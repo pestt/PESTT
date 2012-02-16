@@ -7,6 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import activator.Activator;
+import constants.Preferences;
+
 public class DotProcess implements IDotProcess {
 
 	private PrintWriter stdin;
@@ -14,7 +19,9 @@ public class DotProcess implements IDotProcess {
 
 	public Map<String, ArrayList<String>> DotToPlain(String dotsource) {
 		LinkedHashMap<String, ArrayList<String>> elements = null;
-		String cmd = "dot -Tplain"; // the Graphviz command.
+		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		String dot = preferenceStore.getString(Preferences.DOT_PATH);
+		String cmd = dot + " -Tplain"; // the Graphviz command.
 		try {
 			Process p = Runtime.getRuntime().exec(cmd, null, null); // run the Graphviz command.
 			stdin = new PrintWriter(p.getOutputStream()); // pass the dot string.

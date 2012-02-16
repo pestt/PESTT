@@ -22,7 +22,6 @@ public enum GraphsCreator {
 	private ArrayList<Object> graphs;
 	
 	public void createGraphs(Composite parent, ArrayList<String> location) {
-		graphs = new ArrayList<Object>(); // the list to store the sourceGraph and the layoutGraph;
 		IProjectExplorer explorer = new ProjectExplorer(); // creates a project to be explorer.
 		DotGraphVisitor<Integer> visitor = new DotGraphVisitor<Integer>(); // creates the visitor to the graph.
 		Graph<Integer> sourceGraph = explorer.getSourceCodeGraph(location); // get the graph of the project explored.
@@ -30,13 +29,16 @@ public enum GraphsCreator {
 		visitor.visitGraph(sourceGraph); // apply the visitor to the graph.
 		String dotGraph = "digraph grafo {\nrankdir=TD\nsize=\"10,10\"\n" + visitor.getDotString()  + "}\n"; // creates the string to be passed to Graphviz.
 		IDotProcess dotProcess = new DotProcess(); // the object that parse the information to build the layoutGraph.
-		Map<String, ArrayList<String>> layoutMap = dotProcess.DotToPlain(dotGraph); // the information to build the layoutGraph.				
-		layoutgraph.Graph layoutGraph = new layoutgraph.Graph(parent, layoutMap);
-		graphs.add(Graph_ID.LAYOUT_GRAPH_NUM, layoutGraph); // add the layoutGraph.
-		parent.layout();
+		Map<String, ArrayList<String>> map = dotProcess.DotToPlain(dotGraph); // the information to build the layoutGraph.				
+		if(map != null) {
+			layoutgraph.Graph layoutGraph = new layoutgraph.Graph(parent, map);
+			graphs.add(Graph_ID.LAYOUT_GRAPH_NUM, layoutGraph); // add the layoutGraph.
+			parent.layout();
+		}
 	}
 	
-	public void createCoverageCriteriaGraphs(Composite parent) {
+	public void createCoverageCriteriaGraph(Composite parent) {
+		graphs = new ArrayList<Object>(); // the list to store the sourceGraph and the layoutGraph;
 		GraphCoverageCriteria coverageGraph = new GraphCoverageCriteria(parent);;
 		graphs.add(Graph_ID.COVERAGE_GRAPH_NUM, coverageGraph); // add the coverageGraph.
 		parent.layout();

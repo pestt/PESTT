@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.ViewPart;
 
-public class ViewGraphCroverageCriteria extends ViewPart  {
+public class ViewGraphCoverageCriteria extends ViewPart  {
 
 	private Composite parent;
 	
@@ -20,6 +20,6 @@ public class ViewGraphCroverageCriteria extends ViewPart  {
 	public void create() {
 		for(Control control : parent.getChildren()) // dispose all active controls.
 			control.dispose();
-		GraphsCreator.INSTANCE.createCoverageCriteriaGraphs(parent); // create the new viewGraph.
+		GraphsCreator.INSTANCE.createCoverageCriteriaGraph(parent); // create the new viewGraph.
 	}
 }

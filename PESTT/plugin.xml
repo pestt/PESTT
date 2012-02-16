@@ -2,6 +2,20 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="preferences.PreferencePage"
+            id="preferences.PreferencePage"
+            name="PESTT">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="perspective.Perspective"
@@ -29,9 +43,9 @@
       <view
             allowMultiple="true"
             category="PESTT.Category"
-            class="view.ViewGraphCroverageCriteria"
+            class="view.ViewGraphCoverageCriteria"
             icon="icons/coverage.gif"
-            id="PESTT.GraphCoverageCriteria"
+            id="PESTT.ViewGraphCoverageCriteria"
             name="Graph Coverage Criteria"
             restorable="true">
       </view>
@@ -73,7 +87,7 @@
          </view>
          <view
                closeable="true"
-               id="PESTT.GraphCoverageCriteria"
+               id="PESTT.ViewGraphCoverageCriteria"
                minimized="false"
                moveable="true"
                relationship="right"

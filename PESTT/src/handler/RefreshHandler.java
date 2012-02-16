@@ -7,18 +7,22 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import activator.Activator;
+
 import view.ViewGraph;
-import view.ViewGraphCroverageCriteria;
+import view.ViewGraphCoverageCriteria;
 import view.ViewRequirementSet;
 import constants.Description_ID;
 import constants.Layer_ID;
 import constants.Messages_ID;
+import constants.Preferences;
 import editor.ActiveEditor;
 
 public class RefreshHandler extends AbstractHandler {
@@ -28,19 +32,23 @@ public class RefreshHandler extends AbstractHandler {
 		ActiveEditor editor = new ActiveEditor();
 		editor.getSelectedText();
 		ArrayList<String> location = editor.getLocation(); // get the location of the file.
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(editor.isInMethod()) { // if the text selected is the name of the method.
-			ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
-			viewGraph.create(location); // update view content.
-			ViewGraphCroverageCriteria viewCoverageCriteriaGraph = (ViewGraphCroverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_COVERAGE_CRITERIA); // get the view graph.
-			viewCoverageCriteriaGraph.create();
-			ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
-			viewRequirementSet.disposeControl(1);
-			viewRequirementSet.setEditor(editor);
-			keepCommandOptions();
-		} else {
-			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+			String dot = preferenceStore.getString(Preferences.DOT_PATH);
+			if(dot != null && !dot.equals("")) {
+				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_COVERAGE_CRITERIA); // get the view graph.
+				viewGraphCoverageCriteria.create();
+				ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
+				viewGraph.create(location); // update view content.
+				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
+				viewRequirementSet.disposeControl(1);
+				viewRequirementSet.setEditor(editor);
+				keepCommandOptions();
+			} else
+				MessageDialog.openInformation(window.getShell(), Messages_ID.PREFERENCES_TITLE, Messages_ID.PREFERENCES); 
+		} else 
 			MessageDialog.openInformation(window.getShell(), Messages_ID.DRAW_GRAPH_TITLE, Messages_ID.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
-		}
 		return null;
 	}
 	

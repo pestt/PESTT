@@ -147,6 +147,6 @@ public class TotalBasicStatistics implements IStatistics {
 	}
 	
 	private String createString(String unit, int passed, int total, String percentage) {
-		return "Totla of " + unit + " coverage for all tests: " + passed + " of " + total + " (" + percentage + ")";
+		return "Total of " + unit + " coverage for all tests: " + passed + " of " + total + " (" + percentage + ")";
 	}
 }
