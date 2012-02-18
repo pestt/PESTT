@@ -2,6 +2,7 @@ package sourcegraph;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -25,7 +26,7 @@ public class GraphInformation {
 	@SuppressWarnings("unchecked")
 	public void addInformationToLayer2(Graph<Integer> sourceGraph, Node<Integer> node, ASTNode instructions, CompilationUnit unit) {
 		sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // change to instruction layer.
-		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // contains the instructions associated to the node. 
+		Map<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // contains the instructions associated to the node. 
 		if(nodeInstructions == null) { 
     		nodeInstructions = new LinkedHashMap<ASTNode, Line>(); 
     		sourceGraph.addMetadata(node, nodeInstructions); // add information to metadata.

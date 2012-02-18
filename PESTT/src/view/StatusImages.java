@@ -1,13 +1,16 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Image;
+
 import activator.Activator;
 import constants.Images_ID;
 
 public class StatusImages {
 	
-	private ArrayList<Image> images; // the list of images.
+	private List<Image> images; // the list of images.
 	private Image PASS; // the pas image.
 	private Image FAIL; // the fail image
 	
@@ -20,7 +23,7 @@ public class StatusImages {
 		images.add(FAIL); // add failimage to the list.
 	}
 	
-	public ArrayList<Image> getImage() {
+	public List<Image> getImage() {
 		return images;
 	}	
 }

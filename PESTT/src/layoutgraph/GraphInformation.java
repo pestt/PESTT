@@ -1,7 +1,8 @@
 package layoutgraph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -79,7 +80,7 @@ public class GraphInformation {
 					sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
 					HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 					if(map != null) {
-						ArrayList<ASTNode> nodes = getASTNodes(map);
+						List<ASTNode> nodes = getASTNodes(map);
 						if(nodes != null) 
 							regionToSelect(nodes, editor, Markers_ID.LINK_MARKER); // select the area in the editor.
 						else 
@@ -90,14 +91,14 @@ public class GraphInformation {
 			editor.deleteALLMarkers(); // removes the marks in the editor.
 	}
 	
-	private ArrayList<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
-		ArrayList<ASTNode> nodesInstructions = new ArrayList<ASTNode>();
+	private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
+		List<ASTNode> nodesInstructions = new LinkedList<ASTNode>();
 		for(Entry<ASTNode, Line> entry : map.entrySet()) 
 	         nodesInstructions.add(entry.getKey());
 		return nodesInstructions;
 	}
 	
-	private void regionToSelect(ArrayList<ASTNode> info, ActiveEditor editor, String markerType) {
+	private void regionToSelect(List<ASTNode> info, ActiveEditor editor, String markerType) {
 		int start = findStartPosition(info); // get the start position.
 		ASTNode instructions = info.get(0); // the first element of the list.
 		switch(instructions.getNodeType()) {
@@ -121,7 +122,7 @@ public class GraphInformation {
 		}
 	}
 	
-	public int findStartPosition(ArrayList<ASTNode> info) {
+	public int findStartPosition(List<ASTNode> info) {
 		int start = info.get(0).getStartPosition(); // the start position of the first element in the list.
 		for(ASTNode instructions : info)  // through all.
 			if(instructions.getStartPosition() < start) // if the start position of the node begins first than the position stored.
@@ -140,7 +141,7 @@ public class GraphInformation {
 			sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null) {
-				ArrayList<ASTNode> nodesInstructions = getASTNodes(map);
+				List<ASTNode> nodesInstructions = getASTNodes(map);
 				Entry<ASTNode, Line> entry = map.entrySet().iterator().next();	
 				String colorStatus = data.getLineStatus(entry.getValue().getStartLine());
 				if(colorStatus.equals(Colors_ID.GRENN_ID))

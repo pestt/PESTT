@@ -1,10 +1,11 @@
 package sourcecodeexplorer;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import sourcegraph.Graph;
 
 public interface IProjectExplorer {
 	
-	public Graph<Integer> getSourceCodeGraph(ArrayList<String> path);
+	public Graph<Integer> getSourceCodeGraph(List<String> path);
 
 }

@@ -2,8 +2,7 @@ package dotprocessor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -17,8 +16,8 @@ public class DotProcess implements IDotProcess {
 	private PrintWriter stdin;
 	private Scanner stdout;
 
-	public Map<String, ArrayList<String>> DotToPlain(String dotsource) {
-		LinkedHashMap<String, ArrayList<String>> elements = null;
+	public Map<String, List<String>> DotToPlain(String dotsource) {
+		Map<String, List<String>> elements = null;
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
 		String cmd = dot + " -Tplain"; // the Graphviz command.

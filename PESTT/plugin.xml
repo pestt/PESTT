@@ -204,9 +204,9 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewRequirementSet"
-            description="Get coverage test reuirements."
-            id="PESTT.TestRequirements"
-            name="Test Requirements">
+            description="Touring and Sidetrips"
+            id="PESTT.Touring&amp;Sidetrips"
+            name="Touring_Sidetrips">
       </command>
    </extension>
    <extension
@@ -479,9 +479,9 @@
             </visibleWhen>
          </command>
          <command
-               commandId="PESTT.TestRequirements"
+               commandId="PESTT.Touring&amp;Sidetrips"
                icon="icons/paths.gif"
-               label="Test Requirements"
+               label="Touring and Sidetrips"
                mnemonic="Allt+T"
                style="push"
                tooltip="Show test requirements">
@@ -524,7 +524,7 @@
             sequence="Ctrl+F5">
       </key>
       <key
-            commandId="PESTT.TestRequirements"
+            commandId="PESTT.Touring&amp;Sidetrips"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+T">
@@ -611,8 +611,8 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.TestRequirementsHandler"
-            commandId="PESTT.TestRequirements">
+            class="handler.Touring_SidetripsHandler"
+            commandId="PESTT.Touring&amp;Sidetrips">
          <activeWhen>
             <and>
                <with
@@ -691,7 +691,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.AddPathManuallyHandler"
+            class="handler.AddTestRequirementManuallyHandler"
             commandId="PESTT.AddPathManually">
          <activeWhen>
             <and>

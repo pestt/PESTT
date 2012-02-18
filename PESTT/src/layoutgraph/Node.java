@@ -1,6 +1,7 @@
 package layoutgraph;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Color;
 
 import constants.Colors_ID;
@@ -13,7 +14,7 @@ public class Node {
 	private Color bgcolor;
 	private Color fgcolor;
 	
-	public Node(ArrayList<String> attributes) {
+	public Node(List<String> attributes) {
 		name = attributes.get(0);
 		xPos = Double.parseDouble(attributes.get(1));
 		yPos = Double.parseDouble(attributes.get(2));

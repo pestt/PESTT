@@ -1,11 +1,12 @@
 package sourcegraph;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class GraphMetadataLayer {
-	private HashMap<Node<?>, Object> nodeMetadata;
-	private HashMap<Edge<?>, Object> edgeMetadata;
+	private Map<Node<?>, Object> nodeMetadata;
+	private Map<Edge<?>, Object> edgeMetadata;
 	
 	public GraphMetadataLayer() {
 		nodeMetadata = new HashMap<Node<?>, Object> ();

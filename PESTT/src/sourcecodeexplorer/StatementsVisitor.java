@@ -1,9 +1,10 @@
 package sourcecodeexplorer;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -25,11 +26,11 @@ import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-import constants.Layer_ID;
 import sourcegraph.Edge;
 import sourcegraph.Graph;
 import sourcegraph.GraphInformation;
 import sourcegraph.Node;
+import constants.Layer_ID;
 
 public class StatementsVisitor extends ASTVisitor {
 
@@ -43,7 +44,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private boolean returnFlag;
 	private boolean caseFlag;
 	private Node<Integer> finalnode;
-	private ArrayList<Node<Integer>> caseNodes;
+	private List<Node<Integer>> caseNodes;
 	private GraphInformation infos;
 	private CompilationUnit unit;
 
@@ -65,7 +66,7 @@ public class StatementsVisitor extends ASTVisitor {
 		sourceGraph.addInitialNode(initial); // add first node to the graph.
 		prevNode.push(initial); // add first node to the previous node stack.
 		finalnode = null; // The final node.
-		caseNodes= new ArrayList<Node<Integer>>(); // the list of case nodes.
+		caseNodes= new LinkedList<Node<Integer>>(); // the list of case nodes.
 		infos = new GraphInformation(); // the graph informations.
 	}
 
@@ -79,8 +80,8 @@ public class StatementsVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(MethodDeclaration node) {
 		if(node.getName().getIdentifier().equals(methodName)) {
-			ArrayList<Node<Integer>> nodesToRemove = new ArrayList<Node<Integer>>();
-			ArrayList<Edge<Integer>> edgesToRemove = new ArrayList<Edge<Integer>>();
+			List<Node<Integer>> nodesToRemove = new LinkedList<Node<Integer>>();
+			List<Edge<Integer>> edgesToRemove = new LinkedList<Edge<Integer>>();
 			for(Node<Integer> graphNode : sourceGraph.getNodes()) {
 				sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.	
 				if(sourceGraph.getMetadata(graphNode) == null && 

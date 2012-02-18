@@ -16,6 +16,7 @@ public enum Messages_ID {
 	public static final String GRAPH_INVALID_INPUT_MSG = "You need to enter a valid executed path.";
 	public static final String GRAPH_REMOVE_MSG = "Graph successfully removed.";
 	public static final String GRAPH_SELECT_TO_REMOVE_MSG = "You need to select a executed graph to be removed.";
+	public static final String GRAPH_SELECT_TOTTAL_TO_REMOVE_MSG = "You can't remove the Total. Please select a valid grpah to remove.";
 	public static final String TEST_REQUIREMENT_INPUT_TITLE = "PESTT - Test requirements input";
 	public static final String TEST_REQUIREMENT_INPUT_MSG = "You need to enter a test requirement.";
 	public static final String TEST_REQUIREMENT_INVALID_INPUT_MSG = "You need to enter a valid test requirement.";

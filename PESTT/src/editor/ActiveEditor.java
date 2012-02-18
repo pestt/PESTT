@@ -1,7 +1,7 @@
 package editor;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
@@ -33,13 +33,13 @@ public class ActiveEditor {
 	private ITextSelection textSelect; // text selected in editor.
 	private IFile file; // the current open file.
 	private Markers marker; // marker to add.
-	private ArrayList<String> location; // file location;
+	private List<String> location; // file location;
 	private boolean methodSelected;
 	private String classPath;
 	private String targetName;
 	
 	public ActiveEditor() {
-		location = new ArrayList<String>();
+		location = new LinkedList<String>();
 		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); // obtain the active editor.
 		editor = (ITextEditor) part; // obtain the text editor.
 		ISelection select = editor.getSelectionProvider().getSelection(); // the selected text.
@@ -63,7 +63,7 @@ public class ActiveEditor {
 		marker.deleteAllMarkers();
 	}
 	
-	public ArrayList<String> getLocation() {
+	public List<String> getLocation() {
 		location.clear();
 		StringTokenizer strtok = new StringTokenizer(file.getRawLocation().toOSString(), "/");
 		// separate the current open editor location.
@@ -126,8 +126,8 @@ public class ActiveEditor {
 		return location;
 	}
 	
-	public Collection<String> getMethodNames() {
-		ArrayList<String> methods = new ArrayList<String>();
+	public List<String> getMethodNames() {
+		List<String> methods = new LinkedList<String>();
 		for(IMethod method : getMethods(location))
 			methods.add(method.getElementName());
 		return methods;
@@ -143,7 +143,7 @@ public class ActiveEditor {
 		return location.get(CompilationUnits_ID.CLASS).substring(0, file.getName().length() - 5);
 	}
 	
-	private IMethod[] getMethods(ArrayList<String> location) {
+	private IMethod[] getMethods(List<String> location) {
 		IMethod[] methods = null;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();

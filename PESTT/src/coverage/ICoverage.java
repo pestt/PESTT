@@ -1,21 +1,20 @@
 package coverage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import sourcegraph.Path;
 
 public interface ICoverage {
 	
-	public ArrayList<Object> getExecutedGraphs();
+	public List<Object> getExecutedGraphs();
 
-	public ArrayList<Path<Integer>> getCoveredPaths(Object executedGraph);
+	public List<Path<Integer>> getCoveredPaths(Object executedGraph, List<Path<Integer>> testRequirements);
 	
 	public int getStatusOfRun(Object executedGraph);
 	
-	public ArrayList<ICoverageData> getCoverageStatus(int index);
+	public List<ICoverageData> getCoverageStatus(int index);
 	
-	public List<ArrayList<ICoverageData>> getCoverageData();
+	public List<List<ICoverageData>> getCoverageData();
 	
-	public ArrayList<String> getCoverageStatistics(int index, Object executedGraph);
+	public List<String> getCoverageStatistics(int index, Object executedGraph, List<Path<Integer>> testRequirements);
 }

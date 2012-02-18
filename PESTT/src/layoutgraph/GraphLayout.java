@@ -1,7 +1,7 @@
 package layoutgraph;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -51,7 +51,7 @@ public class GraphLayout {
 		return layout;
 	}
 	
-	private void setNodePosition(Composite parent, GraphElements graphelements, HashMap<String, Node> nodeslist, EntityLayout[] graphnodes) {
+	private void setNodePosition(Composite parent, GraphElements graphelements, Map<String, Node> nodeslist, EntityLayout[] graphnodes) {
 		double pointX = 0;
 		double pointY = 0;
 		int current = 0;

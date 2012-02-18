@@ -1,19 +1,21 @@
 package coveragealgorithms;
 
 import graphvisitors.BreadthFirstGraphVisitor;
-import java.util.ArrayList;
+
 import java.util.LinkedList;
+import java.util.List;
+
 import sourcegraph.Node;
 import sourcegraph.Path;
 
 public class NodeCoverage<V> extends BreadthFirstGraphVisitor<V> implements ICoverageAlgorithms<V> {
 
-	private ArrayList<Path<V>> paths;
-	private LinkedList<Node<V>> visitedNodes = new LinkedList<Node<V>>();
+	private List<Path<V>> paths;
+	private List<Node<V>> visitedNodes;
 	
 	public NodeCoverage() {
 		visitedNodes = new LinkedList<Node<V>>();
-		paths = new ArrayList<Path<V>>();
+		paths = new LinkedList<Path<V>>();
 	}
 	
 	@Override
@@ -26,17 +28,8 @@ public class NodeCoverage<V> extends BreadthFirstGraphVisitor<V> implements ICov
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ArrayList<Path<V>> getTestRequirements() {
+	public List<Path<V>> getTestRequirements() {
 		paths = new SortPaths().sort(paths); // sort the paths.
-		setIds(); // set the id of the path.
 		return paths;
-	}
-	
-	private void setIds() {
-		int id = 0;
-		for(Path<V> path : paths) { // set the id to all paths in the list.
-			path.setPathId(id);
-			id++;
-		}
 	}
 }

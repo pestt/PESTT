@@ -1,9 +1,9 @@
 package statistics;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IStatistics {
 
-	public ArrayList<String> getStatistics();
+	public List<String> getStatistics();
 	
 }

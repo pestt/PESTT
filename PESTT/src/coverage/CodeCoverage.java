@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jacoco.core.analysis.Analyzer;
@@ -20,16 +21,16 @@ import editor.ActiveEditor;
 
 public class CodeCoverage {
 
-	private List<ArrayList<ICoverageData>> data;
+	private List<List<ICoverageData>> data;
 	private ActiveEditor editor;
 
 
 	public CodeCoverage(ActiveEditor editor) {
-		data = new ArrayList<ArrayList<ICoverageData>>();
+		data = new LinkedList<List<ICoverageData>>();
 		this.editor = editor;
 	}
 
-	public List<ArrayList<ICoverageData>> getCodeCoverageStatus() {
+	public List<List<ICoverageData>> getCodeCoverageStatus() {
 
 		String targetName = editor.getTargetName();
 		
@@ -80,7 +81,7 @@ public class CodeCoverage {
 				final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 				analyzer.analyzeClass(getTargetClass(editor));
 
-				ArrayList<ICoverageData> dataRun = new ArrayList<ICoverageData>();
+				List<ICoverageData> dataRun = new LinkedList<ICoverageData>();
 				// line coverage information:
 				for(final IClassCoverage classCoverage : coverageBuilder.getClasses()) {
 					dataRun.add(new CoverageData(classCoverage));

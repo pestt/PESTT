@@ -1,6 +1,6 @@
 package handler;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -9,16 +9,16 @@ import org.eclipse.core.commands.State;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import activator.Activator;
-
 import view.ViewGraph;
 import view.ViewGraphCoverageCriteria;
 import view.ViewRequirementSet;
+import activator.Activator;
 import constants.Description_ID;
 import constants.Layer_ID;
 import constants.Messages_ID;
@@ -31,17 +31,30 @@ public class RefreshHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ActiveEditor editor = new ActiveEditor();
 		editor.getSelectedText();
-		ArrayList<String> location = editor.getLocation(); // get the location of the file.
+		List<String> location = editor.getLocation(); // get the location of the file.
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(editor.isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
 			if(dot != null && !dot.equals("")) {
 				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_COVERAGE_CRITERIA); // get the view graph.
-				viewGraphCoverageCriteria.create();
 				ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
-				viewGraph.create(location); // update view content.
 				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
+				if(viewGraphCoverageCriteria == null || viewGraph == null || viewRequirementSet == null) {
+					try {
+						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_GRAPH);
+						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_COVERAGE_CRITERIA);
+						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_REQUIREMENT_SET);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+					viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_COVERAGE_CRITERIA); // get the view graph.
+					viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
+					viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
+				}
+
+				viewGraphCoverageCriteria.create();
+				viewGraph.create(location); // update view content.
 				viewRequirementSet.disposeControl(1);
 				viewRequirementSet.setEditor(editor);
 				keepCommandOptions();

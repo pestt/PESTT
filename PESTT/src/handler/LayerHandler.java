@@ -8,7 +8,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.RadioState;
-
 import constants.Description_ID;
 import constants.Layer_ID;
 import constants.Messages_ID;

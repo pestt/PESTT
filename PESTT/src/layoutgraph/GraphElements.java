@@ -1,9 +1,8 @@
 package layoutgraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -14,10 +13,10 @@ public class GraphElements {
 	
 	private double gWidth;
 	private double gHeight;
-	private LinkedHashMap<String, Node> nodes;
-	private LinkedHashMap<String, Edge> connections;
+	private Map<String, Node> nodes;
+	private Map<String, Edge> connections;
 	
-	public GraphElements(Map<String, ArrayList<String>> elements) {
+	public GraphElements(Map<String, List<String>> elements) {
 		gWidth = 0.0;
 		gHeight = 0.0;
 		nodes = null;
@@ -33,25 +32,25 @@ public class GraphElements {
 		return gHeight;
 	}
 	
-	public HashMap<String, Node> getNodesInfo() {
+	public Map<String, Node> getNodesInfo() {
 		return nodes;
 	}
 	
-	public HashMap<String, Edge> getEdgesInfo() {
+	public Map<String, Edge> getEdgesInfo() {
 		return connections;
 	}
 	
-	private void getElements(Map<String, ArrayList<String>> elements) {
+	private void getElements(Map<String, List<String>> elements) {
 		nodes = new LinkedHashMap<String, Node>();
 		connections =  new LinkedHashMap<String, Edge>();
 		Node node = null;
 		Edge connection = null;
-		Set<Entry<String, ArrayList<String>>> set = elements.entrySet();
-		Iterator<Entry<String, ArrayList<String>>> iterator = set.iterator();
+		Set<Entry<String, List<String>>> set = elements.entrySet();
+		Iterator<Entry<String, List<String>>> iterator = set.iterator();
 		while(iterator.hasNext()) {
-			Entry<String, ArrayList<String>> entry = iterator.next();
+			Entry<String, List<String>> entry = iterator.next();
 			if(entry.getKey().equals(Description_ID.GRAPH)) {
-				ArrayList<String> dimension = entry.getValue();
+				List<String> dimension = entry.getValue();
 				gWidth = Double.parseDouble(dimension.get(0));
 				gHeight = Double.parseDouble(dimension.get(1));
 			} else if(Description_ID.NODE.equals(entry.getKey().substring(0, 4))) {

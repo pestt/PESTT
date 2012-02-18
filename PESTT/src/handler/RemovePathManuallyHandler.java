@@ -1,6 +1,6 @@
 package handler;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -40,7 +40,7 @@ public class RemovePathManuallyHandler extends AbstractHandler {
 			dialog.open();
 			String input = dialog.getInput();
 			if(input != null) {
-				ArrayList<Path<Integer>> testRequirements = view.getTestRequirement();
+				List<Path<Integer>> testRequirements = view.getTestRequirement();
 				testRequirements.remove(selectedTestRequirement);
 				view.cleanPathStatus();
 				viewer.setInput(testRequirements);

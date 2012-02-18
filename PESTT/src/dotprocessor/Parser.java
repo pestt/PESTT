@@ -2,6 +2,9 @@ package dotprocessor;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -9,19 +12,19 @@ import constants.Description_ID;
 
 public class Parser {
 
-	public LinkedHashMap<String, ArrayList<String>> parsePlainInfo(Scanner input) {
-		LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<String, ArrayList<String>>();
+	public Map<String, List<String>> parsePlainInfo(Scanner input) {
+		Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
 		String line = input.nextLine();
 		int nodeCount = 1;
 		int edgeCount = 1;
 		StringTokenizer tok = null;
 		String type = null;
 		while(!line.equals(Description_ID.STOP) && input.hasNext()) {
-			ArrayList<String> values;
+			List<String> values;
 			tok = new StringTokenizer(line);
 			type = tok.nextToken();
 			if(type.equals(Description_ID.GRAPH)) {
-				values = new ArrayList<String>();
+				values = new LinkedList<String>();
 				tok.nextToken(); // discard the graph scale.
 				values.add(tok.nextToken()); // the graph width.
 				values.add(tok.nextToken()); // the graph height.

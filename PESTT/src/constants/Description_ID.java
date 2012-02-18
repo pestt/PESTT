@@ -1,8 +1,6 @@
 package constants;
 
-public enum Description_ID {
-	
-	INSTANCE;
+public class Description_ID {
 	
 	public static final String VIEW_GRAPH = "PESTT.ViewGraph";
 	public static final String VIEW_REQUIREMENT_SET = "PESTT.ViewRequirementSet";
@@ -15,4 +13,5 @@ public enum Description_ID {
 	public static final String EDGE = "edge" ;
 	public static final String GRAPH = "graph";
 	public static final String STOP = "stop";
+	public static final String TOTAL = "Total";
 }

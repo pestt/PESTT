@@ -1,6 +1,6 @@
 package handler;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -53,12 +53,22 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 			if(!input.equals(Description_ID.EMPTY)) {
 				Path<Integer> fakeExecutedPath = createFakeExecutedPath(input);
 				if(fakeExecutedPath != null) {
-					ArrayList<Object> executedGraphs = view.getExecutedGraphs();
+					List<Object> executedGraphs = view.getExecutedGraphs();
 					executedGraphs.add(fakeExecutedPath);
-					List<ArrayList<ICoverageData>> data = view.getCoverageData();
-					ArrayList<ICoverageData> newData = new ArrayList<ICoverageData>();
+					List<List<ICoverageData>> data = view.getCoverageData();
+					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new FakeCoverageData(fakeExecutedPath));
 					data.add(newData);
+					int index = -1;
+					for(Object obj : executedGraphs)
+						if(obj instanceof String) {
+							index = executedGraphs.indexOf(obj);
+							executedGraphs.remove(obj);
+						}
+
+					if(index != -1 && data.size() > executedGraphs.size())	
+						data.remove(index);
+					executedGraphs.add(Description_ID.TOTAL);
 					view.cleanPathStatus();
 					viewer.setInput(executedGraphs);
 				} else {
@@ -75,12 +85,12 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 	private Path<Integer> createFakeExecutedPath(String input) {
 		boolean flag = true;
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
-		ArrayList<String> insertedNodes = getInsertedNodes(input);
+		List<String> insertedNodes = getInsertedNodes(input);
 		Path<Integer> fakeExecutedPath = null;
 		for(int i = 0; i < insertedNodes.size(); i++) {
 			try {
 				Node<Integer> nodeFrom = sourceGraph.getNode(Integer.parseInt(insertedNodes.get(i)));
-				if(nodeFrom != null && flag)
+				if(nodeFrom != null && flag) 
 					if(i + 1 < insertedNodes.size()) {
 						Node<Integer> nodeTo = sourceGraph.getNode(Integer.parseInt(insertedNodes.get(i + 1)));
 						for(Edge<Integer> edge : sourceGraph.getNodeEdges(nodeFrom))
@@ -93,8 +103,11 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 								break;
 							} else
 								flag = false;
-					} else
-						fakeExecutedPath.addNode(nodeFrom);
+					} else 
+						if(fakeExecutedPath == null) 
+							fakeExecutedPath = new Path<Integer>(nodeFrom);
+						else
+							fakeExecutedPath.addNode(nodeFrom);
 				else
 					return null;
 			} catch(NumberFormatException ee) {
@@ -104,8 +117,8 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 		return fakeExecutedPath;
 	}
 	
-	private ArrayList<String> getInsertedNodes(String input) {
-		ArrayList<String> aux = new ArrayList<String>();
+	private List<String> getInsertedNodes(String input) {
+		List<String> aux = new LinkedList<String>();
 		StringTokenizer strtok = new StringTokenizer(input, ", ");
 		// separate the inserted nodes.
 		while(strtok.hasMoreTokens())

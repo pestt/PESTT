@@ -1,6 +1,7 @@
 package handler;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -22,9 +23,10 @@ import constants.Description_ID;
 import constants.Graph_ID;
 import constants.Messages_ID;
 import constants.TableViewers_ID;
+import coveragealgorithms.SortPaths;
 import dialog.InputDialog;
 
-public class AddPathManuallyHandler extends AbstractHandler {
+public class AddTestRequirementManuallyHandler extends AbstractHandler {
 
 	private ViewRequirementSet view;
 	private IWorkbenchWindow window;
@@ -39,6 +41,7 @@ public class AddPathManuallyHandler extends AbstractHandler {
 		return null;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addTableLine(TableViewer viewer, Shell shell) throws ExecutionException {
 		String message = "Please enter a requirement test:\n(e.g. 0, ..., 3)";
 		InputDialog dialog = new InputDialog(shell, message);
@@ -48,10 +51,12 @@ public class AddPathManuallyHandler extends AbstractHandler {
 			if(!input.equals(Description_ID.EMPTY)) {
 				Path<Integer> fakeTestRequirement = createFakeTestRequirement(input);
 				if(fakeTestRequirement != null) {
-					ArrayList<Path<Integer>> testRequirements = view.getTestRequirement();
+					List<Path<Integer>> testRequirements = view.getTestRequirement();
 					testRequirements.add(fakeTestRequirement);	
-					view.cleanPathStatus();
+					testRequirements = new SortPaths().sort(testRequirements);
 					viewer.setInput(testRequirements);
+					view.setTestRequirement(testRequirements);
+					view.cleanPathStatus();
 				} else {
 					MessageDialog.openInformation(window.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 					addTableLine(viewer, shell);
@@ -66,7 +71,7 @@ public class AddPathManuallyHandler extends AbstractHandler {
 	private Path<Integer> createFakeTestRequirement(String input) {
 		boolean flag = true;
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
-		ArrayList<String> insertedNodes = getInsertedNodes(input);
+		List<String> insertedNodes = getInsertedNodes(input);
 		Path<Integer> fakeRequirementTest = null;
 		for(int i = 0; i < insertedNodes.size(); i++) {
 			try {
@@ -85,7 +90,10 @@ public class AddPathManuallyHandler extends AbstractHandler {
 							} else
 								flag = false;
 					} else
-						fakeRequirementTest.addNode(nodeFrom);
+						if(fakeRequirementTest == null) 
+							fakeRequirementTest = new Path<Integer>(nodeFrom);
+						else
+							fakeRequirementTest.addNode(nodeFrom);
 				else
 					return null;
 			} catch(NumberFormatException ee) {
@@ -95,8 +103,8 @@ public class AddPathManuallyHandler extends AbstractHandler {
 		return fakeRequirementTest;
 	}
 	
-	private ArrayList<String> getInsertedNodes(String input) {
-		ArrayList<String> aux = new ArrayList<String>();
+	private List<String> getInsertedNodes(String input) {
+		List<String> aux = new LinkedList<String>();
 		StringTokenizer strtok = new StringTokenizer(input, ", ");
 		// separate the inserted nodes.
 		while(strtok.hasMoreTokens())

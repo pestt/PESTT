@@ -1,8 +1,10 @@
 package statistics;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -16,37 +18,37 @@ import constants.Colors_ID;
 import constants.Graph_ID;
 import constants.Layer_ID;
 import constants.Statistics_ID;
+import coverage.FakeCoverageData;
 import coverage.ICoverageData;
-import coveragealgorithms.ICoverageAlgorithms;
 import editor.Line;
 
 public class TotalBasicStatistics implements IStatistics {
 		
 	private Graph<Integer> sourceGraph;
-	private ArrayList<Object> executedGraphs;
-	private ArrayList<ICoverageData> datas;
-	private ArrayList<String> coverageStatistics;
-	private ArrayList<String> individualStatistics;
-	private ArrayList<ArrayList<Path<Integer>>> coveredPaths;
-	private ICoverageAlgorithms<Integer> testRequirementPaths;
+	private List<Object> executedGraphs;
+	private List<List<ICoverageData>> dataList;
+	private List<ICoverageData> datas;
+	private List<String> coverageStatistics;
+	private List<List<Path<Integer>>> coveredPaths;
+	private List<Path<Integer>> testRequirementPaths;
 	
 	@SuppressWarnings("unchecked")
-	public TotalBasicStatistics(ArrayList<Object> param) {
+	public TotalBasicStatistics(List<Object> param) {
 		this.sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
-		this.executedGraphs = (ArrayList<Object>) param.get(0);
-		this.datas = (ArrayList<ICoverageData>) param.get(1);
-		this.coveredPaths = (ArrayList<ArrayList<Path<Integer>>>) param.get(2);
-		this.testRequirementPaths = (ICoverageAlgorithms<Integer>) param.get(3);
-		this.individualStatistics = (ArrayList<String>) param.get(4);
-		coverageStatistics = (ArrayList<String>) individualStatistics.clone();
+		this.executedGraphs = (List<Object>) param.get(0);
+		this.dataList = (List<List<ICoverageData>>) param.get(1);
+		this.datas = (List<ICoverageData>) param.get(2);
+		this.coveredPaths = (List<List<Path<Integer>>>) param.get(3);
+		this.testRequirementPaths = (List<Path<Integer>>) param.get(4);
 		setCoverageStatistics();
 	}
 
-	public ArrayList<String> getStatistics() {
+	public List<String> getStatistics() {
 		return coverageStatistics;
 	}
 	
 	private void setCoverageStatistics() {
+		coverageStatistics = new LinkedList<String>();
 		coverageStatistics.add(setNodesCoverageStatistics());
 		if(sourceGraph.getNodes().size() > 1)
 			coverageStatistics.add(setEdgesCoverageStatistics());
@@ -57,13 +59,13 @@ public class TotalBasicStatistics implements IStatistics {
 	@SuppressWarnings("unchecked")
 	private String setNodesCoverageStatistics() {
 		String unit = Statistics_ID.NODES;;
-		ArrayList<Node<Integer>> nodes = new ArrayList<Node<Integer>>();
+		List<Node<Integer>> nodes = new LinkedList<Node<Integer>>();
 		for(Object executedGraph : executedGraphs)
 			if(executedGraph instanceof Graph<?>) {
 				for(Node<Integer> node : ((Graph<Integer>) executedGraph).getNodes())
 					if(!nodes.contains(node))
 						nodes.add(node);
-			} else {
+			} else if(executedGraph instanceof Path<?>){
 				for(Node<Integer> node : ((Path<Integer>) executedGraph).getPathNodes())
 					if(!nodes.contains(node))
 						nodes.add(node);
@@ -79,14 +81,14 @@ public class TotalBasicStatistics implements IStatistics {
 	private String setEdgesCoverageStatistics() {
 		String unit = Statistics_ID.EDGES;
 		int total = 0;
-		ArrayList<Edge<Integer>> edges = new ArrayList<Edge<Integer>>();
+		List<Edge<Integer>> edges = new LinkedList<Edge<Integer>>();
 		for(Object executedGraph : executedGraphs) 
 			if(executedGraph instanceof Graph<?>) {
 				for(Node<Integer> node : ((Graph<Integer>) executedGraph).getNodes())
 					for(Edge<Integer> edge : ((Graph<Integer>) executedGraph).getNodeEdges(node))
 						if(!edges.contains(edge))
 							edges.add(edge);
-			}else {
+			} else if(executedGraph instanceof Path<?>) {
 				for(int i = 0; i < ((Path<Integer>) executedGraph).getPathNodes().size(); i++)
 					if(i + 1 < ((Path<Integer>) executedGraph).getPathNodes().size()) {
 						Node<Integer> nodeFrom = ((Path<Integer>) executedGraph).getPathNodes().get(i);
@@ -108,10 +110,11 @@ public class TotalBasicStatistics implements IStatistics {
 	private String setLinesCoverageStatistics() {
 		String unit = Statistics_ID.LINES;
 		int total = 0;
-		ArrayList<Integer> lines = new ArrayList<Integer>();
+		LinkedHashMap<Integer, String> fakeLineStatus = new LinkedHashMap<Integer, String>();
+		List<Integer> lines = new LinkedList<Integer>();
 		sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
 		for(Node<Integer> node : sourceGraph.getNodes()) {
-			LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
+			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null)
 				for(Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
@@ -119,9 +122,21 @@ public class TotalBasicStatistics implements IStatistics {
 						if(data.getLineStatus(line).equals(Colors_ID.GRENN_ID))
 							if(!lines.contains(line))
 								lines.add(line);
+
 						total++;
+						if(!fakeLineStatus.containsKey(line))
+							fakeLineStatus.put(line, Colors_ID.RED_ID);
 				}
 		}
+		
+		for(int line : lines) {
+			fakeLineStatus.remove(line);
+			fakeLineStatus.put(line, Colors_ID.GRENN_ID);
+		}
+		
+		List<ICoverageData> coverageLine = new LinkedList<ICoverageData>();
+		coverageLine.add(new FakeCoverageData(fakeLineStatus));
+		dataList.add(coverageLine);
 		int passed = lines.size();
 		String percentage = getPercentage(passed, total);
 		return createString(unit, passed, total, percentage);
@@ -129,9 +144,9 @@ public class TotalBasicStatistics implements IStatistics {
 	
 	private String setTestRequirementsCoverageStatistics() {
 		String unit = Statistics_ID.TESTREQUIREMENTS;
-		int total = testRequirementPaths.getTestRequirements().size();
-		ArrayList<Path<Integer>> aux = new ArrayList<Path<Integer>>();
-		for(ArrayList<Path<Integer>> paths : coveredPaths)
+		int total = testRequirementPaths.size();
+		List<Path<Integer>> aux = new LinkedList<Path<Integer>>();
+		for(List<Path<Integer>> paths : coveredPaths)
 			for(Path<Integer> path : paths)
 				if(!aux.contains(path))
 				aux.add(path);

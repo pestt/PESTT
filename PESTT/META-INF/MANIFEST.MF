@@ -10,9 +10,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.jacoco.core;bundle-version="0.5.5",
- org.objectweb.asm;bundle-version="3.3.2",
  org.eclipse.jdt.launching;bundle-version="3.6.0",
- org.junit4;bundle-version="4.8.1"
+ org.junit4;bundle-version="4.8.1",
+ org.objectweb.asm;bundle-version="3.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.ui.texteditor
 Bundle-ActivationPolicy: lazy

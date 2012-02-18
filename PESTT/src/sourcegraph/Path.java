@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Path<V> implements Iterable<Node<V>> {
 	private List<Node<V>> nodes;
-	private int id;
 	
 	public Path(Node<V> node) {
 		nodes = new LinkedList<Node<V>>();
@@ -23,14 +22,6 @@ public class Path<V> implements Iterable<Node<V>> {
 		return nodes.iterator();
 	}
 	
-	public void setPathId(int id) {
-		this.id = id;
-	}
-	
-	public int getPathId() {
-		return id;
-	}
-	
 	public List<Node<V>> getPathNodes() {
 		return nodes;
 	}
@@ -41,7 +32,7 @@ public class Path<V> implements Iterable<Node<V>> {
 	
 	public boolean isSubPath(Path<V> path) {
 		boolean match = true;
-		if(nodes .size() < path.getPathNodes().size())
+		if(nodes.size() < path.getPathNodes().size())
 			return false;
 
 		for(Node<V> node : path.getPathNodes())
@@ -52,7 +43,7 @@ public class Path<V> implements Iterable<Node<V>> {
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 		for(int i = 0; i < nodes.size(); i++) {
 			Node<V> node = nodes.get(i);
-			if(node == first && i + path.getPathNodes().size() - 1 < nodes.size())
+			if(node == first && i + path.getPathNodes().size() - 1 < nodes.size()) 
 				indexes.add(i);
 		}
 		

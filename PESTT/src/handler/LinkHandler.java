@@ -1,8 +1,9 @@
 package handler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import layoutgraph.Graph;
@@ -87,14 +88,14 @@ public class LinkHandler extends AbstractHandler {
 	
 	@SuppressWarnings("unchecked")
 	private void selectNode(int position) {
-		ArrayList<GraphItem> aux = new ArrayList<GraphItem>(); // auxiliary list to store selected items.
+		List<GraphItem> aux = new LinkedList<GraphItem>(); // auxiliary list to store selected items.
 		sourcegraph.Graph<Integer> sourceGraph = (sourcegraph.Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM); // the sourceGraph;.
 		Graph layoutGraph = (Graph) GraphsCreator.INSTANCE.getGraphs().get(constants.Graph_ID.LAYOUT_GRAPH_NUM); // the layoutGraph.
 		sourceGraph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
 		for(Node<Integer> node : sourceGraph.getNodes()) { // through all nodes.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null) {
-				ArrayList<ASTNode> info = getASTNodes(map);
+				List<ASTNode> info = getASTNodes(map);
 				if(info != null && findNode(info, position)) { // verify if it is the node.
 					for(GraphNode gnode : layoutGraph.getGraphNodes()) { // through all GraphNodes.
 						if(gnode.getData().equals(node)) { // if matches with the node.
@@ -113,14 +114,14 @@ public class LinkHandler extends AbstractHandler {
 		information.setLayerInformation(Layer_ID.INSTRUCTIONS); // set the information to the instructions layer.
 	}
 	
-	private ArrayList<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
-		ArrayList<ASTNode> nodes = new ArrayList<ASTNode>();
+	private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
+		List<ASTNode> nodes = new LinkedList<ASTNode>();
 		for(Entry<ASTNode, Line> entry : map.entrySet()) 
 	         nodes.add(entry.getKey());
 		return nodes;
 	}
 	
-	private boolean findNode(ArrayList<ASTNode> info, int position) {
+	private boolean findNode(List<ASTNode> info, int position) {
 		int startPosition = new GraphInformation().findStartPosition(info); // get the start position.
 		int endPosition = 0;
 		ASTNode aNode = info.get(0); // the first element of the list.

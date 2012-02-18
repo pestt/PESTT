@@ -1,6 +1,6 @@
 package dotprocessor;
  
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -25,6 +25,6 @@ public interface IDotProcess {
 	 * The plaintext contains the information associated with the graph elements.   
 	 * 
 	 ***/
-	public Map<String, ArrayList<String>> DotToPlain(String dotsource);
+	public Map<String, List<String>> DotToPlain(String dotsource);
 	
 }

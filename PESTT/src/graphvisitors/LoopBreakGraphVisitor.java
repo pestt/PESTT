@@ -1,6 +1,7 @@
 package graphvisitors;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -61,7 +62,7 @@ public class LoopBreakGraphVisitor<V> extends ASTVisitor {
 	public boolean visit(BreakStatement node) {
 		Node<V> breakNode = graph.getInitialNodes().iterator().next();	
 		graph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
-		LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(breakNode); // get the information in this layer to this node.
+		Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(breakNode); // get the information in this layer to this node.
 		int line = map.entrySet().iterator().next().getValue().getStartLine();
 		if(data.getLineStatus(line).equals(Colors_ID.GRENN_ID) || data.getLineStatus(line).equals(Colors_ID.YELLOW_ID)) 
 			breaks = true;

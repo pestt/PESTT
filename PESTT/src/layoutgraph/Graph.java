@@ -1,8 +1,7 @@
 package layoutgraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,15 +25,15 @@ public class Graph {
 	
 	private org.eclipse.zest.core.widgets.Graph graph;
 	private sourcegraph.Graph<Integer> sourceGraph;
-	private ArrayList<GraphNode> graphNodes;
-	private ArrayList<GraphConnection> graphEdges;
+	private List<GraphNode> graphNodes;
+	private List<GraphConnection> graphEdges;
 	private int layer;
 	private SelectionAdapter event;
 	private Composite parent;
 	private ActiveEditor editor;
 	
 	@SuppressWarnings("unchecked")
-	public Graph(Composite parent, Map<String, ArrayList<String>> elements) {
+	public Graph(Composite parent, Map<String, List<String>> elements) {
 		this.parent = parent;
 		this.sourceGraph = (sourcegraph.Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
 		graph = new org.eclipse.zest.core.widgets.Graph(parent, SWT.NONE);
@@ -45,8 +44,8 @@ public class Graph {
 		sourceGraph.selectMetadataLayer(0); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 	}
 	
-	private void setNodes(HashMap<String, Node> nodes) {
-		graphNodes = new ArrayList<GraphNode>(); // the list of nodes.
+	private void setNodes(Map<String, Node> nodes) {
+		graphNodes = new LinkedList<GraphNode>(); // the list of nodes.
 		Set<Entry<String, Node>> set = nodes.entrySet(); // the node properties.
 		Iterator<Entry<String, Node>> iterator = set.iterator(); 
 		while(iterator.hasNext()) {
@@ -65,8 +64,8 @@ public class Graph {
 		}
 	}
 	
-	private void setEdges(HashMap<String, Edge> edges) {
-		graphEdges = new ArrayList<GraphConnection>(); // the list of edges.
+	private void setEdges(Map<String, Edge> edges) {
+		graphEdges = new LinkedList<GraphConnection>(); // the list of edges.
 		GraphNode begin; // the initial node of the edge.
 		GraphNode end; // the final node of the edge.
 		int index = 0;
@@ -106,11 +105,11 @@ public class Graph {
 		graph.setLayoutAlgorithm(new GraphLayout(parent, graphElements).setLayout(), true);
 	}
 	
-	public ArrayList<GraphNode> getGraphNodes() {
+	public List<GraphNode> getGraphNodes() {
 		return graphNodes; // the list of nodes.
 	}
 	
-	public ArrayList<GraphConnection> getGraphEdges() {
+	public List<GraphConnection> getGraphEdges() {
 		return graphEdges; // the list of connections.
 	}
 

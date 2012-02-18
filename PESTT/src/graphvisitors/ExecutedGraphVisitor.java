@@ -1,6 +1,7 @@
 package graphvisitors;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.DoStatement;
@@ -48,7 +49,7 @@ public class ExecutedGraphVisitor<V> extends DepthFirstGraphVisitor<V> {
 		for(Edge<V> edge : graph.getNodeEdges(node)) {
 			graph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
 			Node<V> finalEdgeNode = edge.getEndNode();
-			LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(finalEdgeNode); // get the information in this layer to this node.
+			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(finalEdgeNode); // get the information in this layer to this node.
 			if(map != null) {
 				int line = map.entrySet().iterator().next().getValue().getStartLine();
 				map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(node); // get the information in this layer to this node.
@@ -79,7 +80,7 @@ public class ExecutedGraphVisitor<V> extends DepthFirstGraphVisitor<V> {
 		this.graph = graph;
 		Node<V> initialNode = graph.getInitialNodes().iterator().next();
 		graph.selectMetadataLayer(Layer_ID.INSTRUCTIONS); // select the layer to get the information.
-		LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(initialNode); // get the information in this layer to this node.
+		Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(initialNode); // get the information in this layer to this node.
 		int line = map.entrySet().iterator().next().getValue().getStartLine();
 		if(data.getLineStatus(line).equals(Colors_ID.GRENN_ID)) {
 			executedGraph.addInitialNode(initialNode);

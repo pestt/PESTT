@@ -23,6 +23,9 @@ public class FakeCoverageData implements ICoverageData {
 		lineStatus = new LinkedHashMap<Integer, String>();
 		setLineStatus(fakeExecutedPath);
 	}
+	public FakeCoverageData(LinkedHashMap<Integer, String> fakeLineStatus) {
+		lineStatus = fakeLineStatus;
+	}
 	
 	public HashMap<Integer, String> getLineStatus() {
 		return lineStatus;

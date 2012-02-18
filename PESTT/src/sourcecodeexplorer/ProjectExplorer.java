@@ -1,6 +1,7 @@
 package sourcecodeexplorer;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -14,16 +15,15 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import constants.CompilationUnits_ID;
-
 import sourcegraph.Graph;
+import constants.CompilationUnits_ID;
 
 public class ProjectExplorer implements IProjectExplorer {
 
 	private Graph<Integer> graph;
 	
 
-	public Graph<Integer> getSourceCodeGraph(ArrayList<String> path) {
+	public Graph<Integer> getSourceCodeGraph(List<String> path) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		// Get all projects in the workspace

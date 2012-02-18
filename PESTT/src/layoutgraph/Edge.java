@@ -1,6 +1,7 @@
 package layoutgraph;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Color;
 
 public class Edge {
@@ -9,7 +10,7 @@ public class Edge {
 	private String end = null;
 	private Color color;
 	
-	public Edge(ArrayList<String> attributes) {
+	public Edge(List<String> attributes) {
 		start = attributes.get(0);
 		end = attributes.get(1);
 		setColor(attributes.get(2));
