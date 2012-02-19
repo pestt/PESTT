@@ -255,9 +255,12 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void setTestRequirements(String option) {
-		requirementSet = new CoverageAlgorithmsFactory<Integer>().getCoverageAlgorithm(option);
-		requirementSet.visitGraph(sourceGraph);
-		testRequirementsViewer.setInput(getTestRequirement()); 
+		if(option != null) {
+			requirementSet = new CoverageAlgorithmsFactory<Integer>().getCoverageAlgorithm(option);
+			requirementSet.visitGraph(sourceGraph);
+			testRequirementsViewer.setInput(getTestRequirement()); 
+		} else
+			MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.SELECT_VALID_COVERAGE); // message displayed when the coverage criteria is not valid.
 	}
 	
 	public void setEditor(ActiveEditor editor) {

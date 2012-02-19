@@ -61,6 +61,16 @@ public class Path<V> implements Iterable<Node<V>> {
 		}
 		return false;
 	}
+	
+	public Path<V> clone() {
+		Path<V> copy = null;
+		for(Node<V> node : nodes)
+			if(copy == null)
+				copy = new Path<V>(node);
+			else
+				copy.addNode(node);
+		return copy;
+	}
 
 	@Override
 	public String toString() {

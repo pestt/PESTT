@@ -45,6 +45,7 @@ public class GraphCoverageCriteria {
 		epc.setData(CoverageAlgorithms_ID.EDGE_PAIR_ID);
 		nodes.add(epc); 
 		GraphNode crtc = new GraphNode(graph, SWT.SINGLE, "Complete Round\n   Trip Coverage\n----------------------------\n           (CRTC)");
+		crtc.setData(CoverageAlgorithms_ID.COMPLETE_ROUND_TRIP_ID);
 		nodes.add(crtc); 
 		GraphNode auc = new GraphNode(graph, SWT.SINGLE, "  All-Uses\nCoverage\n----------------\n    (AUC)");
 		nodes.add(auc); 
@@ -52,6 +53,7 @@ public class GraphCoverageCriteria {
 		ec.setData(CoverageAlgorithms_ID.EDGE_ID);
 		nodes.add(ec); 
 		GraphNode srtc = new GraphNode(graph, SWT.SINGLE, "Simple Round\nTrip Coverage\n-----------------------\n        (SRTC)");
+		srtc.setData(CoverageAlgorithms_ID.SIMPLE_ROUND_TRIP_ID);
 		nodes.add(srtc); 
 		GraphNode adc = new GraphNode(graph, SWT.SINGLE, "  All-Defs\nCoverage\n----------------\n    (ADC)");
 		nodes.add(adc); 
@@ -65,6 +67,16 @@ public class GraphCoverageCriteria {
 			gnode.setHighlightColor(Colors_ID.YELLOW); 
 			gnode.setBorderHighlightColor(Colors_ID.BLACK); 
 		}
+		cpc.setBackgroundColor(Colors_ID.RED);
+		cpc.setForegroundColor(Colors_ID.WHITE); 
+		adupc.setBackgroundColor(Colors_ID.RED);
+		adupc.setForegroundColor(Colors_ID.WHITE); 
+		auc.setBackgroundColor(Colors_ID.RED);
+		auc.setForegroundColor(Colors_ID.WHITE); 
+		adc.setBackgroundColor(Colors_ID.RED);
+		adc.setForegroundColor(Colors_ID.WHITE); 
+		
+		
 	}
 	
 	private void setEdges() {

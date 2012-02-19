@@ -63,14 +63,30 @@ public class SortPaths<V> {
 				do{
 					p = list.get(i);
 					i++;
-				} while(i < (list.size() - 1) && (!path.getPathNodes().subList(0, pathSize - 1).equals(p.getPathNodes())));
+				} while((i < list.size()) && (!path.getPathNodes().subList(0, pathSize - 1).equals(p.getPathNodes())));
+					
+				if(i == list.size()) {
+					int z = 0;
+					pathValue = Integer.parseInt(path.getPathNodes().get(0).getValue().toString()); // the value of the first node in the path to be added to the list. 
+					while(z < list.size()) {
+						p = list.get(z);
+						z++;
+						pValue = Integer.parseInt(p.getPathNodes().get(0).getValue().toString()); // the value of the first node in the current path in the list. 
+						if(pValue > pathValue) {
+							i = z;
+							break;
+						}
+					}
+					if(i == list.size())
+						break;
+				}
 				
 				// if exists duplicated paths.
 				while(path.getPathNodes().subList(0, pathSize - 1).equals(p.getPathNodes())) {
 					p = list.get(i);
 					i++;
-					
 				}
+				
 				
 				p = list.get(--i); // get the next path in the list.
 				pSize = p.getPathNodes().size(); // update the size of the current path in the list.
@@ -92,8 +108,7 @@ public class SortPaths<V> {
 	
 	private void removePaths(List<Integer> indexes, List<Path<V>> paths) {
 		Collections.reverse(indexes); // reverse the list.
-		for(int i : indexes) { 
+		for(int i : indexes) 
 			paths.remove(i); // remove the indexes.
-		}
 	}
 }

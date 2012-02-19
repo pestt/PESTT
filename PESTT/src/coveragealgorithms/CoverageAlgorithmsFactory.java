@@ -13,6 +13,12 @@ public class CoverageAlgorithmsFactory<V> {
 				return new EdgeCoverage<V>();
 			case EDGE_PAIR:
 				return new EdgePairCoverage<V>();
+			case PRIME_PATH:
+				return new PrimePathCoverage<V>();
+			case SIMPLE_ROUND_TRIP:
+				return new SimpleRoundTripCoverage<V>();
+			case COMPLETE_ROUND_TRIP:
+				return new CompleteRoundTripCoverage<V>();
 			default:
 				return null;
 		}
