@@ -86,6 +86,8 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 		boolean flag = true;
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
 		List<String> insertedNodes = getInsertedNodes(input);
+		if(!sourceGraph.isInitialNode(sourceGraph.getNode(Integer.parseInt(insertedNodes.get(0)))) || !sourceGraph.isFinalNode(sourceGraph.getNode(Integer.parseInt(insertedNodes.get(insertedNodes.size() - 1)))))
+			return null;
 		Path<Integer> fakeExecutedPath = null;
 		for(int i = 0; i < insertedNodes.size(); i++) {
 			try {

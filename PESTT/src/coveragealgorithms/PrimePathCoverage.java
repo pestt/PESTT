@@ -35,7 +35,7 @@ public class PrimePathCoverage<V> extends BreadthFirstGraphVisitor<V> implements
 				primePaths.add(new Path<V>(node));
 
 		while(!paths.isEmpty()) {
-			for (Path<V> path : paths)
+			for(Path<V> path : paths)
 				addNodes(path);
 
 			paths.clear();
@@ -50,15 +50,13 @@ public class PrimePathCoverage<V> extends BreadthFirstGraphVisitor<V> implements
 	private void addNodes(Path<V> path) {
 		Node<V> firstNode = path.getPathNodes().get(0);
 		Node<V> finalNode = path.getPathNodes().get(path.getPathNodes().size() - 1);
-		for (Edge<V> edge : graph.getNodeEdges(finalNode)) {
+		for(Edge<V> edge : graph.getNodeEdges(finalNode)) {
 			Path<V> aux = path.clone();
-			if(graph.isFinalNode(edge.getEndNode()) || (firstNode == edge.getEndNode())) {
-				aux.addNode(edge.getEndNode());
+			aux.addNode(edge.getEndNode());
+			if(graph.isFinalNode(edge.getEndNode()) || (firstNode == edge.getEndNode()))
 				primePaths.add(aux);
-			} else if(!aux.containsNode(edge.getEndNode())){
-				aux.addNode(edge.getEndNode());
+			else if(!aux.containsNode(edge.getEndNode()))
 				temp.add(aux);
-			}
 		}
 	}
 	

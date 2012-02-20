@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.zest.core.widgets.GraphItem;
 
@@ -29,7 +30,11 @@ public class RunCoverageHandler extends AbstractHandler {
 				option = (String) item.getData();
 				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
 				viewRequirementSet.showTestRequirements(option);
-			} else 
+				try {
+					HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_GRAPH);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}			} else 
 				MessageDialog.openInformation(window.getShell(), Messages_ID.DRAW_GRAPH_TITLE, Messages_ID.SELECT_COVERAGE); // message displayed when the graph is not draw.
 		} else {
 			MessageDialog.openInformation(window.getShell(), Messages_ID.DRAW_GRAPH_TITLE, Messages_ID.NEED_TO_DRAW); // message displayed when the graph is not draw.

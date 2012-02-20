@@ -70,15 +70,25 @@ public class SortPaths<V> {
 					pathValue = Integer.parseInt(path.getPathNodes().get(0).getValue().toString()); // the value of the first node in the path to be added to the list. 
 					while(z < list.size()) {
 						p = list.get(z);
-						z++;
+						pSize = p.getPathNodes().size();
 						pValue = Integer.parseInt(p.getPathNodes().get(0).getValue().toString()); // the value of the first node in the current path in the list. 
+						z++;
 						if(pValue > pathValue) {
-							i = z;
-							break;
+							i = list.indexOf(p);
+							return i;
+						} else if(pValue == pathValue) {
+							int min = Math.min(pSize, pathSize);
+							for(int x = 1; x < min; x++)
+								if(Integer.parseInt(path.getPathNodes().get(x).getValue().toString()) < Integer.parseInt(p.getPathNodes().get(x).getValue().toString())) {
+									i = list.indexOf(p);
+									return i;
+								} else if(Integer.parseInt(path.getPathNodes().get(x).getValue().toString()) > Integer.parseInt(p.getPathNodes().get(x).getValue().toString()))
+									break;
 						}
 					}
-					if(i == list.size())
+					if(i == list.size()) 
 						break;
+						
 				}
 				
 				// if exists duplicated paths.

@@ -35,11 +35,13 @@ public class GraphCoverageCriteria {
 	
 	private void setNodes() {
 		GraphNode cpc = new GraphNode(graph, SWT.SINGLE, "Complete Path\n      Coverage\n------------------------\n            (CPC)");
+		cpc.setData(CoverageAlgorithms_ID.COMPLETE_PATH_ID);
 		nodes.add(cpc); 
 		GraphNode ppc = new GraphNode(graph, SWT.SINGLE, "Prime Path\n Coverage\n-------------------\n      (PPC)");
 		ppc.setData(CoverageAlgorithms_ID.PRIME_PATH_ID);
 		nodes.add(ppc);
 		GraphNode adupc = new GraphNode(graph, SWT.SINGLE, "All-du-Paths\n  Coverage\n-------------------\n  (ADUPC)");
+//		adupc.setData(CoverageAlgorithms_ID.ALL_DU_PATHS_ID);
 		nodes.add(adupc); 
 		GraphNode epc = new GraphNode(graph, SWT.SINGLE, "Edge-Pair\nCoverage\n----------------\n     (EPC)");
 		epc.setData(CoverageAlgorithms_ID.EDGE_PAIR_ID);
@@ -48,6 +50,7 @@ public class GraphCoverageCriteria {
 		crtc.setData(CoverageAlgorithms_ID.COMPLETE_ROUND_TRIP_ID);
 		nodes.add(crtc); 
 		GraphNode auc = new GraphNode(graph, SWT.SINGLE, "  All-Uses\nCoverage\n----------------\n    (AUC)");
+//		auc.setData(CoverageAlgorithms_ID.ALL_USES_ID);
 		nodes.add(auc); 
 		GraphNode ec = new GraphNode(graph, SWT.SINGLE, "     Edge\n Coverage\n----------------\n      (EC)");
 		ec.setData(CoverageAlgorithms_ID.EDGE_ID);
@@ -56,6 +59,7 @@ public class GraphCoverageCriteria {
 		srtc.setData(CoverageAlgorithms_ID.SIMPLE_ROUND_TRIP_ID);
 		nodes.add(srtc); 
 		GraphNode adc = new GraphNode(graph, SWT.SINGLE, "  All-Defs\nCoverage\n----------------\n    (ADC)");
+//		adc.setData(CoverageAlgorithms_ID.ALL_DEFS_ID);
 		nodes.add(adc); 
 		GraphNode nc = new GraphNode(graph, SWT.SINGLE, "    Node\nCoverage\n----------------\n     (NC)");
 		nc.setData(CoverageAlgorithms_ID.NODE_ID);
@@ -67,8 +71,7 @@ public class GraphCoverageCriteria {
 			gnode.setHighlightColor(Colors_ID.YELLOW); 
 			gnode.setBorderHighlightColor(Colors_ID.BLACK); 
 		}
-		cpc.setBackgroundColor(Colors_ID.RED);
-		cpc.setForegroundColor(Colors_ID.WHITE); 
+
 		adupc.setBackgroundColor(Colors_ID.RED);
 		adupc.setForegroundColor(Colors_ID.WHITE); 
 		auc.setBackgroundColor(Colors_ID.RED);

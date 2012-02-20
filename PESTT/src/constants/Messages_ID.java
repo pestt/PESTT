@@ -22,6 +22,8 @@ public enum Messages_ID {
 	public static final String TEST_REQUIREMENT_INVALID_INPUT_MSG = "You need to enter a valid test requirement.";
 	public static final String TEST_REQUIREMENT_REMOVE_MSG = "Test requirement successfully removed.";
 	public static final String TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG = "You need to select a test requirement to be removed.";
+	public static final String SHOW_STATISTICS_TITLE = "PESTT - Statistics";
+	public static final String SHOW_STATISTICS_MSG = "Impossible to show statistics. Graph contains loop (infinite paths).";
 	public static final String PREFERENCES_TITLE = "PESTT - Preferences";
 	public static final String PREFERENCES = "Please check if the dot location is currect.\n (Window -> Preferences -> PESTT)";
 }

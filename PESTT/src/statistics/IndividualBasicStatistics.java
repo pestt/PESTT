@@ -8,14 +8,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 
 import sourcegraph.Graph;
+import sourcegraph.InfinitePath;
 import sourcegraph.Node;
 import sourcegraph.Path;
 import view.GraphsCreator;
 import constants.Colors_ID;
 import constants.Graph_ID;
 import constants.Layer_ID;
+import constants.Messages_ID;
 import constants.Statistics_ID;
 import coverage.ICoverageData;
 import editor.Line;
@@ -45,11 +49,22 @@ public class IndividualBasicStatistics implements IStatistics {
 	}
 	
 	private void setCoverageStatistics() {
-		coverageStatistics.add(setNodesCoverageStatistics());
-		if(sourceGraph.getNodes().size() > 1)
-			coverageStatistics.add(setEdgesCoverageStatistics());
-		coverageStatistics.add(setLinesCoverageStatistics());
-		coverageStatistics.add(setTestRequirementsCoverageStatistics());
+		boolean infinite = false;
+		for(Path<Integer> path : testRequirementPaths)
+			if(path instanceof InfinitePath<?>) {
+				infinite = true;
+				break;
+			}
+		if(!infinite) {
+			coverageStatistics.add(setNodesCoverageStatistics());
+			if(sourceGraph.getNodes().size() > 1)
+				coverageStatistics.add(setEdgesCoverageStatistics());
+			coverageStatistics.add(setLinesCoverageStatistics());
+			coverageStatistics.add(setTestRequirementsCoverageStatistics());
+		} else {
+			coverageStatistics.add(Messages_ID.SHOW_STATISTICS_MSG);
+			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages_ID.SHOW_STATISTICS_TITLE, Messages_ID.SHOW_STATISTICS_MSG);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

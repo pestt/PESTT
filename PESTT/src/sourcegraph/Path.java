@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Path<V> implements Iterable<Node<V>> {
+	
 	private List<Node<V>> nodes;
 	
 	public Path(Node<V> node) {
