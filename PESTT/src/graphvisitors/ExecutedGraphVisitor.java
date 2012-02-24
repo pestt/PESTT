@@ -62,8 +62,7 @@ public class ExecutedGraphVisitor<V> extends DepthFirstGraphVisitor<V> {
 							LoopBreakGraphVisitor<V> visitor = new LoopBreakGraphVisitor<V>(data, graph);
 							loopBody.accept(visitor);
 							graph.selectMetadataLayer(Layer_ID.GUARDS); // select the layer to get the information.
-							if(!visitor.hasBreaks() || !((String) graph.getMetadata(edge)).substring(0, 1).equals("¬"))
-								executedGraph.addEdge(edge);
+							executedGraph.addEdge(edge);
 						}
 						else
 							executedGraph.addEdge(edge);
@@ -89,7 +88,7 @@ public class ExecutedGraphVisitor<V> extends DepthFirstGraphVisitor<V> {
 		return false;
 	}
 	
-	public Graph<V> getExecutedgraph() {
+	public Graph<V> getExecutedGraph() {
 		return executedGraph;
 	}
 }

@@ -7,7 +7,6 @@ public enum Statistics_ID {
 	
 	public static final String INDIVIDUAL_BASIC_ID = "INDIVIDUAL_BASIC";
 	public static final String TOTAL_BASIC_ID = "TOTAL_BASIC";
-	
 	public static final String NODES = "nodes";
 	public static final String EDGES = "edges";
 	public static final String LINES = "lines";

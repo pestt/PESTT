@@ -101,7 +101,7 @@ public class ActiveEditor {
 			packageName = packageName.substring(0, packageName.length() - 1);
 				
 		location.clear();
-		location.add(CompilationUnits_ID.SYSTEMLOCATION, relativePath);
+		location.add(CompilationUnits_ID.SYSTEM_LOCATION, relativePath);
 		location.add(CompilationUnits_ID.PROJECT, projectName);
 		location.add(CompilationUnits_ID.PACKAGE, packageName);
 		location.add(CompilationUnits_ID.CLASS, className);
@@ -179,7 +179,7 @@ public class ActiveEditor {
 			if(project.getName().equals(getLocation().get(CompilationUnits_ID.PROJECT))) { // if the project name match.
 				IJavaProject targetProject = JavaCore.create(project);
 				try {
-					classPath = getLocation().get(CompilationUnits_ID.SYSTEMLOCATION) + targetProject.getOutputLocation();
+					classPath = getLocation().get(CompilationUnits_ID.SYSTEM_LOCATION) + targetProject.getOutputLocation();
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}

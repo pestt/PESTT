@@ -180,15 +180,9 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewRequirementSet"
-            description="Remove a the executed graph manually."
+            description="Remove a executed graph manually."
             id="PESTT.RemoveGraphManually"
             name="Remove Graph Manually">
-      </command>
-      <command
-            categoryId="PESTT.CategoryViewRequirementSet"
-            description="Remove a the path manually from the test requireent."
-            id="PESTT.RemovePathManually"
-            name="Remove Path Manually">
       </command>
       <command
             categoryId="PESTT.CategoryViewRequirementSet"
@@ -198,15 +192,46 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewRequirementSet"
+            description="Remove a path manually from the test requireent."
+            id="PESTT.RemovePathManually"
+            name="Remove Path Manually">
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewRequirementSet"
             description="Status coverage."
             id="PESTT.RunCoverage"
             name="Run Coverage">
       </command>
       <command
             categoryId="PESTT.CategoryViewRequirementSet"
-            description="Touring and Sidetrips"
-            id="PESTT.Touring&amp;Sidetrips"
-            name="Touring_Sidetrips">
+            description="Type of graph tour"
+            id="PESTT.Touring"
+            name="Touring">
+         <commandParameter
+               id="org.eclipse.ui.commands.radioStateParameter"
+               name="Tour select"
+               optional="false">
+         </commandParameter>
+         <state
+               id="org.eclipse.ui.commands.radioState">
+            <class
+                  class="org.eclipse.ui.handlers.RadioState">
+               <parameter
+                     name="default"
+                     value="NONE">
+               </parameter>
+               <parameter
+                     name="persisted"
+                     value="false">
+               </parameter>
+            </class>
+         </state>
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewRequirementSet"
+            description="Show test requirements"
+            id="PESTT.TestRequirements"
+            name="Show test requirements">
       </command>
    </extension>
    <extension
@@ -227,43 +252,133 @@
                   style="push"
                   tooltip="Draw Graph">
             </command>
-            <menu
-                  icon="icons/layers.gif"
-                  id="PESTT.LayersMenu"
-                  label="Layers Menu">
-            </menu>
-            <command
-                  commandId="PESTT.Link"
-                  icon="icons/link.gif"
-                  label="Link"
-                  mnemonic="Allt+I"
-                  style="toggle"
-                  tooltip="Show Instructions">
-            </command>
-            <command
-                  commandId="PESTT.Refresh"
-                  icon="icons/refresh.gif"
-                  label="Refresh"
-                  mnemonic="Ctrl+F5"
-                  style="push"
-                  tooltip="Refresh">
-            </command>
             <separator
                   name="PESTT.separator"
                   visible="true">
             </separator>
-            <command
-                  commandId="PESTT.RunCoverage"
-                  icon="icons/run.gif"
-                  label="Run coverage"
-                  mnemonic="Alt+S"
-                  style="push"
-                  tooltip="Show coverage status.">
-            </command>
             <menu
-                  icon="icons/paths.gif"
-                  id="PESTT.CoverageCriteria"
-                  label="Coverage Criteria">
+                  label="Graph">
+               <menu
+                     icon="icons/layers.gif"
+                     id="PESTT.LayersMenu"
+                     label="Layers">
+               </menu>
+               <command
+                     commandId="PESTT.Link"
+                     icon="icons/link.gif"
+                     label="Link"
+                     mnemonic="Allt+I"
+                     style="toggle"
+                     tooltip="Show Instructions">
+               </command>
+               <command
+                     commandId="PESTT.Refresh"
+                     icon="icons/refresh.gif"
+                     label="Refresh"
+                     mnemonic="Ctrl+F5"
+                     style="push"
+                     tooltip="Refresh">
+               </command>
+            </menu>
+            <menu
+                  label="Test requirements">
+               <command
+                     commandId="PESTT.AddPathManually"
+                     icon="icons/add_path.gif"
+                     label="Add a new test requirement"
+                     style="push"
+                     tooltip="Add a new test requirement">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="PESTT.RemovePathManually"
+                     icon="icons/remove_path.gif"
+                     label="Remove the selected test requirement"
+                     style="push"
+                     tooltip="Remove the selected test requirement">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="PESTT.AddGraphManually"
+                     icon="icons/add_graph.gif"
+                     label="Add a new executed graph"
+                     style="push"
+                     tooltip="Add a new executed graph">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="PESTT.RemoveGraphManually"
+                     icon="icons/remove_graph.gif"
+                     label="Remove the selected graph"
+                     style="push"
+                     tooltip="Remove the selected graph">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="PESTT.RunCoverage"
+                     icon="icons/run.gif"
+                     label="Status"
+                     mnemonic="Alt+S"
+                     style="push"
+                     tooltip="Show status coverage">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="PESTT.Touring"
+                     icon="icons/tour.gif"
+                     label="Tour"
+                     style="push"
+                     tooltip="Type of touring to be aplied">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="activeWorkbenchWindow.activePerspective">
+                        <equals
+                              value="PESTT.Perspective">
+                        </equals>
+                     </with>
+                  </visibleWhen>
+               </command>
             </menu>
             <visibleWhen
                   checkEnabled="false">
@@ -462,6 +577,23 @@
                visible="true">
          </separator>
          <command
+               commandId="PESTT.TestRequirements"
+               icon="icons/testrequirements.gif"
+               label="Show test requirements"
+               mnemonic="Alt+R"
+               style="push"
+               tooltip="Show test requirements">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
                commandId="PESTT.RunCoverage"
                icon="icons/run.gif"
                label="Status"
@@ -479,12 +611,16 @@
             </visibleWhen>
          </command>
          <command
-               commandId="PESTT.Touring&amp;Sidetrips"
-               icon="icons/paths.gif"
-               label="Touring and Sidetrips"
-               mnemonic="Allt+T"
-               style="push"
-               tooltip="Show test requirements">
+               commandId="PESTT.Touring"
+               icon="icons/tour.gif"
+               label="Types of tour"
+               mnemonic="Alt+T"
+               style="pulldown"
+               tooltip="Type of tour to be applied">
+            <parameter
+                  name="org.eclipse.ui.commands.radioStateParameter"
+                  value="NONE">
+            </parameter>
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -495,6 +631,41 @@
                </with>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:PESTT.Touring?after=additions">
+         <menu
+               id="PESTT.TouringMenu"
+               label="Touring Menu">
+            <command
+                  commandId="PESTT.Touring"
+                  label="Tour"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="TOUR">
+               </parameter>
+            </command>
+            <command
+                  commandId="PESTT.Touring"
+                  label="Tour with SideTrips"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="SIDETRIP">
+               </parameter>
+            </command>
+            <command
+                  commandId="PESTT.Touring"
+                  label="Tour with Detours"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="DETOUR">
+               </parameter>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -524,16 +695,22 @@
             sequence="Ctrl+F5">
       </key>
       <key
-            commandId="PESTT.Touring&amp;Sidetrips"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+T">
-      </key>
-      <key
             commandId="PESTT.RunCoverage"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+S">
+      </key>
+      <key
+            commandId="PESTT.TestRequirements"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+R">
+      </key>
+      <key
+            commandId="PESTT.Touring"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+T">
       </key>
    </extension>
    <extension
@@ -611,8 +788,8 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.Touring_SidetripsHandler"
-            commandId="PESTT.Touring&amp;Sidetrips">
+            class="handler.TouringHandler"
+            commandId="PESTT.Touring">
          <activeWhen>
             <and>
                <with
@@ -713,6 +890,26 @@
       <handler
             class="handler.RemovePathManuallyHandler"
             commandId="PESTT.RemovePathManually">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewRequirementSet">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="handler.TestRequirementsHandler"
+            commandId="PESTT.TestRequirements">
          <activeWhen>
             <and>
                <with

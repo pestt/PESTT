@@ -45,7 +45,7 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 	@SuppressWarnings("unchecked")
 	private void addTableLine(TableViewer viewer, Shell shell) throws ExecutionException {
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
-		String message = "Please enter a executed graph:\n(e.g. 0, ..., 3)";
+		String message = "Please enter a executed graph:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
 		InputDialog dialog = new InputDialog(shell, message);
 		dialog.open();
 		String input = dialog.getInput();
@@ -59,16 +59,12 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new FakeCoverageData(fakeExecutedPath));
 					data.add(newData);
-					int index = -1;
 					for(Object obj : executedGraphs)
-						if(obj instanceof String) {
-							index = executedGraphs.indexOf(obj);
+						if(obj instanceof String) 
 							executedGraphs.remove(obj);
-						}
-
-					if(index != -1 && data.size() > executedGraphs.size())	
-						data.remove(index);
-					executedGraphs.add(Description_ID.TOTAL);
+					
+					if(executedGraphs.size() > 1)
+						executedGraphs.add(Description_ID.TOTAL);
 					view.cleanPathStatus();
 					viewer.setInput(executedGraphs);
 				} else {

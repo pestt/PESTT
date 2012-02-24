@@ -1,8 +1,6 @@
 package constants;
 
-public enum Graph_ID {
-	
-	INSTANCE;
+public class Graph_ID {
 	
 	public static final int COVERAGE_GRAPH_NUM = 0;
 	public static final int SOURCE_GRAPH_NUM = 1;

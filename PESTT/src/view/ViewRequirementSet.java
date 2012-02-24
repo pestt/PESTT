@@ -49,14 +49,14 @@ import editor.ActiveEditor;
 
 public class ViewRequirementSet extends ViewPart {
 
-	private TableViewer testRequirementsViewer;
-	private TableViewer statisticsViewer;
-	private TableViewer executedGraphViewer;
+	private Composite parent;
 	private sourcegraph.Graph<Integer> sourceGraph;
 	private layoutgraph.Graph layoutGraph;
-	private Composite parent;
-	private Control statisticsControl; // control of statisticsViewer
+	private TableViewer testRequirementsViewer;
+	private TableViewer executedGraphViewer;
+	private TableViewer statisticsViewer;
 	private Control executedGraphControl; // control of statisticsViewer
+	private Control statisticsControl; // control of statisticsViewer
 	private ICoverageAlgorithms<Integer> requirementSet;
 	private ICoverage coverageInformation;
 	private ActiveEditor editor;
@@ -64,9 +64,11 @@ public class ViewRequirementSet extends ViewPart {
 	private List<Path<Integer>> testRequirements;
 	private List<Object> executedGraphs;
 	private Graph<Integer> selectedExecutedGraph;
+	private Path<Integer> selectedExecutedPath;
 	private Path<Integer> selectedTestRequirement;
 	private String selectTotal;
-
+	private String tour;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
@@ -77,7 +79,19 @@ public class ViewRequirementSet extends ViewPart {
 		// does nothing.
 	}
 
-	public void showTestRequirements(String option) {
+	public void showTestRequirements(String criteria) {
+		disposeControl(1);
+		information = new GraphInformation();
+		setGraphs();
+		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
+		createColumnsToTestRequirement(); // create columns.
+		setTestRequirements(criteria); // insert values to the view.
+		setSelections(testRequirementsViewer); // associate path to the ViewGraph elements.
+		cleanPathStatus();
+		update(); // show in layout.
+	}
+	
+	public void showCoverage(String criteria) {
 		disposeControl(1);
 		executedGraphs = null;
 		testRequirements = null;
@@ -85,7 +99,7 @@ public class ViewRequirementSet extends ViewPart {
 		setGraphs();
 		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
 		createColumnsToTestRequirement(); // create columns.
-		setTestRequirements(option); // insert values to the view.
+		setTestRequirements(criteria); // insert values to the view.
 		setSelections(testRequirementsViewer); // associate path to the ViewGraph elements.
 		executedGraphViewer = createViewTable();
 		executedGraphControl = executedGraphViewer.getControl();
@@ -102,6 +116,17 @@ public class ViewRequirementSet extends ViewPart {
 	private void setGraphs() {
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM); // the sourceGraph;.
 		layoutGraph = (layoutgraph.Graph) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.LAYOUT_GRAPH_NUM); // the layoutGraph.
+	}
+	
+	public void setTour(String tour) {
+		this.tour = tour;
+		if(testRequirementsViewer != null) 
+			if(selectedExecutedGraph != null)
+				setPathStatus(selectedExecutedGraph);
+			else if(selectedExecutedPath != null) 
+				setPathStatus(selectedExecutedPath);
+			else if(selectTotal != null)
+				setPathStatus(selectTotal);		
 	}
 
 	public void disposeControl(int controls) {
@@ -228,7 +253,7 @@ public class ViewRequirementSet extends ViewPart {
 	private void setPathStatus(Object selectedExecutedGraph) {
 		StatusImages images = new StatusImages();
 		int n = 0;		
-		List<Path<Integer>> coveredPaths = coverageInformation.getCoveredPaths(selectedExecutedGraph, getTestRequirement());
+		List<Path<Integer>> coveredPaths = coverageInformation.getCoveredTestRequirements(selectedExecutedGraph, getTestRequirement(), tour);
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			if(coveredPaths.contains(getTestRequirement().get(n))) {
 				item.setText(0, Integer.toString(n));
@@ -273,7 +298,7 @@ public class ViewRequirementSet extends ViewPart {
 	
 	public List<Object> getExecutedGraphs() {
 		if(executedGraphs == null) 
-			executedGraphs = coverageInformation.getExecutedGraphs();
+			executedGraphs = coverageInformation.getExecutedPaths();
 		
 		if(!executedGraphs.contains(Description_ID.TOTAL) && executedGraphs.size() > 1)
 			executedGraphs.add(Description_ID.TOTAL);
@@ -287,8 +312,8 @@ public class ViewRequirementSet extends ViewPart {
 	public Object getSelectedGraph() {
 		if(selectedExecutedGraph != null) 
 			return selectedExecutedGraph;
-		else if(selectedTestRequirement != null) 
-			return selectedTestRequirement;
+		else if(selectedExecutedPath != null) 
+			return selectedExecutedPath;
 		else
 			return selectTotal;
 	}
@@ -331,17 +356,20 @@ public class ViewRequirementSet extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				List<GraphItem> aux = null; // auxiliary list to store selected items.
 				Object selected = null;
-				selectedTestRequirement = null;
+				selectedExecutedPath = null;
 				selectedExecutedGraph = null;
+				selectedTestRequirement = null;
 				selectTotal = null;
-				if(selection.getFirstElement() instanceof Path<?>) {
+				if(selection.getFirstElement() instanceof Path<?> && viewer == testRequirementsViewer) {
 					selectedTestRequirement = (Path<Integer>) selection.getFirstElement(); // get the path selected.
 					if(selectedTestRequirement != null)
-						if(viewer == testRequirementsViewer)
-							aux = selectTestRequirement(selectedTestRequirement);
-						else
-							aux = selectExecutedPath(selectedTestRequirement);
-					selected = selectedTestRequirement;
+						aux = selectTestRequirement(selectedTestRequirement);
+					selected = selectedExecutedPath;
+				} else if(selection.getFirstElement() instanceof Path<?>) { 
+					selectedExecutedPath = (Path<Integer>) selection.getFirstElement(); // get the path selected.
+					if(selectedExecutedPath != null)
+						aux = selectExecutedPath(selectedExecutedPath);
+					selected = selectedExecutedPath;
 				} else if(selection.getFirstElement() instanceof Graph<?>){
 					selectedExecutedGraph = (Graph<Integer>) selection.getFirstElement(); // get the path selected.
 					if(selectedExecutedGraph != null)
@@ -378,21 +406,25 @@ public class ViewRequirementSet extends ViewPart {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		setPathStatus(selectedExecutedGraph);
 		int index = coverageInformation.getStatusOfRun(selectedExecutedGraph);
-		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectedExecutedGraph, getTestRequirement()));
+		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectedExecutedGraph, getTestRequirement(), tour));
 		for(Node<Integer> node : selectedExecutedGraph.getNodes()) { // through all node in the path.
 			for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
 				if(!gnode.isDisposed()) {
-					if(gnode.getData().equals(node)) // if matches.
+					if(gnode.getData().equals(node)) { // if matches.
 						aux.add(gnode); // add node item to the list.
+						break;
+					}
 				} else {
 					MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.NEED_UPDATE); // message displayed when the graph is not designed.
 					return null;
 				}
-
+					
 			for(Edge<Integer> edge : selectedExecutedGraph.getNodeEdges(node)) // through all edges of the node.
 				for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // through all connections in the graph.
-					if(gconnection.getData().equals(edge)) // if matches.
+					if(gconnection.getData().equals(edge)) { // if matches.
 						aux.add(gconnection); // add connection item to the list.
+						break;
+					}
 		}
 		return aux;
 	}
@@ -401,13 +433,15 @@ public class ViewRequirementSet extends ViewPart {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		setPathStatus(selectedExecutedPath);
 		int index = coverageInformation.getStatusOfRun(selectedExecutedPath);
-		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectedExecutedPath, getTestRequirement()));
+		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectedExecutedPath, getTestRequirement(), tour));
 		for(int i = 0; i < selectedExecutedPath.getPathNodes().size(); i++) { // through all node in the path.
 			Node<Integer> node = selectedExecutedPath.getPathNodes().get(i);
 			for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
 				if(!gnode.isDisposed()) {
-					if(gnode.getData().equals(node)) // if matches.
+					if(gnode.getData().equals(node)) { // if matches.
 						aux.add(gnode); // add node item to the list.
+						break;
+					}
 				} else {
 					MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.NEED_UPDATE); // message displayed when the graph is not designed.
 					return null;
@@ -417,33 +451,10 @@ public class ViewRequirementSet extends ViewPart {
 				if(i < selectedExecutedPath.getPathNodes().size() - 1)  // if is not the last node if the path.
 					if(edge.getEndNode() == selectedExecutedPath.getPathNodes().get(i + 1))   // the end node of the edge (the next node in the path).
 						for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // through all connections in the graph.
-							if(gconnection.getData().equals(edge)) // if matches.
+							if(gconnection.getData().equals(edge)) { // if matches.
 								aux.add(gconnection); // add connection item to the list.
-		}
-		return aux;
-	}
-	
-	private List<GraphItem> selectTestRequirement(Path<Integer> selectedTestRequirement) {
-		List<GraphItem> aux = new LinkedList<GraphItem>();
-		// select the nodes in the graph.		
-		for(int i = 0; i < selectedTestRequirement.getPathNodes().size(); i++) { // through all node in the path.
-			Node<Integer> node = selectedTestRequirement.getPathNodes().get(i);
-			for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
-				if(!gnode.isDisposed()) {
-					if(gnode.getData().equals(node)) // if matches.
-						aux.add(gnode); // add node item to the list.
-				} else {
-					MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.NEED_UPDATE); // message displayed when the graph is not designed.
-					return null;
-				}
-			
-			// select the edges in the graph.
-			for(Edge<Integer> edge : sourceGraph.getNodeEdges((Node<Integer>) node))  // through all edges of the node.
-				if(i < selectedTestRequirement.getPathNodes().size() - 1)  // if is not the last node if the path.
-					if(edge.getEndNode() == selectedTestRequirement.getPathNodes().get(i + 1))   // the end node of the edge (the next node in the path).
-						for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // through all connections in the graph.
-							if(gconnection.getData().equals(edge)) // if matches.
-								aux.add(gconnection); // add connection item to the list.
+								break;
+							}
 		}
 		return aux;
 	}
@@ -461,10 +472,40 @@ public class ViewRequirementSet extends ViewPart {
 			for(GraphItem item : aux)
 				if(!total.contains(item))
 					total.add(item);
+			aux.clear();
 		}
 		setPathStatus(selectTotal);
 		int index = coverageInformation.getStatusOfRun(selectTotal);
-		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectTotal, getTestRequirement()));
+		statisticsViewer.setInput(coverageInformation.getCoverageStatistics(index, selectTotal, getTestRequirement(), tour));
 		return total;
+	}
+	
+	private List<GraphItem> selectTestRequirement(Path<Integer> selectedTestRequirement) {
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		// select the nodes in the graph.		
+		for(int i = 0; i < selectedTestRequirement.getPathNodes().size(); i++) { // through all node in the path.
+			Node<Integer> node = selectedTestRequirement.getPathNodes().get(i);
+			for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
+				if(!gnode.isDisposed()) {
+					if(gnode.getData().equals(node)) { // if matches.
+						aux.add(gnode); // add node item to the list.
+						break;
+					}
+				} else {
+					MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.NEED_UPDATE); // message displayed when the graph is not designed.
+					return null;
+				}
+			
+			// select the edges in the graph.
+			for(Edge<Integer> edge : sourceGraph.getNodeEdges((Node<Integer>) node))  // through all edges of the node.
+				if(i < selectedTestRequirement.getPathNodes().size() - 1)  // if is not the last node if the path.
+					if(edge.getEndNode() == selectedTestRequirement.getPathNodes().get(i + 1))   // the end node of the edge (the next node in the path).
+						for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // through all connections in the graph.
+							if(gconnection.getData().equals(edge)) { // if matches.
+								aux.add(gconnection); // add connection item to the list.
+								break;
+							}
+		}
+		return aux;
 	}
 }

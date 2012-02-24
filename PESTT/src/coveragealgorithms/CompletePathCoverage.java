@@ -19,6 +19,7 @@ import sourcegraph.Path;
 
 public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> implements ICoverageAlgorithms<V> {
 
+	private static final int SPECIAL_NODE = -1;
 	private List<Path<V>> paths;
 	private List<Path<V>> temp;
 	private List<Path<V>> completePaths;
@@ -56,12 +57,17 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 		Map<Integer, InfinitePath<V>> replace = new LinkedHashMap<Integer, InfinitePath<V>>();
 		for(Path<V> path : completePaths) {
 			List<Integer> index = new ArrayList<Integer>();
+			boolean inLoop = false;
 			for(Node<V> node : path) {
-				if(getNumberOfOccurrences(path, node) == 2) {
+				if(getNumberOfOccurrences(path, node) == 2 && inLoop == false) {
+					inLoop = true;
 					int i = getIndexSpecialNode(path, node);
 					if(!index.contains(i))
 						index.add(i);
-				}
+				} else if(getNumberOfOccurrences(path, node) == 2)
+					inLoop = true;
+				else
+					inLoop = false;
 			}
 			if(!index.isEmpty()) {
 				InfinitePath<V> infinite = null;
@@ -70,9 +76,11 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 						infinite = new InfinitePath<V>(node);
 					else
 						infinite.addNode(node);
-				Node<Integer> n = new Node<Integer>(-1);
-				for(int x : index)
+				Node<Integer> n = new Node<Integer>(SPECIAL_NODE);
+				for(int x : index) {
 					infinite.addNode(x, (Node<V>) n);
+					infinite.addNode(x, infinite.getPathNodes().get(x + 1));
+				}
 						
 				replace.put(completePaths.indexOf(path), infinite);
 			}			
@@ -85,16 +93,6 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 			completePaths.remove(i);
 			completePaths.add(entry.getKey(), entry.getValue());
 		}
-	}
-
-	private int getIndexSpecialNode(Path<V> path, Node<V> node) {
-		int index = -1;
-		for(int i = 0; i < path.getPathNodes().size(); i++) {
-			Node<V> n = path.getPathNodes().get(i);
-			if(n == node)
-				index = i;
-		}
-		return index;
 	}
 
 	private void addNodes(Path<V> path) {
@@ -114,7 +112,6 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 			if(getNumberOfOccurrences(path, node) > 2)
 				return true;
 		return false;
-		
 	}
 
 	private int getNumberOfOccurrences(Path<V> path, Node<V> node) {
@@ -124,11 +121,20 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 				occurrences++;
 		return occurrences;
 	}
+	
+	private int getIndexSpecialNode(Path<V> path, Node<V> node) {
+		int index = -1;
+		for(int i = 0; i < path.getPathNodes().size(); i++) {
+			Node<V> n = path.getPathNodes().get(i);
+			if(n == node)
+				index = i;
+		}
+		return index;
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Path<V>> getTestRequirements() {
 		completePaths = new SortPaths().sort(completePaths); // sort the paths.
 		return completePaths;
 	}
-
 }

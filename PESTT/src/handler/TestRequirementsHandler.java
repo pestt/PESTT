@@ -16,9 +16,9 @@ import constants.Graph_ID;
 import constants.Messages_ID;
 import coveragealgorithms.GraphCoverageCriteria;
 
-public class RunCoverageHandler extends AbstractHandler {
+public class TestRequirementsHandler extends AbstractHandler {
 
-	private String option = Description_ID.EMPTY;
+	String option = Description_ID.EMPTY;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -29,7 +29,7 @@ public class RunCoverageHandler extends AbstractHandler {
 			if(item != null) {
 				option = (String) item.getData();
 				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
-				viewRequirementSet.showCoverage(option);
+				viewRequirementSet.showTestRequirements(option);
 				try {
 					HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_GRAPH);
 				} catch (PartInitException e) {

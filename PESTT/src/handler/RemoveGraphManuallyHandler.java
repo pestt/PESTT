@@ -46,11 +46,8 @@ public class RemoveGraphManuallyHandler extends AbstractHandler {
 					executedGraphs.remove(selectedGraph);
 					List<List<ICoverageData>> data = view.getCoverageData();
 					data.remove(index);
-					if(executedGraphs.contains(Description_ID.TOTAL) && executedGraphs.size()<= 2) {
-						index = executedGraphs.indexOf(Description_ID.TOTAL);
+					if(executedGraphs.contains(Description_ID.TOTAL) && executedGraphs.size() <= 2)
 						executedGraphs.remove(Description_ID.TOTAL);
-						data.remove(index);
-					}
 					view.cleanPathStatus();
 					viewer.setInput(executedGraphs);
 					MessageDialog.openInformation(window.getShell(), Messages_ID.GRAPH_INPUT_TITLE, Messages_ID.GRAPH_REMOVE_MSG); // message displayed when the graph is successfully remove.

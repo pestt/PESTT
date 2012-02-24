@@ -1,8 +1,6 @@
 package constants;
 
-public enum Messages_ID {
-	
-	INSTANCE;
+public class Messages_ID {
 	
 	public static final String DRAW_GRAPH_TITLE = "PESTT - Draw Graph";
 	public static final String DRAW_GRAPH_MSG = "You need to select a method to draw the graph.";
@@ -26,4 +24,5 @@ public enum Messages_ID {
 	public static final String SHOW_STATISTICS_MSG = "Impossible to show statistics. Graph contains loop (infinite paths).";
 	public static final String PREFERENCES_TITLE = "PESTT - Preferences";
 	public static final String PREFERENCES = "Please check if the dot location is currect.\n (Window -> Preferences -> PESTT)";
+	
 }

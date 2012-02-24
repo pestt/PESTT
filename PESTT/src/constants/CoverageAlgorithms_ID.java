@@ -2,7 +2,6 @@ package constants;
 
 public enum CoverageAlgorithms_ID {
 	
-	
 	COMPLETE_PATH,
 	PRIME_PATH,
 //	ALL_DU_PATHS,
@@ -24,4 +23,5 @@ public enum CoverageAlgorithms_ID {
 	public static final String SIMPLE_ROUND_TRIP_ID = "SIMPLE_ROUND_TRIP";
 //	public static final String ALL_DEFS_ID = "ALL_DEFS";
 	public static final String NODE_ID = "NODE";	
+	
 }

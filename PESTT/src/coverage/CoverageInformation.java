@@ -3,12 +3,20 @@ package coverage;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.HandlerUtil;
+
 import sourcegraph.Graph;
 import sourcegraph.Path;
 import statistics.StatisticsFactory;
+import tour.Tour;
 import view.GraphsCreator;
+import constants.Description_ID;
 import constants.Graph_ID;
 import constants.Statistics_ID;
+import constants.Tour_ID;
 import editor.ActiveEditor;
 import graphvisitors.ExecutedGraphVisitor;
 
@@ -17,7 +25,7 @@ public class CoverageInformation implements ICoverage {
 	private Graph<Integer> sourceGraph;
 	private CodeCoverage codeCoverage;
 	private List<List<ICoverageData>> data;
-	private List<Object> executedGraphs;
+	private List<Object> executedPaths;
 	private List<Path<Integer>> coveredPaths;
 	
 	@SuppressWarnings("unchecked")
@@ -25,48 +33,47 @@ public class CoverageInformation implements ICoverage {
 		this.sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
 		codeCoverage = new CodeCoverage(editor);
 		data = codeCoverage.getCodeCoverageStatus();
-		executedGraphs = new LinkedList<Object>();
+		executedPaths = new LinkedList<Object>();
 	}
 	
-	public List<Object> getExecutedGraphs() {
-		executedGraphs.clear();
+	public List<Object> getExecutedPaths() {
+		executedPaths.clear();
 		for(int i = 0; i < data.size(); i++) {
 			ExecutedGraphVisitor<Integer> executedGraphVisitor = new ExecutedGraphVisitor<Integer>(data.get(i).get(0));
 			sourceGraph.accept(executedGraphVisitor);
-			Graph<Integer> executedGraph = executedGraphVisitor.getExecutedgraph();
-			executedGraphs.add(executedGraph);
+			Graph<Integer> executedGraph = executedGraphVisitor.getExecutedGraph();
+			executedPaths.add(executedGraph);
 		}
-		return executedGraphs;
+		return executedPaths;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Path<Integer>> getCoveredPaths(Object executedGraph, List<Path<Integer>> testRequirements) {	
-		coveredPaths = new LinkedList<Path<Integer>>();
-		if(executedGraph instanceof Graph<?>) {
-			for(Path<Integer> path : testRequirements) 
-				if(((Graph<Integer>) executedGraph).isPath(path))
-					coveredPaths.add(path);
-		} else if(executedGraph instanceof Path<?>) {
-			for(Path<Integer> path : testRequirements) 
-				if(((Path<Integer>) executedGraph).isSubPath(path))
-					coveredPaths.add(path);
-		} else {
-			List<Path<Integer>> total = new LinkedList<Path<Integer>>();
-			for(Object obj : executedGraphs) 
-				if(!(obj instanceof String)) {
-					List<Path<Integer>> aux = getCoveredPaths(obj, testRequirements);
-					for(Path<Integer> covered : aux)
-						if(!total.contains(covered))
-							total.add(covered);
-				}
-			coveredPaths = total;
+	public List<Path<Integer>> getCoveredTestRequirements(Object executedPath, List<Path<Integer>> testRequirements, String tourType) {	
+		if(tourType == null) 
+			try {
+				ICommandService cmdService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class); // get the ICommandService.
+				HandlerUtil.updateRadioState(cmdService.getCommand(Description_ID.TOUR_BUTTON), Tour_ID.TOUR_ID);
+				tourType = Tour_ID.TOUR_ID;
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		Tour tour = new Tour(executedPaths, testRequirements);
+		
+		switch(Tour_ID.valueOf(tourType)) {
+			case DETOUR:
+				coveredPaths = tour.getDetourPathCoverage(executedPath);
+				break;
+			case SIDETRIP:
+				coveredPaths = tour.getSidetripPathCoverage(executedPath);
+				break;
+			default:
+				coveredPaths = tour.getTourPathCoverage(executedPath);
 		}
 		
 		return coveredPaths;
 	}
 	
 	public int getStatusOfRun(Object executedGraph) {			
-		return executedGraphs.indexOf(executedGraph);
+		return executedPaths.indexOf(executedGraph);
 	}
 	
 	public List<ICoverageData> getCoverageStatus(int index) {
@@ -77,15 +84,13 @@ public class CoverageInformation implements ICoverage {
 		return data;
 	}
 	
-	public List<String> getCoverageStatistics(int index, Object executedGraph, List<Path<Integer>> testRequirements) {
+	public List<String> getCoverageStatistics(int index, Object executedGraph, List<Path<Integer>> testRequirements, String tour) {
 		List<Object> param = new LinkedList<Object>();
 		if(executedGraph instanceof String) {
-			param.add(executedGraphs);
-			if(data.size() > getStatusOfRun(executedGraph))
-				data.remove(getStatusOfRun(executedGraph));
+			param.add(executedPaths);
 			param.add(data);
 			param.add(getCoveredData());
-			param.add(getCoveredPaths(testRequirements));
+			param.add(getCoveredPaths(testRequirements, tour));
 			param.add(testRequirements);
 			return new StatisticsFactory().getStatisticType(Statistics_ID.TOTAL_BASIC_ID, param).getStatistics();
 		} else {
@@ -106,10 +111,10 @@ public class CoverageInformation implements ICoverage {
 		return aux;	
 	}
 	
-	private List<List<Path<Integer>>> getCoveredPaths(List<Path<Integer>> testRequirements) {
+	private List<List<Path<Integer>>> getCoveredPaths(List<Path<Integer>> testRequirements, String tour) {
 		List<List<Path<Integer>>> coveredPaths = new LinkedList<List<Path<Integer>>>();
-		for(Object executedGraph : executedGraphs)
-			coveredPaths.add(getCoveredPaths(executedGraph, testRequirements));
+		for(Object executedGraph : executedPaths)
+			coveredPaths.add(getCoveredTestRequirements(executedGraph, testRequirements, tour));
 		return coveredPaths;
 	}
 }

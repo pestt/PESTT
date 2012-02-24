@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
+import sourcegraph.Edge;
 import sourcegraph.Graph;
 import sourcegraph.InfinitePath;
 import sourcegraph.Node;
@@ -94,9 +95,16 @@ public class IndividualBasicStatistics implements IStatistics {
 			for(Node<Integer> node : ((Graph<Integer>) executedGraph).getNodes())
 				passed += ((Graph<Integer>) executedGraph).getNodeEdges(node).size();
 		else {
+			List<Edge<Integer>> edges = new LinkedList<Edge<Integer>>();
 			for(int i = 0; i < ((Path<Integer>) executedGraph).getPathNodes().size(); i++)
-				if(i + 1 < ((Path<Integer>) executedGraph).getPathNodes().size())
-					passed++;
+				if(i + 1 < ((Path<Integer>) executedGraph).getPathNodes().size()) {
+					Node<Integer> nodeFrom = ((Path<Integer>) executedGraph).getPathNodes().get(i);
+					Node<Integer> nodeTo = ((Path<Integer>) executedGraph).getPathNodes().get(i + 1);
+					for(Edge<Integer> edge : sourceGraph.getNodeEdges(nodeFrom))
+						if(edge.getEndNode() == nodeTo && !edges.contains(edge))
+							edges.add(edge);
+				}
+			passed = edges.size();
 		}		
 		for(Node<Integer> node : sourceGraph.getNodes())
 			total += sourceGraph.getNodeEdges(node).size();
