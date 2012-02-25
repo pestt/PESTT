@@ -81,6 +81,9 @@ public class ViewRequirementSet extends ViewPart {
 
 	public void showTestRequirements(String criteria) {
 		disposeControl(1);
+		statisticsViewer = null;
+		executedGraphs = null;
+		testRequirements = null;
 		information = new GraphInformation();
 		setGraphs();
 		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
@@ -132,7 +135,7 @@ public class ViewRequirementSet extends ViewPart {
 	public void disposeControl(int controls) {
 		switch(controls) {
 		case 1:
-			for(Control control : parent.getChildren())
+			for(Control control : parent.getChildren()) 
 				control.dispose();
 			break;
 		case 2:

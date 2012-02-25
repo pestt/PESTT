@@ -1,6 +1,10 @@
 package coveragealgorithms;
 
+import handler.RunCoverageHandler;
+import handler.TestRequirementsHandler;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,7 +25,7 @@ import constants.CoverageAlgorithms_ID;
 public class GraphCoverageCriteria {
 	
 	private Graph graph;
-	private ArrayList<GraphNode> nodes;
+	private List<GraphNode> nodes;
 	private SelectionAdapter event;	
 
 	public GraphCoverageCriteria(Composite parent) {
@@ -71,15 +75,12 @@ public class GraphCoverageCriteria {
 			gnode.setHighlightColor(Colors_ID.YELLOW); 
 			gnode.setBorderHighlightColor(Colors_ID.BLACK); 
 		}
-
 		adupc.setBackgroundColor(Colors_ID.RED);
 		adupc.setForegroundColor(Colors_ID.WHITE); 
 		auc.setBackgroundColor(Colors_ID.RED);
 		auc.setForegroundColor(Colors_ID.WHITE); 
 		adc.setBackgroundColor(Colors_ID.RED);
 		adc.setForegroundColor(Colors_ID.WHITE); 
-		
-		
 	}
 	
 	private void setEdges() {
@@ -99,6 +100,10 @@ public class GraphCoverageCriteria {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
 	
+	public List<GraphNode> getCriteriaGraphNodes() {
+		return nodes;
+	}
+	
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 				
@@ -110,6 +115,9 @@ public class GraphCoverageCriteria {
 					items = new GraphItem[1];
 					items[0] = (GraphItem) e.item;
 					setSelected(items);
+					String option = (String) getSelected().getData();
+					TestRequirementsHandler.setSelectionCriteria(option);
+					RunCoverageHandler.setSelectionCriteria(option);
 				}
 			}
 		};	
@@ -122,7 +130,7 @@ public class GraphCoverageCriteria {
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 	
-	private void setSelected(GraphItem[] items) {
+	public void setSelected(GraphItem[] items) {
 		graph.setSelection(items); // the items selected.
 	}
 }

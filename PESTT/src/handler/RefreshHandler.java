@@ -14,19 +14,23 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.zest.core.widgets.GraphItem;
 
+import view.GraphsCreator;
 import view.ViewGraph;
 import view.ViewGraphCoverageCriteria;
 import view.ViewRequirementSet;
 import activator.Activator;
 import constants.Description_ID;
+import constants.Graph_ID;
 import constants.Layer_ID;
 import constants.Messages_ID;
 import constants.Preferences;
+import coveragealgorithms.GraphCoverageCriteria;
 import editor.ActiveEditor;
 
 public class RefreshHandler extends AbstractHandler {
-
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ActiveEditor editor = new ActiveEditor();
@@ -36,7 +40,7 @@ public class RefreshHandler extends AbstractHandler {
 		if(editor.isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
-			if(dot != null && !dot.equals("")) {
+			if(dot != null && !dot.equals(Description_ID.EMPTY)) {
 				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_COVERAGE_CRITERIA); // get the view graph.
 				ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
 				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
@@ -52,7 +56,6 @@ public class RefreshHandler extends AbstractHandler {
 					viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_GRAPH); // get the view graph.
 					viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
 				}
-
 				viewGraphCoverageCriteria.create();
 				viewGraph.create(location); // update view content.
 				viewRequirementSet.disposeControl(1);
@@ -66,6 +69,18 @@ public class RefreshHandler extends AbstractHandler {
 	}
 	
 	private void keepCommandOptions() {
+		GraphCoverageCriteria coverageGraph = (GraphCoverageCriteria) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.COVERAGE_GRAPH_NUM);
+		String option = Description_ID.EMPTY;
+		option = TestRequirementsHandler.getSelectedCriteria();
+		if(!option.equals(Description_ID.EMPTY)) {
+			GraphItem[] items = new GraphItem[1];
+			for(GraphItem item : coverageGraph.getCriteriaGraphNodes()) 
+				if(option.equals(item.getData())) {
+					items[0] = item;
+					coverageGraph.setSelected(items);
+					break;
+				}
+		}
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class); // get the IHandlerService.
 		ICommandService cmdService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class); // get the ICommandService.
 		State stateLink = cmdService.getCommand(Description_ID.LINK_BUTTON).getState("org.eclipse.ui.commands.toggleState"); // the current state of the link command.
