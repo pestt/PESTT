@@ -169,7 +169,7 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void createColumnsToTestRequirement() {
-		String[] columnNames = new String[] {TableViewers_ID.EMPTY, TableViewers_ID.INFEASIBLE, TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
+		String[] columnNames = new String[] {TableViewers_ID.EMPTY, TableViewers_ID.INFEASIBLE , TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
 		int[] columnWidths = new int[] {50, 80, 50, 50}; // the width of columns.
 
 		// first column is for the id.
@@ -181,7 +181,7 @@ public class ViewRequirementSet extends ViewPart {
 			}
 		});
 		
-/*		// second column is for infeasible.
+		// second column is for infeasible.
 		col = createColumnsHeaders(testRequirementsViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 		
@@ -190,7 +190,7 @@ public class ViewRequirementSet extends ViewPart {
 				cell.setImage(images.getImage().get(Images_ID.UNCHECK));
 			}
 		});
-*/
+
 		// second column is for status.
 		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
 		col.setLabelProvider(new StyledCellLabelProvider() {
@@ -301,7 +301,12 @@ public class ViewRequirementSet extends ViewPart {
 		if(option != null) {
 			requirementSet = new CoverageAlgorithmsFactory<Integer>().getCoverageAlgorithm(option);
 			requirementSet.visitGraph(sourceGraph);
-			testRequirementsViewer.setInput(getTestRequirement()); 
+			testRequirementsViewer.setInput(getTestRequirement());
+			for(Path<Integer> path : getTestRequirement())
+				if(path.toString().contains("...")) {
+					MessageDialog.openInformation(parent.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
+					break;
+				}
 		} else
 			MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.SELECT_VALID_COVERAGE); // message displayed when the coverage criteria is not valid.
 	}

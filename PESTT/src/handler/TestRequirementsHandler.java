@@ -28,14 +28,14 @@ public class TestRequirementsHandler extends AbstractHandler {
 			GraphItem item = coverageGraph.getSelected();
 			if(item != null) {
 				option = (String) item.getData();
-				RunCoverageHandler.setSelectionCriteria(option);
-				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
-				viewRequirementSet.showTestRequirements(option);
 				try {
 					HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_GRAPH);
 				} catch (PartInitException e) {
 					e.printStackTrace();
 				}	
+				RunCoverageHandler.setSelectionCriteria(option);
+				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
+				viewRequirementSet.showTestRequirements(option);
 			} else 
 				MessageDialog.openInformation(window.getShell(), Messages_ID.DRAW_GRAPH_TITLE, Messages_ID.SELECT_COVERAGE); // message displayed when the graph is not draw.
 		} else {
