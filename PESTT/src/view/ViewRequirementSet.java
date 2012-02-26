@@ -68,6 +68,7 @@ public class ViewRequirementSet extends ViewPart {
 	private Path<Integer> selectedTestRequirement;
 	private String selectTotal;
 	private String tour;
+	private StatusImages images;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -81,6 +82,7 @@ public class ViewRequirementSet extends ViewPart {
 
 	public void showTestRequirements(String criteria) {
 		disposeControl(1);
+		images = new StatusImages();
 		statisticsViewer = null;
 		executedGraphs = null;
 		testRequirements = null;
@@ -96,6 +98,7 @@ public class ViewRequirementSet extends ViewPart {
 	
 	public void showCoverage(String criteria) {
 		disposeControl(1);
+		images = new StatusImages();
 		executedGraphs = null;
 		testRequirements = null;
 		information = new GraphInformation();
@@ -166,8 +169,8 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void createColumnsToTestRequirement() {
-		String[] columnNames = new String[] { TableViewers_ID.EMPTY, TableViewers_ID.STATUS, TableViewers_ID.TESTREQUIREMENTS }; // the names of columns.
-		int[] columnWidths = new int[] {50, 50, 50 }; // the width of columns.
+		String[] columnNames = new String[] {TableViewers_ID.EMPTY, TableViewers_ID.INFEASIBLE, TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
+		int[] columnWidths = new int[] {50, 80, 50, 50}; // the width of columns.
 
 		// first column is for the id.
 		TableViewerColumn col = createColumnsHeaders(testRequirementsViewer, columnNames[0], columnWidths[0], 0);
@@ -177,18 +180,30 @@ public class ViewRequirementSet extends ViewPart {
 			public void update(ViewerCell cell) {
 			}
 		});
-
-		// second column is for test paths.
+		
+/*		// second column is for infeasible.
 		col = createColumnsHeaders(testRequirementsViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
+		
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setImage(images.getImage().get(Images_ID.UNCHECK));
+			}
+		});
+*/
+		// second column is for status.
+		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
+		col.setLabelProvider(new StyledCellLabelProvider() {
+		
 			@Override
 			public void update(ViewerCell cell) {
 			}
 		});
 
 		// third column is for test paths.
-		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
+		col = createColumnsHeaders(testRequirementsViewer, columnNames[3], columnWidths[3], 3);
 		col.setLabelProvider(new StyledCellLabelProvider() {
+			
 			@Override
 			public void update(ViewerCell cell) {
 				Path<?> path = (Path<?>) cell.getElement();
@@ -204,6 +219,7 @@ public class ViewRequirementSet extends ViewPart {
 		int columnWidths = 100; // the width of column.
 		TableViewerColumn col = createColumnsHeaders(executedGraphViewer, columnNames, columnWidths, 0);
 		col.setLabelProvider(new StyledCellLabelProvider() {
+			
 			@Override
 			public void update(ViewerCell cell) {
 				if(cell.getElement() instanceof Graph<?>) {
@@ -254,7 +270,6 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void setPathStatus(Object selectedExecutedGraph) {
-		StatusImages images = new StatusImages();
 		int n = 0;		
 		List<Path<Integer>> coveredPaths = coverageInformation.getCoveredTestRequirements(selectedExecutedGraph, getTestRequirement(), tour);
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {

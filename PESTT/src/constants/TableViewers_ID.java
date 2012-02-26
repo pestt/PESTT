@@ -12,7 +12,8 @@ public enum TableViewers_ID {
 	
 	public static final String EMPTY = "";
 	public static final String STATUS = "Status";
-	public static final String TESTREQUIREMENTS = "Requirement Set";
+	public static final String INFEASIBLE = "Infeasible";
+	public static final String TEST_REQUIREMENTS = "Requirement Set";
 	public static final String EXECUTED_GRAPH = "Executed Graph";
 	public static final String STATISTICS = "Statistics";
 

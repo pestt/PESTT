@@ -1,5 +1,7 @@
 package sourcecodeexplorer;
 
+import graphvisitors.RenumNodesGraphVisitor;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -100,12 +102,13 @@ public class StatementsVisitor extends ASTVisitor {
 			}
 			for(Node<Integer> n : nodesToRemove)
 				sourceGraph.removeNode(n);
-							
-			
 
-			int i = 0;
-			for(Node<Integer> graphNode : sourceGraph.getNodes()) 
-				graphNode.setValue(i++);
+//			int i = 0;
+//			for(Node<Integer> graphNode : sourceGraph.getNodes()) 
+//				graphNode.setValue(i++);
+					
+			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
+				sourceGraph.accept(visitor);
 
 			if(!sourceGraph.getInitialNodes().iterator().hasNext())
 				sourceGraph.addInitialNode(sourceGraph.getNode(0));
@@ -223,18 +226,20 @@ public class StatementsVisitor extends ASTVisitor {
 	
 	@Override  
 	public boolean visit(DoStatement node) {
+//		Node<Integer> noDoWhile = edge.getEndNode(); // the initial node of the DoStatement.
+//		prevNode.push(noDoWhile);
+//		infos.addInformationToLayer2(sourceGraph, noDoWhile, node, unit); // add information to noDoWhile node.
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noDoWhile = edge.getEndNode(); // the initial node of the DoStatement.
-		prevNode.push(noDoWhile);
-		infos.addInformationToLayer2(sourceGraph, noDoWhile, node, unit); // add information to noDoWhile node.
-    	Node<Integer> noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
+		Node<Integer> noDoWhileBody = edge.getEndNode(); // create the DoWhileBody node. 
+    	prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
+		Node<Integer> noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
     	infos.addInformationToLayer2(sourceGraph, noWhile, node.getExpression(), unit);
     	Node<Integer> noEndDoWhile = sourceGraph.addNode(++nodeNum); // the final node of the DoStatement.
     	breakNode.push(noEndDoWhile); // if a break occur goes to the final node of the DoStatement.
     	continueNode.push(noWhile); // if a continue occur goes to the WhileStatement node.
-    	Edge<Integer> edgeBody = createConnection(); // visit the doWhile body block.
-    	Node<Integer> noDoWhileBody = edgeBody.getEndNode(); // create the DoWhileBody node. 
-    	prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
+//    	Edge<Integer> edgeBody = createConnection(); // visit the doWhile body block.
+//   	Node<Integer> noDoWhileBody = edgeBody.getEndNode(); // create the DoWhileBody node. 
+//    	prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
     	node.getBody().accept(this);
     	continueNode.pop(); // when ends clean the stack.
     	breakNode.pop(); // when ends clean the stack.
@@ -245,7 +250,7 @@ public class StatementsVisitor extends ASTVisitor {
 				controlFlag = false;
     	} else
     		returnFlag = false;
-    	edge = sourceGraph.addEdge(noWhile, noDoWhile); // the loop connection.
+    	edge = sourceGraph.addEdge(noWhile, noDoWhileBody); // the loop connection.
     	infos.addInformationToLayer1(sourceGraph, edge, node.getExpression().toString()); // add information to noWhile - noDoWhile edge.
     	edge = sourceGraph.addEdge(noWhile, noEndDoWhile); // the connection from the WhileStatement node to the final node of the DoWhileStatement.
     	infos.addInformationToLayer1(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noWhile - noEndDoWhile edge.
