@@ -18,9 +18,9 @@ public class GraphInformation {
 		sourceGraph.addMetadata(sourceNode, gnode); // associate the the nodes of sourceGraph and layoutGraph.
 	}
 	
-	public void addInformationToLayer1(Graph<Integer> sourceGraph, Edge<Integer> edge, String information) {
+	public void addInformationToLayer1(Graph<Integer> sourceGraph, Edge<Integer> edge, String info) {
 		sourceGraph.selectMetadataLayer(Layer_ID.GUARDS); // change to cycle layer.
-		sourceGraph.addMetadata(edge, information); // add information to edge.
+		sourceGraph.addMetadata(edge, info); // add information to edge.
 	}
 	
 	@SuppressWarnings("unchecked")

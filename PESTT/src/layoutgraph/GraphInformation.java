@@ -52,8 +52,10 @@ public class GraphInformation {
 		for(sourcegraph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
 			for(sourcegraph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))  // search in the sourceGraph for all edges.
 				for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // search in the layoutGraph for all edges.
-					if(gconnection.getData().equals(edge)) // when they match.
+					if(gconnection.getData().equals(edge)) { // when they match.
 						gconnection.setText(Description_ID.EMPTY); // clear the visible information.
+						break;
+					}
 		new ActiveEditor().deleteALLMarkers(); // removes the marks in the editor.
 	}
 	
@@ -67,6 +69,7 @@ public class GraphInformation {
 						String info = (String) sourceGraph.getMetadata(edge); // get the information.
 						if(info != null)  // if it have information
 							gconnection.setText(info); // set the information to the edge.
+						break;
 					}
 	}
 	
