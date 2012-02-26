@@ -42,7 +42,12 @@ public class CompletePathCoverage<V> extends BreadthFirstGraphVisitor<V> impleme
 		while(!paths.isEmpty()) {
 			for(Path<V> path : paths)
 				addNodes(path);
-
+	
+			if(temp.isEmpty() && completePaths.isEmpty()) {
+				completePaths = paths;
+				return true;
+			}
+				
 			paths.clear();
 			for(Path<V> path : temp)
 				paths.add(path);

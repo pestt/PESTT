@@ -33,11 +33,17 @@ public class PrimePathCoverage<V> extends BreadthFirstGraphVisitor<V> implements
 				paths.add(new Path<V>(node));
 			else
 				primePaths.add(new Path<V>(node));
+				
 
 		while(!paths.isEmpty()) {
 			for(Path<V> path : paths)
 				addNodes(path);
 
+			if(temp.isEmpty() && primePaths.isEmpty()) {
+				primePaths = paths;
+				return true;
+			}
+			
 			paths.clear();
 			for(Path<V> path : temp)
 				paths.add(path);
