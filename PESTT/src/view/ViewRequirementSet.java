@@ -81,13 +81,14 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	public void showTestRequirements(String criteria) {
+		information = new GraphInformation();
+		setGraphs();
 		disposeControl(1);
 		images = new StatusImages();
 		statisticsViewer = null;
 		executedGraphs = null;
 		testRequirements = null;
-		information = new GraphInformation();
-		setGraphs();
+		
 		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
 		createColumnsToTestRequirement(); // create columns.
 		setTestRequirements(criteria); // insert values to the view.
@@ -97,12 +98,12 @@ public class ViewRequirementSet extends ViewPart {
 	}
 	
 	public void showCoverage(String criteria) {
+		information = new GraphInformation();
+		setGraphs();
 		disposeControl(1);
 		images = new StatusImages();
 		executedGraphs = null;
 		testRequirements = null;
-		information = new GraphInformation();
-		setGraphs();
 		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
 		createColumnsToTestRequirement(); // create columns.
 		setTestRequirements(criteria); // insert values to the view.

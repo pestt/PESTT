@@ -73,6 +73,7 @@ public class GraphInformation {
 					}
 	}
 	
+
 	@SuppressWarnings("unchecked")
 	private void addInformationToLayer2() {
 		if(!layoutGraph.getSelected().isEmpty()) { // verify if there are nodes selected.
