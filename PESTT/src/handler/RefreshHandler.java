@@ -60,6 +60,7 @@ public class RefreshHandler extends AbstractHandler {
 				viewGraph.create(location); // update view content.
 				viewRequirementSet.disposeControl(1);
 				viewRequirementSet.setEditor(editor);
+				viewRequirementSet.setRefresh(true);
 				keepCommandOptions();
 			} else
 				MessageDialog.openInformation(window.getShell(), Messages_ID.PREFERENCES_TITLE, Messages_ID.PREFERENCES); 

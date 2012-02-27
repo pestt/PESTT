@@ -120,14 +120,15 @@ public class Tour {
 	}
 	
 	private boolean containsAllNodesInOrder(Path<Integer> executedPath, Path<Integer> path) {
-		int index = -1;
+		int index = 0;
 		for(Node<Integer> node : path.getPathNodes())
 			if(!executedPath.containsNode(node))
 				return false;
 			else {
-				if(index < executedPath.getPathNodes().indexOf(node))
-					index = executedPath.getPathNodes().indexOf(node);
-				else
+				List<Node<Integer>> executedPathNodes = executedPath.getPathNodes();
+				while (index < executedPathNodes.size() && executedPathNodes.get(index) != node)
+					index++;
+				if (index == executedPathNodes.size())
 					return false;
 			}
 		return true;

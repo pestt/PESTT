@@ -1,5 +1,6 @@
 package coverage;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,12 +39,18 @@ public class CoverageInformation implements ICoverage {
 	
 	public List<Object> getExecutedPaths() {
 		executedPaths.clear();
+		List<Integer> toRemove = new ArrayList<Integer>();
 		for(int i = 0; i < data.size(); i++) {
 			ExecutedGraphVisitor<Integer> executedGraphVisitor = new ExecutedGraphVisitor<Integer>(data.get(i).get(0));
 			sourceGraph.accept(executedGraphVisitor);
 			Graph<Integer> executedGraph = executedGraphVisitor.getExecutedGraph();
-			executedPaths.add(executedGraph);
+			if(executedGraph.getNodes().size() > 0)
+				executedPaths.add(executedGraph);
+			else
+				toRemove.add(i);
 		}
+		for(int i : toRemove)
+			data.remove(i);
 		return executedPaths;
 	}
 	
