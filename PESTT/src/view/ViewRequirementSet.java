@@ -103,7 +103,7 @@ public class ViewRequirementSet extends ViewPart {
 		disposeControl(1);
 		images = new StatusImages();
 		resetViewers();
-		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
+		testRequirementsViewer = createViewTable(true); // create the new view of requirements set.
 		createColumnsToTestRequirement(); // create columns.
 		setTestRequirements(criteria); // insert values to the view.
 		setSelections(testRequirementsViewer); // associate path to the ViewGraph elements.
@@ -121,7 +121,7 @@ public class ViewRequirementSet extends ViewPart {
 		information = new GraphInformation();
 		setGraphs();
 		disposeControl(4);
-		executedPathViewer = createViewTable();
+		executedPathViewer = createViewTable(false);
 		executedPathControl = executedPathViewer.getControl();
 		createColumnsToExecutedPathViewer();
 		setSelections(executedPathViewer); // associate executed graph to the ViewGraph elements.
@@ -139,10 +139,10 @@ public class ViewRequirementSet extends ViewPart {
 		setGraphs();
 		disposeControl(1);
 		images = new StatusImages();
-		testRequirementsViewer = createViewTable(); // create the new view of requirements set.
-		executedGraphViewer = createViewTable();
+		testRequirementsViewer = createViewTable(true); // create the new view of requirements set.
+		executedGraphViewer = createViewTable(false);
 		executedGraphControl = executedGraphViewer.getControl();
-		statisticsViewer = createViewTable();
+		statisticsViewer = createViewTable(false);
 		statisticsControl = statisticsViewer.getControl();
 		createColumnsToTestRequirement(); // create columns.
 		setSelections(testRequirementsViewer); // associate path to the ViewGraph elements.
@@ -203,8 +203,12 @@ public class ViewRequirementSet extends ViewPart {
 		}
 	}
 
-	private TableViewer createViewTable() {
-		TableViewer viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+	private TableViewer createViewTable(boolean check) {
+		TableViewer viewer = null;
+		if(check)
+			viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		else
+			viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		Table table = viewer.getTable(); // create the table.
 		table.setHeaderVisible(true); // show header.
 		table.setLinesVisible(true); // show table lines.
@@ -214,8 +218,8 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void createColumnsToTestRequirement() {
-		String[] columnNames = new String[] {TableViewers_ID.EMPTY, TableViewers_ID.INFEASIBLE , TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
-		int[] columnWidths = new int[] {50, 80, 50, 50}; // the width of columns.
+		String[] columnNames = new String[] {TableViewers_ID.INFEASIBLE, TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
+		int[] columnWidths = new int[] {80, 55, 50}; // the width of columns.
 
 		// first column is for the id.
 		TableViewerColumn col = createColumnsHeaders(testRequirementsViewer, columnNames[0], columnWidths[0], 0);
@@ -225,19 +229,9 @@ public class ViewRequirementSet extends ViewPart {
 			public void update(ViewerCell cell) {
 			}
 		});
-		
-		// second column is for infeasible.
-		col = createColumnsHeaders(testRequirementsViewer, columnNames[1], columnWidths[1], 1);
-		col.setLabelProvider(new StyledCellLabelProvider() {
-		
-			@Override
-			public void update(ViewerCell cell) {
-				cell.setImage(images.getImage().get(Images_ID.UNCHECK));
-			}
-		});
 
 		// second column is for status.
-		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
+		col = createColumnsHeaders(testRequirementsViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 		
 			@Override
@@ -246,7 +240,7 @@ public class ViewRequirementSet extends ViewPart {
 		});
 
 		// third column is for test paths.
-		col = createColumnsHeaders(testRequirementsViewer, columnNames[3], columnWidths[3], 3);
+		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			
 			@Override
@@ -321,7 +315,7 @@ public class ViewRequirementSet extends ViewPart {
 	public void cleanPathStatus() {
 		int n = 0;
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
-			item.setImage(2, null);
+			item.setImage(1, null);
 			if(n % 2 == 0)
 				item.setBackground(Colors_ID.WHITE);
 			else 
@@ -331,7 +325,7 @@ public class ViewRequirementSet extends ViewPart {
 		}
 		if(statisticsViewer != null) {
 			disposeControl(3);
-			statisticsViewer = createViewTable();
+			statisticsViewer = createViewTable(false);
 			statisticsControl = statisticsViewer.getControl();
 			createColumnsToStatisticsViewer();
 			update();
@@ -344,11 +338,11 @@ public class ViewRequirementSet extends ViewPart {
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			if(coveredPaths.contains(getTestRequirement().get(n))) {
 				item.setText(0, Integer.toString(n));
-				item.setImage(2, images.getImage().get(Images_ID.PASS));
+				item.setImage(1, images.getImage().get(Images_ID.PASS));
 				item.setBackground(Colors_ID.GREEN_COVERAGE);
 			} else {
 				item.setText(0, Integer.toString(n));
-				item.setImage(2, images.getImage().get(Images_ID.FAIL));
+				item.setImage(1, images.getImage().get(Images_ID.FAIL));
 				item.setBackground(Colors_ID.RED_COVERAGE);
 			}
 			n++;

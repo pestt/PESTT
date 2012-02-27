@@ -12,7 +12,6 @@ public enum TableViewers_ID {
 	public static final String EXECUTED_PATHS_VIEWER_ID = "EXECUTEDPATHVIEWER";
 	public static final String STATISTICS_VIEWER_ID = "STATISTICSVIEWER";
 	
-	public static final String EMPTY = "";
 	public static final String STATUS = "Status";
 	public static final String INFEASIBLE = "Infeasible";
 	public static final String TEST_REQUIREMENTS = "Requirement Set";
