@@ -218,7 +218,7 @@ public class ViewRequirementSet extends ViewPart {
 	}
 
 	private void createColumnsToTestRequirement() {
-		String[] columnNames = new String[] {TableViewers_ID.INFEASIBLE, TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
+		String[] columnNames = new String[] {TableViewers_ID.INFEASIBLE , TableViewers_ID.STATUS, TableViewers_ID.TEST_REQUIREMENTS}; // the names of columns.
 		int[] columnWidths = new int[] {80, 55, 50}; // the width of columns.
 
 		// first column is for the id.
@@ -229,7 +229,7 @@ public class ViewRequirementSet extends ViewPart {
 			public void update(ViewerCell cell) {
 			}
 		});
-
+		
 		// second column is for status.
 		col = createColumnsHeaders(testRequirementsViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {

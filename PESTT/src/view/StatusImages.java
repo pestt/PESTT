@@ -14,7 +14,6 @@ public class StatusImages {
 	private Image PASS; // the pas image.
 	private Image FAIL; // the fail image
 
-
 	public StatusImages() {
 		PASS = Activator.getImageDescriptor(Images_ID.PASS_LOCATION).createImage(); // load the pass image.
 		FAIL = Activator.getImageDescriptor(Images_ID.FAIL_LOCATION).createImage(); // load the fail image.
