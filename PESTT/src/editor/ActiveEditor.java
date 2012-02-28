@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import constants.CompilationUnits_ID;
+import constants.Description_ID;
 
 public class ActiveEditor {
 
@@ -46,7 +47,10 @@ public class ActiveEditor {
 		textSelect = (ITextSelection) select; // get the text selected.
 		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the file
 		marker = new Markers(file);
-		targetName = getLocation().get(CompilationUnits_ID.PACKAGE) + "." + getClassName();
+		if(!getLocation().get(CompilationUnits_ID.PACKAGE).equals(Description_ID.EMPTY))
+			targetName = getLocation().get(CompilationUnits_ID.PACKAGE) + "." + getClassName();
+		else
+			targetName = getClassName();
 		getClassPath();
 	}
 	

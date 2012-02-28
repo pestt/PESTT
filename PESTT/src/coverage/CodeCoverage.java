@@ -33,8 +33,6 @@ public class CodeCoverage {
 	public List<List<ICoverageData>> getCodeCoverageStatus() {
 
 		String targetName = editor.getTargetName();
-		
-
 		try {				
 			ActiveEditor testEditor = new ActiveEditor();
 
@@ -45,7 +43,6 @@ public class CodeCoverage {
 				methodsToRun = testEditor.getMethodNames();
 
 			for(String method : methodsToRun) {
-				
 				// for instrumentation and runtime we need a IRuntime instance to collect execution data.
 				final IRuntime runtime = new LoggerRuntime();
 

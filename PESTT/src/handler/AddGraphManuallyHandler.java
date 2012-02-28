@@ -32,7 +32,6 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 	private ViewRequirementSet view;
 	private IWorkbenchWindow window;
 	private Graph<Integer> sourceGraph;
-	private boolean pathOnly = false;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -42,9 +41,9 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 		if(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID) != null)
 			addTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID), window.getShell());
 		else {
-			pathOnly = true;
-			view.showExecutedPaths();
-			addTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_PATHS_VIEWER_ID), window.getShell());
+			String criteria = TestRequirementsHandler.getSelectedCriteria();
+			view.showCoverage(criteria);
+			addTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID), window.getShell());
 		}
 		return null;
 	}
@@ -53,8 +52,6 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 	private void addTableLine(TableViewer viewer, Shell shell) throws ExecutionException {
 		sourceGraph = (Graph<Integer>) GraphsCreator.INSTANCE.getGraphs().get(Graph_ID.SOURCE_GRAPH_NUM);
 		List<Object> executedGraphs = view.getExecutedGraphs();
-		if(executedGraphs.contains(Description_ID.TOTAL))
-			executedGraphs.remove(Description_ID.TOTAL);
 		viewer.setInput(executedGraphs);
 		String message = "Please enter a executed graph:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
 		InputDialog dialog = new InputDialog(shell, message);
@@ -62,6 +59,8 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 		String input = dialog.getInput();
 		if(input != null)
 			if(!input.equals(Description_ID.EMPTY)) {
+				if(executedGraphs.contains(Description_ID.TOTAL))
+					executedGraphs.remove(Description_ID.TOTAL);
 				Path<Integer> fakeExecutedPath = createFakeExecutedPath(input);
 				if(fakeExecutedPath != null) {
 					executedGraphs.add(fakeExecutedPath);
@@ -69,14 +68,9 @@ public class AddGraphManuallyHandler extends AbstractHandler {
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new FakeCoverageData(fakeExecutedPath));
 					data.add(newData);
-					
-					if(executedGraphs.size() > 1 && viewer != view.getTableViewer(TableViewers_ID.EXECUTED_PATHS_VIEWER_ID))
-						executedGraphs.add(Description_ID.TOTAL);
-							
-					if(!pathOnly)
-						view.cleanPathStatus();
-					else
-						pathOnly = false;
+					if(executedGraphs.size() > 1)
+						executedGraphs.add(Description_ID.TOTAL);					
+					view.cleanPathStatus();
 					viewer.setInput(executedGraphs);
 				} else {
 					MessageDialog.openInformation(window.getShell(), Messages_ID.GRAPH_INPUT_TITLE, Messages_ID.GRAPH_INVALID_INPUT_MSG); // message displayed when the inserted graph is not valid.

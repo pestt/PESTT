@@ -28,10 +28,7 @@ public class RemoveGraphManuallyHandler extends AbstractHandler {
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		view = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID) != null)
-			removeTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID), window.getShell());
-		else 
-			removeTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_PATHS_VIEWER_ID), window.getShell());
+		removeTableLine(view.getTableViewer(TableViewers_ID.EXECUTED_GRAPHS_VIEWER_ID), window.getShell());
 		return null;
 	}
 	

@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
@@ -55,9 +56,7 @@ public class ViewRequirementSet extends ViewPart {
 	private layoutgraph.Graph layoutGraph;
 	private TableViewer testRequirementsViewer;
 	private TableViewer executedGraphViewer;
-	private TableViewer executedPathViewer;
 	private TableViewer statisticsViewer;
-	private Control executedPathControl; // control of executedGraphViewer.
 	private Control executedGraphControl; // control of executedGraphViewer.
 	private Control statisticsControl; // control of statisticsViewer.
 	private ICoverageAlgorithms<Integer> requirementSet;
@@ -69,7 +68,6 @@ public class ViewRequirementSet extends ViewPart {
 	private Graph<Integer> selectedExecutedGraph;
 	private Path<Integer> selectedExecutedPath;
 	private Path<Integer> selectedTestRequirement;
-	private Path<Integer> selectedFakeExecutedPath;
 	private String selectTotal;
 	private String tour;
 	private StatusImages images;
@@ -88,7 +86,6 @@ public class ViewRequirementSet extends ViewPart {
 	
 	private void resetViewers() {
 		testRequirementsViewer = null;
-		executedPathViewer = null;
 		executedGraphViewer = null;
 		statisticsViewer = null;
 	}
@@ -113,19 +110,6 @@ public class ViewRequirementSet extends ViewPart {
 		setTestRequirements(criteria); // insert values to the view.
 		setSelections(testRequirementsViewer); // associate path to the ViewGraph elements.
 		cleanPathStatus();
-		update(); // show in layout.
-	}
-	
-	public void showExecutedPaths() {
-		if(isRefresh)
-			resetVariables();
-		information = new GraphInformation();
-		setGraphs();
-		disposeControl(4);
-		executedPathViewer = createViewTable(false);
-		executedPathControl = executedPathViewer.getControl();
-		createColumnsToExecutedPathViewer();
-		setSelections(executedPathViewer); // associate executed graph to the ViewGraph elements.
 		update(); // show in layout.
 	}
 	
@@ -186,10 +170,6 @@ public class ViewRequirementSet extends ViewPart {
 			if(statisticsControl != null)
 				statisticsControl.dispose();
 			break;	
-		case 4:
-			if(executedPathControl != null)
-				executedPathControl.dispose();
-			break;
 	}
 
 		if(layoutGraph != null) {
@@ -206,6 +186,7 @@ public class ViewRequirementSet extends ViewPart {
 			viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		else
 			viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		
 		Table table = viewer.getTable(); // create the table.
 		table.setHeaderVisible(true); // show header.
 		table.setLinesVisible(true); // show table lines.
@@ -248,7 +229,7 @@ public class ViewRequirementSet extends ViewPart {
 		});
 	}
 
-	public void createColumnsToExecutedGraphViewer() {
+	private void createColumnsToExecutedGraphViewer() {
 		if(coverageInformation == null)
 			coverageInformation = new CoverageInformation(editor);
 		executedGraphViewer.setInput(getExecutedGraphs());
@@ -257,29 +238,6 @@ public class ViewRequirementSet extends ViewPart {
 		TableViewerColumn col = createColumnsHeaders(executedGraphViewer, columnNames, columnWidths, 0);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			
-			@Override
-			public void update(ViewerCell cell) {
-				if(cell.getElement() instanceof Graph<?>) {
-					Graph<?> graph = (Graph<?>) cell.getElement();
-					cell.setText(graph.toString());
-				} else if(cell.getElement() instanceof Path<?>) {
-					Path<?> path = (Path<?>) cell.getElement();
-					cell.setText(path.toString());
-				} else {
-					String str = (String) cell.getElement();
-					cell.setText(str);
-				}
-			}
-		});
-	}
-	
-	private void createColumnsToExecutedPathViewer() {
-		if(coverageInformation == null)
-			coverageInformation = new CoverageInformation(editor);
-		String columnNames = TableViewers_ID.EXECUTED_GRAPH; // the names of column.
-		int columnWidths = 200; // the width of column.
-		TableViewerColumn col = createColumnsHeaders(executedPathViewer, columnNames, columnWidths, 0);
-		col.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				if(cell.getElement() instanceof Graph<?>) {
@@ -381,6 +339,8 @@ public class ViewRequirementSet extends ViewPart {
 	}
 	
 	public List<Object> getExecutedGraphs() {
+		if(coverageInformation == null)
+			coverageInformation = new CoverageInformation(editor);
 		if(executedGraphs == null) 
 			executedGraphs = coverageInformation.getExecutedPaths();
 		if(!executedGraphs.contains(Description_ID.TOTAL) && executedGraphs.size() > 1)
@@ -397,8 +357,6 @@ public class ViewRequirementSet extends ViewPart {
 			return selectedExecutedGraph;
 		else if(selectedExecutedPath != null) 
 			return selectedExecutedPath;
-		else if(selectedFakeExecutedPath != null)
-			return selectedFakeExecutedPath;
 		else
 			return selectTotal;
 	}
@@ -423,8 +381,6 @@ public class ViewRequirementSet extends ViewPart {
 				return testRequirementsViewer;
 			case EXECUTEDGRAPHVIEWER:
 				return executedGraphViewer;
-			case EXECUTEDPATHVIEWER:
-				return executedPathViewer;
 			case STATISTICSVIEWER:
 				return statisticsViewer;
 		}
@@ -443,21 +399,20 @@ public class ViewRequirementSet extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				List<GraphItem> aux = null; // auxiliary list to store selected items.
 				Object selected = null;
-				selectedFakeExecutedPath = null;
 				selectedExecutedPath = null;
 				selectedExecutedGraph = null;
 				selectedTestRequirement = null;
 				selectTotal = null;
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description_ID.VIEW_GRAPH);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}	
 				if(selection.getFirstElement() instanceof Path<?> && viewer == testRequirementsViewer) {
 					selectedTestRequirement = (Path<Integer>) selection.getFirstElement(); // get the path selected.
 					if(selectedTestRequirement != null)
 						aux = selectTestRequirement(selectedTestRequirement);
 					selected = selectedExecutedPath;
-				} else if(selection.getFirstElement() instanceof Path<?> && viewer == executedPathViewer) { 
-					selectedFakeExecutedPath = (Path<Integer>) selection.getFirstElement(); // get the path selected.
-					if(selectedFakeExecutedPath != null)
-						aux = selectTestRequirement(selectedFakeExecutedPath);
-					selected = selectedFakeExecutedPath;
 				} else if(selection.getFirstElement() instanceof Path<?>) { 
 					selectedExecutedPath = (Path<Integer>) selection.getFirstElement(); // get the path selected.
 					if(selectedExecutedPath != null)

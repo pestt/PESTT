@@ -5,7 +5,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.zest.core.widgets.GraphItem;
 
@@ -28,11 +27,6 @@ public class TestRequirementsHandler extends AbstractHandler {
 			GraphItem item = coverageGraph.getSelected();
 			if(item != null) {
 				option = (String) item.getData();
-				try {
-					HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description_ID.VIEW_GRAPH);
-				} catch (PartInitException e) {
-					e.printStackTrace();
-				}	
 				RunCoverageHandler.setSelectionCriteria(option);
 				ViewRequirementSet viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET);
 				viewRequirementSet.showTestRequirements(option);
