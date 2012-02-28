@@ -34,6 +34,7 @@ import sourcegraph.Graph;
 import sourcegraph.Node;
 import sourcegraph.Path;
 import constants.Colors_ID;
+import constants.CoverageAlgorithms_ID;
 import constants.Description_ID;
 import constants.Graph_ID;
 import constants.Images_ID;
@@ -73,6 +74,7 @@ public class ViewRequirementSet extends ViewPart {
 	private String tour;
 	private StatusImages images;
 	private boolean isRefresh;
+	private String criteria;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -90,14 +92,17 @@ public class ViewRequirementSet extends ViewPart {
 		executedGraphViewer = null;
 		statisticsViewer = null;
 	}
+	
+	private void resetVariables() {
+		isRefresh = false;
+		this.criteria = "";
+		coverageInformation = null;
+		executedGraphs = null;
+	}
 
 	public void showTestRequirements(String criteria) {
-		if(isRefresh) {
-			isRefresh = false;
-			coverageInformation = null;
-			executedGraphs = null;
-			testRequirements = null;
-		}
+		if(isRefresh)
+			resetVariables();
 		information = new GraphInformation();
 		setGraphs();
 		disposeControl(1);
@@ -112,12 +117,8 @@ public class ViewRequirementSet extends ViewPart {
 	}
 	
 	public void showExecutedPaths() {
-		if(isRefresh) {
-			isRefresh = false;
-			coverageInformation = null;
-			executedGraphs = null;
-			testRequirements = null;
-		}
+		if(isRefresh)
+			resetVariables();
 		information = new GraphInformation();
 		setGraphs();
 		disposeControl(4);
@@ -129,12 +130,8 @@ public class ViewRequirementSet extends ViewPart {
 	}
 	
 	public void showCoverage(String criteria) {
-		if(isRefresh) {
-			isRefresh = false;
-			coverageInformation = null;
-			executedGraphs = null;
-			testRequirements = null;
-		}
+		if(isRefresh)
+			resetVariables();
 		information = new GraphInformation();
 		setGraphs();
 		disposeControl(1);
@@ -360,16 +357,17 @@ public class ViewRequirementSet extends ViewPart {
 		return viewerColumn;
 	}
 
-	private void setTestRequirements(String option) {
-		if(option != null) {
-			requirementSet = new CoverageAlgorithmsFactory<Integer>().getCoverageAlgorithm(option);
+	private void setTestRequirements(String criteria) {
+		if(!this.criteria.equals(criteria)) {
+			this.criteria = criteria;
+			testRequirements = null;
+		}
+		if(criteria != null) {
+			requirementSet = new CoverageAlgorithmsFactory<Integer>().getCoverageAlgorithm(criteria);
 			requirementSet.visitGraph(sourceGraph);
 			testRequirementsViewer.setInput(getTestRequirement());
-			for(Path<Integer> path : getTestRequirement())
-				if(path.toString().contains("...")) {
-					MessageDialog.openInformation(parent.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
-					break;
-				}
+			if(criteria.equals(CoverageAlgorithms_ID.COMPLETE_PATH_ID))
+				MessageDialog.openInformation(parent.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
 		} else
 			MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.SELECT_VALID_COVERAGE); // message displayed when the coverage criteria is not valid.
 	}
