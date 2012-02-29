@@ -9,6 +9,7 @@ public class Description_ID {
 	public static final String LAYER_BUTTON = "PESTT.Layers";
 	public static final String TOUR_BUTTON = "PESTT.Touring";
 	public static final String NONE = "NONE";
+	public static final String INFINITE = "...";
 	public static final String EMPTY = "";
 	public static final String NODE = "node";
 	public static final String EDGE = "edge" ;

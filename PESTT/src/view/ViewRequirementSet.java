@@ -325,8 +325,12 @@ public class ViewRequirementSet extends ViewPart {
 			requirementSet.visitGraph(sourceGraph);
 			testRequirementsViewer.setInput(getTestRequirement());
 			if(criteria.equals(CoverageAlgorithms_ID.COMPLETE_PATH_ID))
-				MessageDialog.openInformation(parent.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
-		} else
+				for(Path<Integer> path : getTestRequirement())
+					if(path.toString().contains(Description_ID.INFINITE)) {
+						MessageDialog.openInformation(parent.getShell(), Messages_ID.TEST_REQUIREMENT_INPUT_TITLE, Messages_ID.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
+						break;
+					}
+			} else
 			MessageDialog.openInformation(parent.getShell(), Messages_ID.COVERAGE_TITLE, Messages_ID.SELECT_VALID_COVERAGE); // message displayed when the coverage criteria is not valid.
 	}
 	

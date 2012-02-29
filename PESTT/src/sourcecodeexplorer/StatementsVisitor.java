@@ -47,7 +47,6 @@ public class StatementsVisitor extends ASTVisitor {
 	private boolean returnFlag;
 	private boolean caseFlag;
 	private Node<Integer> finalnode;
-	private List<Node<Integer>> caseNodes;
 	private GraphInformation infos;
 	private CompilationUnit unit;
 
@@ -69,7 +68,6 @@ public class StatementsVisitor extends ASTVisitor {
 		sourceGraph.addInitialNode(initial); // add first node to the graph.
 		prevNode.push(initial); // add first node to the previous node stack.
 		finalnode = null; // The final node.
-		caseNodes= new LinkedList<Node<Integer>>(); // the list of case nodes.
 		infos = new GraphInformation(); // the graph informations.
 	}
 
@@ -342,7 +340,6 @@ public class StatementsVisitor extends ASTVisitor {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void endVisit(SwitchStatement node) {
 		// if the default case doesn't have a break.
 		// the number 2 represents the initial and the final nodes of the SwitchStatement.
@@ -357,7 +354,6 @@ public class StatementsVisitor extends ASTVisitor {
 		finalnode = prevNode.peek(); // update the final node.
 		controlFlag = false;
 		returnFlag = false;
-		selectCaseBlockInformation(node.statements()); // the information associated to the case or default block.
 	}
 	
 	@Override  
@@ -374,6 +370,7 @@ public class StatementsVisitor extends ASTVisitor {
 			returnFlag = false;
 		nodeNum++;
 		Node<Integer> n = sourceGraph.addNode(nodeNum); // create the node of the case.
+		infos.addInformationToLayer2(sourceGraph, n, node, unit);
 		Edge<Integer> edge = null;
 		if(!caseFlag && prevNode.size() > 2)
 			edge = sourceGraph.addEdge(prevNode.pop(), n); // create a edge from the previous node to this node.
@@ -383,7 +380,6 @@ public class StatementsVisitor extends ASTVisitor {
 		else 
 			infos.addInformationToLayer1(sourceGraph, edge, "default:"); // add information to noSwitch - default edge.
 		prevNode.push(n); // the graph continues from the case node of the SwitchStatement.
-		caseNodes.add(n); // add node value to the list.
 		return false;
 	}
 	
@@ -421,32 +417,6 @@ public class StatementsVisitor extends ASTVisitor {
 		}
 		return false;
 	}
-	
-	private void selectCaseBlockInformation(List<Statement> statements) {
-		int n = 0; // flag to get the case node.
-		int i = 0;
-		for(Statement statement : statements) { // through all the statements.
-			if(statement.getNodeType() == ASTNode.SWITCH_CASE) { // if is a switch case statement.
-				addInstructions(statements, caseNodes.get(n), i); // add instructions.
-				n++;
-			}
-			i++;
-		}
-	}
-	
-	private void addInstructions(List<Statement> statements, Node<Integer> n, int i) {
-		for(; i < statements.size(); i++) { // through all the statements.
-			Statement statement = statements.get(i); // the current statemtn.
-			if(statement.getNodeType() == ASTNode.RETURN_STATEMENT) // if encounters a break or a return statement.
-				return; // break out;
-			else if(statement.getNodeType() == ASTNode.BREAK_STATEMENT) {				
-				infos.addInformationToLayer2(sourceGraph, n, statement, unit); // add the statement to the node.
-				return; // break out.
-			}
-			infos.addInformationToLayer2(sourceGraph, n, statement, unit); // add the statement to the node.
-		}
-	}
-
 
 	private Edge<Integer> createConnection() {
     	nodeNum++; // increase the node number.
