@@ -16,7 +16,6 @@ import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 
-import constants.CompilationUnits_ID;
 import editor.ActiveEditor;
 
 public class CodeCoverage {
@@ -32,13 +31,12 @@ public class CodeCoverage {
 
 	public List<List<ICoverageData>> getCodeCoverageStatus() {
 
-		String targetName = editor.getTargetName();
+		String targetName = editor.getLocation();
 		try {				
 			ActiveEditor testEditor = new ActiveEditor();
-
 			Collection<String> methodsToRun = new ArrayList<String>();
 			if(testEditor.isInMethod())
-				methodsToRun.add(testEditor.getLocation().get(CompilationUnits_ID.METHOD));
+				methodsToRun.add(testEditor.getSelectedMethod());
 			else
 				methodsToRun = testEditor.getMethodNames();
 
@@ -54,8 +52,8 @@ public class CodeCoverage {
 				// class loader to directly load the instrumented class definition from a byte[] instances.
 				final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
 				memoryClassLoader.addDefinition(targetName, instrumented);
-				memoryClassLoader.addDefinition(testEditor.getTargetName(), instrumentedJUnitTest);
-				final Class<?> classJUnit = memoryClassLoader.loadClass(testEditor.getTargetName());
+				memoryClassLoader.addDefinition(testEditor.getLocation(), instrumentedJUnitTest);
+				final Class<?> classJUnit = memoryClassLoader.loadClass(testEditor.getLocation());
 
 				// start the runtime to run the instrumented class.
 				runtime.startup();
@@ -93,6 +91,6 @@ public class CodeCoverage {
 	}
 
 	private InputStream getTargetClass(ActiveEditor editor) throws FileNotFoundException {
-		return new FileInputStream(editor.getClassFile());
+		return new FileInputStream(editor.getClassFilePath());
 	}
 }

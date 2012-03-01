@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.swt.widgets.Composite;
 
 import sourcecodeexplorer.IProjectExplorer;
@@ -22,10 +23,10 @@ public enum GraphsCreator {
 	
 	private List<Object> graphs;
 	
-	public void createGraphs(Composite parent, List<String> location) {
+	public void createGraphs(Composite parent, ICompilationUnit unit, String methodName) {
 		IProjectExplorer explorer = new ProjectExplorer(); // creates a project to be explorer.
 		DotGraphVisitor<Integer> visitor = new DotGraphVisitor<Integer>(); // creates the visitor to the graph.
-		Graph<Integer> sourceGraph = explorer.getSourceCodeGraph(location); // get the graph of the project explored.
+		Graph<Integer> sourceGraph = explorer.getSourceCodeGraph(unit, methodName); // get the graph of the project explored.
 		graphs.add(Graph_ID.SOURCE_GRAPH_NUM, sourceGraph); // add the sourceGraph.
 		visitor.visitGraph(sourceGraph); // apply the visitor to the graph.
 		String dotGraph = "digraph grafo {\nrankdir=TD\nsize=\"10,10\"\n" + visitor.getDotString()  + "}\n"; // creates the string to be passed to Graphviz.

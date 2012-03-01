@@ -1,7 +1,5 @@
 package handler;
 
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -34,8 +32,6 @@ public class RefreshHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ActiveEditor editor = new ActiveEditor();
-		editor.getSelectedText();
-		List<String> location = editor.getLocation(); // get the location of the file.
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(editor.isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -57,7 +53,7 @@ public class RefreshHandler extends AbstractHandler {
 					viewRequirementSet = (ViewRequirementSet) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description_ID.VIEW_REQUIREMENT_SET); // get the view requirement set.
 				}
 				viewGraphCoverageCriteria.create();
-				viewGraph.create(location); // update view content.
+				viewGraph.create(editor.getCompilationUnit(), editor.getSelectedMethod()); // update view content.
 				viewRequirementSet.disposeControl(1);
 				viewRequirementSet.setEditor(editor);
 				viewRequirementSet.setRefresh(true);
