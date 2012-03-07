@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="preferences.PreferencePage"
+            class="ui.preferences.PreferencePage"
             id="preferences.PreferencePage"
             name="PESTT">
       </page>
@@ -12,13 +12,13 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="preferences.PreferenceInitializer">
+            class="ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="perspective.Perspective"
+            class="ui.display.perspective.Perspective"
             fixed="false"
             icon="icons/PESTT.gif"
             id="PESTT.Perspective"
@@ -34,7 +34,7 @@
       <view
             allowMultiple="true"
             category="PESTT.Category"
-            class="view.ViewGraph"
+            class="ui.display.views.ViewGraph"
             icon="icons/graph.gif"
             id="PESTT.ViewGraph"
             name="Graph"
@@ -43,7 +43,7 @@
       <view
             allowMultiple="true"
             category="PESTT.Category"
-            class="view.ViewGraphCoverageCriteria"
+            class="ui.display.views.ViewGraphCoverageCriteria"
             icon="icons/coverage.gif"
             id="PESTT.ViewGraphCoverageCriteria"
             name="Graph Coverage Criteria"
@@ -52,10 +52,10 @@
       <view
             allowMultiple="true"
             category="PESTT.Category"
-            class="view.ViewRequirementSet"
+            class="ui.display.views.ViewStructuralCriteria"
             icon="icons/results.gif"
-            id="PESTT.ViewRequirementSet"
-            name="Requirement Set"
+            id="PESTT.ViewStructuralCoverage"
+            name="Strutural Coverage Criteria"
             restorable="true">
       </view>
    </extension>
@@ -76,7 +76,7 @@
          </view>
          <view
                closeable="true"
-               id="PESTT.ViewRequirementSet"
+               id="PESTT.ViewStructuralCoverage"
                minimized="false"
                moveable="true"
                relationship="stack"
@@ -132,7 +132,7 @@
                   class="org.eclipse.ui.handlers.RadioState">
                <parameter
                      name="default"
-                     value="NONE">
+                     value="0">
                </parameter>
                <parameter
                      name="persisted"
@@ -169,41 +169,41 @@
       </command>
       <category
             description="Commands related to the PESTT View Requirement Set"
-            id="PESTT.CategoryViewRequirementSet"
-            name="PESTTViewRequirementSetCategory">
+            id="PESTT.CategoryViewStructuralCoverage"
+            name="PESTTViewStructuralCoverageCategory">
       </category>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Adds a graph manually to the executed graphs."
             id="PESTT.AddGraphManually"
             name="Add Graph Manually">
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Remove a executed graph manually."
             id="PESTT.RemoveGraphManually"
             name="Remove Graph Manually">
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Adds a path manually to the test requirements."
             id="PESTT.AddPathManually"
             name="Add Path Manually">
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Remove a path manually from the test requireent."
             id="PESTT.RemovePathManually"
             name="Remove Path Manually">
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Status coverage."
             id="PESTT.RunCoverage"
             name="Run Coverage">
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Type of graph tour"
             id="PESTT.Touring"
             name="Touring">
@@ -218,7 +218,7 @@
                   class="org.eclipse.ui.handlers.RadioState">
                <parameter
                      name="default"
-                     value="NONE">
+                     value="TOUR">
                </parameter>
                <parameter
                      name="persisted"
@@ -228,7 +228,7 @@
          </state>
       </command>
       <command
-            categoryId="PESTT.CategoryViewRequirementSet"
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Show test requirements"
             id="PESTT.TestRequirements"
             name="Show test requirements">
@@ -503,7 +503,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:PESTT.ViewRequirementSet">
+            locationURI="toolbar:PESTT.ViewStructuralCoverage">
          <command
                commandId="PESTT.AddPathManually"
                icon="icons/add_path.gif"
@@ -716,7 +716,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="handler.DrawGraphHandler"
+            class="ui.handler.DrawGraphHandler"
             commandId="PESTT.DrawGraph">
          <activeWhen>
             <with
@@ -728,7 +728,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.LayerHandler"
+            class="ui.handler.LayerHandler"
             commandId="PESTT.Layers">
          <activeWhen>
             <and>
@@ -748,7 +748,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.LinkHandler"
+            class="ui.handler.LinkHandler"
             commandId="PESTT.Link">
          <activeWhen>
             <and>
@@ -768,7 +768,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.RefreshHandler"
+            class="ui.handler.RefreshHandler"
             commandId="PESTT.Refresh">
          <activeWhen>
             <and>
@@ -788,7 +788,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="handler.TouringHandler"
+            class="ui.handler.TouringHandler"
             commandId="PESTT.Touring">
          <activeWhen>
             <and>
@@ -801,14 +801,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.RunCoverageHandler"
+            class="ui.handler.RunCoverageHandler"
             commandId="PESTT.RunCoverage">
          <activeWhen>
             <and>
@@ -821,14 +821,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.AddGraphManuallyHandler"
+            class="ui.handler.AddTestPathHandler"
             commandId="PESTT.AddGraphManually">
          <activeWhen>
             <and>
@@ -841,14 +841,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.RemoveGraphManuallyHandler"
+            class="ui.handler.RemoveTestPathHandler"
             commandId="PESTT.RemoveGraphManually">
          <activeWhen>
             <and>
@@ -861,14 +861,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.AddTestRequirementManuallyHandler"
+            class="ui.handler.AddTestRequirementHandler"
             commandId="PESTT.AddPathManually">
          <activeWhen>
             <and>
@@ -881,14 +881,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.RemovePathManuallyHandler"
+            class="ui.handler.RemoveTestRequirementHandler"
             commandId="PESTT.RemovePathManually">
          <activeWhen>
             <and>
@@ -901,14 +901,14 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
          </activeWhen>
       </handler>
       <handler
-            class="handler.TestRequirementsHandler"
+            class="ui.handler.TestRequirementsHandler"
             commandId="PESTT.TestRequirements">
          <activeWhen>
             <and>
@@ -921,7 +921,7 @@
                <with
                      variable="activePartId">
                   <equals
-                        value="PESTT.ViewRequirementSet">
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
