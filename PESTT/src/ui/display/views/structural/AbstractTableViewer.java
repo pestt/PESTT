@@ -9,14 +9,23 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import ui.constants.TableViewers;
+
 public abstract class AbstractTableViewer {
 
-	protected TableViewer createViewTable(Composite parent, IWorkbenchPartSite site, boolean check) {
+	protected TableViewer createViewTable(Composite parent, IWorkbenchPartSite site, TableViewers id) {
 		TableViewer viewer = null;
-		if(check)
-			viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		else
-			viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		switch(id) {
+			case TESTREQUIREMENTSVIEWER :
+				viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+				break;
+			case TESTPATHSVIEWER:
+				viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+				break;
+			case STATISTICSVIEWER:
+				viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+				break;
+		}
 		Table table = viewer.getTable(); // create the table.
 		table.setHeaderVisible(true); // show header.
 		table.setLinesVisible(true); // show table lines.

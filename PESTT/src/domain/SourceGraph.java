@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import adt.graph.Graph;
+import domain.events.CFGCreateEvent;
 import domain.explorer.StatementsVisitor;
 import domain.graph.visitors.IGraphVisitor;
 
@@ -26,15 +27,15 @@ public class SourceGraph extends Observable {
 		parse.accept(visitor);
 		sourceGraph = visitor.getGraph();
 		setChanged();
-		notifyObservers(new ControlFlowGraphGeneratedEvent(sourceGraph));
+		notifyObservers(new CFGCreateEvent(sourceGraph));
 	}
 	
 	public Graph<Integer> getSourceGraph() {
 		return sourceGraph;
 	}
 	
-	public boolean isGraphDisplayed() {
-		return sourceGraph.getNodes().size() > 0 ? true : false; 
+	public int numberOfNodes() {
+		return sourceGraph.getNodes().size(); 
 	}
 	
 	public void applyVisitor(IGraphVisitor<Integer> visitor) {
@@ -46,6 +47,6 @@ public class SourceGraph extends Observable {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(unit);
 		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null); // parse
+		return (CompilationUnit) parser.createAST(null); 
 	}
 }

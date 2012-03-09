@@ -16,14 +16,14 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import ui.constants.Description;
+import ui.constants.Messages;
+import ui.constants.Preferences;
 import ui.display.views.ViewGraph;
 import ui.display.views.ViewGraphCoverageCriteria;
 import ui.display.views.ViewStructuralCriteria;
 import ui.editor.ActiveEditor;
-import domain.constants.Description;
 import domain.constants.Layer;
-import domain.constants.Messages;
-import domain.constants.Preferences;
 
 public class RefreshHandler extends AbstractHandler {
 	
@@ -62,7 +62,7 @@ public class RefreshHandler extends AbstractHandler {
 		String selectedMethod = Activator.getDefault().getEditorController().getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
-		Activator.getDefault().getTestPathController().cleanTestPathSet();
+		Activator.getDefault().getTestPathController().clear();
 		Activator.getDefault().getCoverageDataController().cleanCoverageData();
 		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
 		Activator.getDefault().getStatisticsController().cleanStatistics();

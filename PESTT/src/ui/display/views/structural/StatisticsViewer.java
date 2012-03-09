@@ -1,7 +1,10 @@
 package ui.display.views.structural;
 
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -13,12 +16,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import adt.graph.Path;
-
-import domain.StatisticsChangedEvent;
-import domain.TestPathChangedEvent;
-import domain.TestPathSelected;
-import domain.constants.TableViewers;
+import ui.constants.TableViewers;
+import ui.events.StatisticsChangedEvent;
+import domain.events.TestPathChangedEvent;
+import domain.events.TestPathSelectedEvent;
 
 public class StatisticsViewer extends AbstractTableViewer implements ITableViewer, Observer {
 	
@@ -36,7 +37,7 @@ public class StatisticsViewer extends AbstractTableViewer implements ITableViewe
 	}
 	
 	public TableViewer create() {
-		statisticsViewer = createViewTable(parent, site, false);
+		statisticsViewer = createViewTable(parent, site, TableViewers.STATISTICSVIEWER);
 		statisticsControl = statisticsViewer.getControl();
 		createColumnsToStatisticsViewer();
 		return statisticsViewer;
@@ -45,14 +46,17 @@ public class StatisticsViewer extends AbstractTableViewer implements ITableViewe
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof StatisticsChangedEvent) {
-			statisticsViewer.setInput(((StatisticsChangedEvent) data).statisticsSet);
-		} else if(data instanceof TestPathSelected) {
-			Object selected = ((TestPathSelected) data).selected;
-			if(selected != null)
-				if(selected instanceof Path<?>) 
-					Activator.getDefault().getStatisticsController().getIndividualStatistics();
+			Set<String> statistics = new TreeSet<String>();
+			Iterator<String> iterator = ((StatisticsChangedEvent) data).statisticsSet;
+			while(iterator.hasNext())
+				statistics.add(iterator.next());
+			statisticsViewer.setInput(statistics);
+		} else if(data instanceof TestPathSelectedEvent) {
+			if(((TestPathSelectedEvent) data).selectedTestPaths != null)
+				if(!((TestPathSelectedEvent) data).selectedTestPaths.isEmpty())
+					Activator.getDefault().getTestPathController().getStatistics();
 				else
-					Activator.getDefault().getStatisticsController().getTotalStatistics();
+					Activator.getDefault().getStatisticsController().cleanStatistics();
 		} else if(data instanceof TestPathChangedEvent)
 			Activator.getDefault().getStatisticsController().cleanStatistics();
 	}

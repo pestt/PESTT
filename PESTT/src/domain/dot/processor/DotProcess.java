@@ -10,8 +10,7 @@ import main.activator.Activator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-
-import domain.constants.Preferences;
+import ui.constants.Preferences;
 
 public class DotProcess implements IDotProcess {
 

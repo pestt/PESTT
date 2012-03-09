@@ -18,7 +18,8 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
-import domain.constants.Colors;
+import ui.constants.Colors;
+
 import domain.constants.GraphCoverageCriteriaId;
 
 @SuppressWarnings("deprecation")

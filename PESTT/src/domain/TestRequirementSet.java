@@ -1,15 +1,14 @@
 package domain;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 import java.util.TreeSet;
 
-import adt.graph.InfinitePath;
 import adt.graph.Path;
+import adt.graph.SequencePath;
 import domain.coverage.algorithms.ICoverageAlgorithms;
+import domain.events.TestRequirementChangedEvent;
 
 
 public class TestRequirementSet extends Observable implements Iterable<Path<Integer>> {
@@ -20,22 +19,22 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 		testRequirementSet = new TreeSet<Path<Integer>>();
 	}
 
-	public void addTestRequirement(Path<Integer> path) {
+	public void add(Path<Integer> path) {
 		testRequirementSet.add(path);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(testRequirementSet, hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}
 
-	public void removeTestRequirement(Path<Integer> selected) {
+	public void remove(Path<Integer> selected) {
 		testRequirementSet.remove(selected);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(testRequirementSet, hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}
 	
-	public void clean() {
+	public void clear() {
 		testRequirementSet.clear();
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(testRequirementSet, hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}
 	
 	public int size() {
@@ -45,74 +44,38 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {
 		testRequirementSet = algorithm.getTestRequirements();
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(testRequirementSet, hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}
 	
 	public boolean hasInfinitePath() {
 		for(Path<Integer> path : testRequirementSet) 
-			if(path instanceof InfinitePath<?>)
+			if(path instanceof SequencePath<?>)
 				return true;
 		return false;
 	}
 
-	public List<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
-		List<Path<Integer>> coveredPaths = new LinkedList<Path<Integer>>();
+	public Set<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
+		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for(Path<Integer> path : testRequirementSet)
 			if(seletedTestPath.isSubPath(path))
 					coveredPaths.add(path);
 		return coveredPaths;
 	}
 
-	public List<Path<Integer>> getPathsTouredWithSideTrip(Path<Integer> seletedTestPath) {
-		List<Path<Integer>> coveredPaths = new LinkedList<Path<Integer>>();
+	public Set<Path<Integer>> getPathsTouredWithSideTrip(Path<Integer> seletedTestPath) {
+		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for(Path<Integer> path : testRequirementSet)
 			if(seletedTestPath.toursWithSideTrip(path))
 				coveredPaths.add(path);
 		return coveredPaths;
 	}
 
-	public List<Path<Integer>> getPathsTouredWithDeTour(Path<Integer> seletedTestPath) {
-		List<Path<Integer>> coveredPaths = new LinkedList<Path<Integer>>();
+	public Set<Path<Integer>> getPathsTouredWithDeTour(Path<Integer> seletedTestPath) {
+		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for(Path<Integer> path : testRequirementSet)
 			if(seletedTestPath.toursWithDeTour(path))
 				coveredPaths.add(path);
 		return coveredPaths;
-	}
-
-	public List<Path<Integer>> getTotalPathToured(Iterator<Path<Integer>> iterator) {
-		List<Path<Integer>> total = new LinkedList<Path<Integer>>();
-		while(iterator.hasNext()) {
-			Path<Integer> path = iterator.next();
-			List<Path<Integer>> aux = getPathToured(path);
-			for(Path<Integer> p : aux)
-				if(!total.contains(p))
-					total.add(p);
-		}
-		return total;
-	}
-
-	public List<Path<Integer>> getTotalPathsTouredWithSideTrip(Iterator<Path<Integer>> iterator) {
-		List<Path<Integer>> total = new LinkedList<Path<Integer>>();
-		while(iterator.hasNext()) {
-			Path<Integer> path = iterator.next();
-			List<Path<Integer>> aux = getPathsTouredWithSideTrip(path);
-			for(Path<Integer> p : aux)
-				if(!total.contains(p))
-					total.add(p);
-		}
-		return total;
-	}
-
-	public List<Path<Integer>> getTotalPathsTouredWithDeTour(Iterator<Path<Integer>> iterator) {
-		List<Path<Integer>> total = new LinkedList<Path<Integer>>();
-		while(iterator.hasNext()) {
-			Path<Integer> path = iterator.next();
-			List<Path<Integer>> aux = getPathsTouredWithDeTour(path);
-			for(Path<Integer> p : aux)
-				if(!total.contains(p))
-					total.add(p);
-		}
-		return total;
 	}
 	
 	@Override

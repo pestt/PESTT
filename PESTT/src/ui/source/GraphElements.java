@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import domain.constants.Description;
+import ui.constants.Description;
 
 public class GraphElements {
 	

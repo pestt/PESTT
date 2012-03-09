@@ -5,7 +5,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 
-import domain.constants.Description;
+import ui.constants.Description;
 
 /**
  *  This class is meant to serve as an example for how various contributions 

@@ -1,39 +1,36 @@
 package domain;
 
+import ui.StatisticsSet;
+import ui.controllers.CFGController;
+import ui.controllers.EditorController;
+import ui.controllers.StatisticsController;
 import domain.constants.Layer;
 import domain.constants.TourType;
-import domain.coverage.instrument.CoverageDataController;
-import domain.coverage.instrument.CoverageDataSet;
+import domain.controllers.CoverageDataController;
+import domain.controllers.SourceGraphController;
+import domain.controllers.TestPathController;
+import domain.controllers.TestRequirementController;
 
 
 public class PESTT { 
 
-	private SourceGraph sourceGraph;
 	private SourceGraphController sourceGraphController;
-	private TestRequirementSet testRequirementSet;
 	private TestRequirementController testRequirementController;
-	private TestPathSet testPathSet;
 	private TestPathController testPathController;
-	private CoverageDataSet coverageDataSet;
 	private CoverageDataController coverageDataController;
-	private StatisticsSet statisticsSet;
 	private StatisticsController statisticsController;
 	private EditorController editorController;
 	private CFGController cfgController;
 	
 	public PESTT() {
 		editorController = new EditorController();
-		sourceGraph = new SourceGraph();
+		SourceGraph sourceGraph = new SourceGraph();
 		sourceGraphController = new SourceGraphController(sourceGraph);
-		testRequirementSet = new TestRequirementSet();
-		testRequirementController = new TestRequirementController(sourceGraph, testRequirementSet);
-		testRequirementController.selectTourType(TourType.TOUR.toString());
-		testPathSet = new TestPathSet();
-		testPathController = new TestPathController(testPathSet);
-		coverageDataSet = new CoverageDataSet();
-		coverageDataController = new CoverageDataController(coverageDataSet);
-		statisticsSet = new StatisticsSet();
-		statisticsController = new StatisticsController(statisticsSet);
+		testRequirementController = new TestRequirementController(sourceGraph, new TestRequirementSet());
+		testPathController = new TestPathController(new TestPathSet());
+		testPathController.selectTourType(TourType.TOUR.toString());
+		coverageDataController = new CoverageDataController(new CoverageDataSet());
+		statisticsController = new StatisticsController(new StatisticsSet());
 		cfgController = new CFGController();
 		cfgController.selectLayer(Layer.EMPTY.toString());
 	}

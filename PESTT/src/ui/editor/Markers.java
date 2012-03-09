@@ -5,7 +5,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-import domain.constants.MarkersType;
+import ui.constants.MarkersType;
 
 public class Markers {
 	

@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
 
-import domain.constants.Colors;
+import ui.constants.Colors;
+
 
 public class Node {
 	

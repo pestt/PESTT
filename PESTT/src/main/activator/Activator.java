@@ -4,14 +4,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import domain.CFGController;
-import domain.EditorController;
+import ui.controllers.CFGController;
+import ui.controllers.EditorController;
+import ui.controllers.StatisticsController;
 import domain.PESTT;
-import domain.SourceGraphController;
-import domain.StatisticsController;
-import domain.TestPathController;
-import domain.TestRequirementController;
-import domain.coverage.instrument.CoverageDataController;
+import domain.controllers.CoverageDataController;
+import domain.controllers.SourceGraphController;
+import domain.controllers.TestPathController;
+import domain.controllers.TestRequirementController;
 
 /**
  * The activator class controls the plug-in life cycle

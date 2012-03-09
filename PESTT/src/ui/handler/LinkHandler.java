@@ -9,13 +9,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import domain.constants.Messages;
+import ui.constants.Messages;
 
 public class LinkHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-	    if(Activator.getDefault().getSourceGraphController().isGraphDisplayed()) {
+	    if(Activator.getDefault().getSourceGraphController().numberOfNodes() > 1) {
 	    	boolean state = HandlerUtil.toggleCommandState(event.getCommand());
 	    	Activator.getDefault().getCFGController().settLinkState(!state);
 	    } else {

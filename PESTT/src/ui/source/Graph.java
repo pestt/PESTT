@@ -1,7 +1,6 @@
 package ui.source;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,17 +12,11 @@ import java.util.Set;
 
 import main.activator.Activator;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.zest.core.widgets.GraphConnection;
@@ -31,20 +24,18 @@ import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
 
-import ui.editor.ActiveEditor;
-import ui.editor.Line;
+import ui.constants.Colors;
+import ui.constants.Description;
+import ui.constants.Messages;
+import ui.events.LayerChangeEvent;
+import ui.events.LinkChangeEvent;
 import adt.graph.Path;
-import domain.ControlFlowGraphGeneratedEvent;
-import domain.LayerChangeEvent;
-import domain.LinkChangeEvent;
-import domain.TestPathSelected;
-import domain.TestRequirementSelected;
-import domain.constants.Colors;
-import domain.constants.Description;
 import domain.constants.Layer;
-import domain.constants.Messages;
 import domain.dot.processor.DotProcess;
 import domain.dot.processor.IDotProcess;
+import domain.events.CFGCreateEvent;
+import domain.events.TestPathSelectedEvent;
+import domain.events.TestRequirementSelectedEvent;
 import domain.graph.visitors.DotGraphVisitor;
 
 public class Graph implements Observer {
@@ -55,18 +46,15 @@ public class Graph implements Observer {
 	private List<GraphConnection> graphEdges;
 	private SelectionAdapter event;
 	private Composite parent;
-	private ISelectionListener listener;
-	private ActiveEditor editor;
-	private GraphInformation information;
 	
 	public Graph(Composite parent) {
 		this.parent = parent;
 		graph = new org.eclipse.zest.core.widgets.Graph(parent, SWT.NONE);
-		information = new GraphInformation(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getSourceGraphController().addObserverSourceGraph(this);
 		Activator.getDefault().getCFGController().addObserver(this);
+		Activator.getDefault().getEditorController().setGraphInformation(new GraphInformation(this));
 		create(Activator.getDefault().getSourceGraphController().getSourceGraph());
 	}
 	
@@ -148,6 +136,10 @@ public class Graph implements Observer {
 		}
 	}
 	
+	public List<GraphNode> getGraphNodes() {
+		return graphNodes; // the list of connections.
+	}
+	
 	public List<GraphConnection> getGraphEdges() {
 		return graphEdges; // the list of connections.
 	}
@@ -161,7 +153,7 @@ public class Graph implements Observer {
 		return graph.getSelection(); // return the list with the selected nodes.
 	}
 	
-	private void setSelected(GraphItem[] items) {
+	public void setSelected(GraphItem[] items) {
 		graph.setSelection(items); // the items selected.
 	}
 	
@@ -172,65 +164,56 @@ public class Graph implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof ControlFlowGraphGeneratedEvent)
-			create(((ControlFlowGraphGeneratedEvent) data).sourceGraph);
-		else if(data instanceof TestRequirementSelected) {
-			if(((TestRequirementSelected) data).selected == null)
+		if(data instanceof CFGCreateEvent)
+			create(((CFGCreateEvent) data).sourceGraph);
+		else if(data instanceof TestRequirementSelectedEvent) {
+			if(((TestRequirementSelectedEvent) data).selectedTestRequirement == null) {
 				unselectAll();
-			else
-				selectTestRequirement(((TestRequirementSelected) data));
-		} else if(data instanceof TestPathSelected) {
-			if(((TestPathSelected) data).selected == null)
+				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+			} else
+				selectTestRequirement(((TestRequirementSelectedEvent) data));
+		} else if(data instanceof TestPathSelectedEvent) {
+			if(((TestPathSelectedEvent) data).selectedTestPaths == null) {
 				unselectAll();
-			else
-				selectTestPath(((TestPathSelected) data));
-		}
-		else if(data instanceof LinkChangeEvent) {
-			editor = Activator.getDefault().getEditorController().getActiveEditor();
+				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+			} else
+				selectTestPath(((TestPathSelectedEvent) data));
+		} else if(data instanceof LinkChangeEvent) {
 			if(((LinkChangeEvent) data).state) {
-				creatorSelectToEditor(); // create the SelectionListener to the editor.
-		    	createSelectionListener(); // create the SelectionAdapter event to the nodes.
+				Activator.getDefault().getEditorController().creatorSelectToEditor(); // create the SelectionListener to the editor.
+				createSelectionListener(); // create the SelectionAdapter event to the nodes.
 		    } else {
-		    	removeSelectToEditor(); // remove the SelectionListener to the editor.
+		    	Activator.getDefault().getEditorController().removeSelectToEditor(); // remove the SelectionListener to the editor.
 		    	removeSelectionListener(); // remove the SelectionAdapter event to the nodes.
-		    	editor.deleteALLMarkers(); // removes the marks in the editor.
+		    	Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 		    }
 		} else if(data instanceof LayerChangeEvent) {
-			information.setLayerInformation(((LayerChangeEvent) data).layer);
+			Activator.getDefault().getEditorController().setLayerInformation(((LayerChangeEvent) data).layer);
 		}
 	}
 
-	private void selectTestRequirement(TestRequirementSelected data) {
+	private void selectTestRequirement(TestRequirementSelectedEvent data) {
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
-		if(data.selected != null) {
-			List<GraphItem> aux = selectInGraph(data.selected);
-			GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
-			setSelected(items); // the list of selected items.
-			setVisualCoverage(data);
-		}
+		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
+		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
+		setSelected(items); // the list of selected items.
+		Activator.getDefault().getEditorController().setVisualCoverage(data);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void selectTestPath(TestPathSelected data) {
+	private void selectTestPath(TestPathSelectedEvent data) {
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
 		} catch(PartInitException e) {
 			e.printStackTrace();
 		}
-		if(data.selected != null) {
-			List<GraphItem> aux = null;
-			if(data.selected instanceof Path<?>)
-				aux = selectInGraph((Path<Integer>) data.selected);
-			else if(data.selected instanceof String)
-				aux = selectTotal((String) data.selected);
-			GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
-			setSelected(items); // the list of selected items.
-			setVisualCoverage(data);
-		}
+		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
+		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
+		setSelected(items); // the list of selected items.
+		Activator.getDefault().getEditorController().setVisualCoverage(data);
 	}
 	
 	private List<GraphItem> selectInGraph(Path<Integer> selectedTestRequirement) {
@@ -262,12 +245,10 @@ public class Graph implements Observer {
 		return aux;
 	}
 
-	private List<GraphItem> selectTotal(String selectTotal) {
+	private List<GraphItem> selectTestPathSet(Set<Path<Integer>> selectedTestPaths) {
 		List<GraphItem> total = new LinkedList<GraphItem>();
 		List<GraphItem> aux = null;
-		Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().iterator();
- 		while(iterator.hasNext()) {
-			Path<Integer> path = iterator.next();
+		for(Path<Integer> path : selectedTestPaths) {
 			aux = selectInGraph(path);
 			for(GraphItem item : aux)
 				if(!total.contains(item))
@@ -277,18 +258,6 @@ public class Graph implements Observer {
 		return total;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void setVisualCoverage(Object data) {
-		if(Activator.getDefault().getCFGController().getLinkState()) // if the link button is on.
-			if(data instanceof TestPathSelected)
-				if(((TestPathSelected) data).selected instanceof Path<?>)
-					information.setVisualCoverageStatus(Activator.getDefault().getCoverageDataController().getCoverageData((Path<Integer>) ((TestPathSelected) data).selected)); // insert coverage status to the editor.
-				else
-					System.out.println("String");
-			else 
-				information.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
-	}
-	
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 				
@@ -296,9 +265,11 @@ public class Graph implements Observer {
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
 					getSelected();
-					information.setLayerInformation(Layer.INSTRUCTIONS);
-				} else if(e.item == null)
-					editor.deleteALLMarkers(); // removes the marks in the editor.
+					Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
+				} else if(e.item == null) {
+					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+					Activator.getDefault().getTestPathController().unSelect();
+				}	
 			}
 		};	
 		graph.addSelectionListener(event); // add the SelectionAdapter to the graph. 
@@ -306,89 +277,5 @@ public class Graph implements Observer {
 	
 	private void removeSelectionListener() {
 		graph.removeSelectionListener(event); // remove the SelectionAdapter from the graph.
-	}
-	
-	private void creatorSelectToEditor() {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		// adding a listener
-		listener = new ISelectionListener() {
-			
-			@Override
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				if(selection instanceof ITextSelection) {				
-					ITextSelection textSelected = (ITextSelection) selection; // get the text selected in the editor.
-					selectNode(textSelected.getOffset());
-				}
-			}
-		};
-		page.addSelectionListener(listener);
-	}
-	
-	
-	private void removeSelectToEditor() {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); // get the active page.
-		page.removeSelectionListener(listener); // remove the listener.
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void selectNode(int position) {
-		List<GraphItem> aux = new LinkedList<GraphItem>(); // auxiliary list to store selected items.
-		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for(adt.graph.Node<Integer> node : sourceGraph.getNodes()) { // through all nodes.
-			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
-			if(map != null) {
-				List<ASTNode> info = getASTNodes(map);
-				if(info != null && findNode(info, position)) { // verify if it is the node.
-					for(GraphNode gnode : graphNodes) { // through all GraphNodes.
-						if(gnode.getData().equals(node)) { // if matches with the node.
-							aux.add(gnode); // adds the GraphNode to the list.
-						}
-					}
-				}
-			}
-		}
-		while(!aux.isEmpty() && aux.size() != 1) // one word is assigned to only one node.
-			aux.remove(0); // remove all the others.
-		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
-		setSelected(items); // the list of selected items.
-		information.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
-	}
-	
-	private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
-		List<ASTNode> nodes = new LinkedList<ASTNode>();
-		for(Entry<ASTNode, Line> entry : map.entrySet()) 
-	         nodes.add(entry.getKey());
-		return nodes;
-	}
-	
-	private boolean findNode(List<ASTNode> info, int position) {
-		int startPosition = information.findStartPosition(info); // get the start position.
-		int endPosition = 0;
-		ASTNode aNode = info.get(0); // the first element of the list.
-		switch(aNode.getNodeType()) {
-			case ASTNode.IF_STATEMENT:
-			case ASTNode.DO_STATEMENT:
-				endPosition = aNode.getStartPosition() + 2; // select the if or do words.
-				break;
-			case ASTNode.FOR_STATEMENT:
-			case ASTNode.ENHANCED_FOR_STATEMENT:
-				endPosition = aNode.getStartPosition() + 3; // select the for word.
-				break;
-			case ASTNode.SWITCH_STATEMENT:
-				endPosition = aNode.getStartPosition() + 6; // select the switch word.
-				break;
-			case ASTNode.WHILE_STATEMENT:
-				endPosition = aNode.getStartPosition() + 5;; // select the while word.
-				break;
-			default:
-				if(aNode.getStartPosition() <= startPosition)
-					endPosition = info.get(info.size() - 1).getStartPosition() + info.get(info.size() - 1).getLength(); // select the block of instructions associated to the selected node.
-				else
-					endPosition = aNode.getStartPosition() + aNode.getLength(); // select the block of instructions associated to the selected node.
-				break;
-		}
-		if(startPosition <= position && position <= endPosition) // if a position is in his node.
-			return true;
-		return false;
 	}
 }

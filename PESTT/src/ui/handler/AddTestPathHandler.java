@@ -14,14 +14,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import ui.constants.Description;
+import ui.constants.Messages;
 import ui.dialog.InputDialog;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.constants.Description;
-import domain.constants.Messages;
-import domain.coverage.instrument.FakeCoverageData;
+import adt.graph.SimplePath;
+import domain.coverage.instrument.CoverageData;
 import domain.coverage.instrument.ICoverageData;
 
 public class AddTestPathHandler extends AbstractHandler {
@@ -47,9 +48,9 @@ public class AddTestPathHandler extends AbstractHandler {
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = createTestPath(input);
 				if(newTestPath != null) {
-					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
+					Activator.getDefault().getTestPathController().add(newTestPath);
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
-					newData.add(new FakeCoverageData(newTestPath));
+					newData.add(new CoverageData(newTestPath));
 					Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);			
 				} else {
 					MessageDialog.openInformation(window.getShell(), Messages.GRAPH_INPUT_TITLE, Messages.GRAPH_INVALID_INPUT_MSG); // message displayed when the inserted graph is not valid.
@@ -76,7 +77,7 @@ public class AddTestPathHandler extends AbstractHandler {
 						for(Edge<Integer> edge : sourceGraph.getNodeEdges(nodeFrom))
 							if(nodeTo == edge.getEndNode()) {
 								if(fakeExecutedPath == null) 
-									fakeExecutedPath = new Path<Integer>(nodeFrom);
+									fakeExecutedPath = new SimplePath<Integer>(nodeFrom);
 								 else 
 									fakeExecutedPath.addNode(nodeFrom);
 								flag = true;
@@ -85,7 +86,7 @@ public class AddTestPathHandler extends AbstractHandler {
 								flag = false;
 					} else 
 						if(fakeExecutedPath == null) 
-							fakeExecutedPath = new Path<Integer>(nodeFrom);
+							fakeExecutedPath = new SimplePath<Integer>(nodeFrom);
 						else
 							fakeExecutedPath.addNode(nodeFrom);
 				else

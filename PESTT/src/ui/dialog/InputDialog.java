@@ -13,8 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ui.display.views.StatusImages;
-import domain.constants.Images;
+import ui.StatusImages;
+import ui.constants.Images;
 
 public class InputDialog extends Dialog {
 	

@@ -2,22 +2,29 @@ package domain.coverage.instrument;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.ICounter;
+import main.activator.Activator;
 
-import domain.constants.Colors;
-import domain.constants.Description;
+import org.eclipse.jdt.core.dom.ASTNode;
 
-public class CoverageData implements ICoverageData{
+import ui.constants.Colors;
+import ui.editor.Line;
+import adt.graph.Graph;
+import adt.graph.Node;
+import adt.graph.Path;
+import domain.constants.Layer;
 
-	private IClassCoverage classCoverage;
+public class CoverageData implements ICoverageData {
+
 	private HashMap<Integer, String> lineStatus;
 	
-	public CoverageData(IClassCoverage classCoverage) {
-		this.classCoverage = classCoverage;
+	public CoverageData(Path<Integer> fakeExecutedPath) {
 		lineStatus = new LinkedHashMap<Integer, String>();
-		setLineStatus();
+		setLineStatus(fakeExecutedPath);
+	}
+	public CoverageData(LinkedHashMap<Integer, String> fakeLineStatus) {
+		lineStatus = fakeLineStatus;
 	}
 	
 	public HashMap<Integer, String> getLineStatus() {
@@ -28,20 +35,20 @@ public class CoverageData implements ICoverageData{
 		return lineStatus.get(line);
 	}
 	
-	private void setLineStatus() {
-		for(int i = classCoverage.getFirstLine(); i <= classCoverage.getLastLine(); i++)
-			lineStatus.put(Integer.valueOf(i), getColor(classCoverage.getLine(i).getStatus()));		
-	}
-	
-	private String getColor(final int status) {
-		switch (status) {
-		case ICounter.NOT_COVERED:
-			return Colors.RED_ID;
-		case ICounter.PARTLY_COVERED:
-			return Colors.GRENN_ID;
-		case ICounter.FULLY_COVERED:
-			return Colors.GRENN_ID;
+	@SuppressWarnings("unchecked")
+	private void setLineStatus(Path<Integer> fakeExecutedPath) {
+		Graph<Integer> sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
+		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
+		for(Node<Integer> node : sourceGraph.getNodes()) {
+			LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
+			if(map != null) 
+				for(Entry<ASTNode, Line> entry : map.entrySet()) {
+					int line = entry.getValue().getStartLine();
+					if(fakeExecutedPath.containsNode(node)) 
+						lineStatus.put(line, Colors.GRENN_ID);
+					else 
+						lineStatus.put(line, Colors.RED_ID);
+				}
 		}
-		return Description.EMPTY;
 	}
 }

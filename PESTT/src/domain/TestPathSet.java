@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import adt.graph.Path;
+import domain.events.TestPathChangedEvent;
 
 public class TestPathSet extends Observable implements Iterable<Path<Integer>> {
 
@@ -15,26 +16,22 @@ public class TestPathSet extends Observable implements Iterable<Path<Integer>> {
 		testPathSet = new TreeSet<Path<Integer>>();
 	}
 
-	public void addTestPath(Path<Integer> newTestPath) {
+	public void add(Path<Integer> newTestPath) {
 		testPathSet.add(newTestPath);
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(testPathSet));
+		notifyObservers(new TestPathChangedEvent(iterator()));
 	}
 
-	public void removeTestPath(Path<Integer> selected) {
-		testPathSet.remove(selected);
+	public void remove(Set<Path<Integer>> selectedTestPaths) {
+		testPathSet.remove(selectedTestPaths);
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(testPathSet));
+		notifyObservers(new TestPathChangedEvent(iterator()));
 	}
 	
-	public void clean() {
+	public void clear() {
 		testPathSet.clear();
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(testPathSet));
-	}
-	
-	public int size() {
-		return testPathSet.size();
+		notifyObservers(new TestPathChangedEvent(iterator()));
 	}
 	
 	@Override

@@ -12,10 +12,10 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+import ui.constants.Colors;
 import ui.editor.Line;
 import adt.graph.Graph;
 import adt.graph.Node;
-import domain.constants.Colors;
 import domain.constants.Layer;
 import domain.coverage.instrument.ICoverageData;
 

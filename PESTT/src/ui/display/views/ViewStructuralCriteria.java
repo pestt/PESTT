@@ -3,9 +3,8 @@ package ui.display.views;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ui.constants.TableViewers;
 import ui.display.views.structural.TableViewerFactory;
-
-import domain.constants.TableViewers;
 
 public class ViewStructuralCriteria extends ViewPart {
 

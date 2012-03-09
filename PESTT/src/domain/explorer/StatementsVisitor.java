@@ -27,11 +27,11 @@ import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+import ui.constants.Description;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import domain.GraphInformation;
-import domain.constants.Description;
 import domain.constants.Layer;
 import domain.graph.visitors.RenumNodesGraphVisitor;
 

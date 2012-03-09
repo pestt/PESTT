@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import domain.constants.Description;
+import ui.constants.Description;
 
 public class Parser {
 

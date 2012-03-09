@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import adt.graph.Edge;
 import adt.graph.Graph;
-import adt.graph.InfinitePath;
+import adt.graph.SequencePath;
 import adt.graph.Node;
 import adt.graph.Path;
 import domain.graph.visitors.BreadthFirstGraphVisitor;
@@ -73,7 +73,7 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 		
 		@SuppressWarnings("unchecked")
 		private void insertSpecialPaths() {
-			Map<Path<V>, InfinitePath<V>> replace = new LinkedHashMap<Path<V>, InfinitePath<V>>();
+			Map<Path<V>, SequencePath<V>> replace = new LinkedHashMap<Path<V>, SequencePath<V>>();
 			for(Path<V> path : completePaths) {
 				List<Integer> index = new ArrayList<Integer>();
 				boolean inLoop = false;
@@ -89,10 +89,10 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 						inLoop = false;
 				}
 				if(!index.isEmpty()) {
-					InfinitePath<V> infinite = null;
+					SequencePath<V> infinite = null;
 					for(Node<V> node : path)
 						if(infinite == null)
-							infinite = new InfinitePath<V>(node);
+							infinite = new SequencePath<V>(node);
 						else
 							infinite.addNode(node);
 					Node<Integer> n = new Node<Integer>(SPECIAL_NODE);
@@ -104,10 +104,10 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 					replace.put(path, infinite);
 				}			
 			}
-			Set<Entry<Path<V>, InfinitePath<V>>> set = replace.entrySet(); // the node properties.
-			Iterator<Entry<Path<V>, InfinitePath<V>>> iterator = set.iterator(); 
+			Set<Entry<Path<V>, SequencePath<V>>> set = replace.entrySet(); // the node properties.
+			Iterator<Entry<Path<V>, SequencePath<V>>> iterator = set.iterator(); 
 			while(iterator.hasNext()) {
-				Entry<Path<V>, InfinitePath<V>> entry = iterator.next();
+				Entry<Path<V>, SequencePath<V>> entry = iterator.next();
 				Path<V> p = entry.getKey();
 				completePaths.remove(p);
 				completePaths.add(entry.getValue());

@@ -1,10 +1,12 @@
 package ui.display.views.structural;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -19,11 +21,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import ui.constants.Description;
+import ui.constants.TableViewers;
 import adt.graph.Graph;
 import adt.graph.Path;
-import domain.TestPathChangedEvent;
-import domain.constants.Description;
-import domain.constants.TableViewers;
+import domain.events.TestPathChangedEvent;
 
 public class TestPathsViewer extends AbstractTableViewer implements ITableViewer, Observer {
 
@@ -39,22 +41,21 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 	}
 	
 	public TableViewer create() {
-		testPathhsViewer = createViewTable(parent, site, false);
+		testPathhsViewer = createViewTable(parent, site, TableViewers.TESTPATHSVIEWER);
 		testPathsControl = testPathhsViewer.getControl();
 		createColumnsToExecutedGraphViewer();
 		setSelections(); // associate path to the ViewGraph elements.
 		return testPathhsViewer;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			Set<Path<Integer>> testPathSet = (Set<Path<Integer>>) ((TestPathChangedEvent) data).testPathSet;
-			for(Path<Integer> path : testPathSet)
-				testPaths.add(path);
-			if(Activator.getDefault().getTestPathController().getTestPathSetSize() > 1)
+			Iterator<Path<Integer>> iterator = ((TestPathChangedEvent) data).testPathSet;
+			while(iterator.hasNext()) 
+				testPaths.add(iterator.next());
+			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
 		}
@@ -89,9 +90,27 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 	private void setSelections() {
 		testPathhsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@SuppressWarnings("unchecked")
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
-				Activator.getDefault().getTestPathController().selectTestPath(selection.getFirstElement());
+				boolean hasTotal = false;
+				Set<Path<Integer>> testRequirements = new TreeSet<Path<Integer>>();
+				for(Object obj : selection.toList())
+					if(obj instanceof String) {
+						hasTotal = true;
+						break;
+					}
+					else
+						testRequirements.add((Path<Integer>) obj);
+		
+				if(hasTotal) {
+					testRequirements.clear();
+					Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().iterator();
+					while(iterator.hasNext())
+						testRequirements.add(iterator.next());
+				}
+					
+				Activator.getDefault().getTestPathController().selectTestPath(testRequirements);
 		    }
 		});
 	}

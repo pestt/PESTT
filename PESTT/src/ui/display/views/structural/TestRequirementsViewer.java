@@ -1,9 +1,10 @@
 package ui.display.views.structural;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -20,15 +21,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import ui.display.views.StatusImages;
+import ui.StatusImages;
+import ui.constants.Colors;
+import ui.constants.Images;
+import ui.constants.Messages;
+import ui.constants.TableViewers;
 import adt.graph.Path;
-import domain.TestPathChangedEvent;
-import domain.TestPathSelected;
-import domain.TestRequirementChangedEvent;
-import domain.constants.Colors;
-import domain.constants.Images;
-import domain.constants.Messages;
-import domain.constants.TableViewers;
+import domain.events.TestPathChangedEvent;
+import domain.events.TestPathSelectedEvent;
+import domain.events.TestRequirementChangedEvent;
 
 public class TestRequirementsViewer extends AbstractTableViewer implements ITableViewer, Observer {
 
@@ -46,7 +47,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 	}
 
 	public TableViewer create() {
-		testRequirementsViewer = createViewTable(parent, site, true);
+		testRequirementsViewer = createViewTable(parent, site, TableViewers.TESTREQUIREMENTSVIEWER);
 		testRequirementsControl = testRequirementsViewer.getControl();
 		createColumnsToTestRequirement();
 		setSelections(); // associate path to the ViewGraph elements.
@@ -58,11 +59,19 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		if(data instanceof TestRequirementChangedEvent) {
 			if(((TestRequirementChangedEvent) data).hasInfinitePath)
 				MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
-			testRequirementsViewer.setInput(((TestRequirementChangedEvent) data).testRequirementSet);
+			Set<Path<Integer>> testRequirements = new TreeSet<Path<Integer>>();
+			Iterator<Path<Integer>> iterator = ((TestRequirementChangedEvent) data).testRequirementSet;
+			while(iterator.hasNext())
+				testRequirements.add(iterator.next());
+			testRequirementsViewer.setInput(testRequirements);
 			cleanPathStatus();
-		} else if(data instanceof TestPathSelected)
-			setPathStatus(((TestPathSelected) data).selected);
-		else if(data instanceof TestPathChangedEvent)
+		} else if(data instanceof TestPathSelectedEvent) {
+			if(((TestPathSelectedEvent) data).selectedTestPaths != null)
+				if(!((TestPathSelectedEvent) data).selectedTestPaths.isEmpty())
+					setPathStatus();
+				else
+					cleanPathStatus();
+		} else if(data instanceof TestPathChangedEvent) 
 			cleanPathStatus();
 	}
 	
@@ -117,16 +126,10 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void setPathStatus(Object selected) {
+	private void setPathStatus() {
 		int n = 0;
 		StatusImages images = new StatusImages();
-		List<Path<Integer>> coveredPaths = null;
-		if(selected instanceof Path<?>) {
-			Path<Integer> selectedTestPath = (Path<Integer>) Activator.getDefault().getTestPathController().getSelectedTestPath();
-			coveredPaths = Activator.getDefault().getTestRequirementController().getTestPathCoverage(selectedTestPath);
-		} else
-			coveredPaths = Activator.getDefault().getTestRequirementController().getTotalTestPathCoverage();
+		Set<Path<Integer>> coveredPaths = Activator.getDefault().getTestPathController().getTestRequirementCoverage();
 		Iterator<Path<Integer>> iterator = Activator.getDefault().getTestRequirementController().iterator();
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			Path<Integer> path = iterator.next();

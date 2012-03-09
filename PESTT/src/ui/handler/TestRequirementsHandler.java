@@ -9,7 +9,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import domain.constants.Messages;
+import ui.constants.Messages;
 
 public class TestRequirementsHandler extends AbstractHandler {
 	

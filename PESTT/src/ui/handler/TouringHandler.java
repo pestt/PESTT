@@ -10,8 +10,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.RadioState;
 
-import domain.constants.Description;
-import domain.constants.Messages;
+import ui.constants.Description;
+import ui.constants.Messages;
 
 public class TouringHandler extends AbstractHandler {
 
@@ -19,11 +19,11 @@ public class TouringHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if(Activator.getDefault().getSourceGraphController().isGraphDisplayed()) {
+		if(Activator.getDefault().getSourceGraphController().numberOfNodes() > 1) {
 			option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
 			if(!option.equals(Description.NONE)) {
 				HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
-				Activator.getDefault().getTestRequirementController().selectTourType(option);
+				Activator.getDefault().getTestPathController().selectTourType(option);
 			}
 		} else {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);

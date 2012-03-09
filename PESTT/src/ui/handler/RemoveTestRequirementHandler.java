@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import ui.constants.Messages;
 import ui.dialog.RemoveDialog;
-import domain.constants.Messages;
 
 public class RemoveTestRequirementHandler extends AbstractHandler {
 

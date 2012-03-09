@@ -14,13 +14,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import ui.constants.Description;
+import ui.constants.Messages;
 import ui.dialog.InputDialog;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.constants.Description;
-import domain.constants.Messages;
+import adt.graph.SimplePath;
 
 public class AddTestRequirementHandler extends AbstractHandler {
 
@@ -69,7 +70,7 @@ public class AddTestRequirementHandler extends AbstractHandler {
 						for(Edge<Integer> edge : sourceGraph.getNodeEdges(nodeFrom))
 							if(nodeTo == edge.getEndNode()) {
 								if(newTestRequirement == null) 
-									newTestRequirement = new Path<Integer>(nodeFrom);
+									newTestRequirement = new SimplePath<Integer>(nodeFrom);
 								 else 
 									newTestRequirement.addNode(nodeFrom);
 								flag = true;
@@ -78,7 +79,7 @@ public class AddTestRequirementHandler extends AbstractHandler {
 								flag = false;
 					} else
 						if(newTestRequirement == null) 
-							newTestRequirement = new Path<Integer>(nodeFrom);
+							newTestRequirement = new SimplePath<Integer>(nodeFrom);
 						else
 							newTestRequirement.addNode(nodeFrom);
 				else

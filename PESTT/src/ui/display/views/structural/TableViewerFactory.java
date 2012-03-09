@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import domain.constants.TableViewers;
+import ui.constants.TableViewers;
 
 public enum TableViewerFactory {
 	

@@ -1,15 +1,18 @@
 package domain.coverage.algorithms;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
-import adt.graph.Edge;
+import adt.graph.CyclePath;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.graph.visitors.BreadthFirstGraphVisitor;
+import adt.graph.SimplePath;
+import domain.graph.visitors.DepthFirstGraphVisitor;
+;
 
 public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 
@@ -25,15 +28,13 @@ public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgo
 		return ppc.getPaths();
 	}
 	
-	private class PrimePathCoverageVisitor extends BreadthFirstGraphVisitor<V> {
+	private class PrimePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
 		
-		private Set<Path<V>> paths;
-		private Set<Path<V>> temp;
+		private Deque<Node<V>> deque;
 		private Set<Path<V>> primePaths;
 	
 		public PrimePathCoverageVisitor() {
-			paths = new TreeSet<Path<V>>();
-			temp = new TreeSet<Path<V>>();
+			deque = new LinkedList<Node<V>>();
 			primePaths = new TreeSet<Path<V>>();
 		}
 		
@@ -43,63 +44,48 @@ public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgo
 	
 		@Override
 		public boolean visit(Graph<V> graph) {
-			for(Node<V> node : graph.getNodes())
-				if(!graph.isFinalNode(node))
-					paths.add(new Path<V>(node));
-				else
-					primePaths.add(new Path<V>(node));
-	
-			while(!paths.isEmpty()) {
-				for(Path<V> path : paths)
-					addNodes(path);
-	
-				if(temp.isEmpty() && primePaths.isEmpty()) {
-					primePaths = paths;
-					return true;
-				}
-				
-				paths.clear();
-				for(Path<V> path : temp)
-					paths.add(path);
-				temp.clear();
+			for(Node<V> node : graph.getNodes()) {
+				deque.clear();
+				node.accept(this);
 			}
-			getPrimePaths();
+			removeSubPaths();
+			return false;
+		}
+
+		private void removeSubPaths() {
+			TreeSet<Path<V>> temp = new TreeSet<Path<V>>();
+			Iterator<Path<V>> iterator = primePaths.iterator();
+			if(iterator.hasNext()) {
+				Path<V> primeAnt = iterator.next();
+				while(iterator.hasNext()) {
+					Path<V> primePath = iterator.next();
+					if(!primeAnt.isSubPath(primePath))
+						temp.add(primeAnt);
+					primeAnt = primePath;
+				}
+				temp.add(primeAnt);
+				primePaths = temp;
+			}
+		}
+
+		@Override
+		public boolean visit(Node<V> node) {
+			if(deque.contains(node)) {
+				if(deque.getFirst() == node)
+					primePaths.add(new CyclePath<V>(deque)); 
+				else	
+					primePaths.add(new SimplePath<V>(deque)); 
+				return false;
+			}
+			deque.addLast(node);
+			if(graph.isFinalNode(node))
+				primePaths.add(new SimplePath<V>(deque)); 
 			return true;
 		}
-	
-		private void addNodes(Path<V> path) {
-			Node<V> firstNode = path.getPathNodes().get(0);
-			Node<V> finalNode = path.getPathNodes().get(path.getPathNodes().size() - 1);
-			for(Edge<V> edge : graph.getNodeEdges(finalNode)) {
-				Path<V> aux = path.clone();
-				if(graph.isFinalNode(edge.getEndNode()) || firstNode == edge.getEndNode()) {
-					aux.addNode(edge.getEndNode());
-					primePaths.add(aux);
-				} else if(aux.containsNode(edge.getEndNode())) 
-					primePaths.add(aux);
-				else if(!aux.containsNode(edge.getEndNode())) {
-					aux.addNode(edge.getEndNode());
-					temp.add(aux);
-				}
-			}
-		}
 		
-		public void getPrimePaths() {
-			temp.clear();
-			for(Path<V> path : primePaths) 
-				temp.add(path);				
-					
-			List<Path<V>> toRemove = new ArrayList<Path<V>>();
-			for(Path<V> path : primePaths)
-				for(Path<V> p : temp)
-					if(path != p && path.isSubPath(p))
-						if(!toRemove.contains(p)) {
-							toRemove.add(p);
-							break;
-						}		
-			
-			for(Path<V> path : toRemove)
-				primePaths.remove(path);
+		@Override
+		public void endVisit(Node<V> node) {
+			deque.removeLast();
 		}
 	}
 }

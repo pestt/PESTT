@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import domain.constants.Description;
+import ui.constants.Description;
 
 public class ActiveEditor {
 
@@ -54,7 +54,7 @@ public class ActiveEditor {
 		marker.createMarks(markerType, offset, length);
 	}
 	
-	public void deleteALLMarkers() {
+	public void removeALLMarkers() {
 		marker.deleteAllMarkers();
 	}
 	
