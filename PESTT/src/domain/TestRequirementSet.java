@@ -14,19 +14,23 @@ import domain.events.TestRequirementChangedEvent;
 public class TestRequirementSet extends Observable implements Iterable<Path<Integer>> {
 
 	private Set<Path<Integer>> testRequirementSet;
+	private Set<Path<Integer>> manuallyTestRequirementSet;
 
 	public TestRequirementSet() {
 		testRequirementSet = new TreeSet<Path<Integer>>();
+		manuallyTestRequirementSet = new TreeSet<Path<Integer>>();;
 	}
 
 	public void add(Path<Integer> path) {
 		testRequirementSet.add(path);
+		manuallyTestRequirementSet.add(path);
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}
 
 	public void remove(Path<Integer> selected) {
 		testRequirementSet.remove(selected);
+		manuallyTestRequirementSet.remove(selected);
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
 	}

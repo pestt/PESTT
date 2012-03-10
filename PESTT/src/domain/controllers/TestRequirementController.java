@@ -1,12 +1,18 @@
 package domain.controllers;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import main.activator.Activator;
+import adt.graph.Edge;
+import adt.graph.Node;
 import adt.graph.Path;
+import adt.graph.SimplePath;
 import domain.SourceGraph;
 import domain.TestRequirementSet;
 import domain.constants.GraphCoverageCriteriaId;
@@ -48,6 +54,58 @@ public class TestRequirementController extends Observable {
 	
 	public int size() {
 		return testRequirementSet.size();
+	}
+	
+	public void updateTestrequirementPath(List<String> list) {
+		for(String input : list) {
+			input = input.substring(1, input.length() - 1);
+			Path<Integer> newTestRequirement = createTestRequirement(input);
+			if(newTestRequirement != null)
+				addTestRequirement(newTestRequirement);
+		}
+	}
+	
+	public Path<Integer> createTestRequirement(String input) {
+		boolean flag = true;
+		List<String> insertedNodes = getInsertedNodes(input);
+		Path<Integer> newTestRequirement = null;
+		for(int i = 0; i < insertedNodes.size(); i++) {
+			try {
+				Node<Integer> nodeFrom = sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i)));
+				if(nodeFrom != null && flag)
+					if(i + 1 < insertedNodes.size()) {
+						Node<Integer> nodeTo = sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i + 1)));
+						for(Edge<Integer> edge : sourceGraph.getSourceGraph().getNodeEdges(nodeFrom))
+							if(nodeTo == edge.getEndNode()) {
+								if(newTestRequirement == null) 
+									newTestRequirement = new SimplePath<Integer>(nodeFrom);
+								 else 
+									newTestRequirement.addNode(nodeFrom);
+								flag = true;
+								break;
+							} else
+								flag = false;
+					} else
+						if(newTestRequirement == null) 
+							newTestRequirement = new SimplePath<Integer>(nodeFrom);
+						else
+							newTestRequirement.addNode(nodeFrom);
+				else
+					return null;
+			} catch(NumberFormatException ee) {
+				return null;
+			}
+		}
+		return newTestRequirement;
+	}
+	
+	private List<String> getInsertedNodes(String input) {
+		List<String> aux = new LinkedList<String>();
+		StringTokenizer strtok = new StringTokenizer(input, ", ");
+		// separate the inserted nodes.
+		while(strtok.hasMoreTokens())
+			aux.add(strtok.nextToken());
+		return aux;
 	}
 	
 	public boolean isTestRequirementSelected() {

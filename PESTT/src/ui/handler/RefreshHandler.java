@@ -1,5 +1,8 @@
 package ui.handler;
 
+import java.util.List;
+import java.util.Map;
+
 import main.activator.Activator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -23,6 +26,8 @@ import ui.display.views.ViewGraph;
 import ui.display.views.ViewGraphCoverageCriteria;
 import ui.display.views.ViewStructuralCriteria;
 import ui.editor.ActiveEditor;
+import domain.constants.GraphCoverageCriteriaId;
+import domain.constants.JavadocTagAnnotations;
 import domain.constants.Layer;
 
 public class RefreshHandler extends AbstractHandler {
@@ -67,6 +72,13 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
 		Activator.getDefault().getStatisticsController().cleanStatistics();
 		
+		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocTagAnnotations();
+		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
+		if(!criteria.isEmpty()) {
+			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
+			Activator.getDefault().getTestRequirementController().generateTestRequirement();
+			Activator.getDefault().getTestRequirementController().updateTestrequirementPath(javadocAnnotations.get(JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH));
+		}
 	}
 
 	private void keepCommandOptions() {

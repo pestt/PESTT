@@ -1,8 +1,10 @@
 package domain.explorer;
 
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -34,6 +36,7 @@ import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import domain.GraphInformation;
+import domain.constants.JavadocTagAnnotations;
 import domain.constants.Layer;
 import domain.graph.visitors.RenumNodesGraphVisitor;
 
@@ -51,6 +54,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private Node<Integer> finalnode;
 	private GraphInformation infos;
 	private CompilationUnit unit;
+	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 
 	public StatementsVisitor(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
@@ -63,6 +67,7 @@ public class StatementsVisitor extends ASTVisitor {
 		prevNode = new Stack<Node<Integer>>(); // stack that contain the predecessor nodes.
 		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
+		javadocAnnotations = new HashMap<JavadocTagAnnotations, List<String>>();
 		controlFlag = false; // flag that control if a continue or a break occur.
 		returnFlag = false; // flag that control if a return occur.
 		caseFlag = false; // flag that control the occurrence of a break in the previous case;  
@@ -78,27 +83,30 @@ public class StatementsVisitor extends ASTVisitor {
 	public boolean visit(MethodDeclaration node) {
 		if (node.getName().getIdentifier().equals(methodName)) {
 			if (node.getJavadoc() != null) {
-				List<TagElement> tags = node.getJavadoc().tags();
-				System.out.println(getProperty(node.getJavadoc(), "@CoverageCriteria"));
-				System.out.println(getProperty(node.getJavadoc(), "@InfeasiblePath"));
-				System.out.println(getProperty(node.getJavadoc(), "@AdicionalPath"));
+				javadocAnnotations.put(JavadocTagAnnotations.COVERAGE_CRITERIA, getProperty(node.getJavadoc(), JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()));
+				javadocAnnotations.put(JavadocTagAnnotations.INFEASIBLE_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.INFEASIBLE_PATH.getTag()));
+				javadocAnnotations.put(JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH.getTag()));
+				javadocAnnotations.put(JavadocTagAnnotations.ADICIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADICIONAL_TEST_PATH.getTag()));
 				return true;
 			}
 		}
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<String> getProperty(Javadoc javadoc, String propertyName) {
 		List<String> result = new LinkedList<String>();
 		List<TagElement> tags = (List<TagElement>) javadoc.tags();
-		for (TagElement tag : tags) {
-			if (tag.getTagName() != null)
-				if (tag.getTagName().equals(propertyName)
-						&& !tag.fragments().isEmpty())
-					result.add(tag.fragments().get(0).toString());
-		}
+		for (TagElement tag : tags) 
+			if(tag.getTagName() != null)
+				if(tag.getTagName().equals(propertyName) && !tag.fragments().isEmpty()) {
+					String str = tag.fragments().get(0).toString(); 
+					str = str.substring(1, str.length());
+					result.add(str);
+				}
 		return result;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -131,6 +139,10 @@ public class StatementsVisitor extends ASTVisitor {
 			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
 				sourceGraph.accept(visitor);
 		} 	
+	}
+	
+	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
+		return javadocAnnotations;		
 	}
 
 	@Override  

@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -8,6 +10,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import adt.graph.Graph;
+import domain.constants.JavadocTagAnnotations;
 import domain.events.CFGCreateEvent;
 import domain.explorer.StatementsVisitor;
 import domain.graph.visitors.IGraphVisitor;
@@ -15,6 +18,7 @@ import domain.graph.visitors.IGraphVisitor;
 public class SourceGraph extends Observable {
 	
 	private Graph<Integer> sourceGraph;
+	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	
 	public SourceGraph() {
 		sourceGraph = new Graph<Integer>();
@@ -26,6 +30,7 @@ public class SourceGraph extends Observable {
 		StatementsVisitor visitor = new StatementsVisitor(methodName, parse);
 		parse.accept(visitor);
 		sourceGraph = visitor.getGraph();
+		javadocAnnotations = visitor.getJavadocTagAnnotations();
 		setChanged();
 		notifyObservers(new CFGCreateEvent(sourceGraph));
 	}
@@ -36,6 +41,10 @@ public class SourceGraph extends Observable {
 	
 	public int numberOfNodes() {
 		return sourceGraph.getNodes().size(); 
+	}
+	
+	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
+		return javadocAnnotations;
 	}
 	
 	public void applyVisitor(IGraphVisitor<Integer> visitor) {

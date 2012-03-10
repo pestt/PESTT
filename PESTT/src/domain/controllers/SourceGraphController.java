@@ -1,11 +1,14 @@
 package domain.controllers;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Observer;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import adt.graph.Graph;
 import domain.SourceGraph;
+import domain.constants.JavadocTagAnnotations;
 import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraphController {
@@ -39,6 +42,10 @@ public class SourceGraphController {
 	public int numberOfNodes() {
 		return sourceGraph.numberOfNodes();
 	}
+	
+	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
+		return sourceGraph.getJavadocTagAnnotations();
+	} 
 
 
 }
