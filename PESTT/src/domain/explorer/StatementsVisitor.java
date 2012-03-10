@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import main.activator.Activator;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -54,7 +56,7 @@ public class StatementsVisitor extends ASTVisitor {
 		this.methodName = methodName; // name of the method to be analyzed.
 		this.unit = unit;
 		nodeNum = 0; // number of the node.
-		sourceGraph = new Graph<Integer>(); // the graph.
+		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
@@ -106,7 +108,7 @@ public class StatementsVisitor extends ASTVisitor {
 				sourceGraph.addInitialNode(sourceGraph.getNodes().iterator().next());
 			
 			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
-				sourceGraph.accept(visitor);
+			Activator.getDefault().getSourceGraphController().applyVisitor(visitor);
 		} 	
 	}
 		

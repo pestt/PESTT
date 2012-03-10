@@ -8,8 +8,11 @@ public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor<Integer> {
 
 	@Override
 	public boolean visit(Node<Integer> node) {
-		node.setValue(nodeNum);
-		nodeNum++;
-		return true;
+		if(super.visit(node)) {
+			node.setValue(nodeNum);
+			nodeNum++;
+			return true;
+		}
+		return false;
 	}
 }

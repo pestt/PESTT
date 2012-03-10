@@ -1,22 +1,19 @@
 package domain.graph.visitors;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 
-
-
-
 public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVisitor<V> {
 
-	private List<Node<V>> visitedNodes;
-	private Graph<V> graph;
+	private Set<Node<V>> visitedNodes;
+	protected Graph<V> graph;
 	
 	public DepthFirstGraphVisitor() {
-		visitedNodes = new LinkedList<Node<V>>();
+		visitedNodes = new HashSet<Node<V>>();
 	}
 	
 	@Override
@@ -39,22 +36,20 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVi
 
 	@Override
 	public void visitNode(Node<V> node) {
-		// visit if not already visited;
-		if(!visitedNodes.contains(node)) {
+		if(visit(node)) { 
 			visitedNodes.add(node);
-			if(visit(node)) { 
-				for(Edge<V> edge : graph.getNodeEdges(node)) {
-					edge.accept(this);
-					edge.getEndNode().accept(this);
-				}
-				endVisit(node);
+			for(Edge<V> edge : graph.getNodeEdges(node)) {
+				edge.accept(this);
+				edge.getEndNode().accept(this);
 			}
+			visitedNodes.remove(node);
+			endVisit(node);
 		}
 	}
 
 	@Override
 	public boolean visit(Node<V> node) {
-		return true;
+		return !alreadyVisited(node);
 	}
 
 	@Override
@@ -80,5 +75,10 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVi
 	@Override
 	public void endVisit(Graph<V> graph) {
 		// does nothing!
+	}
+
+	@Override
+	public boolean alreadyVisited(Node<V> node) {
+		return visitedNodes.contains(node);
 	}
 }

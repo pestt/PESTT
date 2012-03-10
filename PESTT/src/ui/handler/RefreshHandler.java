@@ -35,18 +35,18 @@ public class RefreshHandler extends AbstractHandler {
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
 			if(dot != null && !dot.equals(Description.EMPTY)) {
-				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_COVERAGE_CRITERIA); // get the view graph.
+				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
 				ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
 				ViewStructuralCriteria viewStructuralCriteria = (ViewStructuralCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_STRUCTURAL_COVERAGE); // get the view structural criteria.
 				if(viewGraphCoverageCriteria == null || viewGraph == null || viewStructuralCriteria == null) {
 					try {
 						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH);
-						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_COVERAGE_CRITERIA);
+						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
 						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_STRUCTURAL_COVERAGE);
 					} catch (PartInitException e) {
 						e.printStackTrace();
 					}
-					viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_COVERAGE_CRITERIA); // get the view graph.
+					viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
 					viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
 				}
 				resetDataStructures();

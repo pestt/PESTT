@@ -16,4 +16,5 @@ public interface IGraphVisitor<V extends Comparable<V>> {
 	public void visitGraph(Graph<V> graph);
 	public boolean visit(Graph<V> graph);
 	public void endVisit(Graph<V> graph);
+	public boolean alreadyVisited(Node<V> node);
 }

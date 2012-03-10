@@ -52,6 +52,15 @@
       <view
             allowMultiple="true"
             category="PESTT.Category"
+            class="ui.display.views.ViewLogicCoverageCriteria"
+            icon="icons/coverage.gif"
+            id="PESTT.ViewLogicCoverageCriteria"
+            name="Logic Coverage Criteria"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            category="PESTT.Category"
             class="ui.display.views.ViewStructuralCriteria"
             icon="icons/results.gif"
             id="PESTT.ViewStructuralCoverage"
@@ -88,6 +97,17 @@
          <view
                closeable="true"
                id="PESTT.ViewGraphCoverageCriteria"
+               minimized="false"
+               moveable="true"
+               relationship="right"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="PESTT.ViewLogicCoverageCriteria"
                minimized="false"
                moveable="true"
                relationship="right"

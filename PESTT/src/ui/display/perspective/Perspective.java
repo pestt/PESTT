@@ -44,7 +44,8 @@ public class Perspective implements IPerspectiveFactory {
 		
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.45f, editorarea);
 		right.addView(Description.VIEW_GRAPH);
-		right.addView(Description.VIEW_COVERAGE_CRITERIA);
+		right.addView(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
+		right.addView(Description.VIEW_LOGIC_COVERAGE_CRITERIA);
 	}
 
 }
