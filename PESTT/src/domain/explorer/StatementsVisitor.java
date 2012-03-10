@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import main.activator.Activator;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -20,11 +18,13 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
@@ -56,7 +56,7 @@ public class StatementsVisitor extends ASTVisitor {
 		this.methodName = methodName; // name of the method to be analyzed.
 		this.unit = unit;
 		nodeNum = 0; // number of the node.
-		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
+		sourceGraph = new Graph<Integer>(); // the graph.
 		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
@@ -76,9 +76,30 @@ public class StatementsVisitor extends ASTVisitor {
 	//only visit the method indicated by the user.
 	@Override  
 	public boolean visit(MethodDeclaration node) {
-		return node.getName().getIdentifier().equals(methodName);
+		if (node.getName().getIdentifier().equals(methodName)) {
+			if (node.getJavadoc() != null) {
+				List<TagElement> tags = node.getJavadoc().tags();
+				System.out.println(getProperty(node.getJavadoc(), "@CoverageCriteria"));
+				System.out.println(getProperty(node.getJavadoc(), "@InfeasiblePath"));
+				System.out.println(getProperty(node.getJavadoc(), "@AdicionalPath"));
+				return true;
+			}
+		}
+		return false;
 	}
-	
+
+	private List<String> getProperty(Javadoc javadoc, String propertyName) {
+		List<String> result = new LinkedList<String>();
+		List<TagElement> tags = (List<TagElement>) javadoc.tags();
+		for (TagElement tag : tags) {
+			if (tag.getTagName() != null)
+				if (tag.getTagName().equals(propertyName)
+						&& !tag.fragments().isEmpty())
+					result.add(tag.fragments().get(0).toString());
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void endVisit(MethodDeclaration node) {
@@ -106,42 +127,42 @@ public class StatementsVisitor extends ASTVisitor {
 
 			if(!sourceGraph.getInitialNodes().iterator().hasNext()) 
 				sourceGraph.addInitialNode(sourceGraph.getNodes().iterator().next());
-			
+
 			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
-			Activator.getDefault().getSourceGraphController().applyVisitor(visitor);
+				sourceGraph.accept(visitor);
 		} 	
 	}
-		
+
 	@Override  
 	public boolean visit(ExpressionStatement node) {
 		infos.addInformationToLayer2(sourceGraph, prevNode.peek(), node, unit);
 		return true;
 	}
-	
+
 	@Override  
 	public boolean visit(AssertStatement node) {
 		infos.addInformationToLayer2(sourceGraph, prevNode.peek(), node, unit);
 		return true;
 	}
-	
+
 	@Override  
 	public boolean visit(EmptyStatement node) {
 		infos.addInformationToLayer2(sourceGraph, prevNode.peek(), node, unit);
 		return true;
 	}
-	
+
 	@Override  
 	public boolean visit(VariableDeclarationStatement node) {
 		infos.addInformationToLayer2(sourceGraph, prevNode.peek(), node, unit);
 		return true;
 	}
-	
+
 	@Override  
 	public boolean visit(TypeDeclarationStatement node) {
 		infos.addInformationToLayer2(sourceGraph, prevNode.peek(), node, unit);
 		return true;
 	}
-	
+
 	@Override  
 	public boolean visit(IfStatement node) {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
@@ -220,7 +241,7 @@ public class StatementsVisitor extends ASTVisitor {
     	finalnode = noEndWhile; // update the final node.
     	return false;
 	}
-	
+
 	@Override  
 	public boolean visit(DoStatement node) {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
@@ -297,7 +318,7 @@ public class StatementsVisitor extends ASTVisitor {
     	finalnode = noEndFor; // update the final node.
     	return false;
 	}
-	
+
 	@Override  
 	public boolean visit(EnhancedForStatement node) {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
@@ -327,7 +348,7 @@ public class StatementsVisitor extends ASTVisitor {
 		finalnode = noEndForEach; // update the final node.
 		return false;
 	}
-	
+
 	@Override  
 	public boolean visit(SwitchStatement node) {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
@@ -340,7 +361,7 @@ public class StatementsVisitor extends ASTVisitor {
 		prevNode.push(noSwitch); // the graph continues from the initial node of the SwitchStatement.
 		return true;
 	}
-	
+
 	@Override
 	public void endVisit(SwitchStatement node) {
 		// if the default case doesn't have a break.
@@ -357,7 +378,7 @@ public class StatementsVisitor extends ASTVisitor {
 		controlFlag = false;
 		returnFlag = false;
 	}
-	
+
 	@Override  
 	public boolean visit(SwitchCase node) {
 		if(!returnFlag) { // verify if a return occur in the SwitchBody.
@@ -384,7 +405,7 @@ public class StatementsVisitor extends ASTVisitor {
 		prevNode.push(n); // the graph continues from the case node of the SwitchStatement.
 		return false;
 	}
-	
+
 	@Override  
 	public boolean visit(BreakStatement node) {
 		if(!prevNode.isEmpty()) {
@@ -395,7 +416,7 @@ public class StatementsVisitor extends ASTVisitor {
 		}
 		return false;
 	}	
-	
+
 	@Override  
 	public boolean visit(ContinueStatement node) {
 		if(!prevNode.isEmpty()) {
@@ -406,7 +427,7 @@ public class StatementsVisitor extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(ReturnStatement node) {
 		if(!prevNode.isEmpty()) {
@@ -425,7 +446,7 @@ public class StatementsVisitor extends ASTVisitor {
     	Node<Integer> node = sourceGraph.addNode(nodeNum); // create a new node.
     	return sourceGraph.addEdge(prevNode.pop(), node); // create a edge to the previous node to the new one.
 	}
-	
+
 	public Graph<Integer> getGraph() {
 		if(finalnode != null) // if exist final node.
 			sourceGraph.addFinalNode(finalnode); // add final node to the final nodes of the graph.
