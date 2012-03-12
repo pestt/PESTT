@@ -44,6 +44,8 @@ public class TestRequirementController extends Observable {
 	}
 
 	public void removeSelectedTestRequirement() {
+		if(testRequirementSet.isInfeasible(selectedTestRequirement))
+			testRequirementSet.disableInfeasible(selectedTestRequirement);
 		testRequirementSet.remove(selectedTestRequirement);
 		selectTestRequirement(null);
 	}
@@ -52,17 +54,20 @@ public class TestRequirementController extends Observable {
 		testRequirementSet.clear();
 	}
 	
-	public int size() {
-		return testRequirementSet.size();
+	public void enableInfeasible(Path<Integer> infeasible) {
+		testRequirementSet.enableInfeasible(infeasible);
 	}
 	
-	public void updateTestrequirementPath(List<String> list) {
-		for(String input : list) {
-			input = input.substring(1, input.length() - 1);
-			Path<Integer> newTestRequirement = createTestRequirement(input);
-			if(newTestRequirement != null)
-				addTestRequirement(newTestRequirement);
-		}
+	public void disableInfeasible(Path<Integer> infeasible) {
+		testRequirementSet.disableInfeasible(infeasible);
+	}
+	
+	public boolean isInfeasible(Path<Integer> infeasible) {
+		return testRequirementSet.isInfeasible(infeasible);
+	}
+	
+	public int size() {
+		return testRequirementSet.size();
 	}
 	
 	public Path<Integer> createTestRequirement(String input) {

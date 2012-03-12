@@ -81,14 +81,14 @@ public class StatementsVisitor extends ASTVisitor {
 	//only visit the method indicated by the user.
 	@Override  
 	public boolean visit(MethodDeclaration node) {
-		if (node.getName().getIdentifier().equals(methodName)) {
-			if (node.getJavadoc() != null) {
+		if(node.getName().getIdentifier().equals(methodName)) {
+			if(node.getJavadoc() != null) {
 				javadocAnnotations.put(JavadocTagAnnotations.COVERAGE_CRITERIA, getProperty(node.getJavadoc(), JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()));
 				javadocAnnotations.put(JavadocTagAnnotations.INFEASIBLE_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.INFEASIBLE_PATH.getTag()));
-				javadocAnnotations.put(JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH.getTag()));
-				javadocAnnotations.put(JavadocTagAnnotations.ADICIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADICIONAL_TEST_PATH.getTag()));
-				return true;
+				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()));
+				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()));
 			}
+			return true;
 		}
 		return false;
 	}
@@ -97,7 +97,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private List<String> getProperty(Javadoc javadoc, String propertyName) {
 		List<String> result = new LinkedList<String>();
 		List<TagElement> tags = (List<TagElement>) javadoc.tags();
-		for (TagElement tag : tags) 
+		for(TagElement tag : tags) 
 			if(tag.getTagName() != null)
 				if(tag.getTagName().equals(propertyName) && !tag.fragments().isEmpty()) {
 					String str = tag.fragments().get(0).toString(); 
@@ -106,7 +106,6 @@ public class StatementsVisitor extends ASTVisitor {
 				}
 		return result;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override

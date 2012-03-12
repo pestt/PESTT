@@ -16,8 +16,11 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
@@ -27,6 +30,7 @@ import ui.constants.Images;
 import ui.constants.Messages;
 import ui.constants.TableViewers;
 import adt.graph.Path;
+import domain.constants.JavadocTagAnnotations;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementChangedEvent;
@@ -121,7 +125,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 				item.setBackground(Colors.WHITE);
 			else 
 				item.setBackground(Colors.GREY);
-			testRequirementsViewer.getTable().getItem(n).setText(0, Integer.toString(n));
+			testRequirementsViewer.getTable().getItem(n).setText(0, Integer.toString(n + 1));
 			n++;
 		}
 	}
@@ -134,7 +138,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			Path<Integer> path = iterator.next();
 			if(coveredPaths.contains(path)) {
-				item.setText(0, Integer.toString(n));
+				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.GREEN_COVERAGE);
 			} else {
@@ -156,5 +160,20 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 				Activator.getDefault().getTestRequirementController().selectTestRequirement(selected);
 		    }
 		});
+		
+		testRequirementsViewer.getTable().addListener(SWT.Selection, new Listener() {
+		      public void handleEvent(Event event) {
+		        if(event.detail == SWT.CHECK)
+		        	for(TableItem item : testRequirementsViewer.getTable().getItems()) 
+		        		if(item == event.item)
+		        			if(item.getChecked()) {
+		        				Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.INFEASIBLE_PATH, item.getText(2));
+		        				Activator.getDefault().getTestRequirementController().enableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+		        			} else {
+		        				Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.INFEASIBLE_PATH, item.getText(2));
+		        				Activator.getDefault().getTestRequirementController().disableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+		        			}
+		      }
+		    });
 	}
 }

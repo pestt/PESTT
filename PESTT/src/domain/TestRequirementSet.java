@@ -15,10 +15,12 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 
 	private Set<Path<Integer>> testRequirementSet;
 	private Set<Path<Integer>> manuallyTestRequirementSet;
+	private Set<Path<Integer>> indeasibleSet;
 
 	public TestRequirementSet() {
 		testRequirementSet = new TreeSet<Path<Integer>>();
-		manuallyTestRequirementSet = new TreeSet<Path<Integer>>();;
+		manuallyTestRequirementSet = new TreeSet<Path<Integer>>();
+		indeasibleSet = new TreeSet<Path<Integer>>();
 	}
 
 	public void add(Path<Integer> path) {
@@ -43,6 +45,18 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 	
 	public int size() {
 		return testRequirementSet.size();
+	}
+	
+	public void enableInfeasible(Path<Integer> infeasible) {
+		indeasibleSet.add(infeasible);
+	}
+	
+	public void disableInfeasible(Path<Integer> infeasible) {
+		indeasibleSet.remove(infeasible);
+	}
+	
+	public boolean isInfeasible(Path<Integer> infeasible) {
+		return indeasibleSet.contains(infeasible);
 	}
 	
 	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {

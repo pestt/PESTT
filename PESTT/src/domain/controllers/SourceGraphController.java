@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Observer;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import adt.graph.Graph;
 import domain.SourceGraph;
@@ -46,6 +47,8 @@ public class SourceGraphController {
 	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
 		return sourceGraph.getJavadocTagAnnotations();
 	} 
-
-
+	
+	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {
+		return sourceGraph.getCompilationUnit(unit);
+	}
 }

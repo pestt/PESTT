@@ -19,6 +19,8 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import adt.graph.Path;
+
 import ui.constants.Description;
 import ui.constants.Messages;
 import ui.constants.Preferences;
@@ -54,7 +56,7 @@ public class RefreshHandler extends AbstractHandler {
 					viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
 					viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
 				}
-				resetDataStructures();
+				resetDataStructures(window);
 				keepCommandOptions();
 			} else
 				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES); 
@@ -63,7 +65,7 @@ public class RefreshHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private void resetDataStructures() {
+	private void resetDataStructures(IWorkbenchWindow window) {
 		String selectedMethod = Activator.getDefault().getEditorController().getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
@@ -74,10 +76,18 @@ public class RefreshHandler extends AbstractHandler {
 		
 		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocTagAnnotations();
 		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
-		if(!criteria.isEmpty()) {
+		if(criteria != null && !criteria.isEmpty()) {
 			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
 			Activator.getDefault().getTestRequirementController().generateTestRequirement();
-			Activator.getDefault().getTestRequirementController().updateTestrequirementPath(javadocAnnotations.get(JavadocTagAnnotations.ADICIONAL_TEST_REQUIREMENT_PATH));
+			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH)) {
+				String msg = input;
+				input = input.substring(1, input.length() - 1);
+				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
+				if(newTestRequirement != null) 
+					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
+				else
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
+			}
 		}
 	}
 

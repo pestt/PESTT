@@ -26,9 +26,9 @@ public class SourceGraph extends Observable {
 	
 	public void create(ICompilationUnit unit, String methodName) {
 		// Now create the AST for the ICompilationUnits
-		CompilationUnit parse = parse(unit);
-		StatementsVisitor visitor = new StatementsVisitor(methodName, parse);
-		parse.accept(visitor);
+		CompilationUnit parser = parse(unit);
+		StatementsVisitor visitor = new StatementsVisitor(methodName, parser);
+		parser.accept(visitor);
 		sourceGraph = visitor.getGraph();
 		javadocAnnotations = visitor.getJavadocTagAnnotations();
 		setChanged();
@@ -45,6 +45,10 @@ public class SourceGraph extends Observable {
 	
 	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
 		return javadocAnnotations;
+	}
+	
+	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {
+		return parse(unit);
 	}
 	
 	public void applyVisitor(IGraphVisitor<Integer> visitor) {

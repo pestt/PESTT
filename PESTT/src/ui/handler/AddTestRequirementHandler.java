@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import domain.constants.JavadocTagAnnotations;
+
 import ui.constants.Description;
 import ui.constants.Messages;
 import ui.dialog.InputDialog;
@@ -35,9 +37,10 @@ public class AddTestRequirementHandler extends AbstractHandler {
 		if(input != null)
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null) 
+				if(newTestRequirement != null) {
+					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, newTestRequirement.toString());
 					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
-				else {
+				} else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 					addNewTestReuirementPath(shell);
 				}

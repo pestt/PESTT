@@ -17,7 +17,9 @@ public class Messages {
 	public static final String TEST_REQUIREMENT_INPUT_TITLE = "PESTT - Test requirements input";
 	public static final String TEST_REQUIREMENT_INPUT_MSG = "You need to enter a test requirement.";
 	public static final String TEST_REQUIREMENT_INVALID_INPUT_MSG = "You need to enter a valid test requirement.";
-	public static final String TEST_REQUIREMENT_REMOVE_MSG = "Test requirement successfully removed.";
+	public static final String TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG = "The following test requirement is no longer valid.";
+	public static final String TEST_REQUIREMENT_REMOVE_MSG = "It will be removed from the list";
+	public static final String TEST_REQUIREMENT_SUCCESS_REMOVE_MSG = "Test requirement successfully removed.";
 	public static final String TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG = "You need to select a test requirement to be removed.";
 	public static final String TEST_REQUIREMENT_INFINITE_MSG = "The number os test requirements is infinite. (The method contains cycles)."; 
 	public static final String SHOW_STATISTICS_TITLE = "PESTT - Statistics";

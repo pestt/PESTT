@@ -4,8 +4,8 @@ public enum JavadocTagAnnotations {
 	
 	COVERAGE_CRITERIA("CoverageCriteria"), 
 	INFEASIBLE_PATH("InfeasiblePath"),
-	ADICIONAL_TEST_REQUIREMENT_PATH("AdicionalTestRequirementPath"),
-	ADICIONAL_TEST_PATH("AdicionaltestPath");
+	ADDITIONAL_TEST_REQUIREMENT_PATH("AdditionalTestRequirementPath"),
+	ADDITIONAL_TEST_PATH("AdditionalTestPath");
 	
 	
 	private final String tag;
