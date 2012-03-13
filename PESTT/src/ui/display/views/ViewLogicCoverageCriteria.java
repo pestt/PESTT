@@ -5,7 +5,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import ui.display.views.logic.LogicCoverageCriteria;
 
-
 public class ViewLogicCoverageCriteria extends ViewPart  {
 	
 	@Override

@@ -2,6 +2,8 @@ package ui.editor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -160,37 +162,87 @@ public class ActiveEditor {
 		return compilationUnit;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void addJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String path) {	
-		unit.recordModifications();
+	
+	public void addJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input) {	
+		if(tagAnnotation.getTag().equals(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()))
+			removeJavadocTagAnnotation(unit, method, tagAnnotation, input); 
 		Javadoc javadoc = method.getJavadoc();
 		if(javadoc == null) {
 			javadoc = method.getAST().newJavadoc();
 			method.setJavadoc(javadoc);
 		}
+		createTag(method, tagAnnotation, input, javadoc);
+		sortJavadocTagAnnotation(method, javadoc);
+		applychanges(unit);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void createTag(MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input, Javadoc javadoc) {
 		TagElement newTag = method.getAST().newTagElement();
 		newTag.setTagName(tagAnnotation.getTag());
 		TextElement newText = method.getAST().newTextElement();
-		newText.setText(path);
+		newText.setText(input);
 		newTag.fragments().add(newText);
 		javadoc.tags().add(newTag);
-		applychanges(unit);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input) {	
+		Javadoc javadoc = method.getJavadoc();
+		if(javadoc != null) {
+			List<TagElement> tags = (List<TagElement>) javadoc.tags();
+			int index = -1;
+			for(TagElement tag : tags) 
+				if(tag.getTagName().equals(tagAnnotation.getTag()))
+					if(tag.fragments().get(0).toString().equals(" " + input))
+						index = tags.indexOf(tag);
+			if(index != -1)
+				tags.remove(index);
+			applychanges(unit);
+		}
+	}
+	
+	public void cleanJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method) {
+		if(method.getJavadoc() != null) {
+			method.getJavadoc().delete();
+			applychanges(unit);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void removeJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String path) {	
-		unit.recordModifications();
-		Javadoc javadoc = method.getJavadoc();
+	private void sortJavadocTagAnnotation(MethodDeclaration method, Javadoc javadoc) {
+		String criteria = Description.EMPTY;
+		Set<String> testPath = new TreeSet<String>(); 
+		Set<String> testRequirements = new TreeSet<String>();
+		Set<String> infeasibles = new TreeSet<String>();
 		List<TagElement> tags = (List<TagElement>) javadoc.tags();
-		int index = -1;
 		for(TagElement tag : tags) 
-			if(tag.getTagName().equals(tagAnnotation.getTag()))
-				if(tag.fragments().get(0).toString().equals(" " + path))
-					index = tags.indexOf(tag);
-		if(index != -1)
-			tags.remove(index);
-		applychanges(unit);
-					
+			if(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag().equals(tag.getTagName())) {
+				 criteria = tag.fragments().get(0).toString();
+				 criteria = criteria.substring(0, criteria.length());
+			} else if(JavadocTagAnnotations.INFEASIBLE_PATH.getTag().equals(tag.getTagName())) {
+				String str = tag.fragments().get(0).toString();
+				str = str.substring(1, str.length());
+				infeasibles.add(str);
+			} else if(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag().equals(tag.getTagName())) {
+				String str = tag.fragments().get(0).toString();
+				str = str.substring(1, str.length());
+				testRequirements.add(str);
+			} else if(JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag().equals(tag.getTagName())) {
+				String str = tag.fragments().get(0).toString();
+				str = str.substring(1, str.length());
+				testPath.add(str);
+			}
+		javadoc.delete();
+		javadoc = method.getAST().newJavadoc();
+		method.setJavadoc(javadoc);
+		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
+		for(String str : infeasibles)
+			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH, str, javadoc);
+		for(String str : testRequirements)
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, str, javadoc);
+		for(String str : testPath)
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, str, javadoc);
 	}
 	
 	private void applychanges(CompilationUnit unit) {

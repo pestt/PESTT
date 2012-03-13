@@ -59,7 +59,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		for(Path<Integer> path : selectedTestPaths) {
 			aux = getCoveredNodes(path);
 			for(Node<Integer> node : aux)
-				if(!nodes.contains(node))
+				if(!nodes.contains(node)) 
 					nodes.add(node);
 		}
 		int total = getTotalNodes();
@@ -159,7 +159,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	private String getTestRequirementsStatistics() {
 		String unit = StatisticsElements.TESTREQUIREMENTS;;
 		Set<Path<Integer>> testRequirements = getTestPathCoverage();
-		int total = getTotalTestRequirements();
+		int total = getTotalTestRequirements() - getInfeasible();
 		int passed = testRequirements.size();
 		String percentage = getPercentage(passed, total);
 		return totalOutpu(unit, passed, total, percentage);
@@ -171,6 +171,10 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	private int getTotalTestRequirements() {
 		return Activator.getDefault().getTestRequirementController().size();
+	}
+	
+	private int getInfeasible() {
+		return Activator.getDefault().getTestRequirementController().sizeInfeasibles();
 	}
 	
 	private String getPercentage(int passed, int total) {

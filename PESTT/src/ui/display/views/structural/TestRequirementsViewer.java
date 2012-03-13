@@ -69,6 +69,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 				testRequirements.add(iterator.next());
 			testRequirementsViewer.setInput(testRequirements);
 			cleanPathStatus();
+			setInfeasibles(((TestRequirementChangedEvent) data).infeasibles);
 		} else if(data instanceof TestPathSelectedEvent) {
 			if(((TestPathSelectedEvent) data).selectedTestPaths != null)
 				if(!((TestPathSelectedEvent) data).selectedTestPaths.isEmpty())
@@ -78,7 +79,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		} else if(data instanceof TestPathChangedEvent) 
 			cleanPathStatus();
 	}
-	
+
 	public void dispose() {
 		testRequirementsControl.dispose();
 	}
@@ -142,12 +143,25 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.GREEN_COVERAGE);
 			} else {
-				item.setText(0, Integer.toString(n));
+				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.FAIL));
 				item.setBackground(Colors.RED_COVERAGE);
 			}
 			n++;
 		}
+	}
+	
+	private void setInfeasibles(Iterator<Path<Integer>> iterator) {
+		while(iterator.hasNext()) {
+			Path<Integer> path = iterator.next();
+			for(TableItem item : testRequirementsViewer.getTable().getItems()) {
+				if(item.getText(2).equals(path.toString()) && !item.getChecked()) {
+					item.setChecked(true);
+					break;
+				}
+			}
+		}
+		
 	}
 	
 	private void setSelections() {

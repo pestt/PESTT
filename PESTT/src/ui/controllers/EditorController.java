@@ -71,12 +71,13 @@ public class EditorController extends Observable {
 	}
 
 	
-	public void addJavadocTagAnnotation(JavadocTagAnnotations tagAnnotation, String path) {
+	public void addJavadocTagAnnotation(JavadocTagAnnotations tagAnnotation, String input) {
 		CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(editor.getCompilationUnit());
+		unit.recordModifications();
 		for(MethodDeclaration method : ((TypeDeclaration) unit.types().get(0)).getMethods())
 			if(method.getName().toString().equals(getSelectedMethod())) {
-				if(!existTag(method.getJavadoc(), tagAnnotation, path))
-					editor.addJavadocTagAnnotation(unit, method, tagAnnotation, path);	
+				if(!existTag(method.getJavadoc(), tagAnnotation, input))
+					editor.addJavadocTagAnnotation(unit, method, tagAnnotation, input);	
 				break;
 			}
 	}
@@ -96,8 +97,23 @@ public class EditorController extends Observable {
 
 	public void removeJavadocTagAnnotation(JavadocTagAnnotations tagAnnotation, String path) {
 		CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(editor.getCompilationUnit());
-		for(MethodDeclaration method : ((TypeDeclaration) unit.types().get(0)).getMethods())
-			if(method.getName().toString().equals(getSelectedMethod())) 
+		unit.recordModifications();
+		for(MethodDeclaration method : ((TypeDeclaration) unit.types().get(0)).getMethods()) 
+			if(method.getName().toString().equals(getSelectedMethod())) {
 				editor.removeJavadocTagAnnotation(unit, method, tagAnnotation, path);
+				break;
+			}
+	}
+	
+	public void clearJavadocTagAnnotation() {
+		if(Activator.getDefault().getEditorController().getActiveEditor() == null)
+			Activator.getDefault().getEditorController().setEditor(new ActiveEditor());
+		CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(editor.getCompilationUnit());
+		unit.recordModifications();
+		for(MethodDeclaration method : ((TypeDeclaration) unit.types().get(0)).getMethods()) 
+			if(method.getName().toString().equals(getSelectedMethod())) {
+				editor.cleanJavadocTagAnnotation(unit, method);
+				break;
+			}
 	}
 }

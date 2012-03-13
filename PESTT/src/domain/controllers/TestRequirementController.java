@@ -19,6 +19,7 @@ import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 import domain.coverage.algorithms.CoverageAlgorithmsFactory;
 import domain.coverage.algorithms.ICoverageAlgorithms;
+import domain.events.TestRequirementSelectedCriteriaEvent;
 import domain.events.TestRequirementSelectedEvent;
 
 
@@ -54,6 +55,10 @@ public class TestRequirementController extends Observable {
 		testRequirementSet.clear();
 	}
 	
+	public int size() {
+		return testRequirementSet.size();
+	}
+	
 	public void enableInfeasible(Path<Integer> infeasible) {
 		testRequirementSet.enableInfeasible(infeasible);
 	}
@@ -66,8 +71,8 @@ public class TestRequirementController extends Observable {
 		return testRequirementSet.isInfeasible(infeasible);
 	}
 	
-	public int size() {
-		return testRequirementSet.size();
+	public int sizeInfeasibles() {
+		return testRequirementSet.sizeInfeasibles();
 	}
 	
 	public Path<Integer> createTestRequirement(String input) {
@@ -137,6 +142,8 @@ public class TestRequirementController extends Observable {
 
 	public void selectCoverageCriteria(GraphCoverageCriteriaId selected) {
 		this.selectedCoverageAlgorithm = selected;
+		setChanged();
+		notifyObservers(new TestRequirementSelectedCriteriaEvent(selected));
 	}
 
 	public void generateTestRequirement() {

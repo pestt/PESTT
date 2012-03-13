@@ -2,6 +2,8 @@ package ui.display.views.structural;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import main.activator.Activator;
 
@@ -19,11 +21,12 @@ import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import ui.constants.Colors;
-
 import domain.constants.GraphCoverageCriteriaId;
+import domain.constants.JavadocTagAnnotations;
+import domain.events.TestRequirementSelectedCriteriaEvent;
 
 @SuppressWarnings("deprecation")
-public class GraphCoverageCriteria {
+public class GraphCoverageCriteria implements Observer {
 	
 	private Graph graph;
 	private Map<GraphCoverageCriteriaId, GraphNode> nodes;
@@ -36,8 +39,13 @@ public class GraphCoverageCriteria {
 		setEdges();
 		setLayout();
 		createSelectionListener();
+		Activator.getDefault().getTestRequirementController().addObserver(this);
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
+	}
+	
+	public void dispose() {
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 	}
 	
 	private void setNodes() {
@@ -118,6 +126,12 @@ public class GraphCoverageCriteria {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.EDGE), nodes.get(GraphCoverageCriteriaId.NODE));
 	}
 	
+	@Override
+	public void update(Observable obs, Object data) {
+		if(data instanceof TestRequirementSelectedCriteriaEvent)
+			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
+	}
+	
 	private void setLayout() {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
@@ -131,7 +145,16 @@ public class GraphCoverageCriteria {
 					setSelected(null);
 					setSelected((GraphItem) e.item);
 					GraphCoverageCriteriaId option = (GraphCoverageCriteriaId) getSelected().getData();
+					if(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria() != null)
+						Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, 
+							Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString());
+					else 
+						Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
 					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(option);
+					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, option.toString());
+				} else {
+					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(null);
+					Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
 				}
 			}
 		};	

@@ -22,6 +22,7 @@ import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SimplePath;
+import domain.constants.JavadocTagAnnotations;
 import domain.coverage.instrument.CoverageData;
 import domain.coverage.instrument.ICoverageData;
 
@@ -48,16 +49,17 @@ public class AddTestPathHandler extends AbstractHandler {
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = createTestPath(input);
 				if(newTestPath != null) {
-					Activator.getDefault().getTestPathController().add(newTestPath);
+					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, newTestPath.toString());
+					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new CoverageData(newTestPath));
 					Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);			
 				} else {
-					MessageDialog.openInformation(window.getShell(), Messages.GRAPH_INPUT_TITLE, Messages.GRAPH_INVALID_INPUT_MSG); // message displayed when the inserted graph is not valid.
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_INPUT_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted graph is not valid.
 					addTableLine(shell);
 				}
 			} else {
-				MessageDialog.openInformation(window.getShell(), Messages.GRAPH_INPUT_TITLE, Messages.GRAPH_INPUT_MSG); // message displayed when the inserted graph is empty.
+				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_INPUT_TITLE, Messages.TEST_PATH_INPUT_MSG); // message displayed when the inserted graph is empty.
 				addTableLine(shell);
 			}
 	}

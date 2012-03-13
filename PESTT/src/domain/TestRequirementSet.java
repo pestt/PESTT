@@ -15,32 +15,32 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 
 	private Set<Path<Integer>> testRequirementSet;
 	private Set<Path<Integer>> manuallyTestRequirementSet;
-	private Set<Path<Integer>> indeasibleSet;
+	private Set<Path<Integer>> infeasibleSet;
 
 	public TestRequirementSet() {
 		testRequirementSet = new TreeSet<Path<Integer>>();
 		manuallyTestRequirementSet = new TreeSet<Path<Integer>>();
-		indeasibleSet = new TreeSet<Path<Integer>>();
+		infeasibleSet = new TreeSet<Path<Integer>>();
 	}
 
 	public void add(Path<Integer> path) {
 		testRequirementSet.add(path);
 		manuallyTestRequirementSet.add(path);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), infeasibles(), hasInfinitePath()));
 	}
 
 	public void remove(Path<Integer> selected) {
 		testRequirementSet.remove(selected);
 		manuallyTestRequirementSet.remove(selected);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), infeasibles(), hasInfinitePath()));
 	}
 	
 	public void clear() {
 		testRequirementSet.clear();
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), infeasibles(), hasInfinitePath()));
 	}
 	
 	public int size() {
@@ -48,21 +48,34 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 	}
 	
 	public void enableInfeasible(Path<Integer> infeasible) {
-		indeasibleSet.add(infeasible);
+		infeasibleSet.add(infeasible);
 	}
 	
 	public void disableInfeasible(Path<Integer> infeasible) {
-		indeasibleSet.remove(infeasible);
+		infeasibleSet.remove(infeasible);
+	}
+	
+	public void clearInfeasibles() {
+		infeasibleSet.clear();
 	}
 	
 	public boolean isInfeasible(Path<Integer> infeasible) {
-		return indeasibleSet.contains(infeasible);
+		return infeasibleSet.contains(infeasible);
+	}
+	
+	public Iterator<Path<Integer>> infeasibles() {
+		return infeasibleSet.iterator(); 
+	}
+	
+	public int sizeInfeasibles() {
+		return infeasibleSet.size();
 	}
 	
 	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {
 		testRequirementSet = algorithm.getTestRequirements();
+		testRequirementSet.addAll(manuallyTestRequirementSet);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(iterator(), hasInfinitePath()));
+		notifyObservers(new TestRequirementChangedEvent(iterator(), infeasibles(), hasInfinitePath()));
 	}
 	
 	public boolean hasInfinitePath() {
@@ -97,7 +110,7 @@ public class TestRequirementSet extends Observable implements Iterable<Path<Inte
 	}
 	
 	@Override
-	public Iterator<Path<Integer>> iterator() {
+	public Iterator<Path<Integer>> iterator() {		
 		return testRequirementSet.iterator();
 	}
 }

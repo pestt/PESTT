@@ -42,12 +42,12 @@ public class TestPathController extends Observable {
 		testPathSet.addObserver(o);
 	}
 
-	public void add(Path<Integer> newTestPath) {
+	public void addTestPath(Path<Integer> newTestPath) {
 		testPathSet.add(newTestPath);
 		selectTestPath(null);
 	}
 
-	public void remove() {
+	public void removeTestPath() {
 		testPathSet.remove(selectedTestPaths);
 		selectTestPath(null);
 	}

@@ -1,9 +1,9 @@
 package domain.coverage.algorithms;
 
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.TreeSet;
 
 import adt.graph.CyclePath;
 import adt.graph.Graph;
@@ -22,7 +22,7 @@ public class EdgeNCoverage<V extends Comparable<V>> implements ICoverageAlgorith
 	public EdgeNCoverage(Graph<V> graph, int edgeSize) {
 		this.graph = graph;
 		this.edgeSize = edgeSize;
-		paths = new HashSet<Path<V>>();
+		paths = new TreeSet<Path<V>>();
 		deque = new LinkedList<Node<V>>();
 	}
 

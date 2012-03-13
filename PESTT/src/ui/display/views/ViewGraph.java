@@ -24,6 +24,5 @@ public class ViewGraph extends ViewPart {
 		graph.dispose();
 	super.dispose();
 	}
-
 	
 }
