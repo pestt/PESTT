@@ -2,8 +2,10 @@ package ui.editor;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Observable;
+import java.util.Observer;
+
+import main.activator.Activator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +23,7 @@ import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -32,9 +35,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ui.constants.Description;
+import adt.graph.Path;
 import domain.constants.JavadocTagAnnotations;
+import domain.events.TestPathChangedEvent;
+import domain.events.TestRequirementChangedEvent;
+import domain.events.TestRequirementSelectedCriteriaEvent;
 
-public class ActiveEditor {
+public class ActiveEditor implements Observer {
 
 	private IEditorPart part;
 	private ITextSelection textSelect; // text selected in editor.
@@ -44,19 +51,18 @@ public class ActiveEditor {
 	private IJavaProject javaProject;
 
 	public ActiveEditor() {
-		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().getActiveEditor();
+		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
+		Activator.getDefault().getTestPathController().addObserverTestPath(this);
+		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		ITextEditor editor = (ITextEditor) part; // obtain the text editor.
-		ISelection select = editor.getSelectionProvider().getSelection(); // the
-																			// selected
-																			// text.
+		ISelection select = editor.getSelectionProvider().getSelection(); // the selected text.
 		textSelect = (ITextSelection) select; // get the text selected.
-		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the
-																		// file
+		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the file
 		marker = new Markers(file);
 		IProject project = file.getProject();
 		try {
-			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+			if(project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
 				javaProject = JavaCore.create(project);
 				compilationUnit = JavaCore.createCompilationUnitFrom(file);
 			}
@@ -66,8 +72,7 @@ public class ActiveEditor {
 	}
 
 	public void createMarker(String markerType, int offset, int length) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.bringToTop(part);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
 		marker.createMarks(markerType, offset, length);
 	}
 
@@ -83,18 +88,25 @@ public class ActiveEditor {
 		IPackageDeclaration[] pd;
 		try {
 			pd = compilationUnit.getPackageDeclarations();
-			if (pd.length != 0)
+			if(pd.length != 0)
 				return pd[0].getElementName();
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
+	
+	private MethodDeclaration getMethodDeclaration(CompilationUnit unit) {
+		for(MethodDeclaration method : ((TypeDeclaration) unit.types().get(0)).getMethods()) 
+			if(method.getName().toString().equals(getSelectedMethod())) 
+				return method;
+		return null;
+	}
 
 	public List<String> getMethodNames() {
 		List<String> methodNames = new LinkedList<String>();
 		try {
-			for (IType type : compilationUnit.getAllTypes())
+			for(IType type : compilationUnit.getAllTypes())
 				for (IMethod method : type.getMethods())
 					methodNames.add(method.getElementName());
 		} catch (JavaModelException e) {
@@ -109,10 +121,8 @@ public class ActiveEditor {
 				for(IMethod method : type.getMethods()) {
 					int cursorPosition = textSelect.getOffset();
 					int methodStart = method.getSourceRange().getOffset();
-					int methodEnd = method.getSourceRange().getOffset()
-							+ method.getSourceRange().getLength();
-					if (methodStart <= cursorPosition
-							&& cursorPosition <= methodEnd)
+					int methodEnd = method.getSourceRange().getOffset() + method.getSourceRange().getLength();
+					if(methodStart <= cursorPosition && cursorPosition <= methodEnd)
 						return method.getElementName();
 				}
 		} catch (JavaModelException e) {
@@ -122,18 +132,17 @@ public class ActiveEditor {
 	}
 
 	public boolean isInMethod() {
-		if (getSelectedMethod() != null)
+		if(getSelectedMethod() != null)
 			return true;
 		return false;
 	}
 
 	public String getClassName() {
-		return compilationUnit.getElementName().substring(0,
-				compilationUnit.getElementName().length() - 5);
+		return compilationUnit.getElementName().substring(0, compilationUnit.getElementName().length() - 5);
 	}
 
 	public String getLocation() {
-		if (!getPackageName().equals(Description.EMPTY))
+		if(!getPackageName().equals(Description.EMPTY))
 			return getPackageName() + "." + getClassName();
 		else
 			return getClassName();
@@ -141,17 +150,8 @@ public class ActiveEditor {
 
 	public String getClassFilePath() {
 		try {
-			String outputFolder = javaProject
-					.getOutputLocation()
-					.toOSString()
-					.substring(
-							getProjectName().length() + 2,
-							javaProject.getOutputLocation().toOSString()
-									.length());
-			return javaProject.getResource().getLocation().toOSString()
-					+ IPath.SEPARATOR + outputFolder + IPath.SEPARATOR
-					+ getPackageName() + IPath.SEPARATOR + getClassName()
-					+ ".class";
+			String outputFolder = javaProject.getOutputLocation().toOSString().substring(getProjectName().length() + 2, javaProject.getOutputLocation().toOSString().length());
+			return javaProject.getResource().getLocation().toOSString() + IPath.SEPARATOR + outputFolder + IPath.SEPARATOR + getPackageName() + IPath.SEPARATOR + getClassName() + ".class";
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 			return "";
@@ -162,17 +162,49 @@ public class ActiveEditor {
 		return compilationUnit;
 	}
 
-	
-	public void addJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input) {	
-		if(tagAnnotation.getTag().equals(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()))
-			removeJavadocTagAnnotation(unit, method, tagAnnotation, input); 
-		Javadoc javadoc = method.getJavadoc();
-		if(javadoc == null) {
-			javadoc = method.getAST().newJavadoc();
-			method.setJavadoc(javadoc);
+	@Override
+	public void update(Observable obs, Object data) {
+		CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(compilationUnit);
+		unit.recordModifications();
+		MethodDeclaration method = getMethodDeclaration(unit);
+		if(data instanceof TestRequirementSelectedCriteriaEvent) {
+			if(method != null && ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria != null) {
+				String criteria = ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria.toString();
+				Iterable<Path<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
+				Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+				Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
+				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+			}			
+		} else if(data instanceof TestRequirementChangedEvent) {
+			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
+				String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
+				Iterable<Path<Integer>> infeasibles = ((TestRequirementChangedEvent) data).infeasigles;
+				Iterable<Path<Integer>> manuallyAdded = ((TestRequirementChangedEvent) data).manuallyAdded;
+				Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
+				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+			}		
+		} else if(data instanceof TestPathChangedEvent) {
+			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
+				String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
+				Iterable<Path<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
+				Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+				Iterable<Path<Integer>> testPath =((TestPathChangedEvent) data).manuallyAdded;
+				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+			}			
 		}
-		createTag(method, tagAnnotation, input, javadoc);
-		sortJavadocTagAnnotation(method, javadoc);
+	}
+	
+	public void setJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, String criteria, Iterable<Path<Integer>> infeasibles, Iterable<Path<Integer>> testRequireents, Iterable<Path<Integer>> testPath) {	
+		Javadoc javadoc = method.getAST().newJavadoc();
+		method.setJavadoc(javadoc);
+		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
+		for(Path<Integer> path : infeasibles)
+			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH, path.toString(), javadoc);
+		for(Path<Integer> path : testRequireents)
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, path.toString(), javadoc);
+		
+		for(Path<Integer> path : testPath)
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, path.toString(), javadoc);
 		applychanges(unit);
 	}
 
@@ -184,65 +216,6 @@ public class ActiveEditor {
 		newText.setText(input);
 		newTag.fragments().add(newText);
 		javadoc.tags().add(newTag);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void removeJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input) {	
-		Javadoc javadoc = method.getJavadoc();
-		if(javadoc != null) {
-			List<TagElement> tags = (List<TagElement>) javadoc.tags();
-			int index = -1;
-			for(TagElement tag : tags) 
-				if(tag.getTagName().equals(tagAnnotation.getTag()))
-					if(tag.fragments().get(0).toString().equals(" " + input))
-						index = tags.indexOf(tag);
-			if(index != -1)
-				tags.remove(index);
-			applychanges(unit);
-		}
-	}
-	
-	public void cleanJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method) {
-		if(method.getJavadoc() != null) {
-			method.getJavadoc().delete();
-			applychanges(unit);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void sortJavadocTagAnnotation(MethodDeclaration method, Javadoc javadoc) {
-		String criteria = Description.EMPTY;
-		Set<String> testPath = new TreeSet<String>(); 
-		Set<String> testRequirements = new TreeSet<String>();
-		Set<String> infeasibles = new TreeSet<String>();
-		List<TagElement> tags = (List<TagElement>) javadoc.tags();
-		for(TagElement tag : tags) 
-			if(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag().equals(tag.getTagName())) {
-				 criteria = tag.fragments().get(0).toString();
-				 criteria = criteria.substring(0, criteria.length());
-			} else if(JavadocTagAnnotations.INFEASIBLE_PATH.getTag().equals(tag.getTagName())) {
-				String str = tag.fragments().get(0).toString();
-				str = str.substring(1, str.length());
-				infeasibles.add(str);
-			} else if(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag().equals(tag.getTagName())) {
-				String str = tag.fragments().get(0).toString();
-				str = str.substring(1, str.length());
-				testRequirements.add(str);
-			} else if(JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag().equals(tag.getTagName())) {
-				String str = tag.fragments().get(0).toString();
-				str = str.substring(1, str.length());
-				testPath.add(str);
-			}
-		javadoc.delete();
-		javadoc = method.getAST().newJavadoc();
-		method.setJavadoc(javadoc);
-		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
-		for(String str : infeasibles)
-			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH, str, javadoc);
-		for(String str : testRequirements)
-			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, str, javadoc);
-		for(String str : testPath)
-			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, str, javadoc);
 	}
 	
 	private void applychanges(CompilationUnit unit) {

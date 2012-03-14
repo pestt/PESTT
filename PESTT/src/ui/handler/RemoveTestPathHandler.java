@@ -1,7 +1,5 @@
 package ui.handler;
 
-import java.util.Set;
-
 import main.activator.Activator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -15,7 +13,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import ui.constants.Messages;
 import ui.dialog.RemoveDialog;
 import adt.graph.Path;
-import domain.constants.JavadocTagAnnotations;
 
 public class RemoveTestPathHandler extends AbstractHandler {
 
@@ -39,9 +36,6 @@ public class RemoveTestPathHandler extends AbstractHandler {
 			dialog.open();
 			String input = dialog.getInput();
 			if(input != null) {
-				Set<Path<Integer>> selectedPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-				for(Path<Integer> selectedPath : selectedPaths)
-					Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, selectedPath.toString());
 				Activator.getDefault().getTestPathController().removeCoverageData();
 				Activator.getDefault().getTestPathController().removeTestPath();
 				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_INPUT_TITLE, Messages.TEST_PATH_SUCCESS_REMOVE_MSG); // message displayed when the graph is successfully remove.

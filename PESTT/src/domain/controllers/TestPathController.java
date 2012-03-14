@@ -1,6 +1,5 @@
 package domain.controllers;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,8 +82,12 @@ public class TestPathController extends Observable {
 			this.selectedTourType = TourType.TOUR;
 	}
 	
-	public Iterator<Path<Integer>> iterator() {
-		return testPathSet.iterator();
+	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {
+		return testPathSet.getTestPathsManuallyAdded();
+	}
+	
+	public Iterable<Path<Integer>> getTestPaths() {
+		return testPathSet.getTestPaths();
 	}
 	
 	public void getStatistics() {
@@ -131,7 +134,6 @@ public class TestPathController extends Observable {
 		}
 
 		return new CoverageData(coverageData);
-		
 	}
 	
 	public void removeCoverageData() {
@@ -141,9 +143,6 @@ public class TestPathController extends Observable {
 
 	public void unSelect() {
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(iterator()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
-
-	
-	
 }

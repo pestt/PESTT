@@ -1,7 +1,6 @@
 package ui.display.views.structural;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -52,9 +51,8 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			Iterator<Path<Integer>> iterator = ((TestPathChangedEvent) data).testPathSet;
-			while(iterator.hasNext()) 
-				testPaths.add(iterator.next());
+			for(Path<Integer> path : ((TestPathChangedEvent) data).testPathSet)
+				testPaths.add(path);
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
@@ -105,9 +103,8 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 		
 				if(hasTotal) {
 					testRequirements.clear();
-					Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().iterator();
-					while(iterator.hasNext())
-						testRequirements.add(iterator.next());
+					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
+						testRequirements.add(path);
 				}
 					
 				Activator.getDefault().getTestPathController().selectTestPath(testRequirements);

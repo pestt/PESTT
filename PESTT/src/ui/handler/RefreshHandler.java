@@ -20,8 +20,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import adt.graph.Path;
-
 import ui.constants.Description;
 import ui.constants.Messages;
 import ui.constants.Preferences;
@@ -29,6 +27,7 @@ import ui.display.views.ViewGraph;
 import ui.display.views.ViewGraphCoverageCriteria;
 import ui.display.views.ViewStructuralCriteria;
 import ui.editor.ActiveEditor;
+import adt.graph.Path;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.JavadocTagAnnotations;
 import domain.constants.Layer;
@@ -74,7 +73,7 @@ public class RefreshHandler extends AbstractHandler {
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
 		Activator.getDefault().getTestPathController().clear();
-		Activator.getDefault().getCoverageDataController().cleanCoverageData();
+		Activator.getDefault().getCoverageDataController().clean();
 		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
 		Activator.getDefault().getStatisticsController().cleanStatistics();
 		
@@ -82,15 +81,6 @@ public class RefreshHandler extends AbstractHandler {
 		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
 		if(criteria != null && !criteria.isEmpty()) {
 			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
-			for(String input : javadocAnnotations.get(JavadocTagAnnotations.INFEASIBLE_PATH)) {
-				String msg = input;
-				input = input.substring(1, input.length() - 1);
-				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null) 
-					Activator.getDefault().getTestRequirementController().enableInfeasible(newTestRequirement);
-				else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
-			}
 			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH)) {
 				String msg = input;
 				input = input.substring(1, input.length() - 1);
@@ -100,12 +90,20 @@ public class RefreshHandler extends AbstractHandler {
 				else
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
 			}
+			for(String input : javadocAnnotations.get(JavadocTagAnnotations.INFEASIBLE_PATH)) {
+				String msg = input;
+				input = input.substring(1, input.length() - 1);
+				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
+				if(newTestRequirement != null) 
+					Activator.getDefault().getTestRequirementController().enableInfeasible(newTestRequirement);
+				else
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
+			}
 			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_PATH)) {
 				String msg = input;
 				input = input.substring(1, input.length() - 1);
 				Path<Integer> newTestPath = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
 				if(newTestPath != null) {
-					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, newTestPath.toString());
 					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new CoverageData(newTestPath));

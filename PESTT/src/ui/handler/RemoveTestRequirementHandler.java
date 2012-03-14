@@ -13,7 +13,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import ui.constants.Messages;
 import ui.dialog.RemoveDialog;
 import adt.graph.Path;
-import domain.constants.JavadocTagAnnotations;
 
 public class RemoveTestRequirementHandler extends AbstractHandler {
 
@@ -35,9 +34,6 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 			dialog.open();
 			String input = dialog.getInput();
 			if(input != null) {
-				Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, selectedPath.toString());
-				if(Activator.getDefault().getTestRequirementController().isInfeasible(selectedPath))
-					Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.INFEASIBLE_PATH, selectedPath.toString());
 				Activator.getDefault().getTestRequirementController().removeSelectedTestRequirement();
 				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_SUCCESS_REMOVE_MSG); // message displayed when the graph is successfully remove.
 			}

@@ -17,18 +17,18 @@ public class CoverageDataController extends Observable {
 	}
 
 	public void addCoverageData(Path<Integer> newTestPath, List<ICoverageData> newData) {
-		coverageDataMap.addCoverageData(newTestPath, newData);
+		coverageDataMap.add(newTestPath, newData);
 	}
 
 	public void removeSelectedCoverageData(Path<Integer> path) {
-		coverageDataMap.removeCoverageData(path);
+		coverageDataMap.remove(path);
 	}
 	
 	public ICoverageData getCoverageData(Path<Integer> path) {
 		return coverageDataMap.getData(path);
 	}
 	
-	public void cleanCoverageData() {
+	public void clean() {
 		coverageDataMap.clean();
 	}
 }

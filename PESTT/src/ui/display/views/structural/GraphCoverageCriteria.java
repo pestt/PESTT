@@ -22,7 +22,6 @@ import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import ui.constants.Colors;
 import domain.constants.GraphCoverageCriteriaId;
-import domain.constants.JavadocTagAnnotations;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 
 @SuppressWarnings("deprecation")
@@ -145,17 +144,17 @@ public class GraphCoverageCriteria implements Observer {
 					setSelected(null);
 					setSelected((GraphItem) e.item);
 					GraphCoverageCriteriaId option = (GraphCoverageCriteriaId) getSelected().getData();
-					if(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria() != null)
-						Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, 
-							Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString());
-					else 
-						Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
+			//		if(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria() != null)
+			//			Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, 
+			//				Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString());
+			//		else 
+			//			Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
 					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(option);
-					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, option.toString());
-				} else {
+			//		Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, option.toString());
+				} else
 					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(null);
-					Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
-				}
+			//		Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
+				
 			}
 		};	
 		graph.addSelectionListener(event);				

@@ -16,11 +16,11 @@ public class CoverageDataSet {
 		coverageDataMap = new HashMap<Path<Integer>, List<ICoverageData>>();
 	}
 
-	public void addCoverageData(Path<Integer> path, List<ICoverageData> data) {
+	public void add(Path<Integer> path, List<ICoverageData> data) {
 		coverageDataMap.put(path, data);
 	}
 
-	public void removeCoverageData(Path<Integer> selected) {
+	public void remove(Path<Integer> selected) {
 		coverageDataMap.remove(selected);
 	}
 	

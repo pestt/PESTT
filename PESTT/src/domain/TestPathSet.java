@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -8,7 +7,7 @@ import java.util.TreeSet;
 import adt.graph.Path;
 import domain.events.TestPathChangedEvent;
 
-public class TestPathSet extends Observable implements Iterable<Path<Integer>> {
+public class TestPathSet extends Observable {
 
 	private Set<Path<Integer>> testPathSet;
 	private Set<Path<Integer>> manuallyTestPathSet;
@@ -22,7 +21,7 @@ public class TestPathSet extends Observable implements Iterable<Path<Integer>> {
 		testPathSet.add(newTestPath);
 		manuallyTestPathSet.add(newTestPath);
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(iterator()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 
 	public void remove(Set<Path<Integer>> selectedTestPaths) {
@@ -31,17 +30,20 @@ public class TestPathSet extends Observable implements Iterable<Path<Integer>> {
 			manuallyTestPathSet.remove(path);
 		}
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(iterator()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 	
 	public void clear() {
 		testPathSet.clear();
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(iterator()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 	
-	@Override
-	public Iterator<Path<Integer>> iterator() {
-		return testPathSet.iterator();
+	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {		
+		return manuallyTestPathSet;
+	}
+	
+	public Iterable<Path<Integer>> getTestPaths() {
+		return testPathSet;
 	}
 }

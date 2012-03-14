@@ -1,6 +1,5 @@
 package domain.controllers;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -67,12 +66,20 @@ public class TestRequirementController extends Observable {
 		testRequirementSet.disableInfeasible(infeasible);
 	}
 	
-	public boolean isInfeasible(Path<Integer> infeasible) {
-		return testRequirementSet.isInfeasible(infeasible);
-	}
-	
 	public int sizeInfeasibles() {
 		return testRequirementSet.sizeInfeasibles();
+	}
+	
+	public Iterable<Path<Integer>> getInfeasiblesTestRequirements() {
+		return testRequirementSet.getInfeasiblesTestRequirements();
+	}
+	
+	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
+		return testRequirementSet.getTestRequirementsManuallyAdded();
+	}
+	
+	public Iterable<Path<Integer>> getTestRequirements() {
+		return testRequirementSet.getTestRequirements();
 	}
 	
 	public Path<Integer> createTestRequirement(String input) {
@@ -163,9 +170,5 @@ public class TestRequirementController extends Observable {
 			default:
 				return null;	
 		}
-	}
-	
-	public Iterator<Path<Integer>> iterator() {
-		return testRequirementSet.iterator();
 	}
 }

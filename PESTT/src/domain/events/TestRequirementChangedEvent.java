@@ -1,18 +1,18 @@
 package domain.events;
 
-import java.util.Iterator;
-
 import adt.graph.Path;
 
 public class TestRequirementChangedEvent {
 	
-	public final Iterator<Path<Integer>> testRequirementSet;
-	public final Iterator<Path<Integer>> infeasibles;
+	public final Iterable<Path<Integer>> testRequirementSet;
+	public final Iterable<Path<Integer>> manuallyAdded;
+	public final Iterable<Path<Integer>> infeasigles;
 	public final boolean hasInfinitePath;
 	
-	public TestRequirementChangedEvent(Iterator<Path<Integer>> testRequirementSet, Iterator<Path<Integer>> infeasibles, boolean hasInfinitePath) {
+	public TestRequirementChangedEvent(Iterable<Path<Integer>> testRequirementSet, Iterable<Path<Integer>> infeasigles, Iterable<Path<Integer>> manuallyAdded, boolean hasInfinitePath) {
 		this.testRequirementSet = testRequirementSet;
-		this.infeasibles = infeasibles;
+		this.manuallyAdded = manuallyAdded;
+		this.infeasigles = infeasigles;
 		this.hasInfinitePath = hasInfinitePath;
 	}
 }

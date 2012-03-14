@@ -1,14 +1,14 @@
 package domain.events;
 
-import java.util.Iterator;
-
 import adt.graph.Path;
 
 public class TestPathChangedEvent {
 	
-	public final Iterator<Path<Integer>> testPathSet;
+	public final Iterable<Path<Integer>> testPathSet;
+	public final Iterable<Path<Integer>> manuallyAdded;
 	
-	public TestPathChangedEvent(Iterator<Path<Integer>> testPathSet) {
+	public TestPathChangedEvent(Iterable<Path<Integer>> testPathSet, Iterable<Path<Integer>> manuallyAdded) {
 		this.testPathSet = testPathSet;
+		this.manuallyAdded = manuallyAdded;
 	}
 }

@@ -22,7 +22,6 @@ import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SimplePath;
-import domain.constants.JavadocTagAnnotations;
 import domain.coverage.instrument.CoverageData;
 import domain.coverage.instrument.ICoverageData;
 
@@ -49,7 +48,6 @@ public class AddTestPathHandler extends AbstractHandler {
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = createTestPath(input);
 				if(newTestPath != null) {
-					Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, newTestPath.toString());
 					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 					List<ICoverageData> newData = new LinkedList<ICoverageData>();
 					newData.add(new CoverageData(newTestPath));
