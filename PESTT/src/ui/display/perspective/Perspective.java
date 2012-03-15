@@ -34,6 +34,7 @@ public class Perspective implements IPerspectiveFactory {
 				
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorarea);
 		bottom.addView(Description.VIEW_STRUCTURAL_COVERAGE);
+		bottom.addView(Description.VIEW_DEF_USES);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView("org.eclipse.pde.runtime.LogView");

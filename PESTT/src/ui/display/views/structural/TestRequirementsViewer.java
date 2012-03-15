@@ -84,7 +84,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 
 	private void createColumnsToTestRequirement() {
 		String[] columnNames = new String[] { TableViewers.INFEASIBLE, TableViewers.STATUS, TableViewers.TEST_REQUIREMENTS }; // the names of columns.
-		int[] columnWidths = new int[] {80, 55, 50}; // the width of columns.
+		int[] columnWidths = new int[] {80, 55, 100}; // the width of columns.
 
 		// first column is for the id.
 		TableViewerColumn col = createColumnsHeaders(testRequirementsViewer, columnNames[0], columnWidths[0], 0);

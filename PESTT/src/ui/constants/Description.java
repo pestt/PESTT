@@ -4,6 +4,7 @@ public class Description {
 	
 	public static final String VIEW_GRAPH = "PESTT.ViewGraph";
 	public static final String VIEW_STRUCTURAL_COVERAGE = "PESTT.ViewStructuralCoverage";
+	public static final String VIEW_DEF_USES = "PESTT.ViewDefUses";
 	public static final String VIEW_GRAPH_COVERAGE_CRITERIA = "PESTT.ViewGraphCoverageCriteria";
 	public static final String VIEW_LOGIC_COVERAGE_CRITERIA = "PESTT.ViewLogicCoverageCriteria";
 	public static final String LINK_BUTTON = "PESTT.Link";
@@ -16,5 +17,6 @@ public class Description {
 	public static final String GRAPH = "graph";
 	public static final String STOP = "stop";
 	public static final String TOTAL = "Total";
+	
 	
 }

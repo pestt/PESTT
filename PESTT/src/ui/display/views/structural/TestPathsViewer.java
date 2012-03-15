@@ -65,7 +65,7 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 	
 	private void createColumnsToExecutedGraphViewer() {
 		String columnNames = TableViewers.TEST_PATTHS; // the names of column.
-		int columnWidths = 100; // the width of column.
+		int columnWidths = 500; // the width of column.
 		TableViewerColumn col = createColumnsHeaders(testPathhsViewer, columnNames, columnWidths, 0);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
