@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ui.constants.Description;
+import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.constants.JavadocTagAnnotations;
 import domain.events.TestPathChangedEvent;
@@ -49,8 +50,10 @@ public class ActiveEditor implements Observer {
 	private Markers marker; // marker to add.
 	private ICompilationUnit compilationUnit;
 	private IJavaProject javaProject;
+	private boolean listenUpdates; 
 
 	public ActiveEditor() {
+		listenUpdates = true;
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
@@ -70,7 +73,17 @@ public class ActiveEditor implements Observer {
 			e.printStackTrace();
 		}
 	}
+	
+	public void setListenUpdates(boolean listenUpdates) {
+		this.listenUpdates = listenUpdates;
+	}
 
+	public void deleteObservers() {
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
+		Activator.getDefault().getTestRequirementController().deleteObserverTestRequirement(this);
+		Activator.getDefault().getTestPathController().deleteObserverTestPath(this);		
+	}
+	
 	public void createMarker(String markerType, int offset, int length) {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
 		marker.createMarks(markerType, offset, length);
@@ -164,41 +177,43 @@ public class ActiveEditor implements Observer {
 
 	@Override
 	public void update(Observable obs, Object data) {
-		CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(compilationUnit);
-		unit.recordModifications();
-		MethodDeclaration method = getMethodDeclaration(unit);
-		if(data instanceof TestRequirementSelectedCriteriaEvent) {
-			if(method != null && ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria != null) {
-				String criteria = ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria.toString();
-				Iterable<Path<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
-				Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
-				Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
-				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
-			}			
-		} else if(data instanceof TestRequirementChangedEvent) {
-			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
-				String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
-				Iterable<Path<Integer>> infeasibles = ((TestRequirementChangedEvent) data).infeasigles;
-				Iterable<Path<Integer>> manuallyAdded = ((TestRequirementChangedEvent) data).manuallyAdded;
-				Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
-				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
-			}		
-		} else if(data instanceof TestPathChangedEvent) {
-			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
-				String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
-				Iterable<Path<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
-				Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
-				Iterable<Path<Integer>> testPath =((TestPathChangedEvent) data).manuallyAdded;
-				setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
-			}			
+		if (listenUpdates) {
+			CompilationUnit unit = Activator.getDefault().getSourceGraphController().getCompilationUnit(compilationUnit);
+			unit.recordModifications();
+			MethodDeclaration method = getMethodDeclaration(unit);
+			if(data instanceof TestRequirementSelectedCriteriaEvent) {
+				if(method != null && ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria != null) {
+					String criteria = ((TestRequirementSelectedCriteriaEvent) data).selectedCoverageCriteria.toString();
+					Iterable<AbstractPath<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
+					Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+					Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
+					setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+				}			
+			} else if(data instanceof TestRequirementChangedEvent) {
+				if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
+					String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
+					Iterable<AbstractPath<Integer>> infeasibles = ((TestRequirementChangedEvent) data).infeasigles;
+					Iterable<Path<Integer>> manuallyAdded = ((TestRequirementChangedEvent) data).manuallyAdded;
+					Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
+					setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+				}		
+			} else if(data instanceof TestPathChangedEvent) {
+				if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
+					String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
+					Iterable<AbstractPath<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
+					Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+					Iterable<Path<Integer>> testPath =((TestPathChangedEvent) data).manuallyAdded;
+					setJavadocTagAnnotation(unit, method, criteria, infeasibles, manuallyAdded, testPath);
+				}			
+			}
 		}
 	}
 	
-	public void setJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, String criteria, Iterable<Path<Integer>> infeasibles, Iterable<Path<Integer>> testRequireents, Iterable<Path<Integer>> testPath) {	
+	public void setJavadocTagAnnotation(CompilationUnit unit, MethodDeclaration method, String criteria, Iterable<AbstractPath<Integer>> infeasibles, Iterable<Path<Integer>> testRequireents, Iterable<Path<Integer>> testPath) {	
 		Javadoc javadoc = method.getAST().newJavadoc();
 		method.setJavadoc(javadoc);
 		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
-		for(Path<Integer> path : infeasibles)
+		for(AbstractPath<Integer> path : infeasibles)
 			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH, path.toString(), javadoc);
 		for(Path<Integer> path : testRequireents)
 			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, path.toString(), javadoc);

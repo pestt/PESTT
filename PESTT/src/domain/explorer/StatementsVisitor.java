@@ -284,9 +284,7 @@ public class StatementsVisitor extends ASTVisitor {
 
 	@Override  
 	public boolean visit(ForStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		prevNode.push(edge.getEndNode());
-		edge = createConnection(); // initialization of the ForStatement.
+		Edge<Integer> edge = createConnection(); // initialization of the ForStatement.
 		String initializers = Description.EMPTY;
 		for(Object initNode : node.initializers()) {
 			initializers += initNode.toString() + ", ";

@@ -1,96 +1,106 @@
 package adt.graph;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Path<V extends Comparable<V>> implements Iterable<Node<V>>, Comparable<Path<V>>, Cloneable {
-
+public class Path<V extends Comparable<V>> extends AbstractPath<V> {
+		
 	private List<Node<V>> nodes;
 
-	public Path(Node<V> node) {
-		nodes = new LinkedList<Node<V>>();
-		nodes.add(node);
-	}
-	
+	// pre: nodes.size() > 0
 	public Path(Collection<Node<V>> nodes) {
 		this.nodes = new LinkedList<Node<V>>(nodes);
 	}
-
-	public void addNode(Node<V> node) {
-		nodes.add(node);
-	}
-
+	
 	@Override
 	public Iterator<Node<V>> iterator() {
 		return nodes.iterator();
 	}
 
-	public List<Node<V>> getPathNodes() {
-		return nodes;
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		s.append("[");
+		Iterator<Node<V>> it = iterator();
+		s.append(it.next()); // a path has always one node, at least!
+		while(it.hasNext())
+			s.append(", " + it.next());
+		s.append("]");
+		return s.toString();
 	}
+	
 
-	public boolean containsNode(Node<V> node) {
-		return nodes.contains(node);
-	}
-
-	public boolean isSubPath(Path<V> path) {
-		boolean match = true;
-		if(nodes.size() < path.getPathNodes().size())
+	@Override
+	public boolean isSubPath(AbstractPath<V> other) {
+		if (other instanceof InfinitePath)
 			return false;
-
-		for(Node<V> node : path.getPathNodes())
-			if(!containsNode(node))
-				return false;
-
-		Node<V> first = path.getPathNodes().get(0);
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		for(int i = 0; i < nodes.size(); i++) {
-			Node<V> node = nodes.get(i);
-			if(node == first && i + path.getPathNodes().size() - 1 < nodes.size())
-				indexes.add(i);
-		}
-
-		for(int index : indexes) {
-			for (int i = index, j = 0; i < i + path.getPathNodes().size() && j < path.getPathNodes().size(); i++, j++) {
-				if(nodes.get(i) != path.getPathNodes().get(j)) {
-					match = false;
-					break;
-				}
-			}
-			if(match)
-				return match;
-			else
-				match = true;
-		}
+		Path<V> path = (Path<V>) other; 
+		int i = 0;
+		for (Iterator<Node<V>> it = nodes.iterator(); it.hasNext(); i++, it.next()) 
+			if (isConsecutive(i, path))
+				return true;
 		return false;
 	}
 	
-	public abstract boolean toursWithSideTrip(Path<V> path);
-		
-
-	public abstract boolean toursWithDeTour(Path<V> path);
-	
-	@SuppressWarnings("unchecked")
-	@Override 
-	public Object clone() throws CloneNotSupportedException {
-		Path<V> newPath = (Path<V>) super.clone();
-		newPath = this;
-		return newPath;
+	private boolean isConsecutive(int i, Path<V> path) {
+		Iterator<Node<V>> it = path.iterator();
+		while (i < nodes.size() && it.hasNext()) {
+			if (nodes.get(i) != it.next())
+				return false;
+			i++;
+		}
+		return true;
 	}
 
+	
 	@Override
-	public int compareTo(Path<V> other) {
-		Iterator<Node<V>> iterator = other.iterator();
-		for(Node<V> node : nodes) 
-			if(iterator.hasNext()) {
-				Node<V> otherNode = iterator.next();
-				if(node.compareTo(otherNode) != 0)
-					return node.compareTo(otherNode);
-			} else 
-				return 1;
-		return iterator.hasNext() ? -1 : 0;
+	public boolean toursWithSideTrip(AbstractPath<V> other) {
+		if (other instanceof InfinitePath)
+			return false;
+		Path<V> path = (Path<V>) other; 
+		int i = 0;
+		for (Iterator<Node<V>> it = nodes.iterator(); it.hasNext(); i++, it.next()) 
+			if (isConsecutiveSideTrip(i, path))
+				return true;
+		return false;
+	}
+
+	private boolean isConsecutiveSideTrip(int i, Path<V> path) {
+		Iterator<Node<V>> it = path.iterator();
+		while (i < nodes.size() && it.hasNext()) {
+			Node<V> node = it.next();
+			if (nodes.get(i) != node) {
+				// try advance loop
+				Node<V> currentNode = nodes.get(i);
+				while (i < nodes.size() & nodes.get(i) != currentNode)
+					i++;
+				if (i == nodes.size())
+					return false;
+				// if found loop, compare the next node in the path
+				i++;
+				if (i < nodes.size() && nodes.get(i) != nodes)
+					return false;
+			}
+			i++;
+		}
+		return true;
+	}
+
+	
+	@Override
+	public boolean toursWithDetour(AbstractPath<V> other) {
+		if (other instanceof InfinitePath)
+			return false;
+		Path<V> path = (Path<V>) other; 
+		int index = 0;
+		for(Node<V> node : path) {
+			while(index < nodes.size() && nodes.get(index) != node)
+				index++;
+			if(index == nodes.size())
+				return false;
+		}
+		return true;
 	}
 }

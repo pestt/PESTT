@@ -1,4 +1,4 @@
-package ui;
+	package ui;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -55,10 +55,8 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	private String getNodesStatistics(Set<Path<Integer>> selectedTestPaths) {
 		String unit = StatisticsElements.NODES;;
 		List<Node<Integer>> nodes = new LinkedList<Node<Integer>>();
-		List<Node<Integer>> aux;
 		for(Path<Integer> path : selectedTestPaths) {
-			aux = getCoveredNodes(path);
-			for(Node<Integer> node : aux)
+			for(Node<Integer> node : path)
 				if(!nodes.contains(node)) 
 					nodes.add(node);
 		}
@@ -66,10 +64,6 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		int passed = nodes.size();
 		String percentage = getPercentage(passed, total);
 		return totalOutpu(unit, passed, total, percentage);
-	}
-	
-	private List<Node<Integer>> getCoveredNodes(Path<Integer> path) {
-		return path.getPathNodes();
 	}
 	
 	private int getTotalNodes() {
@@ -94,14 +88,15 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	private List<Edge<Integer>> getCoveredEdges(Path<Integer> path) {
 		List<Edge<Integer>> edges = new LinkedList<Edge<Integer>>();
-		for(int i = 0; i < path.getPathNodes().size(); i++)
-			if(i + 1 < path.getPathNodes().size()) {
-				Node<Integer> nodeFrom = path.getPathNodes().get(i);
-				Node<Integer> nodeTo = path.getPathNodes().get(i + 1);
-				for(Edge<Integer> edge : graph.getNodeEdges(nodeFrom))
-					if(edge.getEndNode() == nodeTo && !edges.contains(edge))
-						edges.add(edge);
-			}
+		Iterator<Node<Integer>> it = path.iterator();
+		Node<Integer> nodeFrom = it.next();
+		while (it.hasNext()) {
+			Node<Integer> nodeTo = it.next();
+			for(Edge<Integer> edge : graph.getNodeEdges(nodeFrom))
+				if(edge.getEndNode() == nodeTo && !edges.contains(edge))
+					edges.add(edge);
+			nodeFrom = nodeTo;
+		}
 		return edges;
 	}
 	

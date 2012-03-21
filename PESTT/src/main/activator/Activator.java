@@ -9,6 +9,7 @@ import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
 import domain.PESTT;
 import domain.controllers.CoverageDataController;
+import domain.controllers.DefUsesController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
@@ -97,5 +98,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public CFGController getCFGController() {
 		return pestt.getCFGController();
+	}
+	
+	public DefUsesController getDefUsesController() {
+		return pestt.getDefUsesController();
 	}
 }

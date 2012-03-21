@@ -1,154 +1,122 @@
 package domain.coverage.algorithms;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
-import adt.graph.Edge;
+import adt.graph.AbstractPath;
+import adt.graph.CyclePath;
 import adt.graph.Graph;
-import adt.graph.SequencePath;
+import adt.graph.InfinitePath;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.graph.visitors.BreadthFirstGraphVisitor;
+import adt.graph.SequencePath;
+import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 
 	private Graph<V> graph;
+	private LinkedList<Node<V>> nodes;
+	private Set<AbstractPath<V>> paths;	
 	
 	public CompletePathCoverage(Graph<V> graph) {
 		this.graph = graph;
+		paths = new TreeSet<AbstractPath<V>>();
+		nodes = new LinkedList<Node<V>>();
 	}
 
-	public Set<Path<V>> getTestRequirements() {
-		CompletePathCoverageVisitor cpcv = new CompletePathCoverageVisitor();
-		cpcv.visitGraph(graph);
-		return cpcv.getPaths();
+	public Set<AbstractPath<V>> getTestRequirements() {
+		CompletePathCoverageVisitor cpcv = new CompletePathCoverageVisitor(graph);
+		graph.accept(cpcv);
+		return paths;
 	}
 	
-	private class CompletePathCoverageVisitor extends BreadthFirstGraphVisitor<V> {
+	private class CompletePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
 		
-		private static final int SPECIAL_NODE = -1;
-		private Set<Path<V>> paths;
-		private Set<Path<V>> temp;
-		private Set<Path<V>> completePaths;
+		private Stack<CyclePath<V>> stack;
 		
-		public CompletePathCoverageVisitor() {
-			paths = new TreeSet<Path<V>>();
-			temp = new TreeSet<Path<V>>();
-			completePaths = new TreeSet<Path<V>>();
-		}
-		
-		private Set<Path<V>> getPaths() {
-			return completePaths;
+		public CompletePathCoverageVisitor(Graph<V> graph) {
+			this.graph = graph;
+			stack = new Stack<CyclePath<V>>();
+			stack.push(new CyclePath<V>(new ArrayList<Node<V>>()));
 		}
 		
 		@Override
-		public boolean visit(Graph<V> graph) {
-			for(Node<V> node : graph.getNodes())
-				if(graph.isInitialNode(node))
-					paths.add(new Path<V>(node));
-
-			while(!paths.isEmpty()) {
-				for(Path<V> path : paths)
-					addNodes(path);
-		
-				if(temp.isEmpty() && completePaths.isEmpty()) {
-					completePaths = paths;
-					return true;
-				}
-					
-				paths.clear();
-				for(Path<V> path : temp)
-					paths.add(path);
-					temp.clear();
+		public boolean visit(Node<V> node) {
+			CyclePath<V> currentCycle = stack.peek();
+			if (currentCycle.containsNode(node))
+				return false;
+			if(nodes.contains(node)) 
+				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
+			nodes.addLast(node);
+			if(graph.isFinalNode(node)) {
+				paths.add(parseNodes(nodes)); 
 			}
-			insertSpecialPaths();
 			return true;
 		}
 		
-		@SuppressWarnings("unchecked")
-		private void insertSpecialPaths() {
-			Map<Path<V>, SequencePath<V>> replace = new LinkedHashMap<Path<V>, SequencePath<V>>();
-			for(Path<V> path : completePaths) {
-				List<Integer> index = new ArrayList<Integer>();
-				boolean inLoop = false;
-				for(Node<V> node : path) {
-					if(getNumberOfOccurrences(path, node) == 2 && inLoop == false) {
-						inLoop = true;
-						int i = getIndexSpecialNode(path, node);
-						if(!index.contains(i))
-							index.add(i);
-					} else if(getNumberOfOccurrences(path, node) == 2)
-						inLoop = true;
-					else
-						inLoop = false;
+		@Override
+		public void endVisit(Node<V> node) {
+			nodes.removeLast();
+			CyclePath<V> topPath = stack.peek();
+			if (topPath.iterator().hasNext() && stack.peek().from() == node)
+				stack.pop();
+		}
+		
+		private AbstractPath<V> parseNodes(List<Node<V>> nodes) {
+			int cycleStart = hasCycle(nodes);
+			if (cycleStart == -1)
+				return new Path<V>(nodes);
+			else { // assert nodes.size() > 1
+				int cycleEnd = nodes.lastIndexOf(nodes.get(cycleStart));
+													
+				AbstractPath<V> preCycle = null;
+				if (cycleStart > 0) 
+					preCycle = new Path<V>(nodes.subList(0, cycleStart));
+				
+				int innerCycleStart = hasCycle(nodes.subList(cycleStart + 1, cycleEnd));
+				AbstractPath<V> innerPath = null;
+				if (innerCycleStart != -1) {
+					innerCycleStart = cycleStart + innerCycleStart + 1;    // absolute index 
+					int innerCycleEnd = nodes.lastIndexOf(nodes.get(innerCycleStart));
+					InfinitePath<V> innerPathInfinite = new InfinitePath<V> ();
+						innerPathInfinite.addSubPath(new Path<V>(nodes.subList(cycleStart, innerCycleStart)));
+						innerPathInfinite.addSubPath(parseNodes (nodes.subList(innerCycleStart, innerCycleEnd + 1)));
+						if (innerCycleEnd + 1 < cycleEnd)
+							innerPathInfinite.addSubPath(parseNodes(nodes.subList(innerCycleEnd + 1, cycleEnd + 1)));	
+						innerPath = innerPathInfinite;
 				}
-				if(!index.isEmpty()) {
-					SequencePath<V> infinite = null;
-					for(Node<V> node : path)
-						if(infinite == null)
-							infinite = new SequencePath<V>(node);
-						else
-							infinite.addNode(node);
-					Node<Integer> n = new Node<Integer>(SPECIAL_NODE);
-					for(int x : index) {
-						infinite.addNode(x, (Node<V>) n);
-						infinite.addNode(x, infinite.getPathNodes().get(x + 1));
-					}
-							
-					replace.put(path, infinite);
-				}			
-			}
-			Set<Entry<Path<V>, SequencePath<V>>> set = replace.entrySet(); // the node properties.
-			Iterator<Entry<Path<V>, SequencePath<V>>> iterator = set.iterator(); 
-			while(iterator.hasNext()) {
-				Entry<Path<V>, SequencePath<V>> entry = iterator.next();
-				Path<V> p = entry.getKey();
-				completePaths.remove(p);
-				completePaths.add(entry.getValue());
-			}
-		}
+				else
+					innerPath = new CyclePath<V>(nodes.subList(cycleStart, cycleEnd + 1));
+				
+				AbstractPath<V> posCycle = null;
+				if (cycleEnd + 1 < nodes.size())
+					posCycle = parseNodes(nodes.subList(cycleEnd + 1, nodes.size()));
 
-		private void addNodes(Path<V> path) {
-			Node<V> finalNode = path.getPathNodes().get(path.getPathNodes().size() - 1);
-			for(Edge<V> edge : graph.getNodeEdges(finalNode)) {
-				Path<V> aux = path.clone();
-				aux.addNode(edge.getEndNode());
-				if(graph.isFinalNode(edge.getEndNode())) 
-					completePaths.add(aux);
-				else if(!isLop(aux))
-					temp.add(aux);
+				if (preCycle != null || posCycle != null) {
+					SequencePath<V> result = new SequencePath<V>();
+					if (preCycle != null)
+						result.addSubPath(preCycle);
+					result.addSubPath(innerPath);
+					if (posCycle != null)
+						result.addSubPath(posCycle);
+					return result;
+				} else
+					return innerPath;
 			}
-		}
+		}	
 		
-		public boolean isLop(Path<V> path) {
-			for(Node<V> node : path) 
-				if(getNumberOfOccurrences(path, node) > 2)
-					return true;
-			return false;
-		}
-
-		private int getNumberOfOccurrences(Path<V> path, Node<V> node) {
-			int occurrences = 0;
-			for(Node<V> n : path)
-				if(n == node)
-					occurrences++;
-			return occurrences;
-		}
-		
-		private int getIndexSpecialNode(Path<V> path, Node<V> node) {
-			int index = -1;
-			for(int i = 0; i < path.getPathNodes().size(); i++) {
-				Node<V> n = path.getPathNodes().get(i);
-				if(n == node)
-					index = i;
+		private int hasCycle(List<Node<V>> nodes) {
+			int i = 0;
+			for (Node<V> node : nodes) {
+				if (nodes.indexOf(node) != nodes.lastIndexOf(node))
+					return i;
+				i++;
 			}
-			return index;
+			return -1;
 		}
 	};
 }

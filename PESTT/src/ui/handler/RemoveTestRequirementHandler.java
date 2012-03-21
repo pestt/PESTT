@@ -12,7 +12,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import ui.constants.Messages;
 import ui.dialog.RemoveDialog;
-import adt.graph.Path;
+import adt.graph.AbstractPath;
 
 public class RemoveTestRequirementHandler extends AbstractHandler {
 
@@ -28,7 +28,7 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 	
 	private void removeTableLine(Shell shell) throws ExecutionException {
 		if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {	
-			Path<Integer> selectedPath = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement();
+			AbstractPath<Integer> selectedPath = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement();
 			String message = "Are you sure that you want to delete this test requirement:\n" + selectedPath;
 			RemoveDialog dialog = new RemoveDialog(shell, message);
 			dialog.open();

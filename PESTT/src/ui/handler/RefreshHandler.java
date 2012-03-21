@@ -38,8 +38,9 @@ public class RefreshHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if(Activator.getDefault().getEditorController().getActiveEditor() == null)
-			Activator.getDefault().getEditorController().setEditor(new ActiveEditor());
+		if(Activator.getDefault().getEditorController().getActiveEditor() != null)
+			Activator.getDefault().getEditorController().getActiveEditor().deleteObservers();
+		Activator.getDefault().getEditorController().setEditor(new ActiveEditor());
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getEditorController().isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
@@ -69,6 +70,8 @@ public class RefreshHandler extends AbstractHandler {
 	}
 	
 	private void resetDataStructures(IWorkbenchWindow window) {
+		Activator.getDefault().getEditorController().setListenUpdates(false);
+		
 		String selectedMethod = Activator.getDefault().getEditorController().getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
@@ -113,7 +116,10 @@ public class RefreshHandler extends AbstractHandler {
 			}
 			
 			Activator.getDefault().getTestRequirementController().generateTestRequirement();
+			
 		}
+		Activator.getDefault().getEditorController().setListenUpdates(true);
+
 	}
 
 	private void keepCommandOptions() {

@@ -6,7 +6,7 @@ import org.eclipse.ui.part.ViewPart;
 import ui.constants.TableViewers;
 import ui.display.views.structural.TableViewerFactory;
 
-public class ViewDefUses extends ViewPart {
+public class ViewDataFlow extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {

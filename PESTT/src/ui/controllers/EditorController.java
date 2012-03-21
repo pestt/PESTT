@@ -62,4 +62,8 @@ public class EditorController extends Observable {
 			else 
 				information.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
 	}
+
+	public void setListenUpdates(boolean b) {
+		editor.setListenUpdates(b);
+	}
 }

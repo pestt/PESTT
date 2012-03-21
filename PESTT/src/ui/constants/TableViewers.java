@@ -16,8 +16,9 @@ public enum TableViewers {
 	public static final String TEST_PATTHS = "Test Paths Set";
 	public static final String STATISTICS = "Statistics";
 	
-	public static final String DEF_USES_VIEWER = "DEFUSESVIEWER";
 	public static final String EMPTY = "";
+	public static final String DEF_USES_VIEWER = "DEFUSESVIEWER";
+	public static final String NODES_EDGES = "Nodes / Edges";
 	public static final String VARIABLES = "Variables";
 	public static final String DEFS = "Definitions";
 	public static final String USES = "Uses";

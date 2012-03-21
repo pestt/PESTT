@@ -1,5 +1,6 @@
 package domain.controllers;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -8,10 +9,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import main.activator.Activator;
-import adt.graph.Edge;
+import adt.graph.AbstractPath;
 import adt.graph.Node;
 import adt.graph.Path;
-import adt.graph.SimplePath;
 import domain.SourceGraph;
 import domain.TestRequirementSet;
 import domain.constants.GraphCoverageCriteriaId;
@@ -26,7 +26,7 @@ public class TestRequirementController extends Observable {
 
 	private SourceGraph sourceGraph;
 	private TestRequirementSet testRequirementSet;
-	private Path<Integer> selectedTestRequirement;
+	private AbstractPath<Integer> selectedTestRequirement;
 	private GraphCoverageCriteriaId selectedCoverageAlgorithm;
 	
 	public TestRequirementController(SourceGraph sourceGraph, TestRequirementSet testRequirementSet) {
@@ -36,6 +36,10 @@ public class TestRequirementController extends Observable {
 	
 	public void addObserverTestRequirement(Observer o) {
 		testRequirementSet.addObserver(o);
+	}
+
+	public void deleteObserverTestRequirement(Observer o) {
+		testRequirementSet.deleteObserver(o);
 	}
 
 	public void addTestRequirement(Path<Integer> newTestRequirement) {
@@ -58,19 +62,19 @@ public class TestRequirementController extends Observable {
 		return testRequirementSet.size();
 	}
 	
-	public void enableInfeasible(Path<Integer> infeasible) {
-		testRequirementSet.enableInfeasible(infeasible);
+	public void enableInfeasible(AbstractPath<Integer> abstractPath) {
+		testRequirementSet.enableInfeasible(abstractPath);
 	}
 	
-	public void disableInfeasible(Path<Integer> infeasible) {
-		testRequirementSet.disableInfeasible(infeasible);
+	public void disableInfeasible(AbstractPath<Integer> abstractPath) {
+		testRequirementSet.disableInfeasible(abstractPath);
 	}
 	
 	public int sizeInfeasibles() {
 		return testRequirementSet.sizeInfeasibles();
 	}
 	
-	public Iterable<Path<Integer>> getInfeasiblesTestRequirements() {
+	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
 		return testRequirementSet.getInfeasiblesTestRequirements();
 	}
 	
@@ -78,42 +82,35 @@ public class TestRequirementController extends Observable {
 		return testRequirementSet.getTestRequirementsManuallyAdded();
 	}
 	
-	public Iterable<Path<Integer>> getTestRequirements() {
+	public Iterable<AbstractPath<Integer>> getTestRequirements() {
 		return testRequirementSet.getTestRequirements();
 	}
 	
 	public Path<Integer> createTestRequirement(String input) {
-		boolean flag = true;
+		boolean validPath = true;
 		List<String> insertedNodes = getInsertedNodes(input);
-		Path<Integer> newTestRequirement = null;
-		for(int i = 0; i < insertedNodes.size(); i++) {
-			try {
-				Node<Integer> nodeFrom = sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i)));
-				if(nodeFrom != null && flag)
-					if(i + 1 < insertedNodes.size()) {
-						Node<Integer> nodeTo = sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i + 1)));
-						for(Edge<Integer> edge : sourceGraph.getSourceGraph().getNodeEdges(nodeFrom))
-							if(nodeTo == edge.getEndNode()) {
-								if(newTestRequirement == null) 
-									newTestRequirement = new SimplePath<Integer>(nodeFrom);
-								 else 
-									newTestRequirement.addNode(nodeFrom);
-								flag = true;
-								break;
-							} else
-								flag = false;
-					} else
-						if(newTestRequirement == null) 
-							newTestRequirement = new SimplePath<Integer>(nodeFrom);
-						else
-							newTestRequirement.addNode(nodeFrom);
-				else
-					return null;
-			} catch(NumberFormatException ee) {
-				return null;
+		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>> ();
+		try {
+			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>(2);
+			fromToNodes.add(sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(0))));
+			int i = 1; 
+			while (i < insertedNodes.size() && validPath) {
+				fromToNodes.add(sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i))));
+				if (fromToNodes.get(0) != null && fromToNodes.get(1) != null && 
+						sourceGraph.getSourceGraph().isPath(new Path<Integer>(fromToNodes))) {
+					pathNodes.add(fromToNodes.get(0));
+					fromToNodes.remove(0);
+				} else
+					validPath = false;
+				i++;
 			}
+			if (validPath) {
+				pathNodes.add(fromToNodes.get(0));
+				return new Path<Integer>(pathNodes);
+			}
+		} catch(NumberFormatException ee) {
 		}
-		return newTestRequirement;
+		return null;
 	}
 	
 	private List<String> getInsertedNodes(String input) {
@@ -129,11 +126,11 @@ public class TestRequirementController extends Observable {
 		return selectedTestRequirement != null;
 	}
 	
-	public Path<Integer> getSelectedTestRequirement() {
+	public AbstractPath<Integer> getSelectedTestRequirement() {
 		return selectedTestRequirement;
 	}
 
-	public void selectTestRequirement(Path<Integer> selected) {
+	public void selectTestRequirement(AbstractPath<Integer> selected) {
 		this.selectedTestRequirement = selected;
 		setChanged();
 		notifyObservers(new TestRequirementSelectedEvent(selected));

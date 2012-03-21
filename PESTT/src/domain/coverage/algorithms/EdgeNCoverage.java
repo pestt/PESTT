@@ -5,16 +5,16 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
+import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import adt.graph.SimplePath;
 import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class EdgeNCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 	
-	private Set<Path<V>> paths;
+	private Set<AbstractPath<V>> paths;
 	private Deque<Node<V>> deque;
 	private Graph<V> graph;
 	private int edgeSize;
@@ -22,11 +22,12 @@ public class EdgeNCoverage<V extends Comparable<V>> implements ICoverageAlgorith
 	public EdgeNCoverage(Graph<V> graph, int edgeSize) {
 		this.graph = graph;
 		this.edgeSize = edgeSize;
-		paths = new TreeSet<Path<V>>();
+		paths = new TreeSet<AbstractPath<V>>();
 		deque = new LinkedList<Node<V>>();
 	}
 
-	public Set<Path<V>> getTestRequirements() {
+	@Override
+	public Set<AbstractPath<V>> getTestRequirements() {
     	paths.clear();
 		for(Node<V> node : graph.getNodes()) {
 			EdgePairCoverageVisitor epc = new EdgePairCoverageVisitor(graph);
@@ -46,7 +47,7 @@ public class EdgeNCoverage<V extends Comparable<V>> implements ICoverageAlgorith
 		public boolean visit(Node<V> node) { 
 			deque.addLast(node);
 			paths.add(deque.getLast() == deque.getLast() ?
-					new CyclePath<V>(deque) : new SimplePath<V>(deque));
+					new CyclePath<V>(deque) : new Path<V>(deque));
 			if (deque.size() - 1 == edgeSize) {
 				deque.removeLast();
 				return false;

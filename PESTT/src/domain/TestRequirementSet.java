@@ -4,22 +4,23 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.TreeSet;
 
+import adt.graph.AbstractPath;
+import adt.graph.InfinitePath;
 import adt.graph.Path;
-import adt.graph.SequencePath;
 import domain.coverage.algorithms.ICoverageAlgorithms;
 import domain.events.TestRequirementChangedEvent;
 
 
 public class TestRequirementSet extends Observable {
 
-	private Set<Path<Integer>> testRequirementSet;
+	private Set<AbstractPath<Integer>> testRequirementSet;
 	private Set<Path<Integer>> manuallyTestRequirementSet;
-	private Set<Path<Integer>> infeasibleSet;
+	private Set<AbstractPath<Integer>> infeasibleSet;
 
 	public TestRequirementSet() {
-		testRequirementSet = new TreeSet<Path<Integer>>();
+		testRequirementSet = new TreeSet<AbstractPath<Integer>>();
 		manuallyTestRequirementSet = new TreeSet<Path<Integer>>();
-		infeasibleSet = new TreeSet<Path<Integer>>();
+		infeasibleSet = new TreeSet<AbstractPath<Integer>>();
 	}
 
 	public void add(Path<Integer> path) {
@@ -29,9 +30,9 @@ public class TestRequirementSet extends Observable {
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 
-	public void remove(Path<Integer> selected) {
-		testRequirementSet.remove(selected);
-		manuallyTestRequirementSet.remove(selected);
+	public void remove(AbstractPath<Integer> selectedTestRequirement) {
+		testRequirementSet.remove(selectedTestRequirement);
+		manuallyTestRequirementSet.remove(selectedTestRequirement);
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
@@ -46,13 +47,13 @@ public class TestRequirementSet extends Observable {
 		return testRequirementSet.size();
 	}
 	
-	public void enableInfeasible(Path<Integer> infeasible) {
+	public void enableInfeasible(AbstractPath<Integer> infeasible) {
 		infeasibleSet.add(infeasible);
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 	
-	public void disableInfeasible(Path<Integer> infeasible) {
+	public void disableInfeasible(AbstractPath<Integer> infeasible) {
 		infeasibleSet.remove(infeasible);
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
@@ -64,8 +65,8 @@ public class TestRequirementSet extends Observable {
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 	
-	public boolean isInfeasible(Path<Integer> infeasible) {
-		return infeasibleSet.contains(infeasible);
+	public boolean isInfeasible(AbstractPath<Integer> selectedTestRequirement) {
+		return infeasibleSet.contains(selectedTestRequirement);
 	}
 	
 	public int sizeInfeasibles() {
@@ -80,37 +81,37 @@ public class TestRequirementSet extends Observable {
 	}
 	
 	public boolean hasInfinitePath() {
-		for(Path<Integer> path : testRequirementSet) 
-			if(path instanceof SequencePath<?>)
+		for(AbstractPath<Integer> path : testRequirementSet) 
+			if(path instanceof InfinitePath<?>)
 				return true;
 		return false;
 	}
 
 	public Set<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for(Path<Integer> path : testRequirementSet)
-			if(seletedTestPath.isSubPath(path))
-					coveredPaths.add(path);
+		for(AbstractPath<Integer> path : testRequirementSet)
+			if(seletedTestPath.isSubPath(path))  // Infinite paths will never be subpaths 
+					coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}
 
 	public Set<Path<Integer>> getPathsTouredWithSideTrip(Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for(Path<Integer> path : testRequirementSet)
-			if(seletedTestPath.toursWithSideTrip(path))
-				coveredPaths.add(path);
+		for(AbstractPath<Integer> path : testRequirementSet)
+			if(seletedTestPath.toursWithSideTrip(path)) // Infinite paths will never be subpaths
+				coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}
 
 	public Set<Path<Integer>> getPathsTouredWithDeTour(Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for(Path<Integer> path : testRequirementSet)
-			if(seletedTestPath.toursWithDeTour(path))
-				coveredPaths.add(path);
+		for(AbstractPath<Integer> path : testRequirementSet)
+			if(seletedTestPath.toursWithDetour(path)) // Infinite paths will never be subpaths
+				coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}
 	
-	public Iterable<Path<Integer>> getInfeasiblesTestRequirements() {
+	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
 		return infeasibleSet; 
 	}
 	
@@ -118,7 +119,7 @@ public class TestRequirementSet extends Observable {
 		return manuallyTestRequirementSet;
 	}
 	
-	public Iterable<Path<Integer>> getTestRequirements() {		
+	public Iterable<AbstractPath<Integer>> getTestRequirements() {		
 		return testRequirementSet;
 	}
 }

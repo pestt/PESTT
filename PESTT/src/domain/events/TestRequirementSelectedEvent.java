@@ -1,13 +1,13 @@
 package domain.events;
 
-import adt.graph.Path;
+import adt.graph.AbstractPath;
 
 public class TestRequirementSelectedEvent {
 
-	public final Path<Integer> selectedTestRequirement;
+	public final AbstractPath<Integer> selectedTestRequirement;
 
-	public TestRequirementSelectedEvent(Path<Integer> selectedTestRequirement) {
-		this.selectedTestRequirement = selectedTestRequirement;
+	public TestRequirementSelectedEvent(AbstractPath<Integer> selected) {
+		this.selectedTestRequirement = selected;
 	}
 
 }

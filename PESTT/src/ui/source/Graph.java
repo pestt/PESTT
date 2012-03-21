@@ -29,6 +29,7 @@ import ui.constants.Description;
 import ui.constants.Messages;
 import ui.events.LayerChangeEvent;
 import ui.events.LinkChangeEvent;
+import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.constants.Layer;
 import domain.dot.processor.DotProcess;
@@ -216,11 +217,14 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setVisualCoverage(data);
 	}
 	
-	private List<GraphItem> selectInGraph(Path<Integer> selectedTestRequirement) {
+	
+	private List<GraphItem> selectInGraph(AbstractPath<Integer> selectedTestRequirement) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
-		// select the nodes in the graph.		
-		for(int i = 0; i < selectedTestRequirement.getPathNodes().size(); i++) { // through all node in the path.
-			adt.graph.Node<Integer> node = selectedTestRequirement.getPathNodes().get(i);
+		// select the nodes in the graph.	
+		Iterator<adt.graph.Node<Integer>> it = selectedTestRequirement.iterator();
+		adt.graph.Node<Integer> node = it.next();
+		while (it.hasNext()) { // through all node in the path.
+			adt.graph.Node<Integer> nextNode = it.next();
 			for(GraphNode gnode : graphNodes)  // through all nodes in the graph.
 				if(!gnode.isDisposed()) {
 					if(gnode.getData().equals(node)) { // if matches.
@@ -234,13 +238,13 @@ public class Graph implements Observer {
 
 			// select the edges in the graph.
 			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges((adt.graph.Node<Integer>) node))  // through all edges of the node.
-				if(i < selectedTestRequirement.getPathNodes().size() - 1)  // if is not the last node if the path.
-					if(edge.getEndNode() == selectedTestRequirement.getPathNodes().get(i + 1))   // the end node of the edge (the next node in the path).
-						for(GraphConnection gconnection : graphEdges)  // through all connections in the graph.
-							if(gconnection.getData().equals(edge)) { // if matches.
-								aux.add(gconnection); // add connection item to the list.
-								break;
-							}
+				if(edge.getEndNode() == nextNode)   // the end node of the edge (the next node in the path).
+					for(GraphConnection gconnection : graphEdges)  // through all connections in the graph.
+						if(gconnection.getData().equals(edge)) { // if matches.
+							aux.add(gconnection); // add connection item to the list.
+							break;
+						}
+			node = nextNode;
 		}
 		return aux;
 	}

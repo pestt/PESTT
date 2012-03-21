@@ -41,6 +41,11 @@ public class TestPathController extends Observable {
 		testPathSet.addObserver(o);
 	}
 
+	public void deleteObserverTestPath(Observer o) {
+		testPathSet.deleteObserver(o);
+	}
+
+	
 	public void addTestPath(Path<Integer> newTestPath) {
 		testPathSet.add(newTestPath);
 		selectTestPath(null);
