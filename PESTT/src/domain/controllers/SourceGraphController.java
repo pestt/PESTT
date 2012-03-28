@@ -7,9 +7,9 @@ import java.util.Observer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
 import domain.SourceGraph;
-import domain.constants.JavadocTagAnnotations;
 import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraphController {
@@ -44,11 +44,19 @@ public class SourceGraphController {
 		return sourceGraph.numberOfNodes();
 	}
 	
-	public Map<JavadocTagAnnotations, List<String>> getJavadocTagAnnotations() {
-		return sourceGraph.getJavadocTagAnnotations();
-	} 
-	
 	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {
 		return sourceGraph.getCompilationUnit(unit);
+	}
+
+	public void updateMetadataInformation(Graph<Integer> graph) {
+		sourceGraph.updateMetadataInformation(graph);
+	}
+	
+	public Map<JavadocTagAnnotations, List<String>> getJavadocAnnotations() {
+		return sourceGraph.getJavadocAnnotations();
+	}
+	
+	public byte[] getMethodHash() {
+		return sourceGraph.getMethodHash();
 	}
 }

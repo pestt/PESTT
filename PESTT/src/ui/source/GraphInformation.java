@@ -8,6 +8,9 @@ import java.util.Map.Entry;
 
 import main.activator.Activator;
 
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -22,16 +25,18 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.MarkersType;
-import ui.editor.ActiveEditor;
 import ui.editor.Line;
 import domain.constants.Layer;
 import domain.coverage.instrument.ICoverageData;
 
 public class GraphInformation {
 
+	private static final String ALL = "All";
+	private static final String TRUE = "True";
+	private static final String FALSE = "False";
+	
 	private adt.graph.Graph<Integer> sourceGraph;
 	private ui.source.Graph layoutGraph;
-	private ActiveEditor editor;
 	private ISelectionListener listener;
 	
 	public GraphInformation(ui.source.Graph layoutGraph) {
@@ -39,18 +44,23 @@ public class GraphInformation {
 	}
 	
 	public void setLayerInformation(Layer layer) {
-		editor = Activator.getDefault().getEditorController().getActiveEditor();
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph(); // set the sourceGraph.
 		switch(layer) {
+		case INSTRUCTIONS:
+			addInformationToLayer1();
+			break;
 			case EMPTY:
 				clear();
 				break;
 			case GUARDS:
-				addInformationToLayer1();
+				addInformationToLayer2_3_4(ALL);
 				break;
-			case INSTRUCTIONS:
-				addInformationToLayer2();
+			case GUARDS_TRUE:
+				addInformationToLayer2_3_4(TRUE);
 				break;
+			case GUARDS_FALSE:
+				addInformationToLayer2_3_4(FALSE);
+				break;		
 		}
 	}
 	
@@ -63,27 +73,13 @@ public class GraphInformation {
 						gconnection.setText(Description.EMPTY); // clear the visible information.
 						break;
 					}
-		new ActiveEditor().removeALLMarkers(); // removes the marks in the editor.
-	}
-	
-	private void addInformationToLayer1() {
-		setLayerInformation(Layer.EMPTY); // clean previous informations.
-		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
-			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))   // search in the sourceGraph for all edges.
-				for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // search in the layoutGraph for all edges.
-					if(gconnection.getData().equals(edge)) { // when they match.
-						sourceGraph.selectMetadataLayer(Layer.GUARDS.getLayer()); // change to the layer with the cycles information.
-						String info = (String) sourceGraph.getMetadata(edge); // get the information.
-						if(info != null)  // if it have information
-							gconnection.setText(info); // set the information to the edge.
-						break;
-					}
+		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addInformationToLayer2() {
+	private void addInformationToLayer1() {
 		if(!layoutGraph.getSelected().isEmpty()) { // verify if there are nodes selected.
-			editor.removeALLMarkers(); // removes the marks in the editor.
+			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 			for(GraphItem item : layoutGraph.getSelected()) // through all graph items.
 				if(item instanceof GraphNode) { // verify if is a GraphNode.
 					adt.graph.Node<Integer> node = sourceGraph.getNode(Integer.parseInt(item.getText())); // get the node.
@@ -94,11 +90,33 @@ public class GraphInformation {
 						if(nodes != null) 
 							regionToSelect(nodes, MarkersType.LINK_MARKER); // select the area in the editor.
 						else 
-							editor.removeALLMarkers(); // removes the marks in the editor.
+							Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 					}
 				}
 		} else 
-			editor.removeALLMarkers(); // removes the marks in the editor.
+			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+	}
+	
+	private void addInformationToLayer2_3_4(String value) {
+		setLayerInformation(Layer.EMPTY); // clean previous informations.
+		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
+			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))   // search in the sourceGraph for all edges.
+				for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // search in the layoutGraph for all edges.
+					if(gconnection.getData().equals(edge)) { // when they match.
+						sourceGraph.selectMetadataLayer(Layer.GUARDS.getLayer()); // change to the layer with the cycles information.
+						String info = (String) sourceGraph.getMetadata(edge); // get the information.
+						if(info != null) 
+							if(!value.equals(ALL)) {
+								if(info.equals("break;") || info.equals("continue;") || info.equals("return;"))
+									gconnection.setText(info);
+								else if(value.equals(TRUE) && !info.substring(0,  1).equals("¬"))
+									gconnection.setText(info); // set the information to the edge.
+								else if(value.equals(FALSE) && info.substring(0,  1).equals("¬"))
+									gconnection.setText(info); // set the information to the edge.
+							} else
+								gconnection.setText(info); // set the information to the edge.
+						break;
+					}
 	}
 	
 	private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
@@ -114,20 +132,20 @@ public class GraphInformation {
 		switch(instructions.getNodeType()) {
 			case ASTNode.IF_STATEMENT:
 			case ASTNode.DO_STATEMENT:
-				editor.createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 2)); // select the if or do words.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 2)); // select the if or do words.
 				break;
 			case ASTNode.FOR_STATEMENT:
 			case ASTNode.ENHANCED_FOR_STATEMENT:
-				editor.createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 3)); // select the for word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 3)); // select the for word.
 				break;
 			case ASTNode.SWITCH_STATEMENT:
-				editor.createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 6)); // select the switch word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 6)); // select the switch word.
 				break;
 			case ASTNode.WHILE_STATEMENT:
-				editor.createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 5)); // select the while word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 5)); // select the while word.
 				break;
 			default:
-				editor.createMarker(markerType, start, getLength(start, info.get(info.size() - 1).getStartPosition(), info.get(info.size() - 1).getLength())); // select the block of instructions associated to the selected node.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, info.get(info.size() - 1).getStartPosition(), info.get(info.size() - 1).getLength())); // select the block of instructions associated to the selected node.
 				break;
 		}
 	}
@@ -147,8 +165,7 @@ public class GraphInformation {
 	@SuppressWarnings("unchecked")
 	public void setVisualCoverageStatus(ICoverageData data) {
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph(); // set the sourceGraph.
-		editor = Activator.getDefault().getEditorController().getActiveEditor();
-		editor.removeALLMarkers(); // removes the marks in the editor.
+		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes()) {
 			sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
@@ -172,18 +189,44 @@ public class GraphInformation {
 			
 			@Override
 			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				if(selection instanceof ITextSelection) {				
+				if(selection instanceof ITextSelection && Activator.getDefault().getEditorController().isEverythingMatching()) {				
 					ITextSelection textSelected = (ITextSelection) selection; // get the text selected in the editor.
-					selectNode(textSelected.getOffset());
+					String currentMethod = getSelectedMethod(textSelected);
+					if(currentMethod != null) {
+						if(textSelected.getLength() != 0 && currentMethod.equals(Activator.getDefault().getEditorController().getSelectedMethod())) {
+							selectNode(textSelected.getOffset());
+							return;
+						}
+					}
 				}
+				Activator.getDefault().getEditorController().removeALLMarkers();
 			}
 		};
 		page.addSelectionListener(listener);
+		
 	}
 	
 	public void removeSelectToEditor() {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); // get the active page.
-		page.removeSelectionListener(listener); // remove the listener.
+		if(listener != null) {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); // get the active page.
+			page.removeSelectionListener(listener); // remove the listener.
+		}
+	}
+	
+	private String getSelectedMethod(ITextSelection textSelected) {
+		try {
+			for(IType type : Activator.getDefault().getEditorController().getCompilationUnit().getAllTypes())
+				for(IMethod method : type.getMethods()) {
+					int cursorPosition = textSelected.getOffset();
+					int methodStart = method.getSourceRange().getOffset();
+					int methodEnd = method.getSourceRange().getOffset() + method.getSourceRange().getLength();
+					if(methodStart <= cursorPosition && cursorPosition <= methodEnd)
+						return method.getElementName();
+				}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -58,15 +58,14 @@ public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgo
 		}
 
 		private void addPath(Deque<Node<V>> nodes) {
-			Path<V> toAdd = pathNodes.getFirst() == pathNodes.getLast() ?
-					new CyclePath<V>(nodes) : new Path<V>(nodes);
-			if (!isSubPathInSet(toAdd))
+			Path<V> toAdd = pathNodes.getFirst() == pathNodes.getLast() ? new CyclePath<V>(nodes) : new Path<V>(nodes);
+			if(!isSubPathInSet(toAdd))
 				primePaths.add(toAdd);			
 		}
 
 		private boolean isSubPathInSet(Path<V> path) {
-			for (AbstractPath<V> setPath : primePaths)
-				if (setPath.isSubPath(path))
+			for(AbstractPath<V> setPath : primePaths)
+				if(setPath.isSubPath(path))
 					return true;
 			return false;
 		}

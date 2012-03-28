@@ -43,6 +43,10 @@ public class TestRequirementSet extends Observable {
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 	
+	public void clearTestRequirementsManuallyAdded() {
+		manuallyTestRequirementSet.clear();		
+	}
+	
 	public int size() {
 		return testRequirementSet.size();
 	}
@@ -90,7 +94,8 @@ public class TestRequirementSet extends Observable {
 	public Set<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for(AbstractPath<Integer> path : testRequirementSet)
-			if(seletedTestPath.isSubPath(path))  // Infinite paths will never be subpaths 
+			if(path instanceof Path)
+				if(seletedTestPath.isSubPath(path))  // Infinite paths will never be subpaths 
 					coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}

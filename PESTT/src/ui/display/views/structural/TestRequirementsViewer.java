@@ -33,6 +33,7 @@ import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
+import domain.events.TestPathSelectedTourEvent;
 import domain.events.TestRequirementChangedEvent;
 
 public class TestRequirementsViewer extends AbstractTableViewer implements ITableViewer, Observer {
@@ -62,16 +63,17 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestRequirementChangedEvent) {
 			if(((TestRequirementChangedEvent) data).hasInfinitePath)
-				MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
+				MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
 			Set<AbstractPath<Integer>> testRequirements = new TreeSet<AbstractPath<Integer>>();
 			for(AbstractPath<Integer> path : ((TestRequirementChangedEvent) data).testRequirementSet)
 				testRequirements.add(path);
 			testRequirementsViewer.setInput(testRequirements);
 			cleanPathStatus();
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
-		} else if(data instanceof TestPathSelectedEvent) {
-			if(((TestPathSelectedEvent) data).selectedTestPaths != null)
-				if(!((TestPathSelectedEvent) data).selectedTestPaths.isEmpty())
+		} else if(data instanceof TestPathSelectedEvent || data instanceof TestPathSelectedTourEvent) {
+			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
+			if(selectedTestPaths != null)
+				if(!selectedTestPaths.isEmpty())
 					setPathStatus();
 				else
 					cleanPathStatus();
@@ -85,7 +87,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 
 	private void createColumnsToTestRequirement() {
 		String[] columnNames = new String[] {TableViewers.INFEASIBLE, TableViewers.STATUS, TableViewers.TEST_REQUIREMENTS}; // the names of columns.
-		int[] columnWidths = new int[] {80, 55, 100}; // the width of columns.
+		int[] columnWidths = new int[] {80, 55, 200}; // the width of columns.
 
 		// first column is for the id.
 		TableViewerColumn col = createColumnsHeaders(testRequirementsViewer, columnNames[0], columnWidths[0], 0);
@@ -172,17 +174,15 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		});
 		
 		testRequirementsViewer.getTable().addListener(SWT.Selection, new Listener() {
-		      @SuppressWarnings("unchecked")
+		    
 			public void handleEvent(Event event) {
 		        if(event.detail == SWT.CHECK)
 		        	for(TableItem item : testRequirementsViewer.getTable().getItems()) 
 		        		if(item == event.item) {
-		        			Activator.getDefault().getTestRequirementController().selectTestRequirement((AbstractPath<Integer>) item.getData());
+		        			Activator.getDefault().getEditorController().removeALLMarkers();
 		        			if(item.getChecked())
-		        			//	Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.INFEASIBLE_PATH, item.getText(2));
 		        				Activator.getDefault().getTestRequirementController().enableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
-		        			 else 
-		        			//	Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.INFEASIBLE_PATH, item.getText(2));
+		        			else 
 		        				Activator.getDefault().getTestRequirementController().disableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
 		        		}
 		      }

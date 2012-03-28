@@ -15,13 +15,15 @@ public class LinkHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-	    if(Activator.getDefault().getSourceGraphController().numberOfNodes() > 1) {
-	    	boolean state = HandlerUtil.toggleCommandState(event.getCommand());
-	    	Activator.getDefault().getCFGController().settLinkState(!state);
-	    } else {
-			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
-		}
-	    return null; 
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		if(Activator.getDefault().getEditorController().isEverythingMatching())
+			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
+		    	boolean state = HandlerUtil.toggleCommandState(event.getCommand());
+		    	Activator.getDefault().getCFGController().settLinkState(!state);
+		    } else 
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+		else
+			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+		return null;
 	}	
 }

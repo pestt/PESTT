@@ -47,9 +47,9 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 		@Override
 		public boolean visit(Node<V> node) {
 			CyclePath<V> currentCycle = stack.peek();
-			if (currentCycle.containsNode(node))
+			if(currentCycle.containsNode(node))
 				return false;
-			if(nodes.contains(node)) 
+			if(nodes.contains(node) && !graph.isInitialNode(node))
 				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
 			nodes.addLast(node);
 			if(graph.isFinalNode(node)) {

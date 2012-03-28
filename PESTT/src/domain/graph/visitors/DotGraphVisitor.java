@@ -1,5 +1,6 @@
 package domain.graph.visitors;
 
+import main.activator.Activator;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
@@ -20,7 +21,7 @@ public class DotGraphVisitor<V extends Comparable<V>> extends DepthFirstGraphVis
 	
 	@Override
 	public void endVisit(Node<V> node) {
-		if(graph.getNodes().size() == 1)
+		if(Activator.getDefault().getSourceGraphController().numberOfNodes() == 1)
 			dotString.append(node.getValue() + " [style=filled, fillcolor=violet]\n");
 		else if(graph.isInitialNode(node)) 
 			dotString.append(node.getValue() + " [style=filled, fillcolor=green]\n");

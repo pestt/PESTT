@@ -39,6 +39,10 @@ public class TestPathSet extends Observable {
 		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 	
+	public void cleanTestPathManuallyAdded() {
+		manuallyTestPathSet.clear();
+	}
+	
 	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {		
 		return manuallyTestPathSet;
 	}

@@ -92,22 +92,22 @@ public class TestPathsViewer extends AbstractTableViewer implements ITableViewer
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				boolean hasTotal = false;
-				Set<Path<Integer>> testRequirements = new TreeSet<Path<Integer>>();
+				Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
 				for(Object obj : selection.toList())
 					if(obj instanceof String) {
 						hasTotal = true;
 						break;
 					}
 					else
-						testRequirements.add((Path<Integer>) obj);
+						testPaths.add((Path<Integer>) obj);
 		
 				if(hasTotal) {
-					testRequirements.clear();
+					testPaths.clear();
 					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
-						testRequirements.add(path);
+						testPaths.add(path);
 				}
 					
-				Activator.getDefault().getTestPathController().selectTestPath(testRequirements);
+				Activator.getDefault().getTestPathController().selectTestPath(testPaths);
 		    }
 		});
 	}

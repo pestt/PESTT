@@ -21,13 +21,13 @@ public class GraphInformation {
 		sourceGraph.addMetadata(sourceNode, gnode); // associate the the nodes of sourceGraph and layoutGraph.
 	}
 	
-	public void addInformationToLayer1(Graph<Integer> sourceGraph, Edge<Integer> edge, String info) {
+	public void addInformationToLayer2(Graph<Integer> sourceGraph, Edge<Integer> edge, String info) {
 		sourceGraph.selectMetadataLayer(Layer.GUARDS.getLayer()); // change to cycle layer.
 		sourceGraph.addMetadata(edge, info); // add information to edge.
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void addInformationToLayer2(Graph<Integer> sourceGraph, Node<Integer> node, ASTNode instructions, CompilationUnit unit) {
+	public void addInformationToLayer1(Graph<Integer> sourceGraph, Node<Integer> node, ASTNode instructions, CompilationUnit unit) {
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // change to instruction layer.
 		Map<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // contains the instructions associated to the node. 
 		if(nodeInstructions == null) { 

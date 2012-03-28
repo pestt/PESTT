@@ -18,5 +18,4 @@ public class Description {
 	public static final String STOP = "stop";
 	public static final String TOTAL = "Total";
 	
-	
 }

@@ -21,6 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import ui.constants.Description;
+import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
 import ui.constants.Preferences;
 import ui.display.views.ViewGraph;
@@ -29,7 +30,6 @@ import ui.display.views.ViewStructuralCriteria;
 import ui.editor.ActiveEditor;
 import adt.graph.Path;
 import domain.constants.GraphCoverageCriteriaId;
-import domain.constants.JavadocTagAnnotations;
 import domain.constants.Layer;
 import domain.coverage.instrument.CoverageData;
 import domain.coverage.instrument.ICoverageData;
@@ -63,7 +63,7 @@ public class RefreshHandler extends AbstractHandler {
 				resetDataStructures(window);
 				keepCommandOptions();
 			} else
-				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES); 
+				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_MSG); 
 		} else 
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;
@@ -71,19 +71,25 @@ public class RefreshHandler extends AbstractHandler {
 	
 	private void resetDataStructures(IWorkbenchWindow window) {
 		Activator.getDefault().getEditorController().setListenUpdates(false);
-		
+		Activator.getDefault().getCoverageDataController().deleteObserverToCoverageData();
+		Activator.getDefault().getTestPathController().cleanTestPathManuallyAdded();
+		Activator.getDefault().getTestPathController().cleanTestPathSet();
+		Activator.getDefault().getTestRequirementController().clearInfeasibles();
+		Activator.getDefault().getTestRequirementController().clearTestRequirementsManuallyAdded();
+		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
+		Activator.getDefault().getCoverageDataController().clearCoverageDataSet();
+		Activator.getDefault().getStatisticsController().cleanStatisticsSet();
 		String selectedMethod = Activator.getDefault().getEditorController().getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
-		Activator.getDefault().getTestPathController().clear();
-		Activator.getDefault().getCoverageDataController().clean();
-		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
-		Activator.getDefault().getStatisticsController().cleanStatistics();
-		
-		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocTagAnnotations();
+		Activator.getDefault().getCoverageDataController().addObserverToCoverageData();
+		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocAnnotations();
 		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
 		if(criteria != null && !criteria.isEmpty()) {
 			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
+			List<String> tour = javadocAnnotations.get(JavadocTagAnnotations.TOUR_TYPE);
+			if(!tour.isEmpty())
+				Activator.getDefault().getTestPathController().selectTourType(tour.get(0));
 			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH)) {
 				String msg = input;
 				input = input.substring(1, input.length() - 1);
@@ -91,7 +97,7 @@ public class RefreshHandler extends AbstractHandler {
 				if(newTestRequirement != null) 
 					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
 				else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
 			}
 			for(String input : javadocAnnotations.get(JavadocTagAnnotations.INFEASIBLE_PATH)) {
 				String msg = input;
@@ -100,7 +106,7 @@ public class RefreshHandler extends AbstractHandler {
 				if(newTestRequirement != null) 
 					Activator.getDefault().getTestRequirementController().enableInfeasible(newTestRequirement);
 				else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
 			}
 			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_PATH)) {
 				String msg = input;
@@ -112,14 +118,12 @@ public class RefreshHandler extends AbstractHandler {
 					newData.add(new CoverageData(newTestPath));
 					Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
 				} else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_INPUT_TITLE, Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_PATH_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_PATH_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
 			}
 			
 			Activator.getDefault().getTestRequirementController().generateTestRequirement();
-			
 		}
 		Activator.getDefault().getEditorController().setListenUpdates(true);
-
 	}
 
 	private void keepCommandOptions() {
@@ -131,13 +135,12 @@ public class RefreshHandler extends AbstractHandler {
 		String valueLayer = stateLayer.getValue().toString(); // the value of the layer.
 		try {
 			if(valueLink) {
+				Activator.getDefault().getCFGController().settLinkState(false);
 				stateLink.setValue(false); // disable selection
 				handlerService.executeCommand(Description.LINK_BUTTON, null); // update the value.
 			}
-			if(!valueLayer.equals(Integer.toString(Layer.EMPTY.getLayer())) && !valueLayer.equals(Description.NONE)) {
-				handlerService.executeCommand(cmdService.getCommand(Description.LAYER_BUTTON).getId(), null); // update the value.//
-			}
-				
+			if(!valueLayer.equals(Integer.toString(Layer.EMPTY.getLayer())) && !valueLayer.equals(Description.NONE))
+				handlerService.executeCommand(Description.LAYER_BUTTON, null); // update the value.
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

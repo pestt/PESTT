@@ -67,7 +67,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	}
 	
 	private int getTotalNodes() {
-		return graph.getNodes().size();
+		return graph.size();
 	}
 	
 	private String getEdgesStatistics(Set<Path<Integer>> selectedTestPaths) {
@@ -127,6 +127,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	private List<Integer> getCoveredLines(Path<Integer> path) {
 		ICoverageData data = Activator.getDefault().getCoverageDataController().getCoverageData(path);
 		List<Integer> lines = new LinkedList<Integer>();
+		graph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 		for(Node<Integer> node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(node); // get the information in this layer to this node.

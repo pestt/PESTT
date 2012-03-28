@@ -23,7 +23,7 @@ public class StatisticsController extends Observable {
 		statisticsSet.getStatsitics(selectedTestPaths);
 	}
 
-	public void cleanStatistics() {
+	public void cleanStatisticsSet() {
 		statisticsSet.clean();
 	}
 }

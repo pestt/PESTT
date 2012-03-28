@@ -2,21 +2,20 @@ package adt.graph;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import domain.graph.visitors.IGraphVisitor;
 
 public class Graph<V extends Comparable<V>> {
 
-	private List<Node<V>> nodes;
+	private Set<Node<V>> nodes;
 	private Map<Node<V>, Set<Edge<V>>> edges;
 	private Set<Node<V>> initialNodes;
 	private Set<Node<V>> finalNodes;
@@ -24,7 +23,7 @@ public class Graph<V extends Comparable<V>> {
 	private int currentLayer;
 
 	public Graph() {
-		nodes = new LinkedList<Node<V>>();
+		nodes = new TreeSet<Node<V>>();
 		edges = new LinkedHashMap<Node<V>, Set<Edge<V>>>();
 		initialNodes = new HashSet<Node<V>>();
 		finalNodes = new HashSet<Node<V>>();
@@ -106,8 +105,7 @@ public class Graph<V extends Comparable<V>> {
 	}
 
 	public Set<Edge<V>> getNodeEndEdges(Node<V> node) {
-		Set<Edge<V>> nodeEndEdges = new HashSet<Edge<V>>();
-				
+		Set<Edge<V>> nodeEndEdges = new HashSet<Edge<V>>();	
 		for(Set<Edge<V>> edgesNode : edges.values())
 			for (Edge<V> edge : edgesNode)
 				if (edge.getEndNode() == node)
@@ -173,8 +171,20 @@ public class Graph<V extends Comparable<V>> {
 		return metadataLayers.get(currentLayer);
 	}
 
-	public Collection<Node<V>> getNodes() {
+	public Iterable<Node<V>> getNodes() {		
 		return nodes;
+	}
+	
+	public void sort() {
+		Set<Node<V>> sorted = new TreeSet<Node<V>>();
+		for(Node<V> node : nodes)
+			sorted.add(node);
+		nodes.clear();
+		nodes = sorted;
+	}
+	
+	public int size() {
+		return nodes.size();
 	}
 	
 	public boolean isPath(Path<V> path) {

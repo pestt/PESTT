@@ -10,14 +10,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.RadioState;
 
+import domain.constants.Layer;
+import domain.constants.TourType;
+
 import ui.constants.Description;
 import ui.constants.Messages;
-import domain.constants.Layer;
 
-public class LayerHandler extends AbstractHandler {
+public class ToursHandler extends AbstractHandler {
 
 	private String option = Description.EMPTY;
-	private String old = Layer.EMPTY.toString(); 
+	private String old = TourType.TOUR.toString(); 
 	private boolean flag = false;
 	
 	@Override
@@ -32,7 +34,7 @@ public class LayerHandler extends AbstractHandler {
 						old = option;
 					} else if(option == null && old.equals(Layer.EMPTY.toString()))
 						old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
-					Activator.getDefault().getCFGController().selectLayer(old);
+					Activator.getDefault().getTestPathController().selectTourType(old);
 				} else {
 					flag = true;
 					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.

@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.zest.core.widgets.GraphConnection;
@@ -165,20 +166,36 @@ public class Graph implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof CFGCreateEvent)
+		if(data instanceof CFGCreateEvent) {
 			create(((CFGCreateEvent) data).sourceGraph);
-		else if(data instanceof TestRequirementSelectedEvent) {
-			if(((TestRequirementSelectedEvent) data).selectedTestRequirement == null) {
+			bringGraphToTop();
+			Activator.getDefault().getEditorController().everythingMatch();
+		} else if(data instanceof TestRequirementSelectedEvent) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching())
+				if(((TestRequirementSelectedEvent) data).selectedTestRequirement == null) {
+					unselectAll();
+					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+				} else
+					selectTestRequirement(((TestRequirementSelectedEvent) data));
+			else {
 				unselectAll();
 				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-			} else
-				selectTestRequirement(((TestRequirementSelectedEvent) data));
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
+			}
 		} else if(data instanceof TestPathSelectedEvent) {
-			if(((TestPathSelectedEvent) data).selectedTestPaths == null) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
+				if(((TestPathSelectedEvent) data).selectedTestPaths == null) {
+					unselectAll();
+					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+				} else
+					selectTestPath(((TestPathSelectedEvent) data));
+			else {
 				unselectAll();
 				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-			} else
-				selectTestPath(((TestPathSelectedEvent) data));
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
+			}
 		} else if(data instanceof LinkChangeEvent) {
 			if(((LinkChangeEvent) data).state) {
 				Activator.getDefault().getEditorController().creatorSelectToEditor(); // create the SelectionListener to the editor.
@@ -193,12 +210,16 @@ public class Graph implements Observer {
 		}
 	}
 
-	private void selectTestRequirement(TestRequirementSelectedEvent data) {
+	private void bringGraphToTop() {
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void selectTestRequirement(TestRequirementSelectedEvent data) {
+		bringGraphToTop();
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
@@ -206,11 +227,7 @@ public class Graph implements Observer {
 	}
 	
 	private void selectTestPath(TestPathSelectedEvent data) {
-		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
-		} catch(PartInitException e) {
-			e.printStackTrace();
-		}
+		bringGraphToTop();
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
@@ -223,18 +240,9 @@ public class Graph implements Observer {
 		// select the nodes in the graph.	
 		Iterator<adt.graph.Node<Integer>> it = selectedTestRequirement.iterator();
 		adt.graph.Node<Integer> node = it.next();
-		while (it.hasNext()) { // through all node in the path.
+		while(it.hasNext()) { // through all node in the path.
 			adt.graph.Node<Integer> nextNode = it.next();
-			for(GraphNode gnode : graphNodes)  // through all nodes in the graph.
-				if(!gnode.isDisposed()) {
-					if(gnode.getData().equals(node)) { // if matches.
-						aux.add(gnode); // add node item to the list.
-						break;
-					}
-				} else {
-					MessageDialog.openInformation(parent.getShell(), Messages.COVERAGE_TITLE, Messages.NEED_UPDATE); // message displayed when the graph is not designed.
-					return null;
-				}
+			getGraphNode(aux, node);
 
 			// select the edges in the graph.
 			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges((adt.graph.Node<Integer>) node))  // through all edges of the node.
@@ -246,7 +254,18 @@ public class Graph implements Observer {
 						}
 			node = nextNode;
 		}
+		getGraphNode(aux, node);
 		return aux;
+	}
+
+	private void getGraphNode(List<GraphItem> aux, adt.graph.Node<Integer> node) {
+		for(GraphNode gnode : graphNodes)  // through all nodes in the graph.
+			if(!gnode.isDisposed()) {
+				if(gnode.getData().equals(node)) { // if matches.
+					aux.add(gnode); // add node item to the list.
+					break;
+				}
+			}
 	}
 
 	private List<GraphItem> selectTestPathSet(Set<Path<Integer>> selectedTestPaths) {
@@ -269,10 +288,17 @@ public class Graph implements Observer {
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
 					getSelected();
-					Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
+					if(Activator.getDefault().getEditorController().isEverythingMatching())
+						Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
+					else {
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
+					}
 				} else if(e.item == null) {
+					Activator.getDefault().getEditorController().setListenUpdates(false);
 					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 					Activator.getDefault().getTestPathController().unSelect();
+					Activator.getDefault().getEditorController().setListenUpdates(true);
 				}	
 			}
 		};	

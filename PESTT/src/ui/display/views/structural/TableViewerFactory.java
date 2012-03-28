@@ -18,8 +18,6 @@ public enum TableViewerFactory {
 			return new TestPathsViewer(parent, site).create();
 		case STATISTICSVIEWER:
 			return new StatisticsViewer(parent, site).create();
-		case DEFUSESVIEWER:
-			return new DataFlowViewer(parent, site).create();
 		default:
 			return null;
 		}

@@ -6,7 +6,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -16,20 +15,23 @@ import ui.dialog.InputDialog;
 import adt.graph.Path;
 
 public class AddTestRequirementHandler extends AbstractHandler {
-
-	private IWorkbenchWindow window;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		addNewTestReuirementPath(window.getShell());
+		if(Activator.getDefault().getEditorController().isEverythingMatching())
+			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+				addNewTestReuirementPath(window);
+			else 
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+		else
+			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
 		return null;
 	}
 	
-	private void addNewTestReuirementPath(Shell shell) throws ExecutionException {
+	private void addNewTestReuirementPath(IWorkbenchWindow window) throws ExecutionException {
 		String message = "Please enter a test requirement:\n(e.g. 0, ..., 3)";
-		InputDialog dialog = new InputDialog(shell, message);
+		InputDialog dialog = new InputDialog(window.getShell(), message);
 		dialog.open();
 		String input = dialog.getInput();
 		if(input != null)
@@ -38,12 +40,12 @@ public class AddTestRequirementHandler extends AbstractHandler {
 				if(newTestRequirement != null)
 					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
 				else {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
-					addNewTestReuirementPath(shell);
+					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
+					addNewTestReuirementPath(window);
 				}
 			} else {
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_INPUT_TITLE, Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
-				addNewTestReuirementPath(shell);
+				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
+				addNewTestReuirementPath(window);
 			}
 	}
 }
