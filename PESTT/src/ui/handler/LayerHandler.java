@@ -24,8 +24,8 @@ public class LayerHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(!flag)
-			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
-				if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
+			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
+				if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
 					if(option != null && !option.equals(Description.NONE)) {
 						HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
@@ -35,10 +35,9 @@ public class LayerHandler extends AbstractHandler {
 					Activator.getDefault().getCFGController().selectLayer(old);
 				} else {
 					flag = true;
-					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
-				}
+					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);				}
 			} else
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		else
 			flag = false;
 		return null;
