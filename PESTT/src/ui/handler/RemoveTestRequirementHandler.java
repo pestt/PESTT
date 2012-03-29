@@ -18,13 +18,13 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getEditorController().isEverythingMatching())
-			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if(Activator.getDefault().getEditorController().isEverythingMatching())
 				removeTestRequirement(window);
 			else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
 	}
 	
