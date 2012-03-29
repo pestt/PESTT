@@ -228,7 +228,6 @@ public class StatementsVisitor extends ASTVisitor {
 	    		edge = createConnection(); // create the final node of the IFStatement.
 	    		if(elseStatement == null) 
 	    			infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
-	    		finalnode = edge.getEndNode(); // update the final node.
 	    		returnFlag = (returnThenFlag || returnElseFlag);
 	    		if(!returnFlag) { // if there are no returns.
 	    		    if(!breakThenFlag || !breakElseFlag) { // if exist in maximum one break or continue.
@@ -240,6 +239,7 @@ public class StatementsVisitor extends ASTVisitor {
 	    		    }
 	    		} else
 	    			returnFlag = false;
+	    		finalnode = edge.getEndNode(); // update the final node.
 	    		prevNode.push(edge.getEndNode());
     		}
     	}
@@ -480,7 +480,8 @@ public class StatementsVisitor extends ASTVisitor {
 	}
 
 	public Graph<Integer> getGraph() {
-		sourceGraph.addFinalNode(finalnode); // add final node to the final nodes of the graph.
+		if(finalnode != null)
+			sourceGraph.addFinalNode(finalnode); // add final node to the final nodes of the graph.
 		return sourceGraph;
 	}
 }

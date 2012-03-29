@@ -48,51 +48,52 @@ public class GraphCoverageCriteria implements Observer {
 	}
 	
 	private void setNodes() {
-		GraphNode cpc = new GraphNode(graph, SWT.SINGLE, "Complete Path\n      Coverage\n------------------------\n            (CPC)");
+		GraphNode cpc = new GraphNode(graph, SWT.SINGLE, "Complete Path\n      Coverage\n" + insertTrace(14) + "\n            (CPC)");
 		cpc.setData(GraphCoverageCriteriaId.COMPLETE_PATH);
 		cpc.setTooltip(new Label("Complete Path Coverage (CPC):\nTest requirements contains all paths in Graph."));
 		nodes.put(GraphCoverageCriteriaId.COMPLETE_PATH, cpc); 
-		
-		GraphNode ppc = new GraphNode(graph, SWT.SINGLE, "Prime Path\n Coverage\n-------------------\n      (PPC)");
+			
+		GraphNode ppc = new GraphNode(graph, SWT.SINGLE, "Prime Path\n Coverage\n" + insertTrace(11) + "\n      (PPC)");
 		ppc.setData(GraphCoverageCriteriaId.PRIME_PATH);
 		ppc.setTooltip(new Label("Prime Path Coverage (PPC):\nTest requirements contains each prime path in Graph."));
 		nodes.put(GraphCoverageCriteriaId.PRIME_PATH, ppc); 
-		
-		GraphNode adupc = new GraphNode(graph, SWT.SINGLE, "All-du-Paths\n  Coverage\n-------------------\n  (ADUPC)");
+
+		GraphNode adupc = new GraphNode(graph, SWT.SINGLE, "All-du-Paths\n  Coverage\n " + insertTrace(11) + "\n    (ADUPC)");
 //		adupc.setData(GraphCoverageCriteriaId.ALL_DU_PATHS);
-		adupc.setTooltip(new Label("All-du-Paths Coverage (ADUPC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains every path d in S."));		nodes.put(GraphCoverageCriteriaId.ALL_DU_PATHS, adupc); 
+		adupc.setTooltip(new Label("All-du-Paths Coverage (ADUPC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains every path d in S."));		
+		nodes.put(GraphCoverageCriteriaId.ALL_DU_PATHS, adupc); 
 		
-		GraphNode epc = new GraphNode(graph, SWT.SINGLE, "Edge-Pair\nCoverage\n----------------\n     (EPC)");
+		GraphNode epc = new GraphNode(graph, SWT.SINGLE, "Edge-Pair\nCoverage\n" + insertTrace(9) + "\n     (EPC)");
 		epc.setData(GraphCoverageCriteriaId.EDGE_PAIR);
 		epc.setTooltip(new Label("Edge-Pair Coverage (EPC):\nTest requirements contains each reachable path of length up to 2, inclusive, in Graph."));
 		nodes.put(GraphCoverageCriteriaId.EDGE_PAIR, epc); 
-		
-		GraphNode crtc = new GraphNode(graph, SWT.SINGLE, "Complete Round\n   Trip Coverage\n----------------------------\n           (CRTC)");
+
+		GraphNode crtc = new GraphNode(graph, SWT.SINGLE, "Complete Round\n   Trip Coverage\n" + insertTrace(16) + "\n           (CRTC)");
 		crtc.setData(GraphCoverageCriteriaId.COMPLETE_ROUND_TRIP);
 		crtc.setTooltip(new Label("Complete Round Trip Coverage (CRTC):\nTest requirements contains all round-trip paths for each reachable node in Graph."));
 		nodes.put(GraphCoverageCriteriaId.COMPLETE_ROUND_TRIP, crtc); 
-		
-		GraphNode auc = new GraphNode(graph, SWT.SINGLE, "  All-Uses\nCoverage\n----------------\n    (AUC)");
+
+		GraphNode auc = new GraphNode(graph, SWT.SINGLE, "  All-Uses\nCoverage\n" + insertTrace(9) + "\n    (AUC)");
 //		auc.setData(GraphCoverageCriteriaId.ALL_USES);
 		auc.setTooltip(new Label("All-Uses Coverage (AUC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains at least one path d in S."));
 		nodes.put(GraphCoverageCriteriaId.ALL_USES, auc); 
-		
-		GraphNode ec = new GraphNode(graph, SWT.SINGLE, "     Edge\n Coverage\n----------------\n      (EC)");
+
+		GraphNode ec = new GraphNode(graph, SWT.SINGLE, "     Edge\n Coverage\n" + insertTrace(10) + "\n      (EC)");
 		ec.setData(GraphCoverageCriteriaId.EDGE);
 		ec.setTooltip(new Label("Edge Coverage (EC):\nTest requirements contains each reachable path of length up to 1, inclusive, in Graph."));
 		nodes.put(GraphCoverageCriteriaId.EDGE, ec); 
-		
-		GraphNode srtc = new GraphNode(graph, SWT.SINGLE, "Simple Round\nTrip Coverage\n-----------------------\n        (SRTC)");
+
+		GraphNode srtc = new GraphNode(graph, SWT.SINGLE, "Simple Round\nTrip Coverage\n" + insertTrace(13) + "\n        (SRTC)");
 		srtc.setData(GraphCoverageCriteriaId.SIMPLE_ROUND_TRIP);
 		srtc.setTooltip(new Label("Simple Round Trip Coverage (SRTC):\nTest requirements contains at least one round-trip path\n for each reachable node in Graph that begins and ends a round-trip path."));
 		nodes.put(GraphCoverageCriteriaId.SIMPLE_ROUND_TRIP, srtc); 
-		
-		GraphNode adc = new GraphNode(graph, SWT.SINGLE, "  All-Defs\nCoverage\n----------------\n    (ADC)");
+
+		GraphNode adc = new GraphNode(graph, SWT.SINGLE, "  All-Defs\nCoverage\n" + insertTrace(9) + "\n    (ADC)");
 //		adc.setData(GraphCoverageCriteriaId.ALL_DEFS);
 		adc.setTooltip(new Label("All-Defs Coverage (ADC):\nFor each def-path set S = du(n, v),\nTest requirements contains at least one path d in S."));
 		nodes.put(GraphCoverageCriteriaId.ALL_DEFS, adc); 
-		
-		GraphNode nc = new GraphNode(graph, SWT.SINGLE, "    Node\nCoverage\n----------------\n     (NC)");
+
+		GraphNode nc = new GraphNode(graph, SWT.SINGLE, "    Node\nCoverage\n" + insertTrace(9) + "\n     (NC)");
 		nc.setData(GraphCoverageCriteriaId.NODE);
 		nc.setTooltip(new Label("Node Coverage (NC):\nTest requirements contains each reachable node in Grpah."));
 		nodes.put(GraphCoverageCriteriaId.NODE, nc); 
@@ -123,6 +124,13 @@ public class GraphCoverageCriteria implements Observer {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.ALL_USES), nodes.get(GraphCoverageCriteriaId.EDGE));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.ALL_USES), nodes.get(GraphCoverageCriteriaId.ALL_DEFS));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.EDGE), nodes.get(GraphCoverageCriteriaId.NODE));
+	}
+	
+	private String insertTrace(int num) {
+		String line = "";
+		for(int i = 0; i < num; i++)
+			line += (char)0x2013 + "";
+		return line;
 	}
 	
 	@Override
