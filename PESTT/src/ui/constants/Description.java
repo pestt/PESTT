@@ -9,7 +9,7 @@ public class Description {
 	public static final String VIEW_LOGIC_COVERAGE_CRITERIA = "PESTT.ViewLogicCoverageCriteria";
 	public static final String LINK_BUTTON = "PESTT.Link";
 	public static final String LAYER_BUTTON = "PESTT.Layers";
-	public static final String TOUR_BUTTON = "PESTT.Touring";
+	public static final String TOUR_BUTTON = "PESTT.Tours";
 	public static final String NONE = "NONE";
 	public static final String EMPTY = "";
 	public static final String NODE = "node";

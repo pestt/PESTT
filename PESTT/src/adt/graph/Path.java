@@ -80,7 +80,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 				while(i < nodes.size() && nodes.get(i) != currentNode)
 					i++;
 				
-				if(nodes.get(i) == node)
+				if(i < nodes.size() && nodes.get(i) == node)
 					return true;
 				
 				if((i < nodes.size() && nodes.get(i) != currentNode) || i >= nodes.size())
