@@ -49,7 +49,7 @@ public class EditorController extends Observable {
 	}
 	
 	public boolean isEverythingMatching() {
-		return editor.isEverythingMatching();
+			return editor.isEverythingMatching();
 	}
 	
 	public void everythingMatch() {

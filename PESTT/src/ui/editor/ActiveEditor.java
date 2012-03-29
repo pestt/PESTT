@@ -45,11 +45,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
+import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.SourceGraph;
 import domain.events.TestPathChangedEvent;
-import domain.events.TestPathSelectedTourEvent;
 import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 
@@ -68,6 +68,7 @@ public class ActiveEditor implements Observer {
 
 	public ActiveEditor() {
 		listenUpdates = true;
+		updated = true;
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
@@ -225,7 +226,7 @@ public class ActiveEditor implements Observer {
 			MethodDeclaration method = getMethodDeclaration(unit);
 			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 				if(data instanceof TestRequirementSelectedCriteriaEvent  ||
-				   data instanceof TestPathSelectedTourEvent ||
+				   data instanceof TourChangeEvent ||
 				   data instanceof TestRequirementChangedEvent ||
 				   data instanceof TestPathChangedEvent) {
 						String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();

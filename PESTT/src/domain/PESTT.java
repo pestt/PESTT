@@ -7,6 +7,7 @@ import ui.controllers.StatisticsController;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.CoverageDataController;
+import domain.controllers.DefUsesController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
@@ -21,6 +22,7 @@ public class PESTT {
 	private StatisticsController statisticsController;
 	private EditorController editorController;
 	private CFGController cfgController;
+	private DefUsesController defusesController;
 	
 	public PESTT() {
 		editorController = new EditorController();
@@ -33,6 +35,7 @@ public class PESTT {
 		statisticsController = new StatisticsController(new StatisticsSet());
 		cfgController = new CFGController();
 		cfgController.selectLayer(Layer.EMPTY.toString());
+		defusesController = new DefUsesController(new DefUsesSet());
 	}
 	
 	public SourceGraphController getSourceGraphController() {
@@ -61,5 +64,9 @@ public class PESTT {
 
 	public CFGController getCFGController() {
 		return cfgController;
+	}
+
+	public DefUsesController getDefUsesController() {
+		return defusesController;
 	}
 }

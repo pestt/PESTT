@@ -19,9 +19,20 @@ public class TestRequirementsHandler extends AbstractHandler {
 		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
 			if(Activator.getDefault().getEditorController().isEverythingMatching())
 				if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) {
-					Activator.getDefault().getEditorController().setListenUpdates(false);
-					Activator.getDefault().getTestRequirementController().generateTestRequirement();
-					Activator.getDefault().getEditorController().setListenUpdates(true);
+					switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
+						case COMPLETE_PATH:
+						case PRIME_PATH:
+						case EDGE_PAIR:
+						case COMPLETE_ROUND_TRIP:
+						case EDGE:
+						case SIMPLE_ROUND_TRIP: 
+						case NODE:
+							Activator.getDefault().getEditorController().setListenUpdates(false);
+							Activator.getDefault().getTestRequirementController().generateTestRequirement();
+							Activator.getDefault().getEditorController().setListenUpdates(true);
+						default:
+							System.out.println("Test requirements  handler -> Please change view");
+					}
 				} else 
 					MessageDialog.openInformation(window.getShell(), Messages.COVERAGE_TITLE, Messages.COVERAGE_SELECT_MSG); // message displayed when the graph is not draw.
 			else 

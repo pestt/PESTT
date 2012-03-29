@@ -67,6 +67,15 @@
             name="Strutural Coverage Criteria"
             restorable="true">
       </view>
+      <view
+            allowMultiple="true"
+            category="PESTT.Category"
+            class="ui.display.views.ViewDataFlowCriteria"
+            icon="icons/results.gif"
+            id="PESTT.ViewDataFlowCoverage"
+            name="Data Flow Coverage Criteria"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -79,17 +88,6 @@
                moveable="true"
                relationship="right"
                relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
-               id="PESTT.ViewStructuralCoverage"
-               minimized="false"
-               moveable="true"
-               relationship="stack"
-               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -112,6 +110,28 @@
                moveable="true"
                relationship="right"
                relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="PESTT.ViewStructuralCoverage"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="org.eclipse.pde.runtime.LogView"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="PESTT.ViewDataFlowCoverage"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -252,6 +272,12 @@
             description="Show test requirements"
             id="PESTT.TestRequirements"
             name="Show test requirements">
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Show variable definitons and uses "
+            id="PESTT.DefUses"
+            name="Show variable definitons and uses ">
       </command>
    </extension>
    <extension
@@ -692,6 +718,27 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewDataFlowCoverage">
+         <command
+               commandId="PESTT.DefUses"
+               icon="icons/refresh.gif"
+               label="Show variable definitons and uses "
+               mnemonic="Alt+U"
+               style="push"
+               tooltip="Show variable definitons and uses ">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -736,6 +783,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+T">
+      </key>
+      <key
+            commandId="PESTT.DefUses"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+U">
       </key>
    </extension>
    <extension
@@ -947,6 +1000,26 @@
                      variable="activePartId">
                   <equals
                         value="PESTT.ViewStructuralCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.DefUsesHandler"
+            commandId="PESTT.DefUses">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewDataFlowCoverage">
                   </equals>
                </with>
             </and>
