@@ -194,7 +194,7 @@
       </category>
       <command
             categoryId="PESTT.CategoryViewStructuralCoverage"
-            description="Adds a tnew est path manually."
+            description="Adds a new test path manually."
             id="PESTT.AddTestPathManually"
             name="Add Test Path Manually">
       </command>

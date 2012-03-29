@@ -141,6 +141,7 @@ public class RefreshHandler extends AbstractHandler {
 			}
 			if(!valueLayer.equals(Integer.toString(Layer.EMPTY.getLayer())) && !valueLayer.equals(Description.NONE))
 				handlerService.executeCommand(Description.LAYER_BUTTON, null); // update the value.
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

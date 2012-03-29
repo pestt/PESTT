@@ -10,11 +10,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.RadioState;
 
-import domain.constants.Layer;
-import domain.constants.TourType;
-
 import ui.constants.Description;
 import ui.constants.Messages;
+import domain.constants.TourType;
 
 public class ToursHandler extends AbstractHandler {
 
@@ -29,12 +27,14 @@ public class ToursHandler extends AbstractHandler {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
 					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
-					if(option != null && !option.equals(Description.NONE)) {
-						HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
-						old = option;
-					} else if(option == null && old.equals(Layer.EMPTY.toString()))
-						old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
-					Activator.getDefault().getTestPathController().selectTourType(old);
+					if(option != null && !option.equals(old)) {
+						if(option != null && !option.equals(Description.NONE)) {
+							HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
+							old = option;
+						} //else if(option == null)
+						//	old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
+						Activator.getDefault().getTestPathController().selectTourType(old);
+					}
 				} else {
 					flag = true;
 					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
