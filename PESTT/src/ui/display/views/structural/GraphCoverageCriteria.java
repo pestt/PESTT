@@ -21,6 +21,7 @@ import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import ui.constants.Colors;
+import ui.events.RefreshStructuralGraphEvent;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 
@@ -33,21 +34,29 @@ public class GraphCoverageCriteria implements Observer {
 
 	public GraphCoverageCriteria(Composite parent) {
 		graph = new Graph(parent, SWT.NONE);
-		nodes = new HashMap<GraphCoverageCriteriaId, GraphNode>();
+		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getCFGController().addObserver(this);
+		create();
+	}
+
+	private void create() {
+		graph.clear();
 		setNodes();
 		setEdges();
 		setLayout();
 		createSelectionListener();
-		Activator.getDefault().getTestRequirementController().addObserver(this);
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
 	}
-	
+
 	public void dispose() {
 		Activator.getDefault().getTestRequirementController().deleteObserver(this);
+		Activator.getDefault().getCFGController().deleteObserver(this);
 	}
+
 	
 	private void setNodes() {
+		nodes = new HashMap<GraphCoverageCriteriaId, GraphNode>();
 		GraphNode cpc = new GraphNode(graph, SWT.SINGLE, "Complete Path\n      Coverage\n" + insertTrace(14) + "\n            (CPC)");
 		cpc.setData(GraphCoverageCriteriaId.COMPLETE_PATH);
 		cpc.setTooltip(new Label("Complete Path Coverage (CPC):\nTest requirements contains all paths in Graph."));
@@ -119,44 +128,30 @@ public class GraphCoverageCriteria implements Observer {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.ALL_USES), nodes.get(GraphCoverageCriteriaId.ALL_DEFS));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.EDGE), nodes.get(GraphCoverageCriteriaId.NODE));
 	}
-	
+
 	private String insertTrace(int num) {
 		String line = "";
 		for(int i = 0; i < num; i++)
 			line += (char)0x2013 + "";
 		return line;
 	}
-	
-	@Override
-	public void update(Observable obs, Object data) {
-		if(data instanceof TestRequirementSelectedCriteriaEvent)
-			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
-	}
-	
+
 	private void setLayout() {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
-	
+
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
-				
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
 					setSelected(null);
 					setSelected((GraphItem) e.item);
 					GraphCoverageCriteriaId option = (GraphCoverageCriteriaId) getSelected().getData();
-			//		if(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria() != null)
-			//			Activator.getDefault().getEditorController().removeJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, 
-			//				Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString());
-			//		else 
-			//			Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
 					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(option);
-			//		Activator.getDefault().getEditorController().addJavadocTagAnnotation(JavadocTagAnnotations.COVERAGE_CRITERIA, option.toString());
 				} else
-					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(null);
-			//		Activator.getDefault().getEditorController().clearJavadocTagAnnotation();
-				
+					Activator.getDefault().getTestRequirementController().selectCoverageCriteria(null);				
 			}
 		};	
 		graph.addSelectionListener(event);				
@@ -167,8 +162,16 @@ public class GraphCoverageCriteria implements Observer {
 			return null;
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
-	
+
 	private void setSelected(GraphItem item) {
 		graph.setSelection(item == null ? null : new GraphItem[] {item}); // the items selected.
+	}
+
+	@Override
+	public void update(Observable obs, Object data) {
+		if(data instanceof TestRequirementSelectedCriteriaEvent)
+			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
+		else if(data instanceof RefreshStructuralGraphEvent)
+			create();
 	}
 }
