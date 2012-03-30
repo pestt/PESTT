@@ -4,6 +4,8 @@ import java.util.Observable;
 
 import ui.events.LayerChangeEvent;
 import ui.events.LinkChangeEvent;
+import ui.events.RefreshLogicGraphEvent;
+import ui.events.RefreshStructuralGraphEvent;
 import domain.constants.Layer;
 
 public class CFGController extends Observable{
@@ -45,4 +47,16 @@ public class CFGController extends Observable{
 	public Layer getLayer() {
 		return layer;
 	}
+
+	public void refreshStructuralCoverageGraph() {
+		setChanged();
+		notifyObservers(new RefreshStructuralGraphEvent());
+	}
+	
+	public void refreshLogicCoverageGraph() {
+		setChanged();
+		notifyObservers(new RefreshLogicGraphEvent());
+	}
+	
+	
 }

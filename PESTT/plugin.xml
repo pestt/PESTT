@@ -188,7 +188,7 @@
             name="Refresh">
       </command>
       <category
-            description="Commands related to the PESTT View Requirement Set"
+            description="Commands related to the PESTT View Structural Coverage"
             id="PESTT.CategoryViewStructuralCoverage"
             name="PESTTViewStructuralCoverageCategory">
       </category>
@@ -252,6 +252,23 @@
             description="Show test requirements"
             id="PESTT.TestRequirements"
             name="Show test requirements">
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Refresh the structural coverage criteria graph."
+            id="PESTT.RefreshStructuralCoverageCriteriaGraph"
+            name="Refresh the structural coverage criteria graph.">
+      </command>
+      <category
+            description="Commands related to the PESTT View Logic Coverage"
+            id="PESTT.CategoryViewLogicCoverage"
+            name="PESTTViewLogicCoverageCategory">
+      </category>
+      <command
+            categoryId="PESTT.CategoryViewLogicCoverage"
+            description="Refresh the logic coverage criteria graph."
+            id="PESTT.RefreshLogicCoverageCriteriaGraph"
+            name="Refresh the logic coverage criteria graph.">
       </command>
    </extension>
    <extension
@@ -692,6 +709,48 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewGraphCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Ctrl+F5"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshLogicCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Ctrl+F5"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -947,6 +1006,46 @@
                      variable="activePartId">
                   <equals
                         value="PESTT.ViewStructuralCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.RefreshStructuralCriteriaGraphHandler"
+            commandId="PESTT.RefreshStructuralCoverageCriteriaGraph">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewGraphCoverageCriteria">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.RefreshLogicCriteriaGraphHandler"
+            commandId="PESTT.RefreshLogicCoverageCriteriaGraph">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewLogicCoverageCriteria">
                   </equals>
                </with>
             </and>

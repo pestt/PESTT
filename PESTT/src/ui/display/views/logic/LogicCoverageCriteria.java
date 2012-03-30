@@ -2,6 +2,8 @@ package ui.display.views.logic;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import main.activator.Activator;
 
@@ -19,11 +21,11 @@ import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import ui.constants.Colors;
-
+import ui.events.RefreshLogicGraphEvent;
 import domain.constants.LogicCoverageCriteriaId;
 
 @SuppressWarnings("deprecation")
-public class LogicCoverageCriteria {
+public class LogicCoverageCriteria implements Observer {
 	
 	private Graph graph;
 	private Map<LogicCoverageCriteriaId, GraphNode> nodes;
@@ -31,7 +33,12 @@ public class LogicCoverageCriteria {
 
 	public LogicCoverageCriteria(Composite parent) {
 		graph = new Graph(parent, SWT.NONE);
-		nodes = new HashMap<LogicCoverageCriteriaId, GraphNode>();
+		Activator.getDefault().getCFGController().addObserver(this);
+		create();
+	}
+
+	private void create() {
+		graph.clear();
 		setNodes();
 		setEdges();
 		setLayout();
@@ -40,7 +47,12 @@ public class LogicCoverageCriteria {
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
 	}
 	
+	public void dispose() {
+		Activator.getDefault().getCFGController().deleteObserver(this);
+	}
+	
 	private void setNodes() {
+		nodes = new HashMap<LogicCoverageCriteriaId, GraphNode>();
 		GraphNode coc = new GraphNode(graph, SWT.SINGLE, "Complete Clause\n        Coverage\n" + insertTrace(16) + "\n            (CoC)");
 		coc.setData(LogicCoverageCriteriaId.COMPLETE_CLAUSE);
 		coc.setTooltip(new Label("Combinatorial Coverage (or Complete Clause Coverage) (CoC):\nFor each p ∈ P, Test requirements has test requirements for the clauses in Cp to evaluate to each possible combination of truth values."));
@@ -109,13 +121,6 @@ public class LogicCoverageCriteria {
 		}
 	}
 	
-	private String insertTrace(int num) {
-		String line = "";
-		for(int i = 0; i < num; i++)
-			line += (char)0x2013 + "";
-		return line;
-	}
-	
 	private void setEdges() {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.COMPLETE_CLAUSE), nodes.get(LogicCoverageCriteriaId.RESTRICTED_ACTIVE_CLAUSE));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.COMPLETE_CLAUSE), nodes.get(LogicCoverageCriteriaId.RESTRICTED_INACTIVE_CLAUSE));
@@ -127,6 +132,13 @@ public class LogicCoverageCriteria {
 		edge.setCurveDepth(50);
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE), nodes.get(LogicCoverageCriteriaId.CLAUSE));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE), nodes.get(LogicCoverageCriteriaId.PREDICATE));
+	}
+	
+	private String insertTrace(int num) {
+		String line = "";
+		for(int i = 0; i < num; i++)
+			line += (char)0x2013 + "";
+		return line;
 	}
 	
 	private void setLayout() {
@@ -156,5 +168,11 @@ public class LogicCoverageCriteria {
 	
 	private void setSelected(GraphItem item) {
 		graph.setSelection(item == null ? null : new GraphItem[] {item}); // the items selected.
+	}
+	
+	@Override
+	public void update(Observable obs, Object data) {
+		if(data instanceof RefreshLogicGraphEvent)
+			create();
 	}
 }
