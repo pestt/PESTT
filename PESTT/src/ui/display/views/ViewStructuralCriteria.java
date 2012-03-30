@@ -19,4 +19,5 @@ public class ViewStructuralCriteria extends ViewPart {
 	public void setFocus() {
 		// does nothing.
 	}	
+	
 }
