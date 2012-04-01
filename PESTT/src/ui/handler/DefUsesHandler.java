@@ -24,7 +24,6 @@ public class DefUsesHandler extends AbstractHandler {
 					case ALL_USES:
 					case ALL_DEFS:
 						Activator.getDefault().getEditorController().setListenUpdates(false);
-						System.out.println("generatin def uses");
 						Activator.getDefault().getDefUsesController().generateDefUses();
 						Activator.getDefault().getEditorController().setListenUpdates(true);
 					default:
