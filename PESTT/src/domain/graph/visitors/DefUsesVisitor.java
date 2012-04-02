@@ -43,8 +43,10 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 					for(ASTNode ast : astNodes)
 						ast.accept(visitor);
 			}
-			List<String> defuses = getDefUses(defs, uses);
-			Activator.getDefault().getDefUsesController().put(Integer.toString(node.getValue()), defuses);
+			if(!defs.isEmpty() || !uses.isEmpty()) {
+				List<String> defuses = getDefUses(defs, uses);
+				Activator.getDefault().getDefUsesController().put(Integer.toString(node.getValue()), defuses);
+			}
 			return true;
 		}
 		return false;
@@ -63,9 +65,11 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 				for(ASTNode ast : astNodes)
 					ast.accept(visitor);
 		}
-		List<String> defuses = getDefUses(defs, uses);
-		String sEdge = edge.getBeginNode() + " → " + edge.getEndNode();	
-		Activator.getDefault().getDefUsesController().put(sEdge, defuses);
+		if(!defs.isEmpty() || !uses.isEmpty()) {
+			List<String> defuses = getDefUses(defs, uses);
+			String sEdge = edge.getBeginNode() + " → " + edge.getEndNode();	
+			Activator.getDefault().getDefUsesController().put(sEdge, defuses);
+		}
 		return false;
 	}
 	

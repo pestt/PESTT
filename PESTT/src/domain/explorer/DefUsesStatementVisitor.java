@@ -5,12 +5,14 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -90,22 +92,27 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		node.getRightOperand().accept(this);
 		addUses();
 		node.getLeftOperand().accept(this);
-		addUses();
-		stored.push(EMPTY);
 		return false;
 	}
 	
 	public boolean visit(PostfixExpression node) {
 		System.out.println("PostfixExpression " + node);
 		stored.push(node.getOperand().toString());
+		stored.push(node.getOperand().toString());
 		node.getOperand().accept(this);
+		addUses();
+		addDefs();
 		return false;
 	}
 
 	public boolean visit(PrefixExpression node) {
 		System.out.println("PrefixExpression " + node);
 		stored.push(node.getOperand().toString());
+		stored.push(node.getOperand().toString());
+		stored.push(node.getOperand().toString());
 		node.getOperand().accept(this);
+		addUses();
+		addDefs();
 		return false;
 	}
 	
@@ -145,9 +152,29 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		return false;
 	}
 	
-	public boolean visit(ExpressionStatement node) {
-		System.out.println("ExpressionStatement " + node);
-		System.out.println("Expression " + node.getExpression());
+	public boolean visit(ArrayAccess node) {
+		System.out.println("ArrayAccess " + node);
+		if(!stored.isEmpty()) 
+			stored.pop();
+		stored.push(node.getArray().toString());
+		stored.push(node.getIndex().toString());
+		node.getIndex().accept(this);
+		addUses();
+		node.getArray().accept(this);
+		return false;
+	}
+	
+	public boolean visit(ArrayCreation node) {
+		System.out.println("ArrayCreation " + node);
+		if(!stored.isEmpty()) {
+			stored.pop();
+			stored.push(EMPTY);
+		}
+		return false;
+	}
+	
+	public boolean visit(ArrayInitializer node) {
+		System.out.println("ArrayInitializer " + node);
 		return false;
 	}
 	
@@ -189,6 +216,8 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		System.out.println("SwitchCase " + node);
 		return false;
 	}
+	
+	
 	
 	private void addDefs() {
 		if(!stored.isEmpty())
