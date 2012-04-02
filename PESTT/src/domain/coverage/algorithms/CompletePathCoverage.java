@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
+import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.InfinitePath;
 import adt.graph.Node;
@@ -49,7 +50,7 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			CyclePath<V> currentCycle = stack.peek();
 			if(currentCycle.containsNode(node))
 				return false;
-			if(nodes.contains(node) && !graph.isInitialNode(node))
+			if(nodes.contains(node) && !graph.isInitialNode(node) && !isDoLoop(node))
 				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
 			nodes.addLast(node);
 			if(graph.isFinalNode(node)) {
@@ -57,7 +58,7 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			}
 			return true;
 		}
-		
+
 		@Override
 		public void endVisit(Node<V> node) {
 			nodes.removeLast();
@@ -118,5 +119,16 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			}
 			return -1;
 		}
+		
+		private boolean isDoLoop(Node<V> node) {
+			Set<Edge<V>> startEdges = graph.getNodeEdges(node);
+			Set<Edge<V>> endEdges = graph.getNodeEndEdges(node);
+			for(Edge<V> start : startEdges)
+				for(Edge<V> end : endEdges)
+					if(start.getEndNode() == end.getBeginNode() && startEdges.size() > 1)
+					return false;
+			return true;
+		}
+		
 	};
 }
