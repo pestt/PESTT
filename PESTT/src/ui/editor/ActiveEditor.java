@@ -37,6 +37,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -104,24 +105,28 @@ public class ActiveEditor implements Observer {
 	}
 	
 	private void addChangeListener() {
-		listener = new IDocumentListener() {
-
-			@Override
-			public void documentAboutToBeChanged(DocumentEvent event) {
-				// do nothing
-			}
-
-			@Override
-			public void documentChanged(DocumentEvent event) {
-				removeALLMarkers();
-				updated = false;
-			}
-		};
-		editor.getDocumentProvider().getDocument(editor.getEditorInput()).addPrenotifiedDocumentListener(listener);
+		if(editor != null) {
+			listener = new IDocumentListener() {
+	
+				@Override
+				public void documentAboutToBeChanged(DocumentEvent event) {
+					// do nothing
+				}
+	
+				@Override
+				public void documentChanged(DocumentEvent event) {
+					removeALLMarkers();
+					updated = false;
+				}
+			};
+			editor.getDocumentProvider().getDocument(editor.getEditorInput()).addPrenotifiedDocumentListener(listener);
+		}
 	}
 	
 	private void deleteChangeListener() {
-		editor.getDocumentProvider().getDocument(editor.getEditorInput()).removePrenotifiedDocumentListener(listener);
+		IEditorInput input = editor.getEditorInput();
+		if(editor != null && listener != null && input != null)
+			editor.getDocumentProvider().getDocument(input).removePrenotifiedDocumentListener(listener);
 	}
 	
 	public void createMarker(String markerType, int offset, int length) {

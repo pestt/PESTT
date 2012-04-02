@@ -8,14 +8,22 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SwitchCase;
+import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class DefUsesStatementVisitor extends ASTVisitor {
 	
@@ -75,7 +83,8 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	
 	public boolean visit(InfixExpression node) {
 		System.out.println("InfixExpression " + node);
-		stored.pop();
+		if(!stored.isEmpty()) 
+			stored.pop();
 		stored.push(node.getLeftOperand().toString());
 		stored.push(node.getRightOperand().toString());
 		node.getRightOperand().accept(this);
@@ -136,18 +145,65 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		return false;
 	}
 	
+	public boolean visit(ExpressionStatement node) {
+		System.out.println("ExpressionStatement " + node);
+		System.out.println("Expression " + node.getExpression());
+		return false;
+	}
+	
+	public boolean visit(IfStatement node) {
+		System.out.println("IFStatement " + node);
+		stored.push(node.getExpression().toString());
+		node.getExpression().accept(this);
+		addUses();
+		addDefs();
+		return false;
+	}
+	
+	public boolean visit(WhileStatement node) {
+		System.out.println("WhileStatement " + node);
+		return false;
+	}
+	
+	public boolean visit(DoStatement node) {
+		System.out.println("DoStatement " + node);
+		return false;
+	}
+	
+	public boolean visit(ForStatement node) {
+		System.out.println("ForStatement " + node);
+		return false;
+	}
+	
+	public boolean visit(EnhancedForStatement node) {
+		System.out.println("EnhancedForStatement " + node);
+		return false;
+	}
+	
+	public boolean visit(SwitchStatement node) {
+		System.out.println("SwitchStatement " + node);
+		return false;
+	}
+	
+	public boolean visit(SwitchCase node) {
+		System.out.println("SwitchCase " + node);
+		return false;
+	}
+	
 	private void addDefs() {
-		if(!stored.isEmpty() && !stored.peek().equals(EMPTY))
-			defs.add(stored.pop());
-		else
-			stored.pop();
+		if(!stored.isEmpty())
+			if(!stored.peek().equals(EMPTY))
+				defs.add(stored.pop());
+			else
+				stored.pop();
 	}
 
 	private void addUses() {
-		if(!stored.peek().equals(EMPTY))
-			uses.add(stored.pop());
-		else
-			stored.pop();			
+		if(!stored.isEmpty())
+			if(!stored.peek().equals(EMPTY))
+				uses.add(stored.pop());
+			else
+				stored.pop();			
 	}
 
 	/*

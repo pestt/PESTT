@@ -13,6 +13,7 @@ import main.activator.Activator;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import ui.editor.Line;
+import adt.graph.Edge;
 import adt.graph.Node;
 import domain.constants.Layer;
 import domain.explorer.DefUsesStatementVisitor;
@@ -48,6 +49,25 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 		}
 		return false;
 	}	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean visit(Edge<Integer> edge) {
+		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(edge.getBeginNode());
+		Set<String> defs = new TreeSet<String>();
+		Set<String> uses = new TreeSet<String>();
+		visitor = new DefUsesStatementVisitor(defs, uses);
+		if(nodeInstructions != null) {
+			List<ASTNode> astNodes = getASTNodes(nodeInstructions);
+			if(isProgramStatement(astNodes))
+				for(ASTNode ast : astNodes)
+					ast.accept(visitor);
+		}
+		List<String> defuses = getDefUses(defs, uses);
+		String sEdge = edge.getBeginNode() + " → " + edge.getEndNode();	
+		Activator.getDefault().getDefUsesController().put(sEdge, defuses);
+		return false;
+	}
 	
 	public List<String> getDefUses(Set<String> defsSet, Set<String> usesSet) {
 		List<String> defuses = new LinkedList<String>();
