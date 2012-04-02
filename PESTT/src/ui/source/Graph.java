@@ -13,6 +13,7 @@ import java.util.Set;
 import main.activator.Activator;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +29,7 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.Messages;
+import ui.constants.Preferences;
 import ui.events.LayerChangeEvent;
 import ui.events.LinkChangeEvent;
 import adt.graph.AbstractPath;
@@ -57,7 +59,10 @@ public class Graph implements Observer {
 		Activator.getDefault().getSourceGraphController().addObserverSourceGraph(this);
 		Activator.getDefault().getCFGController().addObserver(this);
 		Activator.getDefault().getEditorController().setGraphInformation(new GraphInformation(this));
-		create(Activator.getDefault().getSourceGraphController().getSourceGraph());
+		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		String dot = preferenceStore.getString(Preferences.DOT_PATH);
+		if(dot != null && !dot.equals(Description.EMPTY))
+			create(Activator.getDefault().getSourceGraphController().getSourceGraph());
 	}
 	
 	private void create(adt.graph.Graph<Integer> sourceGraph) {
