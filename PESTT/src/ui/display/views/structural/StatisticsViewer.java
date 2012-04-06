@@ -23,13 +23,13 @@ import org.eclipse.ui.PlatformUI;
 
 import ui.constants.Messages;
 import ui.constants.TableViewers;
+import ui.events.TourChangeEvent;
 import ui.events.StatisticsChangedEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import adt.graph.SequencePath;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
-import domain.events.TestPathSelectedTourEvent;
 import domain.events.TestRequirementChangedEvent;
 
 public class StatisticsViewer extends AbstractTableViewer implements ITableViewer, Observer {
@@ -63,7 +63,7 @@ public class StatisticsViewer extends AbstractTableViewer implements ITableViewe
 			while(iterator.hasNext())
 				statistics.add(iterator.next());
 			statisticsViewer.setInput(statistics);
-		} else if(data instanceof TestPathSelectedEvent || data instanceof TestPathSelectedTourEvent) {
+		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
 			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
 			if(selectedTestPaths != null)
 				if(!selectedTestPaths.isEmpty())

@@ -26,7 +26,7 @@ import domain.constants.LogicCoverageCriteriaId;
 
 @SuppressWarnings("deprecation")
 public class LogicCoverageCriteria implements Observer {
-	
+
 	private Graph graph;
 	private Map<LogicCoverageCriteriaId, GraphNode> nodes;
 	private SelectionAdapter event;	
@@ -46,11 +46,11 @@ public class LogicCoverageCriteria implements Observer {
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
 	}
-	
+
 	public void dispose() {
 		Activator.getDefault().getCFGController().deleteObserver(this);
 	}
-	
+
 	private void setNodes() {
 		nodes = new HashMap<LogicCoverageCriteriaId, GraphNode>();
 		GraphNode coc = new GraphNode(graph, SWT.SINGLE, "Complete Clause\n        Coverage\n" + insertTrace(16) + "\n            (CoC)");
@@ -107,7 +107,7 @@ public class LogicCoverageCriteria implements Observer {
 		cc.setTooltip(new Label("Clause Coverage (CC):\nFor each c ∈ C, Test Requirements contains two requirements: c evaluates to true, and c evaluates to false."));
 		nodes.put(LogicCoverageCriteriaId.CLAUSE, cc);
 
-		GraphNode pc = new GraphNode(graph, SWT.SINGLE, "Predicate\nCoverage\n" + insertTrace(10) + "\n     (PC)");
+		GraphNode pc = new GraphNode(graph, SWT.SINGLE, "Predicate\nCoverage\n" + insertTrace(10) + "\n      (PC)");
 		pc.setData(LogicCoverageCriteriaId.PREDICATE);
 		pc.setTooltip(new Label("Predicate Coverage (PC):\nFor each p ∈ P, Test requirements contains two requirements: p evaluates to true, and p evaluates to false."));
 		nodes.put(LogicCoverageCriteriaId.PREDICATE, pc);
@@ -120,7 +120,7 @@ public class LogicCoverageCriteria implements Observer {
 			gnode.setBorderHighlightColor(Colors.BLACK); 
 		}
 	}
-	
+
 	private void setEdges() {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.COMPLETE_CLAUSE), nodes.get(LogicCoverageCriteriaId.RESTRICTED_ACTIVE_CLAUSE));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.COMPLETE_CLAUSE), nodes.get(LogicCoverageCriteriaId.RESTRICTED_INACTIVE_CLAUSE));
@@ -133,21 +133,21 @@ public class LogicCoverageCriteria implements Observer {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE), nodes.get(LogicCoverageCriteriaId.CLAUSE));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE), nodes.get(LogicCoverageCriteriaId.PREDICATE));
 	}
-	
+
 	private String insertTrace(int num) {
 		String line = "";
 		for(int i = 0; i < num; i++)
 			line += (char)0x2013 + "";
 		return line;
 	}
-	
+
 	private void setLayout() {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
-	
+
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
-				
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
@@ -165,11 +165,11 @@ public class LogicCoverageCriteria implements Observer {
 			return null;
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
-	
+
 	private void setSelected(GraphItem item) {
 		graph.setSelection(item == null ? null : new GraphItem[] {item}); // the items selected.
 	}
-	
+
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof RefreshLogicGraphEvent)

@@ -48,11 +48,12 @@ public class GraphCoverageCriteria implements Observer {
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
 	}
-	
+
 	public void dispose() {
 		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 		Activator.getDefault().getCFGController().deleteObserver(this);
 	}
+
 	
 	private void setNodes() {
 		nodes = new HashMap<GraphCoverageCriteriaId, GraphNode>();
@@ -67,7 +68,7 @@ public class GraphCoverageCriteria implements Observer {
 		nodes.put(GraphCoverageCriteriaId.PRIME_PATH, ppc); 
 
 		GraphNode adupc = new GraphNode(graph, SWT.SINGLE, "All-du-Paths\n  Coverage\n " + insertTrace(11) + "\n    (ADUPC)");
-//		adupc.setData(GraphCoverageCriteriaId.ALL_DU_PATHS);
+		adupc.setData(GraphCoverageCriteriaId.ALL_DU_PATHS);
 		adupc.setTooltip(new Label("All-du-Paths Coverage (ADUPC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains every path d in S."));		
 		nodes.put(GraphCoverageCriteriaId.ALL_DU_PATHS, adupc); 
 		
@@ -82,7 +83,7 @@ public class GraphCoverageCriteria implements Observer {
 		nodes.put(GraphCoverageCriteriaId.COMPLETE_ROUND_TRIP, crtc); 
 
 		GraphNode auc = new GraphNode(graph, SWT.SINGLE, "  All-Uses\nCoverage\n" + insertTrace(9) + "\n    (AUC)");
-//		auc.setData(GraphCoverageCriteriaId.ALL_USES);
+		auc.setData(GraphCoverageCriteriaId.ALL_USES);
 		auc.setTooltip(new Label("All-Uses Coverage (AUC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains at least one path d in S."));
 		nodes.put(GraphCoverageCriteriaId.ALL_USES, auc); 
 
@@ -97,7 +98,7 @@ public class GraphCoverageCriteria implements Observer {
 		nodes.put(GraphCoverageCriteriaId.SIMPLE_ROUND_TRIP, srtc); 
 
 		GraphNode adc = new GraphNode(graph, SWT.SINGLE, "  All-Defs\nCoverage\n" + insertTrace(9) + "\n    (ADC)");
-//		adc.setData(GraphCoverageCriteriaId.ALL_DEFS);
+		adc.setData(GraphCoverageCriteriaId.ALL_DEFS);
 		adc.setTooltip(new Label("All-Defs Coverage (ADC):\nFor each def-path set S = du(n, v),\nTest requirements contains at least one path d in S."));
 		nodes.put(GraphCoverageCriteriaId.ALL_DEFS, adc); 
 
@@ -113,12 +114,6 @@ public class GraphCoverageCriteria implements Observer {
 			gnode.setHighlightColor(Colors.YELLOW); 
 			gnode.setBorderHighlightColor(Colors.BLACK); 
 		}
-		adupc.setBackgroundColor(Colors.RED);
-		adupc.setForegroundColor(Colors.WHITE); 
-		auc.setBackgroundColor(Colors.RED);
-		auc.setForegroundColor(Colors.WHITE); 
-		adc.setBackgroundColor(Colors.RED);
-		adc.setForegroundColor(Colors.WHITE); 
 	}
 	
 	private void setEdges() {
@@ -133,21 +128,21 @@ public class GraphCoverageCriteria implements Observer {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.ALL_USES), nodes.get(GraphCoverageCriteriaId.ALL_DEFS));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.EDGE), nodes.get(GraphCoverageCriteriaId.NODE));
 	}
-	
+
 	private String insertTrace(int num) {
 		String line = "";
 		for(int i = 0; i < num; i++)
 			line += (char)0x2013 + "";
 		return line;
 	}
-	
+
 	private void setLayout() {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
-	
+
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
-				
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
@@ -167,11 +162,11 @@ public class GraphCoverageCriteria implements Observer {
 			return null;
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
-	
+
 	private void setSelected(GraphItem item) {
 		graph.setSelection(item == null ? null : new GraphItem[] {item}); // the items selected.
 	}
-	
+
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestRequirementSelectedCriteriaEvent)

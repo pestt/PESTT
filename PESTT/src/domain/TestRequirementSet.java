@@ -78,10 +78,12 @@ public class TestRequirementSet extends Observable {
 	}
 	
 	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {
-		testRequirementSet = algorithm.getTestRequirements();
-		testRequirementSet.addAll(manuallyTestRequirementSet);
-		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
+		if(algorithm != null) {
+			testRequirementSet = algorithm.getTestRequirements();
+			testRequirementSet.addAll(manuallyTestRequirementSet);
+			setChanged();
+			notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
+		}
 	}
 	
 	public boolean hasInfinitePath() {

@@ -37,6 +37,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -45,11 +46,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
+import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.SourceGraph;
 import domain.events.TestPathChangedEvent;
-import domain.events.TestPathSelectedTourEvent;
 import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 
@@ -68,6 +69,7 @@ public class ActiveEditor implements Observer {
 
 	public ActiveEditor() {
 		listenUpdates = true;
+		updated = true;
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
@@ -103,24 +105,28 @@ public class ActiveEditor implements Observer {
 	}
 	
 	private void addChangeListener() {
-		listener = new IDocumentListener() {
-
-			@Override
-			public void documentAboutToBeChanged(DocumentEvent event) {
-				// do nothing
-			}
-
-			@Override
-			public void documentChanged(DocumentEvent event) {
-				removeALLMarkers();
-				updated = false;
-			}
-		};
-		editor.getDocumentProvider().getDocument(editor.getEditorInput()).addPrenotifiedDocumentListener(listener);
+		if(editor != null) {
+			listener = new IDocumentListener() {
+	
+				@Override
+				public void documentAboutToBeChanged(DocumentEvent event) {
+					// do nothing
+				}
+	
+				@Override
+				public void documentChanged(DocumentEvent event) {
+					removeALLMarkers();
+					updated = false;
+				}
+			};
+			editor.getDocumentProvider().getDocument(editor.getEditorInput()).addPrenotifiedDocumentListener(listener);
+		}
 	}
 	
 	private void deleteChangeListener() {
-		editor.getDocumentProvider().getDocument(editor.getEditorInput()).removePrenotifiedDocumentListener(listener);
+		IEditorInput input = editor.getEditorInput();
+		if(editor != null && listener != null && input != null)
+			editor.getDocumentProvider().getDocument(input).removePrenotifiedDocumentListener(listener);
 	}
 	
 	public void createMarker(String markerType, int offset, int length) {
@@ -225,7 +231,7 @@ public class ActiveEditor implements Observer {
 			MethodDeclaration method = getMethodDeclaration(unit);
 			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 				if(data instanceof TestRequirementSelectedCriteriaEvent  ||
-				   data instanceof TestPathSelectedTourEvent ||
+				   data instanceof TourChangeEvent ||
 				   data instanceof TestRequirementChangedEvent ||
 				   data instanceof TestPathChangedEvent) {
 						String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();

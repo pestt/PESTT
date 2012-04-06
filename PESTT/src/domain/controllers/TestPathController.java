@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import ui.constants.Colors;
 import ui.editor.Line;
+import ui.events.TourChangeEvent;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
@@ -28,7 +29,6 @@ import domain.coverage.instrument.CoverageData;
 import domain.coverage.instrument.ICoverageData;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
-import domain.events.TestPathSelectedTourEvent;
 
 public class TestPathController extends Observable {
 
@@ -97,7 +97,7 @@ public class TestPathController extends Observable {
 		else 
 			this.selectedTourType = TourType.TOUR;
 		setChanged();
-		notifyObservers(new TestPathSelectedTourEvent(selectedTourType));
+		notifyObservers(new TourChangeEvent(selectedTourType));
 	}
 	
 	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {
