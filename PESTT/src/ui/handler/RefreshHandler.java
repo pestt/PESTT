@@ -79,6 +79,7 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
 		Activator.getDefault().getCoverageDataController().clearCoverageDataSet();
 		Activator.getDefault().getStatisticsController().cleanStatisticsSet();
+		Activator.getDefault().getDefUsesController().clearDefUsesSet();
 		String selectedMethod = Activator.getDefault().getEditorController().getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);

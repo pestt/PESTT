@@ -202,7 +202,7 @@ public class StatementsVisitor extends ASTVisitor {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
 		Node<Integer> noIf = edge.getEndNode(); // the initial node of the IFStatement.
 		prevNode.push(noIf); // the graph continues from the initial node of the IFStatement.
-		infos.addInformationToLayer1(sourceGraph, noIf, node, unit); // add informationrmation to noIF node.
+		infos.addInformationToLayer1(sourceGraph, noIf, node, unit); // add information to noIF node.
     	Edge<Integer> edgeThen = createConnection(); // visit the Then block.
     	infos.addInformationToLayer2(sourceGraph, edgeThen, node.getExpression().toString()); // add information to noIF - noIFThen edge.
     	Node<Integer> noIfThen = edgeThen.getEndNode(); // create the IFThen node.
@@ -282,7 +282,7 @@ public class StatementsVisitor extends ASTVisitor {
 		Node<Integer> noDoWhileBody = edge.getEndNode(); // create the DoWhileBody node. 
     	prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
 		Node<Integer> noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
-    	infos.addInformationToLayer1(sourceGraph, noWhile, node.getExpression(), unit);
+    	infos.addInformationToLayer1(sourceGraph, noWhile, node, unit);
     	Node<Integer> noEndDoWhile = sourceGraph.addNode(++nodeNum); // the final node of the DoStatement.
     	breakNode.push(noEndDoWhile); // if a break occur goes to the final node of the DoStatement.
     	continueNode.push(noWhile); // if a continue occur goes to the WhileStatement node.

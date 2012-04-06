@@ -24,7 +24,7 @@ public class DefUsesController extends Observable {
 		defUsesSet.put(node, defuses);
 	}
 	
-	public void clear() {
+	public void clearDefUsesSet() {
 		defUsesSet.clear();
 	}
 
