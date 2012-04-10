@@ -9,13 +9,13 @@ import domain.events.DefUsesChangedEvent;
 
 public class DefUsesSet extends Observable {
 	
-	private Map<String, List<String>> nodeDefUses;
+	private Map<Object, List<String>> nodeDefUses;
 	
 	public DefUsesSet() {
-		nodeDefUses = new LinkedHashMap<String, List<String>>();
+		nodeDefUses = new LinkedHashMap<Object, List<String>>();
 	}
 
-	public void put(String node, List<String> defuses) {
+	public void put(Object node, List<String> defuses) {
 		nodeDefUses.put(node, defuses);
 		setChanged();
 		notifyObservers(new DefUsesChangedEvent(nodeDefUses));

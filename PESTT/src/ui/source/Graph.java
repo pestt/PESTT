@@ -38,6 +38,7 @@ import domain.constants.Layer;
 import domain.dot.processor.DotProcess;
 import domain.dot.processor.IDotProcess;
 import domain.events.CFGCreateEvent;
+import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementSelectedEvent;
 import domain.graph.visitors.DotGraphVisitor;
@@ -56,6 +57,7 @@ public class Graph implements Observer {
 		graph = new org.eclipse.zest.core.widgets.Graph(parent, SWT.NONE);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
+		Activator.getDefault().getDefUsesController().addObserver(this);
 		Activator.getDefault().getSourceGraphController().addObserverSourceGraph(this);
 		Activator.getDefault().getCFGController().addObserver(this);
 		Activator.getDefault().getEditorController().setGraphInformation(new GraphInformation(this));
@@ -82,6 +84,7 @@ public class Graph implements Observer {
 	public void dispose() {
 		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
+		Activator.getDefault().getDefUsesController().deleteObserver(this);
 		Activator.getDefault().getSourceGraphController().deleteObserverSourceGraph(this);
 		Activator.getDefault().getCFGController().deleteObserver(this);
 	}
@@ -182,12 +185,8 @@ public class Graph implements Observer {
 					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 				} else
 					selectTestRequirement(((TestRequirementSelectedEvent) data));
-			else {
-				unselectAll();
-				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
-			}
+			else 
+				graphNeedToBeUpdate();
 		} else if(data instanceof TestPathSelectedEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
 				if(((TestPathSelectedEvent) data).selectedTestPaths == null) {
@@ -195,12 +194,8 @@ public class Graph implements Observer {
 					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 				} else
 					selectTestPath(((TestPathSelectedEvent) data));
-			else {
-				unselectAll();
-				Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
-			}
+			else
+				graphNeedToBeUpdate();
 		} else if(data instanceof LinkChangeEvent) {
 			if(((LinkChangeEvent) data).state) {
 				Activator.getDefault().getEditorController().creatorSelectToEditor(); // create the SelectionListener to the editor.
@@ -212,7 +207,23 @@ public class Graph implements Observer {
 		    }
 		} else if(data instanceof LayerChangeEvent) {
 			Activator.getDefault().getEditorController().setLayerInformation(((LayerChangeEvent) data).layer);
+		} else if(data instanceof DefUsesSelectedEvent) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
+				if(((DefUsesSelectedEvent) data).selectedDefUse == null) {
+					unselectAll();
+					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+				} else
+					selecDefUses((DefUsesSelectedEvent) data);
+			else 
+				graphNeedToBeUpdate();
 		}
+	}
+
+	private void graphNeedToBeUpdate() {
+		unselectAll();
+		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 	}
 
 	private void bringGraphToTop() {
@@ -239,7 +250,14 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setVisualCoverage(data);
 	}
 	
-	
+	private void selecDefUses(DefUsesSelectedEvent data) {
+		bringGraphToTop();
+		List<GraphItem> aux = selectInGraph(data.selectedDefUse);
+		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
+		setSelected(items); // the list of selected items.
+		Activator.getDefault().getEditorController().setVisualCoverage(data);
+	}
+
 	private List<GraphItem> selectInGraph(AbstractPath<Integer> selectedTestRequirement) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		// select the nodes in the graph.	
@@ -260,6 +278,26 @@ public class Graph implements Observer {
 			node = nextNode;
 		}
 		getGraphNode(aux, node);
+		return aux;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<GraphItem> selectInGraph(Object selectedDefUse) {
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		if(selectedDefUse instanceof adt.graph.Node<?>) {
+			adt.graph.Node<Integer> node = (adt.graph.Node<Integer>) selectedDefUse;
+			getGraphNode(aux, node);
+		}
+		else if(selectedDefUse instanceof adt.graph.Edge<?>) {
+			adt.graph.Edge<Integer> edge = (adt.graph.Edge<Integer>) selectedDefUse;
+			for(adt.graph.Edge<Integer> e : sourceGraph.getNodeEdges(edge.getBeginNode()))
+				if(edge == e) 
+					for(GraphConnection gconnection : graphEdges)  // through all connections in the graph.
+						if(gconnection.getData().equals(edge)) { // if matches.
+							aux.add(gconnection); // add connection item to the list.
+							break;
+						}
+		}
 		return aux;
 	}
 

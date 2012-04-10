@@ -155,7 +155,7 @@ public class StatementsVisitor extends ASTVisitor {
 
 			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
 			sourceGraph.accept(visitor);
-			sourceGraph.sort();
+			sourceGraph.sortNodes();
 		} 	
 	}
 

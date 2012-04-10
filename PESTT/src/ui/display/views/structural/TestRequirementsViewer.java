@@ -55,7 +55,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		testRequirementsViewer = createViewTable(parent, site, TableViewers.TESTREQUIREMENTSVIEWER);
 		testRequirementsControl = testRequirementsViewer.getControl();
 		createColumnsToTestRequirement();
-		setSelections(); // associate path to the ViewGraph elements.
+		setSelections(); // connect the view elements to the graph elements.
 		return testRequirementsViewer;
 	}
 

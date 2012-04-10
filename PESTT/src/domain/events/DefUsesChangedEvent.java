@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class DefUsesChangedEvent {
 	
-	public Map<String, List<String>> defuses;
+	public Map<Object, List<String>> defuses;
 	
-	public DefUsesChangedEvent(Map<String, List<String>> defuses) {
+	public DefUsesChangedEvent(Map<Object, List<String>> defuses) {
 		this.defuses = defuses;
 	}
 

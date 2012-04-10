@@ -37,5 +37,4 @@ public class DefUsesHandler extends AbstractHandler {
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		return null;
 	}
-
 }

@@ -4,6 +4,7 @@ import ui.StatisticsSet;
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
+import domain.constants.DefUsesView;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.CoverageDataController;
@@ -36,6 +37,7 @@ public class PESTT {
 		cfgController = new CFGController();
 		cfgController.selectLayer(Layer.EMPTY.toString());
 		defusesController = new DefUsesController(new DefUsesSet());
+		defusesController.selectView(DefUsesView.NODE_EDGE.toString());
 	}
 	
 	public SourceGraphController getSourceGraphController() {

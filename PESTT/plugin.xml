@@ -281,6 +281,31 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Def Uses view select"
+            id="PESTT.DefUsesViewSelect"
+            name="Def Uses view select">
+         <commandParameter
+               id="org.eclipse.ui.commands.radioStateParameter"
+               name="Def Uses view select"
+               optional="false">
+         </commandParameter>
+         <state
+               id="org.eclipse.ui.commands.radioState">
+            <class
+                  class="org.eclipse.ui.handlers.RadioState">
+               <parameter
+                     name="default"
+                     value="NODEEDGE">
+               </parameter>
+               <parameter
+                     name="persisted"
+                     value="true">
+               </parameter>
+            </class>
+         </state>
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Refresh the structural coverage criteria graph."
             id="PESTT.RefreshStructuralCoverageCriteriaGraph"
             name="Refresh the structural coverage graph">
@@ -299,6 +324,48 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewGraphCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Ctrl+O"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Alt+O"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
@@ -737,49 +804,27 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:PESTT.ViewGraphCoverageCriteria">
-         <command
-               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
-               icon="icons/refresh.gif"
-               label="Refresh"
-               mnemonic="Ctrl+O"
-               style="push"
-               tooltip="Refresh">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="PESTT.Perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
-         <command
-               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
-               icon="icons/refresh.gif"
-               label="Refresh"
-               mnemonic="Alt+O"
-               style="push"
-               tooltip="Refresh">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="PESTT.Perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="toolbar:PESTT.ViewDataFlowCoverage">
+         <command
+               commandId="PESTT.DefUsesViewSelect"
+               icon="icons/layers.gif"
+               label="Def Uses View Select"
+               style="pulldown"
+               tooltip="Show graph information to the selected layer.">
+            <parameter
+                  name="org.eclipse.ui.commands.radioStateParameter"
+                  value="NONE">
+            </parameter>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
          <command
                commandId="PESTT.DefUses"
                icon="icons/refresh.gif"
@@ -797,6 +842,32 @@
                </with>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:PESTT.DefUsesViewSelect?after=additions">
+         <menu
+               id="PESTT.DefUsesViewSelectMenu"
+               label="Show by">
+            <command
+                  commandId="PESTT.DefUsesViewSelect"
+                  label="Nodes and Edges"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="NODEEDGE">
+               </parameter>
+            </command>
+            <command
+                  commandId="PESTT.DefUsesViewSelect"
+                  label="Variables"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="VARIABLE">
+               </parameter>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -1119,6 +1190,26 @@
       <handler
             class="ui.handler.DefUsesHandler"
             commandId="PESTT.DefUses">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewDataFlowCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.DefUsesViewSelectHandler"
+            commandId="PESTT.DefUsesViewSelect">
          <activeWhen>
             <and>
                <with

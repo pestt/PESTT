@@ -5,12 +5,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 import main.activator.Activator;
+import ui.events.DefUsesChangeViewEvent;
 import domain.DefUsesSet;
+import domain.constants.DefUsesView;
+import domain.events.DefUsesSelectedEvent;
 import domain.graph.visitors.DefUsesVisitor;
 
 public class DefUsesController extends Observable {
 
 	private DefUsesSet defUsesSet;
+	private Object selectedDefUse;
+	private DefUsesView selectedDefUseView;
 	
 	public DefUsesController(DefUsesSet defUsesSet) {
 		this.defUsesSet = defUsesSet;
@@ -20,7 +25,11 @@ public class DefUsesController extends Observable {
 		defUsesSet.addObserver(o);
 	}
 	
-	public void put(String node, List<String> defuses) {
+	public void deleteObserverDefUses(Observer o) {
+		defUsesSet.deleteObserver(o);
+	}
+	
+	public void put(Object node, List<String> defuses) {
 		defUsesSet.put(node, defuses);
 	}
 	
@@ -31,5 +40,32 @@ public class DefUsesController extends Observable {
 	public void generateDefUses() {
 		DefUsesVisitor<Integer> defusesVisitor = new DefUsesVisitor<Integer>();
 		Activator.getDefault().getSourceGraphController().applyVisitor(defusesVisitor);
+	}
+	
+	public boolean isDefUseSelected() {
+		return selectedDefUse != null;
+	}
+	
+	public Object getSelectedDefUse() {
+		return selectedDefUse;
+	}
+
+	public void selectDefUse(Object selected) {
+		this.selectedDefUse = selected;
+		setChanged();
+		notifyObservers(new DefUsesSelectedEvent(selected));		
+	}
+
+	public void selectView(String selected) {
+		if(selected.equals(DefUsesView.VARIABLE.toString()))
+			this.selectedDefUseView = DefUsesView.VARIABLE;
+		else 
+			this.selectedDefUseView = DefUsesView.NODE_EDGE;
+		setChanged();
+		notifyObservers(new DefUsesChangeViewEvent(selectedDefUseView));
+	}
+
+	public DefUsesView getSelectedView() {
+		return selectedDefUseView;
 	}
 }

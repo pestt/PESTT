@@ -35,9 +35,12 @@ public class LayerHandler extends AbstractHandler {
 					Activator.getDefault().getCFGController().selectLayer(old);
 				} else {
 					flag = true;
-					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);				}
-			} else
+					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);				
+				}
+			} else {
+				flag = true;
 				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+			}
 		else
 			flag = false;
 		return null;
