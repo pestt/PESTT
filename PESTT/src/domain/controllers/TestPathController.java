@@ -191,7 +191,7 @@ public class TestPathController extends Observable {
 
 				return new Path<Integer>(pathNodes);
 			}
-		} catch(NumberFormatException ee) {
+		} catch(NumberFormatException e) {
 		}
 		return null;
 	}

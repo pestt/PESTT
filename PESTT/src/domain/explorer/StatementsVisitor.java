@@ -314,7 +314,6 @@ public class StatementsVisitor extends ASTVisitor {
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(), (ASTNode) initNode, unit); // add information to noInitFor node.
 		}
 		initializers = initializers.substring(0, initializers.length() - 2);
-		infos.addInformationToLayer2(sourceGraph, edge, initializers); // add information to previous node - noFor edge.
 		Node<Integer> noFor = edge.getEndNode(); // the initial node of the ForStatement.
 		infos.addInformationToLayer1(sourceGraph, noFor, node, unit);
     	Node<Integer> incFor = sourceGraph.addNode(++nodeNum); // the node of the incFor.
@@ -343,7 +342,6 @@ public class StatementsVisitor extends ASTVisitor {
 		} else
 			returnFlag = false;
     	edge = sourceGraph.addEdge(incFor, noFor); // the loop connection.
-    	infos.addInformationToLayer2(sourceGraph, edge, updaters); // add information to incFor - noFor edge.
     	edge = sourceGraph.addEdge(noFor, noEndFor); // the connection from the initial node to the final node of the ForStatement.
     	infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noFor - noEndFor edge.
     	prevNode.push(noEndFor); // the graph continues from the final node of the DoWhileStatement.

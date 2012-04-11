@@ -26,7 +26,7 @@ import adt.graph.Graph;
 import adt.graph.Path;
 import domain.events.TestPathChangedEvent;
 
-public class TestPathsViewer extends AbstractTableViewer implements ITableViewer, Observer {
+public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
 	private Composite parent;
 	private TableViewer testPathhsViewer;

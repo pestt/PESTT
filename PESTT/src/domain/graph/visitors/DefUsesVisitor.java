@@ -74,18 +74,16 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 	
 	public List<String> getDefUses(Set<String> defsSet, Set<String> usesSet) {
 		List<String> defuses = new LinkedList<String>();
-		String defs = "{";
-		String uses = "{";
+		String defs = "";
+		String uses = "";
 		for(String str : defsSet)
 			defs += " " + str + ",";
-		if(defs.length() > 3)
+		if(defs.length() > 2)
 			defs = defs.substring(0, defs.length() - 1);
-		defs += " }";
 		for(String str : usesSet)
 			uses += " " + str + ",";
-		if(uses.length() > 3)
+		if(uses.length() > 2)
 			uses = uses.substring(0, uses.length() - 1);
-		uses += " }";
 		defuses.add(defs);
 		defuses.add(uses);
 		return defuses;

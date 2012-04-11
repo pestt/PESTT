@@ -1,0 +1,49 @@
+package ui.handler;
+
+import main.activator.Activator;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.handlers.RadioState;
+
+import ui.constants.Description;
+import ui.constants.Messages;
+import domain.constants.DefUsesView;
+
+public class DefUsesViewSelectHandler extends AbstractHandler {
+	
+	private String option = Description.EMPTY;
+	private String old = DefUsesView.NODE_EDGE.toString(); 
+	private boolean flag = false;
+	
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		if(!flag)
+			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
+				if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
+					if(option != null && !option.equals(old)) {
+						if(option != null && !option.equals(Description.NONE)) {
+							HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
+							old = option;
+						}
+						Activator.getDefault().getDefUsesController().selectView(old);
+					}
+				} else {
+					flag = true;
+					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
+				}
+			} else {
+				flag = true;
+				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+			}
+		else
+			flag = false;
+		return null;
+	}
+}

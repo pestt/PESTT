@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import ui.constants.TableViewers;
+import ui.display.views.structural.defuses.DefUsesViewerFactory;
 
 public enum TableViewerFactory {
 	
@@ -18,6 +19,8 @@ public enum TableViewerFactory {
 				return new TestPathsViewer(parent, site).create();
 			case STATISTICSVIEWER:
 				return new StatisticsViewer(parent, site).create();
+			case DEFUSESVIEWER:
+				return new DefUsesViewerFactory().createTebleViewer(parent, site);
 			default:
 				return null;
 		}

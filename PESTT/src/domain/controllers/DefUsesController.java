@@ -63,6 +63,8 @@ public class DefUsesController extends Observable {
 			this.selectedDefUseView = DefUsesView.NODE_EDGE;
 		setChanged();
 		notifyObservers(new DefUsesChangeViewEvent(selectedDefUseView));
+		if(!defUsesSet.isEmpty())
+			defUsesSet.getElements();
 	}
 
 	public DefUsesView getSelectedView() {

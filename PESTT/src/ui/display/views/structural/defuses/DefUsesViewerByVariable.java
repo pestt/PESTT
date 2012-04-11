@@ -1,10 +1,15 @@
 package ui.display.views.structural.defuses;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -22,18 +27,16 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
-import adt.graph.Edge;
-import adt.graph.Node;
 import domain.events.DefUsesChangedEvent;
 
-public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDefUsesViewer, Observer {
-
+public class DefUsesViewerByVariable extends AbstractTableViewer implements IDefUsesViewer, Observer {
+	
 	private Composite parent;
 	private TableViewer defUsesViewer;
 	private Control defUsesControl;
 	private IWorkbenchPartSite site;
 
-	public DefUsesViewerByNodeEdge(Composite parent, IWorkbenchPartSite site) {
+	public DefUsesViewerByVariable(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
@@ -59,7 +62,7 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 	}
 
 	private void createColumnsToDefUses() {
-		String[] columnNames = new String[] {"", TableViewers.NODES_EDGES, TableViewers.DEFS, TableViewers.USES }; // the names of columns.
+		String[] columnNames = new String[] {"", TableViewers.VARIABLES, TableViewers.DEFS, TableViewers.USES }; // the names of columns.
 		int[] columnWidths = new int[] {50, 405, 405, 400}; // the width of columns.
 
 		// first column is for id.
@@ -71,22 +74,15 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 			}
 		});
 		
-		// second column is for nodes and edges.
+		// second column is for variables.
 		col = createColumnsHeaders(defUsesViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
-			@SuppressWarnings("unchecked")
+			
 			@Override
 			public void update(ViewerCell cell) {
-				Object obj = cell.getElement();
-				if(obj instanceof Node<?>) {
-					Node<Integer> node = (Node<Integer>) obj;
-					cell.setText(node.toString()); 
-				}
-				else if(obj instanceof Edge<?>) {
-					Edge<Integer> edge = (Edge<Integer>) obj;
-					cell.setText(edge.toString());
-				}
+				String str = (String) cell.getElement();;
+				cell.setText(str); 
 			}
 		});
 
@@ -109,34 +105,76 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 		});
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void setDefUses(Map<Object, List<String>> defuses) {
 		int n = 0;
-		defUsesViewer.setInput(defuses.keySet());
-		Iterator<Object> keys = defuses.keySet().iterator();
+		Map<String, List<List<Object>>> variableDefUses = getdefUsesByVariables(defuses);
+		defUsesViewer.setInput(variableDefUses.keySet());
+		Iterator<String> keys = variableDefUses.keySet().iterator();
 		for(TableItem item : defUsesViewer.getTable().getItems()) {
-			Object obj = keys.next();
-			if(obj instanceof Node<?>) {
-				Node<Integer> node = (Node<Integer>) obj;
-				String defs = "{" + defuses.get(node).get(0) + " }";
-				String uses = "{" + defuses.get(node).get(1) + " }";
-				item.setText(0, Integer.toString(n + 1));
-				item.setText(1, node.toString());
-				item.setText(2, defs);
-				item.setText(3, uses);
-			} else if(obj instanceof Edge<?>) {
-				Edge<Integer> edge = (Edge<Integer>) obj;
-				String defs = "{" + defuses.get(edge).get(0) + " }";
-				String uses = "{" + defuses.get(edge).get(1) + " }";
-				item.setText(0, Integer.toString(n + 1));
-				item.setText(1, edge.toString());
-				item.setText(2, defs);
-				item.setText(3, uses);
-			}
+			String key = keys.next();
+			String defs = "{" + getdefUsesRepresentation(variableDefUses.get(key).get(0)) + " }";
+			String uses = "{" + getdefUsesRepresentation(variableDefUses.get(key).get(1)) + " }";
+			item.setText(0, Integer.toString(n + 1));
+			item.setText(1, key);
+			item.setText(2, defs);
+			item.setText(3, uses);
 			n++;
-		}	
+		}
 	}
 	
+	private String getdefUsesRepresentation(List<Object> list) {
+		String str = "";
+		for(Object obj : list)
+			str += " " + obj.toString() + ",";
+		if(str.length() > 2)
+			str = str.substring(0, str.length() - 1);
+		return str;
+	}
+
+	private Map<String, List<List<Object>>> getdefUsesByVariables(Map<Object, List<String>> defuses) {
+		Map<String, List<List<Object>>> variablesDefUses = new LinkedHashMap<String, List<List<Object>>>();
+		Set<String> vars = getVariables(defuses);
+		for(String var : vars) {
+			List<List<Object>> nodeedges = getNodesEdgesDefUses(defuses, var);
+			variablesDefUses.put(var, nodeedges);
+		}
+		return variablesDefUses;
+	}
+
+	private List<List<Object>> getNodesEdgesDefUses(Map<Object, List<String>> defuses, String var) {
+		List<List<Object>> nodeedges = new LinkedList<List<Object>>();
+		List<Object> defs = new LinkedList<Object>();
+		List<Object> uses = new LinkedList<Object>();
+		for(Object obj : defuses.keySet()) {
+			List<String> vars = defuses.get(obj);
+			if(vars.get(0).contains(var))
+				defs.add(obj);
+			if(vars.get(1).contains(var))
+				uses.add(obj);
+		}
+		nodeedges.add(defs);
+		nodeedges.add(uses);
+		return nodeedges;
+	}
+
+	private Set<String> getVariables(Map<Object, List<String>> defuses) {
+		Set<String> vars = new TreeSet<String>();
+		for(Object obj : defuses.keySet()) {
+			List<String> variables = defuses.get(obj);
+			vars.addAll(parseVariables(variables.get(0)));
+			vars.addAll(parseVariables(variables.get(1)));
+		}
+		return vars;
+	}
+
+	private List<String> parseVariables(String input) {
+		List<String> vars = new LinkedList<String>();
+		StringTokenizer strtok = new StringTokenizer(input, ", ");
+		while(strtok.hasMoreTokens())
+			vars.add(strtok.nextToken());
+		return vars;
+	}
+
 	private void setSelections() {
 		defUsesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 

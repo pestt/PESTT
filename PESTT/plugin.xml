@@ -807,7 +807,7 @@
             locationURI="toolbar:PESTT.ViewDataFlowCoverage">
          <command
                commandId="PESTT.DefUsesViewSelect"
-               icon="icons/layers.gif"
+               icon="icons/defuseview.gif"
                label="Def Uses View Select"
                style="pulldown"
                tooltip="Show graph information to the selected layer.">

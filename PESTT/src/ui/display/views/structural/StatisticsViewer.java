@@ -32,7 +32,7 @@ import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementChangedEvent;
 
-public class StatisticsViewer extends AbstractTableViewer implements ITableViewer, Observer {
+public class StatisticsViewer extends AbstractTableViewer implements Observer {
 	
 	private Composite parent;
 	private TableViewer statisticsViewer;

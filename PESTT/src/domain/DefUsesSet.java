@@ -26,4 +26,13 @@ public class DefUsesSet extends Observable {
 		setChanged();
 		notifyObservers(new DefUsesChangedEvent(nodeDefUses));
 	}
+	
+	public boolean isEmpty() {
+		return nodeDefUses.isEmpty();
+	}
+	
+	public void getElements() {
+		setChanged();
+		notifyObservers(new DefUsesChangedEvent(nodeDefUses));
+	}
 }
