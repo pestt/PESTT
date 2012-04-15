@@ -10,7 +10,7 @@ import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.interfaces.EntityLayout;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
-public class CFGLayoutAlgorithm implements LayoutAlgorithm {
+public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 	
 	private double layoutWidth;
 	private double layoutHeight;
@@ -18,7 +18,7 @@ public class CFGLayoutAlgorithm implements LayoutAlgorithm {
 	private LayoutContext context;
 	
 	
-	public CFGLayoutAlgorithm(final Composite parent, GraphElements graphElements) {
+	public GraphLayoutAlgorithm(final Composite parent, GraphElements graphElements) {
 		this.graphElements = graphElements;
 	}
 	

@@ -155,7 +155,7 @@ public class Graph implements Observer {
 	}
 	
 	private void setLayout(GraphElements graphElements) {
-		 graph.setLayoutAlgorithm(new CFGLayoutAlgorithm(parent, graphElements), true);
+		 graph.setLayoutAlgorithm(new GraphLayoutAlgorithm(parent, graphElements), true);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -324,13 +324,25 @@ public class Graph implements Observer {
 		return total;
 	}
 	
+	private void automaticEdgeSelectopn() {
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		List<GraphItem> selected = getSelected();
+		for(GraphConnection gconnection : graphEdges) 
+			if(!selected.contains(gconnection) && selected.contains(gconnection.getSource()) && selected.contains(gconnection.getDestination())) 
+				aux.add(gconnection); 
+			
+		aux.addAll(selected);
+		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class);
+		setSelected(items);
+	}
+	
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 				
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(e.item != null && e.item instanceof GraphNode ) {
-					getSelected();
+					automaticEdgeSelectopn();
 					if(Activator.getDefault().getEditorController().isEverythingMatching())
 						Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
 					else {
