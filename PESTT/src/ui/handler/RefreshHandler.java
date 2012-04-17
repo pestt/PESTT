@@ -31,8 +31,8 @@ import ui.editor.ActiveEditor;
 import adt.graph.Path;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.Layer;
-import domain.coverage.instrument.CoverageData;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.CoverageData;
+import domain.coverage.data.ICoverageData;
 
 public class RefreshHandler extends AbstractHandler {
 	

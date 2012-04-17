@@ -25,8 +25,8 @@ import adt.graph.Path;
 import domain.TestPathSet;
 import domain.constants.Layer;
 import domain.constants.TourType;
-import domain.coverage.instrument.CoverageData;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.CoverageData;
+import domain.coverage.data.ICoverageData;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 

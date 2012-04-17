@@ -27,7 +27,7 @@ import ui.constants.Description;
 import ui.constants.MarkersType;
 import ui.editor.Line;
 import domain.constants.Layer;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.ICoverageData;
 
 public class GraphInformation {
 
@@ -53,13 +53,13 @@ public class GraphInformation {
 				clear();
 				break;
 			case GUARDS:
-				addInformationToLayer2_3_4(ALL);
+				addInformationToLayers2_3_4(ALL);
 				break;
 			case GUARDS_TRUE:
-				addInformationToLayer2_3_4(TRUE);
+				addInformationToLayers2_3_4(TRUE);
 				break;
 			case GUARDS_FALSE:
-				addInformationToLayer2_3_4(FALSE);
+				addInformationToLayers2_3_4(FALSE);
 				break;		
 		}
 	}
@@ -97,7 +97,7 @@ public class GraphInformation {
 			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 	
-	private void addInformationToLayer2_3_4(String value) {
+	private void addInformationToLayers2_3_4(String value) {
 		setLayerInformation(Layer.EMPTY); // clean previous informations.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
 			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))   // search in the sourceGraph for all edges.
