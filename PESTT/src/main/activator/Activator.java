@@ -10,6 +10,7 @@ import ui.controllers.StatisticsController;
 import domain.PESTT;
 import domain.controllers.CoverageDataController;
 import domain.controllers.DefUsesController;
+import domain.controllers.RulesController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
@@ -102,5 +103,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public DefUsesController getDefUsesController() {
 		return pestt.getDefUsesController();
+	}
+	
+	public RulesController getRulesController() {
+		return pestt.getRulesController();
 	}
 }

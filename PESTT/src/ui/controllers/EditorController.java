@@ -24,6 +24,10 @@ public class EditorController extends Observable {
 		return editor;
 	}
 	
+	public String getClassName() {
+		return editor.getClassName();
+	}
+	
 	public boolean isInMethod() {
 		return editor.isInMethod();
 	}
