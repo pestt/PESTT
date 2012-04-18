@@ -26,8 +26,8 @@ public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgo
 
 	public Set<AbstractPath<V>> getTestRequirements() {
 		for(Node<V> node : graph.getNodes()) {
-			SimplePathCoverageVisitor ppc = new SimplePathCoverageVisitor(graph);
-			node.accept(ppc);
+			SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph);
+			node.accept(visitor);
 		}
 		return primePaths;
 	}
@@ -51,9 +51,8 @@ public class PrimePathCoverage<V extends Comparable<V>> implements ICoverageAlgo
 				return false;
 			}
 			pathNodes.addLast(node);
-			if(graph.isFinalNode(node)) {
+			if(graph.isFinalNode(node)) 
 				addPath(pathNodes); 
-			}
 			return true;
 		}
 

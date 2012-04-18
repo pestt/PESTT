@@ -11,6 +11,8 @@ import java.util.TreeSet;
 import main.activator.Activator;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.editor.Line;
 import adt.graph.Edge;
@@ -20,11 +22,12 @@ import domain.explorer.DefUsesStatementVisitor;
 
 public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisitor<Integer> {
 	
+	private static final String THIS = "this.";
 	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one time.
 	private DefUsesStatementVisitor visitor;
 	
 	public DefUsesVisitor() {
-		visitedNodes = new HashSet<Node<Integer>>();		
+		visitedNodes = new HashSet<Node<Integer>>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,6 +39,8 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 			HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(node);
 			Set<String> defs = new TreeSet<String>();
 			Set<String> uses = new TreeSet<String>();
+			if(graph.isInitialNode(node))
+				addToDefs(defs);
 			visitor = new DefUsesStatementVisitor(defs, uses);
 			if(nodeInstructions != null) {
 				List<ASTNode> astNodes = getASTNodes(nodeInstructions);
@@ -51,7 +56,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 		}
 		return false;
 	}	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(Edge<Integer> edge) {
@@ -108,5 +113,14 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 			default:
 				return false;
 		}
+	}
+	
+	private void addToDefs(Set<String> defs) {
+		List<VariableDeclarationFragment> attributes = Activator.getDefault().getSourceGraphController().getClassAttributes();
+		List<SingleVariableDeclaration> params = Activator.getDefault().getSourceGraphController().getMethodParameters();
+		for(VariableDeclarationFragment attribute : attributes)
+			defs.add(THIS + attribute.getName().toString());
+		for(SingleVariableDeclaration param : params) 
+			defs.add(param.getName().toString());		
 	}
 }

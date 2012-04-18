@@ -20,16 +20,19 @@ import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
@@ -59,6 +62,8 @@ public class StatementsVisitor extends ASTVisitor {
 	private CompilationUnit unit;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
+	private List<SingleVariableDeclaration> params;
+	private List<VariableDeclarationFragment> attributes;
 
 	public StatementsVisitor(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
@@ -68,6 +73,7 @@ public class StatementsVisitor extends ASTVisitor {
 		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
+		attributes = new LinkedList<VariableDeclarationFragment>(); // the class atriutes.
 		prevNode = new Stack<Node<Integer>>(); // stack that contain the predecessor nodes.
 		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
@@ -81,8 +87,19 @@ public class StatementsVisitor extends ASTVisitor {
 		finalnode = initial; // The final node.
 		infos = new GraphInformation(); // the graph informations.
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override  
+	public boolean visit(FieldDeclaration node) {
+		List<VariableDeclarationFragment> fragments = node.fragments();
+		for(VariableDeclarationFragment attribute : fragments)
+			attributes.add(attribute);
+		return false;
+	}
+	
 
 	//only visit the method indicated by the user.
+	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(MethodDeclaration node) {
 		if(node.getName().getIdentifier().equals(methodName)) {
@@ -94,6 +111,7 @@ public class StatementsVisitor extends ASTVisitor {
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()));
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()));
 			}
+			params = node.parameters();
 			return true;
 		}
 		return false;
@@ -124,6 +142,14 @@ public class StatementsVisitor extends ASTVisitor {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public List<SingleVariableDeclaration> getMethodParameters() {
+		return params;
+	}
+	
+	public List<VariableDeclarationFragment> getClassAttributes() {
+		return attributes;
 	}
 
 	@SuppressWarnings("unchecked")
