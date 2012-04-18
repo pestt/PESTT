@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
@@ -34,6 +35,10 @@ public class SourceGraphController {
 	
 	public void applyVisitor(IGraphVisitor<Integer> visitor) {
 		sourceGraph.applyVisitor(visitor);
+	}
+	
+	public List<SingleVariableDeclaration> getMethodParameters() {
+		return sourceGraph.getMethodParameters();
 	}
 
 	public Graph<Integer> getSourceGraph() {

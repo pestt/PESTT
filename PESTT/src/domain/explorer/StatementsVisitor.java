@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
@@ -59,6 +60,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private CompilationUnit unit;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
+	private List<SingleVariableDeclaration> params;
 
 	public StatementsVisitor(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
@@ -83,6 +85,7 @@ public class StatementsVisitor extends ASTVisitor {
 	}
 
 	//only visit the method indicated by the user.
+	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(MethodDeclaration node) {
 		if(node.getName().getIdentifier().equals(methodName)) {
@@ -94,6 +97,7 @@ public class StatementsVisitor extends ASTVisitor {
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()));
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()));
 			}
+			params = node.parameters();
 			return true;
 		}
 		return false;
@@ -124,6 +128,10 @@ public class StatementsVisitor extends ASTVisitor {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public List<SingleVariableDeclaration> getMethodParameters() {
+		return params;
 	}
 
 	@SuppressWarnings("unchecked")

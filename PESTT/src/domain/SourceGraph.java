@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
@@ -24,6 +25,7 @@ public class SourceGraph extends Observable {
 	private Graph<Integer> sourceGraph;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
+	private List<SingleVariableDeclaration> params;
 	
 	public SourceGraph() {
 		sourceGraph = new Graph<Integer>();
@@ -37,6 +39,7 @@ public class SourceGraph extends Observable {
 		sourceGraph = visitor.getGraph();
 		javadocAnnotations = visitor.getJavadocAnnotations();
 		hash = visitor.getMethodHash();
+		params = visitor.getMethodParameters();
 		setChanged();
 		notifyObservers(new CFGCreateEvent(sourceGraph));
 	}
@@ -47,6 +50,10 @@ public class SourceGraph extends Observable {
 	
 	public int numberOfNodes() {
 		return sourceGraph.size(); 
+	}
+	
+	public List<SingleVariableDeclaration> getMethodParameters() {
+		return params;
 	}
 	
 	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {

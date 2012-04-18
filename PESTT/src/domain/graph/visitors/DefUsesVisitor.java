@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import main.activator.Activator;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import ui.editor.Line;
 import adt.graph.Edge;
@@ -24,7 +25,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 	private DefUsesStatementVisitor visitor;
 	
 	public DefUsesVisitor() {
-		visitedNodes = new HashSet<Node<Integer>>();		
+		visitedNodes = new HashSet<Node<Integer>>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,6 +37,8 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 			HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(node);
 			Set<String> defs = new TreeSet<String>();
 			Set<String> uses = new TreeSet<String>();
+			if(graph.isInitialNode(node))
+				addToDefs(defs);
 			visitor = new DefUsesStatementVisitor(defs, uses);
 			if(nodeInstructions != null) {
 				List<ASTNode> astNodes = getASTNodes(nodeInstructions);
@@ -51,7 +54,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 		}
 		return false;
 	}	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(Edge<Integer> edge) {
@@ -108,5 +111,11 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 			default:
 				return false;
 		}
+	}
+	
+	private void addToDefs(Set<String> defs) {
+		List<SingleVariableDeclaration> params = Activator.getDefault().getSourceGraphController().getMethodParameters();
+		for(SingleVariableDeclaration param : params) 
+			defs.add(param.getName().toString());		
 	}
 }

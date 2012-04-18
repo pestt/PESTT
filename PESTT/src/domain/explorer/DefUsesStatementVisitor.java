@@ -82,15 +82,15 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(VariableDeclarationFragment node) {
 		if(stored.size() > 1)
-			addUses();
-		addDefs();
+			addToUses();
+		addToDefs();
 	}
 	
 	@Override
 	public void endVisit(Assignment node) {
 		if(stored.size() > 1)
-			addUses();
-		addDefs();
+			addToUses();
+		addToDefs();
 	}
 
 	@Override
@@ -98,40 +98,40 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		if(node.hasExtendedOperands()) {
 			int size = node.extendedOperands().size();
 			while(size != 0) {
-				addUses();
+				addToUses();
 				size--;
 			}
 		}
-		addUses();
-		addUses();
+		addToUses();
+		addToUses();
 		stored.push(EMPTY);
 	}
 	
 	@Override
 	public void endVisit(PostfixExpression node) {
 		String top = stored.peek();
-		addUses();
+		addToUses();
 		stored.push(top);
-		addDefs();
+		addToDefs();
 	}
 
 	@Override
 	public void endVisit(PrefixExpression node) {
 		String top = stored.peek();
-		addUses();
+		addToUses();
 		stored.push(top);
-		addDefs();
+		addToDefs();
 	}
 	
 	@Override
 	public void endVisit(ExpressionStatement node) {
 		while(!stored.isEmpty())
-			addUses();
+			addToUses();
 	}	
 	
 	@Override
 	public void endVisit(ArrayCreation node) {
-		addUses();
+		addToUses();
 		stored.push(EMPTY);
 	}
 	
@@ -139,7 +139,7 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	public void endVisit(ArrayInitializer node) {
 		int size = node.expressions().size();
 		while(size != 0) {
-			addUses();
+			addToUses();
 			size--;
 		}
 		stored.push(EMPTY);
@@ -147,7 +147,7 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	
 	@Override
 	public void endVisit(ArrayAccess node) {
-		addUses();
+		addToUses();
 	}
 	
 	@Override
@@ -177,16 +177,16 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(EnhancedForStatement node) {
 		node.getExpression().accept(this);
-		addUses();
+		addToUses();
 		node.getParameter().accept(this);
-		addDefs();
+		addToDefs();
 		return false;
 	}
 	
 	@Override
 	public boolean visit(SwitchStatement node) {
 		node.getExpression().accept(this);
-		addUses();
+		addToUses();
 		return false;
 	}
 	
@@ -196,7 +196,7 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 		return false;
 	}
 	
-	private void addDefs() {
+	private void addToDefs() {
 		if(!stored.isEmpty())
 			if(stored.peek() != EMPTY)
 				defs.add(stored.pop());
@@ -204,9 +204,9 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 				stored.pop();
 	}
 
-	private void addUses() {
+	private void addToUses() {
 		if(!stored.isEmpty())
-			if(stored.peek() != EMPTY)
+			if(stored.peek() != EMPTY && !defs.contains(stored.peek()))
 				uses.add(stored.pop());
 			else
 				stored.pop();	
