@@ -1,6 +1,7 @@
 package domain.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -69,5 +70,13 @@ public class DefUsesController extends Observable {
 
 	public DefUsesView getSelectedView() {
 		return selectedDefUseView;
+	}
+	
+	public Map<Object, List<String>> getDefUsesByNodeEdge() {
+		return defUsesSet.getDefUsesByNodeEdge();
+	}
+	
+	public Map<String, List<List<Object>>> getDefUsesByVariable() {
+		return defUsesSet.getDefUsesByVariable();
 	}
 }

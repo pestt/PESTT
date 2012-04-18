@@ -85,4 +85,12 @@ public class DefUsesSet extends Observable {
 			vars.add(strtok.nextToken());
 		return vars;
 	}
+	
+	public Map<Object, List<String>> getDefUsesByNodeEdge() {
+		return nodeedgeDefUses;
+	}
+	
+	public Map<String, List<List<Object>>> getDefUsesByVariable() {
+		return variableDefUses;
+	}
 }

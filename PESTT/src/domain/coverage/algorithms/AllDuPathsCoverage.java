@@ -1,0 +1,98 @@
+package domain.coverage.algorithms;
+
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import main.activator.Activator;
+import adt.graph.AbstractPath;
+import adt.graph.Edge;
+import adt.graph.Graph;
+import adt.graph.Node;
+import adt.graph.Path;
+import domain.graph.visitors.DepthFirstGraphVisitor;
+
+public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAlgorithms<V> {
+	
+	private Graph<V> graph;
+	private Set<AbstractPath<V>> allDuPaths;
+	private Deque<Node<V>> pathNodes;
+	private Map<String, List<List<Object>>> defuses;
+
+	
+	public AllDuPathsCoverage(Graph<V> graph) {
+		this.graph = graph;
+		allDuPaths = new TreeSet<AbstractPath<V>>();
+		pathNodes = new LinkedList<Node<V>>();
+		defuses = Activator.getDefault().getDefUsesController().getDefUsesByVariable();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Set<AbstractPath<V>> getTestRequirements() {
+		for(String key : defuses.keySet()) {
+			List<List<Object>> variableDefUses = defuses.get(key);
+			List<Object> defs = variableDefUses.get(0);
+			List<Object> uses = variableDefUses.get(1);
+			for(Object obj : defs) {
+				Node<V> node;
+				if(obj instanceof Edge<?>) 
+					node = ((Edge<V>) obj).getBeginNode();
+				else 
+					node = ((Node<V>) obj);
+				if(!uses.isEmpty()) {
+					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph, uses);
+					node.accept(visitor);
+				}
+			}
+		}
+		return allDuPaths;
+	}
+	
+	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
+		
+		private List<Object> uses;
+		
+		public SimplePathCoverageVisitor(Graph<V> graph, List<Object> uses) {
+			this.graph = graph;
+			this.uses = uses;
+			pathNodes.clear();
+		}
+		
+		@Override
+		public boolean visit(Node<V> node) {
+			if(pathNodes.contains(node))
+				return false;
+			pathNodes.addLast(node);
+			if(graph.isFinalNode(node) || isUseNode(node)) 
+				addPath(pathNodes);
+			return true;
+		}
+
+		@SuppressWarnings("unchecked")
+		private boolean isUseNode(Node<V> node) {
+			for(Object obj : uses) {
+				Node<V> n;
+				if(obj instanceof Edge<?>) 
+					n = ((Edge<V>) obj).getEndNode();
+				else 
+					n = ((Node<V>) obj);
+				if(n == node)
+					return true;
+			}
+			return false;
+		}
+
+		private void addPath(Deque<Node<V>> nodes) {
+			Path<V> toAdd = new Path<V>(nodes);
+			allDuPaths.add(toAdd);			
+		}
+		
+		@Override
+		public void endVisit(Node<V> node) {
+			pathNodes.removeLast();
+		}		
+	}
+}

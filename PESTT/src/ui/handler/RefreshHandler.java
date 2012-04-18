@@ -24,8 +24,10 @@ import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
 import ui.constants.Preferences;
+import ui.display.views.ViewDataFlowCriteria;
 import ui.display.views.ViewGraph;
 import ui.display.views.ViewGraphCoverageCriteria;
+import ui.display.views.ViewLogicCoverageCriteria;
 import ui.display.views.ViewStructuralCriteria;
 import ui.editor.ActiveEditor;
 import adt.graph.Path;
@@ -46,20 +48,7 @@ public class RefreshHandler extends AbstractHandler {
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
 			if(dot != null && !dot.equals(Description.EMPTY)) {
-				ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
-				ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
-				ViewStructuralCriteria viewStructuralCriteria = (ViewStructuralCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_STRUCTURAL_COVERAGE); // get the view structural criteria.
-				if(viewGraphCoverageCriteria == null || viewGraph == null || viewStructuralCriteria == null) {
-					try {
-						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH);
-						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
-						HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_STRUCTURAL_COVERAGE);
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
-					viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
-					viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
-				}
+				loadViews(event);
 				resetDataStructures(window);
 				keepCommandOptions();
 			} else
@@ -67,6 +56,29 @@ public class RefreshHandler extends AbstractHandler {
 		} else 
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;
+	}
+
+	private void loadViews(ExecutionEvent event) {
+		ViewGraphCoverageCriteria viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
+		ViewLogicCoverageCriteria viewLogicCoverageCriteria = (ViewLogicCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_LOGIC_COVERAGE_CRITERIA);
+		ViewGraph viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
+		ViewStructuralCriteria viewStructuralCriteria = (ViewStructuralCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_STRUCTURAL_COVERAGE); // get the view structural criteria.
+		ViewDataFlowCriteria viewDataFlowCriteria = (ViewDataFlowCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_DATA_FLOW_COVERAGE);
+		if(viewGraphCoverageCriteria == null || viewLogicCoverageCriteria == null || viewGraph == null || viewStructuralCriteria == null || viewDataFlowCriteria == null ) {
+			try {
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH);
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_LOGIC_COVERAGE_CRITERIA);
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_STRUCTURAL_COVERAGE);
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(Description.VIEW_DATA_FLOW_COVERAGE);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+			viewDataFlowCriteria = (ViewDataFlowCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_DATA_FLOW_COVERAGE);
+			viewStructuralCriteria = (ViewStructuralCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_STRUCTURAL_COVERAGE);
+			viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
+			viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
+		}
 	}
 	
 	private void resetDataStructures(IWorkbenchWindow window) {
@@ -91,40 +103,49 @@ public class RefreshHandler extends AbstractHandler {
 			List<String> tour = javadocAnnotations.get(JavadocTagAnnotations.TOUR_TYPE);
 			if(!tour.isEmpty())
 				Activator.getDefault().getTestPathController().selectTourType(tour.get(0));
-			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH)) {
-				String msg = input;
-				input = input.substring(1, input.length() - 1);
-				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null) 
-					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
-				else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
-			}
-			for(String input : javadocAnnotations.get(JavadocTagAnnotations.INFEASIBLE_PATH)) {
-				String msg = input;
-				input = input.substring(1, input.length() - 1);
-				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null) 
-					Activator.getDefault().getTestRequirementController().enableInfeasible(newTestRequirement);
-				else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
-			}
-			for(String input : javadocAnnotations.get(JavadocTagAnnotations.ADDITIONAL_TEST_PATH)) {
-				String msg = input;
-				input = input.substring(1, input.length() - 1);
-				Path<Integer> newTestPath = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestPath != null) {
-					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
-					List<ICoverageData> newData = new LinkedList<ICoverageData>();
-					newData.add(new CoverageData(newTestPath));
-					Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
-				} else
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n" + msg + "\n" + Messages.TEST_PATH_REMOVE_MSG); // message displayed when the inserted test requirement is not valid.
-			}
-			
+			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
+			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.INFEASIBLE_PATH, Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
+			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, Messages.TEST_PATH_TITLE, Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_PATH_REMOVE_MSG);			
+			if(isADefUsesCoverageVriteria())
+				Activator.getDefault().getDefUsesController().generateDefUses();
 			Activator.getDefault().getTestRequirementController().generateTestRequirement();
 		}
 		Activator.getDefault().getEditorController().setListenUpdates(true);
+	}
+
+	private void setInformationFromJavadoc(IWorkbenchWindow window, Map<JavadocTagAnnotations, List<String>> javadocAnnotations, JavadocTagAnnotations tag, String title, String prefix, String sufix) {
+		for(String input : javadocAnnotations.get(tag)) {
+			String msg = input;
+			input = input.substring(1, input.length() - 1);
+			Path<Integer> path = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
+			if(path != null) 
+				switch(tag) {
+					case ADDITIONAL_TEST_REQUIREMENT_PATH:
+						Activator.getDefault().getTestRequirementController().addTestRequirement(path);
+						break;
+					case INFEASIBLE_PATH:
+						Activator.getDefault().getTestRequirementController().enableInfeasible(path);
+						break;
+					case ADDITIONAL_TEST_PATH:
+						Activator.getDefault().getTestPathController().addTestPath(path);
+						List<ICoverageData> newData = new LinkedList<ICoverageData>();
+						newData.add(new CoverageData(path));
+						break;
+				}
+			else
+				MessageDialog.openInformation(window.getShell(), title, prefix + msg + sufix); // message displayed when the inserted test requirement is not valid.
+		}
+	}
+
+	private boolean isADefUsesCoverageVriteria() {
+		switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
+			case ALL_DU_PATHS:
+			case ALL_USES:
+			case ALL_DEFS:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	private void keepCommandOptions() {
