@@ -7,6 +7,7 @@ import java.util.Observer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
@@ -39,6 +40,10 @@ public class SourceGraphController {
 	
 	public List<SingleVariableDeclaration> getMethodParameters() {
 		return sourceGraph.getMethodParameters();
+	}
+	
+	public List<VariableDeclarationFragment> getClassAttributes() {
+		return sourceGraph.getClassAttributes();
 	}
 
 	public Graph<Integer> getSourceGraph() {

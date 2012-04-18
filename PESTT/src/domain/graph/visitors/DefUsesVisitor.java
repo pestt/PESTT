@@ -12,6 +12,7 @@ import main.activator.Activator;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.editor.Line;
 import adt.graph.Edge;
@@ -21,6 +22,7 @@ import domain.explorer.DefUsesStatementVisitor;
 
 public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisitor<Integer> {
 	
+	private static final String THIS = "this.";
 	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one time.
 	private DefUsesStatementVisitor visitor;
 	
@@ -114,7 +116,10 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 	}
 	
 	private void addToDefs(Set<String> defs) {
+		List<VariableDeclarationFragment> attributes = Activator.getDefault().getSourceGraphController().getClassAttributes();
 		List<SingleVariableDeclaration> params = Activator.getDefault().getSourceGraphController().getMethodParameters();
+		for(VariableDeclarationFragment attribute : attributes)
+			defs.add(THIS + attribute.getName().toString());
 		for(SingleVariableDeclaration param : params) 
 			defs.add(param.getName().toString());		
 	}
