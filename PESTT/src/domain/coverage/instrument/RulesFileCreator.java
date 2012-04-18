@@ -43,5 +43,4 @@ public class RulesFileCreator {
 		writer.append(rule);
 		writer.flush();
 	}
-
 }
