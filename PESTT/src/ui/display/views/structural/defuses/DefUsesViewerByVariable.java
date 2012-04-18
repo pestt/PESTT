@@ -1,15 +1,10 @@
 package ui.display.views.structural.defuses;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -53,7 +48,7 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof DefUsesChangedEvent) 
-			setDefUses(((DefUsesChangedEvent) data).defuses);
+			setDefUses(((DefUsesChangedEvent) data).variableDefUses);
 	}
 
 	public void dispose() {
@@ -105,9 +100,8 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		});
 	}
 	
-	private void setDefUses(Map<Object, List<String>> defuses) {
+	private void setDefUses(Map<String, List<List<Object>>> variableDefUses) {
 		int n = 0;
-		Map<String, List<List<Object>>> variableDefUses = getdefUsesByVariables(defuses);
 		defUsesViewer.setInput(variableDefUses.keySet());
 		Iterator<String> keys = variableDefUses.keySet().iterator();
 		for(TableItem item : defUsesViewer.getTable().getItems()) {
@@ -131,50 +125,6 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		return str;
 	}
 
-	private Map<String, List<List<Object>>> getdefUsesByVariables(Map<Object, List<String>> defuses) {
-		Map<String, List<List<Object>>> variablesDefUses = new LinkedHashMap<String, List<List<Object>>>();
-		Set<String> vars = getVariables(defuses);
-		for(String var : vars) {
-			List<List<Object>> nodeedges = getNodesEdgesDefUses(defuses, var);
-			variablesDefUses.put(var, nodeedges);
-		}
-		return variablesDefUses;
-	}
-
-	private List<List<Object>> getNodesEdgesDefUses(Map<Object, List<String>> defuses, String var) {
-		List<List<Object>> nodeedges = new LinkedList<List<Object>>();
-		List<Object> defs = new LinkedList<Object>();
-		List<Object> uses = new LinkedList<Object>();
-		for(Object obj : defuses.keySet()) {
-			List<String> vars = defuses.get(obj);
-			if(vars.get(0).contains(var))
-				defs.add(obj);
-			if(vars.get(1).contains(var))
-				uses.add(obj);
-		}
-		nodeedges.add(defs);
-		nodeedges.add(uses);
-		return nodeedges;
-	}
-
-	private Set<String> getVariables(Map<Object, List<String>> defuses) {
-		Set<String> vars = new TreeSet<String>();
-		for(Object obj : defuses.keySet()) {
-			List<String> variables = defuses.get(obj);
-			vars.addAll(parseVariables(variables.get(0)));
-			vars.addAll(parseVariables(variables.get(1)));
-		}
-		return vars;
-	}
-
-	private List<String> parseVariables(String input) {
-		List<String> vars = new LinkedList<String>();
-		StringTokenizer strtok = new StringTokenizer(input, ", ");
-		while(strtok.hasMoreTokens())
-			vars.add(strtok.nextToken());
-		return vars;
-	}
-
 	private void setSelections() {
 		defUsesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -185,5 +135,4 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		    }
 		});
 	}
-
 }

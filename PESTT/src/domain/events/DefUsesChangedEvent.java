@@ -5,10 +5,13 @@ import java.util.Map;
 
 public class DefUsesChangedEvent {
 	
-	public Map<Object, List<String>> defuses;
+	public Map<Object, List<String>> nodeedgeDefUses;
+	public Map<String, List<List<Object>>> variableDefUses;
 	
-	public DefUsesChangedEvent(Map<Object, List<String>> defuses) {
-		this.defuses = defuses;
+	
+	public DefUsesChangedEvent(Map<Object, List<String>> nodeedgeDefUses, Map<String, List<List<Object>>> variableDefUses) {
+		this.nodeedgeDefUses = nodeedgeDefUses;
+		this.variableDefUses = variableDefUses;
 	}
 
 }

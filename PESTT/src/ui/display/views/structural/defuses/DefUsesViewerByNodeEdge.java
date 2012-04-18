@@ -50,7 +50,7 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof DefUsesChangedEvent) 
-			setDefUses(((DefUsesChangedEvent) data).defuses);
+			setDefUses(((DefUsesChangedEvent) data).nodeedgeDefUses);
 	}
 
 	public void dispose() {
@@ -110,24 +110,24 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setDefUses(Map<Object, List<String>> defuses) {
+	private void setDefUses(Map<Object, List<String>> nodeedgeDefUses) {
 		int n = 0;
-		defUsesViewer.setInput(defuses.keySet());
-		Iterator<Object> keys = defuses.keySet().iterator();
+		defUsesViewer.setInput(nodeedgeDefUses.keySet());
+		Iterator<Object> keys = nodeedgeDefUses.keySet().iterator();
 		for(TableItem item : defUsesViewer.getTable().getItems()) {
 			Object obj = keys.next();
 			if(obj instanceof Node<?>) {
 				Node<Integer> node = (Node<Integer>) obj;
-				String defs = "{" + defuses.get(node).get(0) + " }";
-				String uses = "{" + defuses.get(node).get(1) + " }";
+				String defs = "{" + nodeedgeDefUses.get(node).get(0) + " }";
+				String uses = "{" + nodeedgeDefUses.get(node).get(1) + " }";
 				item.setText(0, Integer.toString(n + 1));
 				item.setText(1, node.toString());
 				item.setText(2, defs);
 				item.setText(3, uses);
 			} else if(obj instanceof Edge<?>) {
 				Edge<Integer> edge = (Edge<Integer>) obj;
-				String defs = "{" + defuses.get(edge).get(0) + " }";
-				String uses = "{" + defuses.get(edge).get(1) + " }";
+				String defs = "{" + nodeedgeDefUses.get(edge).get(0) + " }";
+				String uses = "{" + nodeedgeDefUses.get(edge).get(1) + " }";
 				item.setText(0, Integer.toString(n + 1));
 				item.setText(1, edge.toString());
 				item.setText(2, defs);
