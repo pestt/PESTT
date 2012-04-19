@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import main.activator.Activator;
 import ui.events.DefUsesChangeViewEvent;
@@ -15,7 +16,7 @@ import domain.graph.visitors.DefUsesVisitor;
 public class DefUsesController extends Observable {
 
 	private DefUsesSet defUsesSet;
-	private Object selectedDefUse;
+	private Set<List<Object>> selectedDefUse;
 	private DefUsesView selectedDefUseView;
 	
 	public DefUsesController(DefUsesSet defUsesSet) {
@@ -47,11 +48,11 @@ public class DefUsesController extends Observable {
 		return selectedDefUse != null;
 	}
 	
-	public Object getSelectedDefUse() {
+	public Set<List<Object>> getSelectedDefUse() {
 		return selectedDefUse;
 	}
 
-	public void selectDefUse(Object selected) {
+	public void selectDefUse(Set<List<Object>> selected) {
 		this.selectedDefUse = selected;
 		setChanged();
 		notifyObservers(new DefUsesSelectedEvent(selected));		

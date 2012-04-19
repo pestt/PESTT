@@ -1,10 +1,12 @@
 package ui.display.views.structural.defuses;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import main.activator.Activator;
 
@@ -128,10 +130,16 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 	private void setSelections() {
 		defUsesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				Object selected = selection.getFirstElement();
-				Activator.getDefault().getDefUsesController().selectDefUse(selected);
+				Map<String, List<List<Object>>> variableDefUses = Activator.getDefault().getDefUsesController().getDefUsesByVariable();
+				List<List<Object>> defuses = variableDefUses.get(selected);
+				Set<List<Object>> set = new HashSet<List<Object>>();
+				set.add(defuses.get(0));
+				set.add(defuses.get(1));
+				Activator.getDefault().getDefUsesController().selectDefUse(set);
 		    }
 		});
 	}

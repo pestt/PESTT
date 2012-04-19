@@ -252,7 +252,10 @@ public class Graph implements Observer {
 	
 	private void selecDefUses(DefUsesSelectedEvent data) {
 		bringGraphToTop();
-		List<GraphItem> aux = selectInGraph(data.selectedDefUse);
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		for(List<Object> list : data.selectedDefUse)
+			for(Object obj : list)
+				aux.addAll(selectInGraph(obj));
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
 		Activator.getDefault().getEditorController().setVisualCoverage(data);

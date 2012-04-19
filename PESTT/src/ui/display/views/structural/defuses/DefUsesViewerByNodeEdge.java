@@ -1,10 +1,13 @@
 package ui.display.views.structural.defuses;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -143,7 +146,11 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				Object selected = selection.getFirstElement();
-				Activator.getDefault().getDefUsesController().selectDefUse(selected);
+				Set<List<Object>> selectedSet = new TreeSet<List<Object>>();
+				List<Object> list = new LinkedList<Object>();
+				list.add(selected);
+				selectedSet.add(list);
+				Activator.getDefault().getDefUsesController().selectDefUse(selectedSet);
 		    }
 		});
 	}
