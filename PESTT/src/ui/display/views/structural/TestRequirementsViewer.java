@@ -1,7 +1,6 @@
 package ui.display.views.structural;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -32,10 +31,7 @@ import ui.constants.Messages;
 import ui.constants.TableViewers;
 import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
-import adt.graph.Edge;
-import adt.graph.Node;
 import adt.graph.Path;
-import domain.constants.DefUsesView;
 import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
@@ -86,11 +82,10 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		} else if(data instanceof TestPathChangedEvent) 
 			cleanPathStatus();
 		else if(data instanceof DefUsesSelectedEvent) {
-			Set<List<Object>> selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
+			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
 			if(selectedDefUses != null) {
 				cleanPathStatus();
-				if(!selectedDefUses.isEmpty())
-					setDefUsesStatus(selectedDefUses);
+				setDefUsesStatus();
 			}
 		}
 	}
@@ -176,52 +171,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 			}
 	}
 
-	private void setDefUsesStatus(Set<List<Object>> selectedDefUses) {
+	private void setDefUsesStatus() {
+		Set<AbstractPath<Integer>> testRequirementsOfSelected = Activator.getDefault().getDefUsesController().getTestRequirementsOfSelected();
 		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
-		Iterator<List<Object>> it = selectedDefUses.iterator();
-		List<Object> defs = it.next();
-		List<Object> uses = null;
-		if(selectedDefUses.size() > 1)
-			uses = it.next();
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			AbstractPath<Integer> path = iterator.next();
-			if(Activator.getDefault().getDefUsesController().getSelectedView() == DefUsesView.NODE_EDGE) 
-				setDefUsesStatus(item, path, defs, null, DefUsesView.NODE_EDGE);
-			else if(Activator.getDefault().getDefUsesController().getSelectedView() == DefUsesView.VARIABLE) 
-				if(!uses.isEmpty()) 
-					setDefUsesStatus(item, path, defs, uses, DefUsesView.VARIABLE);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void setDefUsesStatus(TableItem item, AbstractPath<Integer> path, List<Object> defs, List<Object> uses, DefUsesView view) {
-		switch(view) {
-			case NODE_EDGE:
-				for(Object obj : defs)
-					if(obj instanceof Edge<?> && path.isEdgeOfPath((Edge<Integer>) obj))
-						item.setBackground(Colors.YELLOW_COVERAGE);
-					else if(obj instanceof Node<?> && path.containsNode((Node<Integer>) obj))
-						item.setBackground(Colors.YELLOW_COVERAGE);
-				break;
-			case VARIABLE:
-				for(Object def : defs) {
-					Node<Integer> begin = null;
-					if(def instanceof Edge<?>)
-						begin = ((Edge<Integer>) def).getBeginNode();
-					else if(def instanceof Node<?>)
-						begin = ((Node<Integer>) def);
-					if(begin == path.from()) 
-						for(Object use : uses) {
-							Node<Integer> end = null;
-							if(use instanceof Edge<?>)
-								end = ((Edge<Integer>) use).getEndNode();
-							else if(use instanceof Node<?>)
-								end = ((Node<Integer>) use);
-							if(end == path.to()) 
-								item.setBackground(Colors.YELLOW_COVERAGE);
-						}
-				}
-				break;
+			if(testRequirementsOfSelected.contains(path))
+				item.setBackground(Colors.YELLOW_COVERAGE);
 		}
 	}
 

@@ -49,7 +49,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 						ast.accept(visitor);
 			}
 			if(!defs.isEmpty() || !uses.isEmpty()) {
-				List<String> defuses = getDefUses(defs, uses);
+				List<List<String>> defuses = getDefUses(defs, uses);
 				Activator.getDefault().getDefUsesController().put(node, defuses);
 			}
 			return true;
@@ -71,24 +71,20 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 					ast.accept(visitor);
 		}
 		if(!defs.isEmpty() || !uses.isEmpty()) {
-			List<String> defuses = getDefUses(defs, uses);
+			List<List<String>> defuses = getDefUses(defs, uses);
 			Activator.getDefault().getDefUsesController().put(edge, defuses);
 		}
 		return false;
 	}
 	
-	public List<String> getDefUses(Set<String> defsSet, Set<String> usesSet) {
-		List<String> defuses = new LinkedList<String>();
-		String defs = "";
-		String uses = "";
+	public List<List<String>> getDefUses(Set<String> defsSet, Set<String> usesSet) {
+		List<List<String>> defuses = new LinkedList<List<String>>();
+		List<String> defs = new LinkedList<String>();
+		List<String> uses = new LinkedList<String>();
 		for(String str : defsSet)
-			defs += " " + str + ",";
-		if(defs.length() > 2)
-			defs = defs.substring(0, defs.length() - 1);
+			defs.add(str);
 		for(String str : usesSet)
-			uses += " " + str + ",";
-		if(uses.length() > 2)
-			uses = uses.substring(0, uses.length() - 1);
+			uses.add(str);
 		defuses.add(defs);
 		defuses.add(uses);
 		return defuses;

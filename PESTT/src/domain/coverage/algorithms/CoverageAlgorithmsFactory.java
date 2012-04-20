@@ -8,7 +8,6 @@ public enum CoverageAlgorithmsFactory {
 	INSTANCE;
 	
 	public ICoverageAlgorithms<Integer> getCoverageAlgorithm(SourceGraph sourceGraph, GraphCoverageCriteriaId coverageCriteria) {
-		
 		// verify what is the coverage to apply.
 		switch(coverageCriteria) {
 			case COMPLETE_PATH:

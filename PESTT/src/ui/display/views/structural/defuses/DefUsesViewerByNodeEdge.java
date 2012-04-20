@@ -1,13 +1,10 @@
 package ui.display.views.structural.defuses;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-import java.util.TreeSet;
 
 import main.activator.Activator;
 
@@ -23,11 +20,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import ui.constants.Colors;
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
+import adt.graph.AbstractPath;
 import adt.graph.Edge;
 import adt.graph.Node;
 import domain.events.DefUsesChangedEvent;
+import domain.events.TestPathChangedEvent;
+import domain.events.TestRequirementSelectedEvent;
 
 public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDefUsesViewer, Observer {
 
@@ -40,6 +41,8 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
+		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getTestPathController().addObserver(this);
 	}
 
 	public TableViewer create() {
@@ -52,13 +55,20 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof DefUsesChangedEvent) 
+		if(data instanceof DefUsesChangedEvent) {
+			cleanDefUsesStatus();
 			setDefUses(((DefUsesChangedEvent) data).nodeedgeDefUses);
+		} else if(data instanceof TestRequirementSelectedEvent) {
+			cleanDefUsesStatus();
+			setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
+		} else if(data instanceof TestPathChangedEvent) 
+			cleanDefUsesStatus();
 	}
 
 	public void dispose() {
 		defUsesControl.dispose();
 		Activator.getDefault().getDefUsesController().deleteObserverDefUses(this);
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 	}
 
 	private void createColumnsToDefUses() {
@@ -112,25 +122,36 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 		});
 	}
 	
+	private void cleanDefUsesStatus() {
+		int n = 0;
+		for(TableItem item : defUsesViewer.getTable().getItems()) {
+			if(n % 2 == 0)
+				item.setBackground(Colors.WHITE);
+			else 
+				item.setBackground(Colors.GREY);
+			n++;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
-	private void setDefUses(Map<Object, List<String>> nodeedgeDefUses) {
+	private void setDefUses(Map<Object, List<List<String>>> nodeedgeDefUses) {
 		int n = 0;
 		defUsesViewer.setInput(nodeedgeDefUses.keySet());
 		Iterator<Object> keys = nodeedgeDefUses.keySet().iterator();
 		for(TableItem item : defUsesViewer.getTable().getItems()) {
-			Object obj = keys.next();
-			if(obj instanceof Node<?>) {
-				Node<Integer> node = (Node<Integer>) obj;
-				String defs = "{" + nodeedgeDefUses.get(node).get(0) + " }";
-				String uses = "{" + nodeedgeDefUses.get(node).get(1) + " }";
+			Object key = keys.next();
+			if(key instanceof Node<?>) {
+				Node<Integer> node = (Node<Integer>) key;
+				String defs = "{ " + getDefUsesRepresentation(nodeedgeDefUses.get(node).get(0)) + " }";
+				String uses = "{ " + getDefUsesRepresentation(nodeedgeDefUses.get(node).get(1)) + " }";
 				item.setText(0, Integer.toString(n + 1));
 				item.setText(1, node.toString());
 				item.setText(2, defs);
 				item.setText(3, uses);
-			} else if(obj instanceof Edge<?>) {
-				Edge<Integer> edge = (Edge<Integer>) obj;
-				String defs = "{" + nodeedgeDefUses.get(edge).get(0) + " }";
-				String uses = "{" + nodeedgeDefUses.get(edge).get(1) + " }";
+			} else if(key instanceof Edge<?>) {
+				Edge<Integer> edge = (Edge<Integer>) key;
+				String defs = "{ " + getDefUsesRepresentation(nodeedgeDefUses.get(edge).get(0)) + " }";
+				String uses = "{ " + getDefUsesRepresentation(nodeedgeDefUses.get(edge).get(1)) + " }";
 				item.setText(0, Integer.toString(n + 1));
 				item.setText(1, edge.toString());
 				item.setText(2, defs);
@@ -140,17 +161,30 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements IDef
 		}	
 	}
 	
+	private void setDefUsesStatus(AbstractPath<Integer> selectedTestRequirement) {
+		Map<Object, List<List<String>>> defuses = Activator.getDefault().getDefUsesController().getDefUsesByNodeEdge();
+		Iterator<Object> iterator = defuses.keySet().iterator();
+		for(TableItem item : defUsesViewer.getTable().getItems()) 
+			if(Activator.getDefault().getDefUsesController().getTestRequirementsToNode(iterator.next()).contains(selectedTestRequirement))
+				item.setBackground(Colors.YELLOW_COVERAGE);
+	}
+
+	private String getDefUsesRepresentation(List<String> list) {
+		String str = "";
+		for(Object obj : list)
+			str += obj.toString() + ", ";
+		if(str.length() > 1)
+			str = str.substring(0, str.length() - 2);
+		return str;
+	}
+
 	private void setSelections() {
 		defUsesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				Object selected = selection.getFirstElement();
-				Set<List<Object>> selectedSet = new TreeSet<List<Object>>();
-				List<Object> list = new LinkedList<Object>();
-				list.add(selected);
-				selectedSet.add(list);
-				Activator.getDefault().getDefUsesController().selectDefUse(selectedSet);
+				Activator.getDefault().getDefUsesController().selectDefUse(selected);
 		    }
 		});
 	}

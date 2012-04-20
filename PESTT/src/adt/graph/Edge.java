@@ -27,7 +27,7 @@ public class Edge<V extends Comparable<V>> {
 	
 	@Override
 	public String toString() {
-		return beginNode + " → " + endNode;
+		return "(" + beginNode + ", " + endNode + ")";
 	}
 
 }

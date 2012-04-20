@@ -1,14 +1,12 @@
 package domain.events;
 
-import java.util.List;
-import java.util.Set;
 
 
 public class DefUsesSelectedEvent {
 	
-	public final Set<List<Object>> selectedDefUse;
+	public final Object selectedDefUse;
 
-	public DefUsesSelectedEvent(Set<List<Object>> selected) {
+	public DefUsesSelectedEvent(Object selected) {
 		this.selectedDefUse = selected;
 	}
 

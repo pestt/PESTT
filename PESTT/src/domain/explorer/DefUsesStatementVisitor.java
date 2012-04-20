@@ -1,5 +1,6 @@
 package domain.explorer;
 
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -13,11 +14,13 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -148,6 +151,20 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(ArrayAccess node) {
 		addToUses();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean visit(MethodInvocation node) {
+		List<Expression> args = node.arguments();
+		if(node.getExpression() != null)
+			node.getExpression().accept(this);
+		int size = stored.size();
+		for(Expression exp : args)
+			exp.accept(this);
+		while(stored.size() != size)
+			addToUses();
+		return false;
 	}
 	
 	@Override

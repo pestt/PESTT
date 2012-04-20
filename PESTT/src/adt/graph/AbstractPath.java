@@ -45,7 +45,7 @@ public abstract class AbstractPath<V extends Comparable<V>> implements Iterable<
 		Iterator<Node<V>> iterator = this.iterator();
 		while(iterator.hasNext()) {
 			Node<V> current = iterator.next();
-			if(edge.getBeginNode() == current) {
+			if(edge.getBeginNode() == current && current != to()) {
 				current = iterator.next();
 				if(edge.getEndNode() == current)
 					return true;
