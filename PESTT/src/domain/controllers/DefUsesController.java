@@ -122,4 +122,8 @@ public class DefUsesController extends Observable {
 	public Set<AbstractPath<Integer>> getTestRequirementsToVariable(String str) {
 		return defUsesSet.getTestRequirementsToVariable(str);
 	}
+
+	public boolean isEmpty() {
+		return defUsesSet.isEmpty();
+	}
 }

@@ -15,7 +15,7 @@ import adt.graph.Node;
 import adt.graph.Path;
 import domain.graph.visitors.DepthFirstGraphVisitor;
 
-public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAlgorithms<V> {
+public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 	
 	private Graph<V> graph;
 	private Set<AbstractPath<V>> allDuPaths;

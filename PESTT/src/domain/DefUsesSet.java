@@ -63,6 +63,8 @@ public class DefUsesSet extends Observable implements Observer {
 	public void clear() {
 		nodeedgeDefUses.clear();
 		variableDefUses.clear();
+		nodeedgeTestRequirements.clear();
+		variableTestRequirements.clear();
 		setChanged();
 		notifyObservers(new DefUsesChangedEvent(nodeedgeDefUses, variableDefUses));
 	}

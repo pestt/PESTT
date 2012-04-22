@@ -7,8 +7,7 @@ import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
 import adt.graph.Graph;
 
-public class CompleteRoundTripCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class CompleteRoundTripCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 
 	private Graph<V> graph;
 
