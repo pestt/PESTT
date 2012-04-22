@@ -213,7 +213,7 @@ public class Graph implements Observer {
 					unselectAll();
 					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 				} else
-					selecDefUses((DefUsesSelectedEvent) data);
+					selecDefUses();
 			else 
 				graphNeedToBeUpdate();
 		}
@@ -250,12 +250,16 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setVisualCoverage(data);
 	}
 	
-	private void selecDefUses(DefUsesSelectedEvent data) {
+	private void selecDefUses() {
 		bringGraphToTop();
-		List<GraphItem> aux = selectInGraph(data.selectedDefUse);
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		Set<List<Object>> selectedDefUse = Activator.getDefault().getDefUsesController().getSelectedDefUse();
+		for(List<Object> list : selectedDefUse)
+			for(Object obj : list)
+				aux.addAll(selectInGraph(obj));
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(data);
+		Activator.getDefault().getEditorController().setVisualCoverage(selectedDefUse);
 	}
 
 	private List<GraphItem> selectInGraph(AbstractPath<Integer> selectedTestRequirement) {

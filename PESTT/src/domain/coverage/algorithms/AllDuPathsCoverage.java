@@ -15,7 +15,7 @@ import adt.graph.Node;
 import adt.graph.Path;
 import domain.graph.visitors.DepthFirstGraphVisitor;
 
-public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAlgorithms<V> {
+public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 	
 	private Graph<V> graph;
 	private Set<AbstractPath<V>> allDuPaths;
@@ -36,21 +36,20 @@ public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAl
 			List<List<Object>> variableDefUses = defuses.get(key);
 			List<Object> defs = variableDefUses.get(0);
 			List<Object> uses = variableDefUses.get(1);
-			for(Object obj : defs) {
-				Node<V> node;
-				if(obj instanceof Edge<?>) 
-					node = ((Edge<V>) obj).getBeginNode();
-				else 
-					node = ((Node<V>) obj);
-				if(!uses.isEmpty()) {
+			if(!uses.isEmpty()) 
+				for(Object obj : defs) {
+					Node<V> node;
+					if(obj instanceof Edge<?>) 
+						node = ((Edge<V>) obj).getBeginNode();
+					else 
+						node = ((Node<V>) obj);
 					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph, uses);
 					node.accept(visitor);
 				}
-			}
 		}
 		return allDuPaths;
 	}
-	
+
 	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
 		
 		private List<Object> uses;
@@ -63,8 +62,14 @@ public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAl
 		
 		@Override
 		public boolean visit(Node<V> node) {
-			if(pathNodes.contains(node))
+			if(pathNodes.contains(node)) {
+				if(pathNodes.getFirst() == node) {
+					pathNodes.addLast(node);
+					addPath(pathNodes);
+					pathNodes.removeLast();
+				}
 				return false;
+			}
 			pathNodes.addLast(node);
 			if(graph.isFinalNode(node) || isUseNode(node)) 
 				addPath(pathNodes);
@@ -87,7 +92,8 @@ public class AllDuPathsCoverage <V extends Comparable<V>> implements ICoverageAl
 
 		private void addPath(Deque<Node<V>> nodes) {
 			Path<V> toAdd = new Path<V>(nodes);
-			allDuPaths.add(toAdd);			
+			if(nodes.size() > 1)
+				allDuPaths.add(toAdd);			
 		}
 		
 		@Override

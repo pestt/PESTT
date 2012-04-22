@@ -84,6 +84,7 @@ public class RefreshHandler extends AbstractHandler {
 	private void resetDataStructures(IWorkbenchWindow window) {
 		Activator.getDefault().getEditorController().setListenUpdates(false);
 		Activator.getDefault().getCoverageDataController().deleteObserverToCoverageData();
+		Activator.getDefault().getDefUsesController().deleteObserverToDefUses();
 		Activator.getDefault().getTestPathController().cleanTestPathManuallyAdded();
 		Activator.getDefault().getTestPathController().cleanTestPathSet();
 		Activator.getDefault().getTestRequirementController().clearInfeasibles();
@@ -96,6 +97,7 @@ public class RefreshHandler extends AbstractHandler {
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		Activator.getDefault().getSourceGraphController().create(unit, selectedMethod);
 		Activator.getDefault().getCoverageDataController().addObserverToCoverageData();
+		Activator.getDefault().getDefUsesController().addObserverToDefUses();
 		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocAnnotations();
 		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
 		if(criteria != null && !criteria.isEmpty()) {

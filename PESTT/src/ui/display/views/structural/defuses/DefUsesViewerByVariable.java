@@ -20,9 +20,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import adt.graph.AbstractPath;
+
+import ui.constants.Colors;
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
 import domain.events.DefUsesChangedEvent;
+import domain.events.TestPathChangedEvent;
+import domain.events.TestRequirementSelectedEvent;
 
 public class DefUsesViewerByVariable extends AbstractTableViewer implements IDefUsesViewer, Observer {
 	
@@ -35,6 +40,8 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
+		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getTestPathController().addObserver(this);
 	}
 
 	public TableViewer create() {
@@ -47,13 +54,20 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof DefUsesChangedEvent) 
+		if(data instanceof DefUsesChangedEvent) {
+			cleanDefUsesStatus();
 			setDefUses(((DefUsesChangedEvent) data).variableDefUses);
+		} else if(data instanceof TestRequirementSelectedEvent) {
+			cleanDefUsesStatus();
+			setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
+		} else if(data instanceof TestPathChangedEvent) 
+			cleanDefUsesStatus();
 	}
 
 	public void dispose() {
 		defUsesControl.dispose();
 		Activator.getDefault().getDefUsesController().deleteObserverDefUses(this);
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 	}
 
 	private void createColumnsToDefUses() {
@@ -73,7 +87,6 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		col = createColumnsHeaders(defUsesViewer, columnNames[1], columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
-			
 			@Override
 			public void update(ViewerCell cell) {
 				String str = (String) cell.getElement();;
@@ -100,14 +113,25 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		});
 	}
 	
+	private void cleanDefUsesStatus() {
+		int n = 0;
+		for(TableItem item : defUsesViewer.getTable().getItems()) {
+			if(n % 2 == 0)
+				item.setBackground(Colors.WHITE);
+			else 
+				item.setBackground(Colors.GREY);
+			n++;
+		}
+	}
+	
 	private void setDefUses(Map<String, List<List<Object>>> variableDefUses) {
 		int n = 0;
 		defUsesViewer.setInput(variableDefUses.keySet());
 		Iterator<String> keys = variableDefUses.keySet().iterator();
 		for(TableItem item : defUsesViewer.getTable().getItems()) {
 			String key = keys.next();
-			String defs = "{" + getdefUsesRepresentation(variableDefUses.get(key).get(0)) + " }";
-			String uses = "{" + getdefUsesRepresentation(variableDefUses.get(key).get(1)) + " }";
+			String defs = "{ " + getDefUsesRepresentation(variableDefUses.get(key).get(0)) + " }";
+			String uses = "{ " + getDefUsesRepresentation(variableDefUses.get(key).get(1)) + " }";
 			item.setText(0, Integer.toString(n + 1));
 			item.setText(1, key);
 			item.setText(2, defs);
@@ -116,12 +140,20 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		}
 	}
 	
-	private String getdefUsesRepresentation(List<Object> list) {
+	private void setDefUsesStatus(AbstractPath<Integer> selectedTestRequirement) {
+		Map<String, List<List<Object>>> defuses = Activator.getDefault().getDefUsesController().getDefUsesByVariable();
+		Iterator<String> iterator = defuses.keySet().iterator();
+		for(TableItem item : defUsesViewer.getTable().getItems()) 
+			if(Activator.getDefault().getDefUsesController().getTestRequirementsToVariable(iterator.next()).contains(selectedTestRequirement))
+				item.setBackground(Colors.YELLOW_COVERAGE);
+	}
+	
+	private String getDefUsesRepresentation(List<Object> list) {
 		String str = "";
 		for(Object obj : list)
-			str += " " + obj.toString() + ",";
-		if(str.length() > 2)
-			str = str.substring(0, str.length() - 1);
+			str += obj.toString() + ", ";
+		if(str.length() > 1)
+			str = str.substring(0, str.length() - 2);
 		return str;
 	}
 
