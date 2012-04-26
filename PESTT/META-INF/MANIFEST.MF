@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PESTT
 Bundle-SymbolicName: PESTT;singleton:=true
-Bundle-Version: 1.0
+Bundle-Version: 0.1
 Bundle-Activator: activator.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.zest.dot.core;bundle-version="2.0.0",
