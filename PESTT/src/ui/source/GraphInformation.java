@@ -27,7 +27,7 @@ import ui.constants.Description;
 import ui.constants.MarkersType;
 import ui.editor.Line;
 import domain.constants.Layer;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.ICoverageData;
 
 public class GraphInformation {
 
@@ -53,13 +53,13 @@ public class GraphInformation {
 				clear();
 				break;
 			case GUARDS:
-				addInformationToLayer2_3_4(ALL);
+				addInformationToLayers2_3_4(ALL);
 				break;
 			case GUARDS_TRUE:
-				addInformationToLayer2_3_4(TRUE);
+				addInformationToLayers2_3_4(TRUE);
 				break;
 			case GUARDS_FALSE:
-				addInformationToLayer2_3_4(FALSE);
+				addInformationToLayers2_3_4(FALSE);
 				break;		
 		}
 	}
@@ -86,9 +86,9 @@ public class GraphInformation {
 					sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 					HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 					if(map != null) {
-						List<ASTNode> nodes = getASTNodes(map);
-						if(nodes != null) 
-							regionToSelect(nodes, MarkersType.LINK_MARKER); // select the area in the editor.
+						List<ASTNode> instructions = getASTNodes(map);
+						if(instructions != null) 
+							regionToSelect(instructions, MarkersType.LINK_MARKER); // select the area in the editor.
 						else 
 							Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 					}
@@ -97,7 +97,7 @@ public class GraphInformation {
 			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 	
-	private void addInformationToLayer2_3_4(String value) {
+	private void addInformationToLayers2_3_4(String value) {
 		setLayerInformation(Layer.EMPTY); // clean previous informations.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
 			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))   // search in the sourceGraph for all edges.
@@ -126,26 +126,27 @@ public class GraphInformation {
 		return nodes;
 	}
 	 
-	private void regionToSelect(List<ASTNode> info, String markerType) {
-		int start = findStartPosition(info); // get the start position.
-		ASTNode instructions = info.get(0); // the first element of the list.
-		switch(instructions.getNodeType()) {
+	private void regionToSelect(List<ASTNode> instructions, String markerType) {
+		int start = findStartPosition(instructions); // get the start position.
+		ASTNode instruction = instructions.get(0); // the first element of the list.
+		switch(instruction.getNodeType()) {
 			case ASTNode.IF_STATEMENT:
 			case ASTNode.DO_STATEMENT:
-				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 2)); // select the if or do words.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instruction.getStartPosition(), 2)); // select the if or do words.
 				break;
 			case ASTNode.FOR_STATEMENT:
 			case ASTNode.ENHANCED_FOR_STATEMENT:
-				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 3)); // select the for word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instruction.getStartPosition(), 3)); // select the for word.
 				break;
 			case ASTNode.SWITCH_STATEMENT:
-				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 6)); // select the switch word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instruction.getStartPosition(), 6)); // select the switch word.
 				break;
 			case ASTNode.WHILE_STATEMENT:
-				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instructions.getStartPosition(), 5)); // select the while word.
+				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, instruction.getStartPosition(), 5)); // select the while word.
 				break;
 			default:
-				Activator.getDefault().getEditorController().createMarker(markerType, start, getLength(start, info.get(info.size() - 1).getStartPosition(), info.get(info.size() - 1).getLength())); // select the block of instructions associated to the selected node.
+				for(ASTNode  instr : instructions) 
+					Activator.getDefault().getEditorController().createMarker(markerType, instr.getStartPosition(), getLength(instr.getStartPosition(), instr.getStartPosition(), instr.getLength()));					
 				break;
 		}
 	}

@@ -20,16 +20,19 @@ import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
@@ -44,6 +47,7 @@ import domain.graph.visitors.RenumNodesGraphVisitor;
 
 public class StatementsVisitor extends ASTVisitor {
 
+	private static final String NEG = "¬"; 
 	private Graph<Integer> sourceGraph;
 	private String methodName;
 	private int nodeNum;
@@ -58,6 +62,8 @@ public class StatementsVisitor extends ASTVisitor {
 	private CompilationUnit unit;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
+	private List<SingleVariableDeclaration> params;
+	private List<VariableDeclarationFragment> attributes;
 
 	public StatementsVisitor(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
@@ -67,6 +73,7 @@ public class StatementsVisitor extends ASTVisitor {
 		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
+		attributes = new LinkedList<VariableDeclarationFragment>(); // the class atriutes.
 		prevNode = new Stack<Node<Integer>>(); // stack that contain the predecessor nodes.
 		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
@@ -80,8 +87,19 @@ public class StatementsVisitor extends ASTVisitor {
 		finalnode = initial; // The final node.
 		infos = new GraphInformation(); // the graph informations.
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override  
+	public boolean visit(FieldDeclaration node) {
+		List<VariableDeclarationFragment> fragments = node.fragments();
+		for(VariableDeclarationFragment attribute : fragments)
+			attributes.add(attribute);
+		return false;
+	}
+	
 
 	//only visit the method indicated by the user.
+	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(MethodDeclaration node) {
 		if(node.getName().getIdentifier().equals(methodName)) {
@@ -93,6 +111,7 @@ public class StatementsVisitor extends ASTVisitor {
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()));
 				javadocAnnotations.put(JavadocTagAnnotations.ADDITIONAL_TEST_PATH, getProperty(node.getJavadoc(), JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()));
 			}
+			params = node.parameters();
 			return true;
 		}
 		return false;
@@ -123,6 +142,14 @@ public class StatementsVisitor extends ASTVisitor {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public List<SingleVariableDeclaration> getMethodParameters() {
+		return params;
+	}
+	
+	public List<VariableDeclarationFragment> getClassAttributes() {
+		return attributes;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -155,7 +182,7 @@ public class StatementsVisitor extends ASTVisitor {
 
 			RenumNodesGraphVisitor visitor = new RenumNodesGraphVisitor();
 			sourceGraph.accept(visitor);
-			sourceGraph.sort();
+			sourceGraph.sortNodes();
 		} 	
 	}
 
@@ -202,7 +229,7 @@ public class StatementsVisitor extends ASTVisitor {
 		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
 		Node<Integer> noIf = edge.getEndNode(); // the initial node of the IFStatement.
 		prevNode.push(noIf); // the graph continues from the initial node of the IFStatement.
-		infos.addInformationToLayer1(sourceGraph, noIf, node, unit); // add informationrmation to noIF node.
+		infos.addInformationToLayer1(sourceGraph, noIf, node, unit); // add information to noIF node.
     	Edge<Integer> edgeThen = createConnection(); // visit the Then block.
     	infos.addInformationToLayer2(sourceGraph, edgeThen, node.getExpression().toString()); // add information to noIF - noIFThen edge.
     	Node<Integer> noIfThen = edgeThen.getEndNode(); // create the IFThen node.
@@ -216,7 +243,7 @@ public class StatementsVisitor extends ASTVisitor {
     	Statement elseStatement = node.getElseStatement(); // get the Else block.
     	if(elseStatement != null) { // if exists visit the Else block.
     		Edge<Integer> edgeElse = createConnection();
-    		infos.addInformationToLayer2(sourceGraph, edgeElse, "¬(" + node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
+    		infos.addInformationToLayer2(sourceGraph, edgeElse, NEG + "(" + node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
         	Node<Integer> noIfElse = edgeElse.getEndNode(); // create the IFElse node. 
         	prevNode.push(noIfElse); // the graph continues from the IFElse node.
         	elseStatement.accept(this);
@@ -227,7 +254,7 @@ public class StatementsVisitor extends ASTVisitor {
     		if(!prevNode.isEmpty()) {
 	    		edge = createConnection(); // create the final node of the IFStatement.
 	    		if(elseStatement == null) 
-	    			infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
+	    			infos.addInformationToLayer2(sourceGraph, edge, NEG + "(" + node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
 	    		returnFlag = (returnThenFlag || returnElseFlag);
 	    		if(!returnFlag) { // if there are no returns.
 	    		    if(!breakThenFlag || !breakElseFlag) { // if exist in maximum one break or continue.
@@ -270,7 +297,7 @@ public class StatementsVisitor extends ASTVisitor {
     	} else
     		returnFlag = false;
     	edge = sourceGraph.addEdge(noWhile, noEndWhile); // the connection from the initial node to the final node of the WhileStatement.
-    	infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noWhile - noEndWhile edge.
+    	infos.addInformationToLayer2(sourceGraph, edge, NEG + "(" + node.getExpression().toString() + ")"); // add information to noWhile - noEndWhile edge.
     	prevNode.push(noEndWhile); // the graph continues from the final node of the WhileStatement.
     	finalnode = noEndWhile; // update the final node.
     	return false;
@@ -282,7 +309,7 @@ public class StatementsVisitor extends ASTVisitor {
 		Node<Integer> noDoWhileBody = edge.getEndNode(); // create the DoWhileBody node. 
     	prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
 		Node<Integer> noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
-    	infos.addInformationToLayer1(sourceGraph, noWhile, node.getExpression(), unit);
+    	infos.addInformationToLayer1(sourceGraph, noWhile, node, unit);
     	Node<Integer> noEndDoWhile = sourceGraph.addNode(++nodeNum); // the final node of the DoStatement.
     	breakNode.push(noEndDoWhile); // if a break occur goes to the final node of the DoStatement.
     	continueNode.push(noWhile); // if a continue occur goes to the WhileStatement node.
@@ -299,7 +326,7 @@ public class StatementsVisitor extends ASTVisitor {
     	edge = sourceGraph.addEdge(noWhile, noDoWhileBody); // the loop connection.
     	infos.addInformationToLayer2(sourceGraph, edge, node.getExpression().toString()); // add information to noWhile - noDoWhile edge.
     	edge = sourceGraph.addEdge(noWhile, noEndDoWhile); // the connection from the WhileStatement node to the final node of the DoWhileStatement.
-    	infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noWhile - noEndDoWhile edge.
+    	infos.addInformationToLayer2(sourceGraph, edge, NEG + "(" + node.getExpression().toString() + ")"); // add information to noWhile - noEndDoWhile edge.
     	prevNode.push(noEndDoWhile); // the graph continues from the final node of the DoWhileStatement.
     	finalnode = noEndDoWhile; // update the final node.
     	return false;
@@ -314,7 +341,6 @@ public class StatementsVisitor extends ASTVisitor {
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(), (ASTNode) initNode, unit); // add information to noInitFor node.
 		}
 		initializers = initializers.substring(0, initializers.length() - 2);
-		infos.addInformationToLayer2(sourceGraph, edge, initializers); // add information to previous node - noFor edge.
 		Node<Integer> noFor = edge.getEndNode(); // the initial node of the ForStatement.
 		infos.addInformationToLayer1(sourceGraph, noFor, node, unit);
     	Node<Integer> incFor = sourceGraph.addNode(++nodeNum); // the node of the incFor.
@@ -343,9 +369,8 @@ public class StatementsVisitor extends ASTVisitor {
 		} else
 			returnFlag = false;
     	edge = sourceGraph.addEdge(incFor, noFor); // the loop connection.
-    	infos.addInformationToLayer2(sourceGraph, edge, updaters); // add information to incFor - noFor edge.
     	edge = sourceGraph.addEdge(noFor, noEndFor); // the connection from the initial node to the final node of the ForStatement.
-    	infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ")"); // add information to noFor - noEndFor edge.
+    	infos.addInformationToLayer2(sourceGraph, edge, NEG + "(" + node.getExpression().toString() + ")"); // add information to noFor - noEndFor edge.
     	prevNode.push(noEndFor); // the graph continues from the final node of the DoWhileStatement.
     	finalnode = noEndFor; // update the final node.
     	return false;
@@ -375,7 +400,7 @@ public class StatementsVisitor extends ASTVisitor {
 		} else
 			returnFlag = false;
 		edge = sourceGraph.addEdge(noForEach, noEndForEach); // the loop connection.
-		infos.addInformationToLayer2(sourceGraph, edge, "¬(" + node.getExpression().toString() + ".hasNext()" + ")"); // add information to noForEach - noEndForEach edge.
+		infos.addInformationToLayer2(sourceGraph, edge, NEG + "(" + node.getExpression().toString() + ".hasNext()" + ")"); // add information to noForEach - noEndForEach edge.
 		prevNode.push(noEndForEach); // the graph continues from the final node of the EnhancedForStatement.
 		finalnode = noEndForEach; // update the final node.
 		return false;

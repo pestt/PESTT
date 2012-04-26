@@ -67,6 +67,15 @@
             name="Strutural Coverage Criteria"
             restorable="true">
       </view>
+      <view
+            allowMultiple="true"
+            category="PESTT.Category"
+            class="ui.display.views.ViewDataFlowCriteria"
+            icon="icons/results.gif"
+            id="PESTT.ViewDataFlowCoverage"
+            name="Data Flow Coverage Criteria"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -79,17 +88,6 @@
                moveable="true"
                relationship="right"
                relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
-               id="PESTT.ViewStructuralCoverage"
-               minimized="false"
-               moveable="true"
-               relationship="stack"
-               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -112,6 +110,28 @@
                moveable="true"
                relationship="right"
                relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="PESTT.ViewStructuralCoverage"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="org.eclipse.pde.runtime.LogView"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="PESTT.ViewDataFlowCoverage"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -255,24 +275,97 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Show variable definitons and uses "
+            id="PESTT.DefUses"
+            name="Show variable definitons and uses ">
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Def Uses view select"
+            id="PESTT.DefUsesViewSelect"
+            name="Def Uses view select">
+         <commandParameter
+               id="org.eclipse.ui.commands.radioStateParameter"
+               name="Def Uses view select"
+               optional="false">
+         </commandParameter>
+         <state
+               id="org.eclipse.ui.commands.radioState">
+            <class
+                  class="org.eclipse.ui.handlers.RadioState">
+               <parameter
+                     name="default"
+                     value="NODEEDGE">
+               </parameter>
+               <parameter
+                     name="persisted"
+                     value="true">
+               </parameter>
+            </class>
+         </state>
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="Refresh the structural coverage criteria graph."
             id="PESTT.RefreshStructuralCoverageCriteriaGraph"
-            name="Refresh the structural coverage criteria graph.">
+            name="Refresh the structural coverage graph">
       </command>
       <category
             description="Commands related to the PESTT View Logic Coverage"
             id="PESTT.CategoryViewLogicCoverage"
-            name="PESTTViewLogicCoverageCategory">
+            name="PESTTViewSLogicCoverageCategory">
       </category>
       <command
             categoryId="PESTT.CategoryViewLogicCoverage"
             description="Refresh the logic coverage criteria graph."
             id="PESTT.RefreshLogicCoverageCriteriaGraph"
-            name="Refresh the logic coverage criteria graph.">
+            name="Refresh logic coverage graph">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewGraphCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Ctrl+O"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
+         <command
+               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               mnemonic="Alt+O"
+               style="push"
+               tooltip="Refresh">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
@@ -711,14 +804,34 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:PESTT.ViewGraphCoverageCriteria">
+            locationURI="toolbar:PESTT.ViewDataFlowCoverage">
          <command
-               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               commandId="PESTT.DefUsesViewSelect"
+               icon="icons/defuseview.gif"
+               label="Def Uses View Select"
+               style="pulldown"
+               tooltip="Show graph information to the selected layer.">
+            <parameter
+                  name="org.eclipse.ui.commands.radioStateParameter"
+                  value="NONE">
+            </parameter>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="PESTT.DefUses"
                icon="icons/refresh.gif"
-               label="Refresh"
-               mnemonic="Ctrl+F5"
+               label="Show variable definitons and uses "
+               mnemonic="Alt+U"
                style="push"
-               tooltip="Refresh">
+               tooltip="Show variable definitons and uses ">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -732,24 +845,29 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
-         <command
-               commandId="PESTT.RefreshLogicCoverageCriteriaGraph"
-               icon="icons/refresh.gif"
-               label="Refresh"
-               mnemonic="Ctrl+F5"
-               style="push"
-               tooltip="Refresh">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="PESTT.Perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
+            locationURI="menu:PESTT.DefUsesViewSelect?after=additions">
+         <menu
+               id="PESTT.DefUsesViewSelectMenu"
+               label="Show by">
+            <command
+                  commandId="PESTT.DefUsesViewSelect"
+                  label="Nodes and Edges"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="NODEEDGE">
+               </parameter>
+            </command>
+            <command
+                  commandId="PESTT.DefUsesViewSelect"
+                  label="Variables"
+                  style="radio">
+               <parameter
+                     name="org.eclipse.ui.commands.radioStateParameter"
+                     value="VARIABLE">
+               </parameter>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -779,6 +897,18 @@
             sequence="Ctrl+F5">
       </key>
       <key
+            commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+O">
+      </key>
+      <key
+            commandId="PESTT.RefreshLogicCoverageCriteriaGraph"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+O">
+      </key>
+      <key
             commandId="PESTT.RunCoverage"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -795,6 +925,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+T">
+      </key>
+      <key
+            commandId="PESTT.DefUses"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+U">
       </key>
    </extension>
    <extension
@@ -1033,7 +1169,7 @@
       </handler>
       <handler
             class="ui.handler.RefreshLogicCriteriaGraphHandler"
-            commandId="PESTT.RefreshLogicCoverageCriteriaGraph">
+            commandId="PESTT.RefreshStructuralCoverageCriteriaGraph">
          <activeWhen>
             <and>
                <with
@@ -1046,6 +1182,46 @@
                      variable="activePartId">
                   <equals
                         value="PESTT.ViewLogicCoverageCriteria">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.DefUsesHandler"
+            commandId="PESTT.DefUses">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewDataFlowCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.DefUsesViewSelectHandler"
+            commandId="PESTT.DefUsesViewSelect">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewDataFlowCoverage">
                   </equals>
                </with>
             </and>

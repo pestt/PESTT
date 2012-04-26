@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import ui.constants.TableViewers;
+import ui.display.views.structural.defuses.DefUsesViewerFactory;
 
 public enum TableViewerFactory {
 	
@@ -12,19 +13,17 @@ public enum TableViewerFactory {
 
 	public TableViewer createTebleViewer(Composite parent, IWorkbenchPartSite site, String name) {
 		switch(TableViewers.valueOf(name)) {
-		case TESTREQUIREMENTSVIEWER:
-			return new TestRequirementsViewer(parent, site).create();
-		case TESTPATHSVIEWER:
-			return new TestPathsViewer(parent, site).create();
-		case STATISTICSVIEWER:
-			return new StatisticsViewer(parent, site).create();
-		default:
-			return null;
+			case TESTREQUIREMENTSVIEWER:
+				return new TestRequirementsViewer(parent, site).create();
+			case TESTPATHSVIEWER:
+				return new TestPathsViewer(parent, site).create();
+			case STATISTICSVIEWER:
+				return new StatisticsViewer(parent, site).create();
+			case DEFUSESVIEWER:
+				return new DefUsesViewerFactory().createTebleViewer(parent, site);
+			default:
+				return null;
 		}
-	}
-
-	public void disposeTebleViewer(ITableViewer viewer) {
-		viewer.dispose();
 	}
 }
 

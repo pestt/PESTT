@@ -25,7 +25,6 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	public void setValue(V value) {
 		this.value = value;
-		
 	}
 
 	@Override

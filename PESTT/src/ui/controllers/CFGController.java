@@ -47,16 +47,14 @@ public class CFGController extends Observable{
 	public Layer getLayer() {
 		return layer;
 	}
-
+	
 	public void refreshStructuralCoverageGraph() {
 		setChanged();
 		notifyObservers(new RefreshStructuralGraphEvent());
 	}
-	
+
 	public void refreshLogicCoverageGraph() {
 		setChanged();
 		notifyObservers(new RefreshLogicGraphEvent());
 	}
-	
-	
 }

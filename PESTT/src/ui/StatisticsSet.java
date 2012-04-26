@@ -24,7 +24,7 @@ import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 import domain.constants.Layer;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.ICoverageData;
 
 public class StatisticsSet extends Observable implements Iterable<String>{
 	

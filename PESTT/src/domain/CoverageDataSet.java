@@ -10,8 +10,8 @@ import java.util.Observer;
 
 import main.activator.Activator;
 import adt.graph.Path;
-import domain.coverage.instrument.CoverageData;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.CoverageData;
+import domain.coverage.data.ICoverageData;
 import domain.events.CFGUpdateEvent;
 
 

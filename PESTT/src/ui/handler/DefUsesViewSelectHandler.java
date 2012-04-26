@@ -12,12 +12,12 @@ import org.eclipse.ui.handlers.RadioState;
 
 import ui.constants.Description;
 import ui.constants.Messages;
-import domain.constants.Layer;
+import domain.constants.DefUsesView;
 
-public class LayerHandler extends AbstractHandler {
-
+public class DefUsesViewSelectHandler extends AbstractHandler {
+	
 	private String option = Description.EMPTY;
-	private String old = Layer.EMPTY.toString(); 
+	private String old = DefUsesView.NODE_EDGE.toString(); 
 	private boolean flag = false;
 	
 	@Override
@@ -27,15 +27,16 @@ public class LayerHandler extends AbstractHandler {
 			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
 				if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
-					if(option != null && !option.equals(Description.NONE)) {
-						HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
-						old = option;
-					} else if(option == null && old.equals(Layer.EMPTY.toString()))
-						old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
-					Activator.getDefault().getCFGController().selectLayer(old);
+					if(option != null && !option.equals(old)) {
+						if(option != null && !option.equals(Description.NONE)) {
+							HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
+							old = option;
+						}
+						Activator.getDefault().getDefUsesController().selectView(old);
+					}
 				} else {
 					flag = true;
-					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);				
+					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 				}
 			} else {
 				flag = true;

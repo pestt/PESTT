@@ -29,14 +29,15 @@ import ui.constants.Colors;
 import ui.constants.Images;
 import ui.constants.Messages;
 import ui.constants.TableViewers;
+import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
+import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
-import domain.events.TestPathSelectedTourEvent;
 import domain.events.TestRequirementChangedEvent;
 
-public class TestRequirementsViewer extends AbstractTableViewer implements ITableViewer, Observer {
+public class TestRequirementsViewer extends AbstractTableViewer implements Observer {
 
 	private Composite parent;
 	private TableViewer testRequirementsViewer;
@@ -49,13 +50,14 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
+		Activator.getDefault().getDefUsesController().addObserver(this);
 	}
 
 	public TableViewer create() {
 		testRequirementsViewer = createViewTable(parent, site, TableViewers.TESTREQUIREMENTSVIEWER);
 		testRequirementsControl = testRequirementsViewer.getControl();
 		createColumnsToTestRequirement();
-		setSelections(); // associate path to the ViewGraph elements.
+		setSelections(); // connect the view elements to the graph elements.
 		return testRequirementsViewer;
 	}
 
@@ -70,7 +72,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 			testRequirementsViewer.setInput(testRequirements);
 			cleanPathStatus();
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
-		} else if(data instanceof TestPathSelectedEvent || data instanceof TestPathSelectedTourEvent) {
+		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
 			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
 			if(selectedTestPaths != null)
 				if(!selectedTestPaths.isEmpty())
@@ -79,6 +81,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 					cleanPathStatus();
 		} else if(data instanceof TestPathChangedEvent) 
 			cleanPathStatus();
+		else if(data instanceof DefUsesSelectedEvent) {
+			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
+			if(selectedDefUses != null) {
+				cleanPathStatus();
+				setDefUsesStatus();
+			}
+		}
 	}
 
 	public void dispose() {
@@ -161,7 +170,17 @@ public class TestRequirementsViewer extends AbstractTableViewer implements ITabl
 				}
 			}
 	}
-	
+
+	private void setDefUsesStatus() {
+		Set<AbstractPath<Integer>> testRequirementsOfSelected = Activator.getDefault().getDefUsesController().getTestRequirementsOfSelected();
+		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
+		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
+			AbstractPath<Integer> path = iterator.next();
+			if(testRequirementsOfSelected.contains(path))
+				item.setBackground(Colors.YELLOW_COVERAGE);
+		}
+	}
+
 	private void setSelections() {
 		testRequirementsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 

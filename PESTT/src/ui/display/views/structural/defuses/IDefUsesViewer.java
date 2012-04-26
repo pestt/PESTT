@@ -1,9 +1,9 @@
-package ui.display.views.structural;
+package ui.display.views.structural.defuses;
 
 import org.eclipse.jface.viewers.TableViewer;
 
-public interface ITableViewer {
-
+public interface IDefUsesViewer {
+	
 	public TableViewer create();
 	
 	public void dispose();

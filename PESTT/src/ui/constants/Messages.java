@@ -10,7 +10,7 @@ public class Messages {
 	public static final String COVERAGE_TITLE = "PESTT - Coverage Criteria";
 	public static final String COVERAGE_SELECT_MSG = "You need to select a coverage criteria in the Graph Coverage Criteria view.";
 	
-	public static final String TEST_PATH_TITLE = "PESTT - Test path input";
+	public static final String TEST_PATH_TITLE = "PESTT - Test Path";
 	public static final String TEST_PATH_INPUT_MSG = "You need to enter a test path.";
 	public static final String TEST_PATH_INVALID_INPUT_MSG = "You need to enter a valid test path.";
 	public static final String TEST_PATH_BECAME_INVALID_INPUT_MSG = "The following test paths is no longer valid.";
@@ -18,7 +18,7 @@ public class Messages {
 	public static final String TEST_PATH_SUCCESS_REMOVE_MSG = "Test path successfully removed.";
 	public static final String TEST_PATH_SELECT_TO_REMOVE_MSG = "You need to select a test path to be removed.";
 	
-	public static final String TEST_REQUIREMENT_TITLE = "PESTT - Test requirements input";
+	public static final String TEST_REQUIREMENT_TITLE = "PESTT - Test Requirements";
 	public static final String TEST_REQUIREMENT_INPUT_MSG = "You need to enter a test requirement.";
 	public static final String TEST_REQUIREMENT_INVALID_INPUT_MSG = "You need to enter a valid test requirement.";
 	public static final String TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG = "The following test requirement is no longer valid.";
@@ -32,4 +32,8 @@ public class Messages {
 	public static final String STATISTICS_REASON_MSG = "Graph contains loop(s) (infinite paths).";
 	
 	public static final String PREFERENCES_TITLE = "PESTT - Preferences";
-	public static final String PREFERENCES_MSG = "Please check if the dot location is correct.\n (Window → Preferences → PESTT)";}
+	public static final String PREFERENCES_MSG = "Please check if the dot location is correct.\n (Window → Preferences → PESTT)";
+	
+	public static final String DEF_USES_TITLE = "PESTT - Definitions and Uses";
+	public static final String DEF_USES_MSG = "You need to generate the DefUses in the Data Flow Coverage Criteria View.";
+}

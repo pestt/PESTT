@@ -27,10 +27,30 @@ public abstract class AbstractPath<V extends Comparable<V>> implements Iterable<
 		return this.iterator().next();
 	}
 	
+	public Node<V> to() {
+		Node<V> lastNode = null;
+		for(Node<V> node : this) 
+			lastNode = node;
+		return lastNode;
+	}
+	
 	public boolean containsNode(Node<V> node) {
-		for (Node<V> pathNode : this)
-			if (pathNode == node)
+		for(Node<V> pathNode : this)
+			if(pathNode == node)
 				return true;
+		return false;
+	}
+	
+	public boolean isEdgeOfPath(Edge<V> edge) {
+		Iterator<Node<V>> iterator = this.iterator();
+		while(iterator.hasNext()) {
+			Node<V> current = iterator.next();
+			if(edge.getBeginNode() == current && current != to()) {
+				current = iterator.next();
+				if(edge.getEndNode() == current)
+					return true;
+			}
+		}
 		return false;
 	}
 }

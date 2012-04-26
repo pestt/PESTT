@@ -175,7 +175,7 @@ public class Graph<V extends Comparable<V>> {
 		return nodes;
 	}
 	
-	public void sort() {
+	public void sortNodes() {
 		Set<Node<V>> sorted = new TreeSet<Node<V>>();
 		for(Node<V> node : nodes)
 			sorted.add(node);

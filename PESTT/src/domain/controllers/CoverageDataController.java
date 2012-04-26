@@ -5,7 +5,7 @@ import java.util.Observable;
 
 import adt.graph.Path;
 import domain.CoverageDataSet;
-import domain.coverage.instrument.ICoverageData;
+import domain.coverage.data.ICoverageData;
 
 
 public class CoverageDataController extends Observable {

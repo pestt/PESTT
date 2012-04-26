@@ -1,4 +1,4 @@
-package domain.coverage.instrument;
+package domain.coverage.data;
 
 import java.util.HashMap;
 

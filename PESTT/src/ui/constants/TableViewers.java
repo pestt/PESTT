@@ -10,6 +10,7 @@ public enum TableViewers {
 	public static final String TEST_REQUIREMENTS_VIEWER_ID = "TESTREQUIREMENTSVIEWER";
 	public static final String TEST_PATHS_VIEWER_ID = "TESTPATHSVIEWER";
 	public static final String STATISTICS_VIEWER_ID = "STATISTICSVIEWER";
+	public static final String DEF_USES_VIEWER_ID = "DEFUSESVIEWER";
 	public static final String STATUS = "Status";
 	public static final String INFEASIBLE = "Infeasible";
 	public static final String TEST_REQUIREMENTS = "Test Requirement Set";

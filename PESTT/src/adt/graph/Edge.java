@@ -24,5 +24,10 @@ public class Edge<V extends Comparable<V>> {
 	public void accept(IGraphVisitor<V> visitor) {
 		visitor.visitEdge(this);
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + beginNode + ", " + endNode + ")";
+	}
 
 }

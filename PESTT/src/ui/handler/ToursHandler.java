@@ -31,16 +31,17 @@ public class ToursHandler extends AbstractHandler {
 						if(option != null && !option.equals(Description.NONE)) {
 							HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
 							old = option;
-						} //else if(option == null)
-						//	old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
+						}
 						Activator.getDefault().getTestPathController().selectTourType(old);
 					}
 				} else {
 					flag = true;
 					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 				}
-			} else
+			} else {
+				flag = true;
 				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+			}
 		else
 			flag = false;
 		return null;
