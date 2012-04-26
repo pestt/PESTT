@@ -33,7 +33,6 @@ public class Messages {
 	
 	public static final String PREFERENCES_TITLE = "PESTT - Preferences";
 	public static final String PREFERENCES_DOT_MSG = "Please check if the dot location is correct.\n (Window → Preferences → PESTT)";
-	public static final String PREFERENCES_BYTEMAN_MSG = "Please check if the Byteman location is correct.\n (Window → Preferences → PESTT)";
 	
 	public static final String DEF_USES_TITLE = "PESTT - Definitions and Uses";
 	public static final String DEF_USES_MSG = "You need to generate the DefUses in the Data Flow Coverage Criteria View.";

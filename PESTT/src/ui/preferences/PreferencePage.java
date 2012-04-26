@@ -4,7 +4,6 @@ import java.net.URL;
 
 import main.activator.Activator;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.SWT;
@@ -27,7 +26,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public void createFieldEditors() {
 		addField(new FileFieldEditor(Preferences.DOT_PATH, Preferences.DOT_PATH_LABEL, getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(Preferences.BYTEMAN_PATH, Preferences.BYTEMAN_PATH_LABEL, getFieldEditorParent()));
 		
 		Link link = new Link(getFieldEditorParent(), SWT.NONE);
 		link.setText(Preferences.SUPPORT_PAGE);
