@@ -26,6 +26,10 @@ public class RulesFileCreator {
 		}
 	}
 	
+	public String getFileLocation() {
+		return file.getAbsolutePath();
+	}
+	
 	private void cleanContent() throws IOException {
 		writer.write("");
 		writer.flush();	

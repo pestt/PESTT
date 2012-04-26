@@ -18,7 +18,7 @@ public class RunCoverageHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
 			if(Activator.getDefault().getEditorController().isEverythingMatching())
-				Activator.getDefault().getRulesController().getExecutedPath();
+				Activator.getDefault().getBytemanController().getExecutedPath();
 			else 
 				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
 		else

@@ -52,7 +52,7 @@ public class RefreshHandler extends AbstractHandler {
 				resetDataStructures(window);
 				keepCommandOptions();
 			} else
-				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_MSG); 
+				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_DOT_MSG); 
 		} else 
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;

@@ -74,7 +74,7 @@ public class Graph implements Observer {
 		Activator.getDefault().getSourceGraphController().applyVisitor(visitor);
 		String dotGraph = "digraph grafo {\nrankdir=TD\nsize=\"10,10\"\n" + visitor.getDotString()  + "}\n"; // creates the string to be passed to Graphviz.
 		IDotProcess dotProcess = new DotProcess(); // the object that parse the information to build the layoutGraph.
-		Map<String, List<String>> map = dotProcess.DotToPlain(dotGraph); // the information to build the layoutGraph.
+		Map<String, List<String>> map = dotProcess.dotToPlain(dotGraph); // the information to build the layoutGraph.
 		GraphElements elements = new GraphElements(map);
 		setLayout(elements);
 		setNodes(elements.getNodesInfo());
