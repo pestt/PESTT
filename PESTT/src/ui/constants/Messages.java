@@ -32,4 +32,4 @@ public class Messages {
 	public static final String STATISTICS_REASON_MSG = "Graph contains loop(s) (infinite paths).";
 	
 	public static final String PREFERENCES_TITLE = "PESTT - Preferences";
-	public static final String PREFERENCES_MSG = "Please check if the dot location is currect.\n (Window → Preferences → PESTT)";}
+	public static final String PREFERENCES_MSG = "Please check if the dot location is correct.\n (Window → Preferences → PESTT)";}
