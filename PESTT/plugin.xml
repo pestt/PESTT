@@ -238,12 +238,6 @@
       </command>
       <command
             categoryId="PESTT.CategoryViewStructuralCoverage"
-            description="Status coverage."
-            id="PESTT.RunCoverage"
-            name="Run Coverage">
-      </command>
-      <command
-            categoryId="PESTT.CategoryViewStructuralCoverage"
             description="The visit tour type"
             id="PESTT.Tours"
             name="Tour type">
@@ -476,23 +470,6 @@
                      </with>
                   </visibleWhen>
                </command>
-               <command
-                     commandId="PESTT.RunCoverage"
-                     icon="icons/run.gif"
-                     label="Status"
-                     mnemonic="Alt+S"
-                     style="push"
-                     tooltip="Show status coverage">
-                  <visibleWhen
-                        checkEnabled="false">
-                     <with
-                           variable="activeWorkbenchWindow.activePerspective">
-                        <equals
-                              value="PESTT.Perspective">
-                        </equals>
-                     </with>
-                  </visibleWhen>
-               </command>
             </menu>
             <visibleWhen
                   checkEnabled="false">
@@ -712,23 +689,6 @@
                visible="true">
          </separator>
          <command
-               commandId="PESTT.RunCoverage"
-               icon="icons/run.gif"
-               label="Status"
-               mnemonic="Alt+S"
-               style="push"
-               tooltip="Show status coverage">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="PESTT.Perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
                commandId="PESTT.Tours"
                icon="icons/tour.gif"
                label="Tours"
@@ -909,12 +869,6 @@
             sequence="Alt+O">
       </key>
       <key
-            commandId="PESTT.RunCoverage"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+S">
-      </key>
-      <key
             commandId="PESTT.TestRequirements"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1070,26 +1024,6 @@
       <handler
             class="ui.handler.RemoveTestRequirementHandler"
             commandId="PESTT.RemoveTestRequirementManually">
-         <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
-         </activeWhen>
-      </handler>
-      <handler
-            class="ui.handler.RunCoverageHandler"
-            commandId="PESTT.RunCoverage">
          <activeWhen>
             <and>
                <with
