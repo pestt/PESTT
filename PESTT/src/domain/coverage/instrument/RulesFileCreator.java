@@ -10,15 +10,21 @@ public class RulesFileCreator {
 	private File dir;
 	private PrintWriter writer;
 	
-	public RulesFileCreator() {
-		dir = new File(System.getProperty("java.io.tmpdir"));
+	public RulesFileCreator(String dir, String file) {
+		createDir(dir);
+		createFile(file);
 	}
 	
-	public void createRulesFile() {
-		file = new File(dir, "rules.btm");
+	private void createDir(String dir) {
+		this.dir = new File(dir);
+		this.dir.mkdir();
+	}
+
+	private void createFile(String file) {
+		this.file = new File(dir, file);
 		try {
-			boolean created = file.createNewFile();
-			writer = new PrintWriter(file);
+			boolean created = this.file.createNewFile();
+			writer = new PrintWriter(this.file);
 			if(!created)
 				cleanContent();
 		} catch (IOException e) {
