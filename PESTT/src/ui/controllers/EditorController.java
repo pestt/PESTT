@@ -24,6 +24,10 @@ public class EditorController extends Observable {
 		return editor;
 	}
 	
+	public String getPackageName() {
+		return editor.getPackageName();
+	}
+	
 	public String getClassName() {
 		return editor.getClassName();
 	}

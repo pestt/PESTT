@@ -14,6 +14,8 @@ import ui.editor.Line;
 import adt.graph.Graph;
 import adt.graph.Node;
 import domain.constants.Layer;
+import domain.coverage.instrument.HelperContent;
+import domain.coverage.instrument.HelperCreator;
 import domain.coverage.instrument.Rules;
 import domain.coverage.instrument.RulesFileCreator;
 
@@ -21,19 +23,41 @@ public class BytemanController {
 	
 	public String getExecutedPath() {
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
-		String dir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + "script";
-		String file = "rules.btm";
-		String className = Activator.getDefault().getEditorController().getClassName();
+		String scriptDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + "script";
+		String sourceDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + unit.getParent().getParent().getElementName();
+		String scriptFile = "rules.btm";
+		String outputFile = "output.txt";
+		String helperClass = "PESTTHelper.java";
 		String methodName = Activator.getDefault().getEditorController().getSelectedMethod();
-		RulesFileCreator fileCreator = new RulesFileCreator(dir, file);
+		String packageName = Activator.getDefault().getEditorController().getPackageName();
+		String className = Activator.getDefault().getEditorController().getClassName();
+		HelperCreator helper = setHelperClass(sourceDir, helperClass, packageName);
+		createRulesFile(scriptDir, scriptFile, className, methodName, helper);
+		createOutputFile(scriptDir, outputFile);
+		return "";
+	}
+
+	private HelperCreator setHelperClass(String dir, String helperClass, String packageName) {
+		HelperCreator helper = new HelperCreator(dir, packageName, helperClass);
+		HelperContent helperContent = new HelperContent();
+		helper.writeHelper(helperContent.getContent(packageName));
+		helper.close();
+		return helper;
+	}
+
+	private void createRulesFile(String dir, String file, String className, String methodName, HelperCreator helper) {
+		RulesFileCreator rulesFile = new RulesFileCreator(dir, file);
 		Rules rules = new Rules();
-		fileCreator.writeRule(rules.createRuleForMethodEntry(className, methodName));
-		fileCreator.writeRule(rules.createRuleForMethodExit(className, methodName));
+		rulesFile.writeRule(rules.createRuleForMethodEntry(className, methodName, helper.getName()));
+		rulesFile.writeRule(rules.createRuleForMethodExit(className, methodName, helper.getName()));
 		List<Integer> lines = getNodeLines();
 		for(Integer line : lines)
-			fileCreator.writeRule(rules.createRuleForLine(className, methodName, line));
-				fileCreator.close();
-		return "";
+			rulesFile.writeRule(rules.createRuleForLine(className, methodName, line, helper.getName()));
+		rulesFile.close();
+	}
+	
+	private void createOutputFile(String dir, String file) {
+		new RulesFileCreator(dir, file);
 	}
 	
 	@SuppressWarnings("unchecked")

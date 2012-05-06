@@ -4,20 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class RulesFileCreator {
+import org.eclipse.core.runtime.IPath;
+
+public class HelperCreator {
 	
 	private File file;
-	private File dir;
+	private String dir;
+	private String packageName;
 	private PrintWriter writer;
 	
-	public RulesFileCreator(String dir, String file) {
-		createDir(dir);
+	public HelperCreator(String dir, String packageName,  String file) {
+		this.dir = dir + IPath.SEPARATOR + packageName.replace('.', IPath.SEPARATOR);
+		this.packageName = packageName;
 		createFile(file);
-	}
-	
-	private void createDir(String dir) {
-		this.dir = new File(dir);
-		this.dir.mkdir();
 	}
 
 	private void createFile(String file) {
@@ -41,17 +40,20 @@ public class RulesFileCreator {
 		writer.flush();	
 	}
 	
-	public void deleteRulesFile() {
+	public void deleteHelper() {
 		file.delete();
-		dir.delete();
 	}
 	
 	public void close() {
 		writer.close();
 	}
 	
-	public void writeRule(String rule) {
+	public void writeHelper(String rule) {
 		writer.append(rule);
 		writer.flush();
+	}
+
+	public String getName() {
+		return packageName + '.' + file.getName().substring(0, file.getName().length() - 5);
 	}
 }
