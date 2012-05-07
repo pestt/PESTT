@@ -170,7 +170,7 @@ public class TestPathController extends Observable {
 		List<String> insertedNodes = getInsertedNodes(input);
 		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>> ();
 		try {
-			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>(2);
+			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>();
 			fromToNodes.add(sourceGraph.getNode(Integer.parseInt(insertedNodes.get(0))));
 			int i = 1; 
 			while(i < insertedNodes.size() && validPath) {

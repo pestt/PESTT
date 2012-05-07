@@ -2,7 +2,7 @@ package domain.coverage.instrument;
 
 public class HelperClass {
 	
-	public String getContent(String pckg, String output) {
+	public String create(String pckg, String output) {
 		return 	"package " + pckg + ";\n\n" +
 				"import java.io.BufferedWriter;\n" +
 				"import java.io.FileWriter;\n" +

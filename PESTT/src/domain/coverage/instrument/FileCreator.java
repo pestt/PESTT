@@ -51,7 +51,7 @@ public class FileCreator {
 		return pckg + '.' + file.getName().substring(0, file.getName().length() - 5);
 	}
 	
-	private void cleanFileContent() {
+	public void cleanFileContent() {
 		writer.write("");
 		writer.flush();	
 	}

@@ -16,29 +16,31 @@ import adt.graph.Node;
 import adt.graph.Path;
 import domain.constants.Layer;
 import domain.coverage.instrument.FileCreator;
+import domain.coverage.instrument.ExecutedPaths;
 import domain.coverage.instrument.HelperClass;
 import domain.coverage.instrument.Rules;
 
 public class BytemanController {
 	
-	Graph<Integer> sourceGraph =  Activator.getDefault().getSourceGraphController().getSourceGraph();
+	Graph<Integer> sourceGraph;
 	FileCreator helper;
 	FileCreator rules;
 	FileCreator output;
 	
 	public String createScripts() {
+		sourceGraph =  Activator.getDefault().getSourceGraphController().getSourceGraph();
 		String scriptFile = "rules.btm";
 		String outputFile = "output.txt";
 		String helperClass = "PESTTHelper.java";
 		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
 		String sourceDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + unit.getParent().getParent().getElementName();
 		String scriptDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + "script";
-		String packageName = Activator.getDefault().getEditorController().getPackageName();
-		String methodName = Activator.getDefault().getEditorController().getSelectedMethod();
-		String className = Activator.getDefault().getEditorController().getClassName();
+		String pckg = Activator.getDefault().getEditorController().getPackageName();
+		String mthd = Activator.getDefault().getEditorController().getSelectedMethod();
+		String cls = Activator.getDefault().getEditorController().getClassName();
 		output = createOutputFile(scriptDir, outputFile);
-		helper = createHelperClass(sourceDir, packageName, helperClass, output.getAbsolutePath());
-		rules = createRulesFile(scriptDir, scriptFile, helper.getLocation(), methodName, className);
+		helper = createHelperClass(sourceDir, pckg, helperClass, output.getAbsolutePath());
+		rules = createRulesFile(scriptDir, scriptFile, helper.getLocation(), mthd, cls);
 		return "";
 	}
 
@@ -55,7 +57,7 @@ public class BytemanController {
 		dir += IPath.SEPARATOR + pckg.replace('.', IPath.SEPARATOR);
 		helper.createDirectory(dir);
 		helper.createFile(cls);
-		helper.writeFileContent(helperClass.getContent(pckg, output));
+		helper.writeFileContent(helperClass.create(pckg, output));
 		helper.close();
 		return helper;
 	}
@@ -72,13 +74,6 @@ public class BytemanController {
 			rulesFile.writeFileContent(rules.createRuleForLine(helper, mthd, cls, line));
 		rulesFile.close();
 		return rulesFile;
-	}
-	
-	public void deleteScripts() {
-		helper.deleteFile();
-		output.deleteFile();
-		rules.deleteFile();
-		rules.deleteDirectory();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -98,21 +93,17 @@ public class BytemanController {
 		return lines;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Node<Integer> getNodeForLine(int line) {
-		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for(Node<Integer> node : sourceGraph.getNodes()) {
-			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
-			if(map != null) 
-				for(Line l : map.values()) 
-					if(line == l.getStartLine()) 
-						return node;	
-		}
-		return null;
+	public void deleteScripts() {
+		helper.deleteFile();
+		output.deleteFile();
+		rules.deleteFile();
+		rules.deleteDirectory();
 	}
 	
 	public List<Path<Integer>> getExecutedPaths() {
-		List<Path<Integer>> paths = new ArrayList<Path<Integer>>();
+		ExecutedPaths reader = new ExecutedPaths(output.getAbsolutePath(), Activator.getDefault().getEditorController().getSelectedMethod());
+		List<Path<Integer>> paths = reader.getExecutedPaths();
+		output.cleanFileContent();
 		return paths;
 	}
 	
