@@ -1,20 +1,25 @@
 package domain.coverage.algorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import ui.editor.Line;
 import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
-import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.InfinitePath;
 import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SequencePath;
+import domain.constants.Layer;
 import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
@@ -50,7 +55,9 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			CyclePath<V> currentCycle = stack.peek();
 			if(currentCycle.containsNode(node))
 				return false;
-			if(nodes.contains(node) && !graph.isInitialNode(node) && !isDoLoop(node))
+			if(nodes.contains(node) && !graph.isInitialNode(node) && isDoLoop(node))
+				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
+			else if(nodes.contains(node) && !graph.isInitialNode(node) && !isDoLoop(node))
 				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
 			nodes.addLast(node);
 			if(graph.isFinalNode(node)) {
@@ -120,14 +127,23 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			return -1;
 		}
 		
+		@SuppressWarnings("unchecked")
 		private boolean isDoLoop(Node<V> node) {
-			Set<Edge<V>> startEdges = graph.getNodeEdges(node);
-			Set<Edge<V>> endEdges = graph.getNodeEndEdges(node);
-			for(Edge<V> start : startEdges)
-				for(Edge<V> end : endEdges)
-					if(start.getEndNode() == end.getBeginNode() && startEdges.size() > 1)
-					return false;
-			return true;
+			graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
+			HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(node);
+			if(nodeInstructions != null) {
+				List<ASTNode> astNodes = getASTNodes(nodeInstructions);
+				if(astNodes.get(0).getNodeType() == ASTNode.DO_STATEMENT)
+					return true;
+			}
+			return false;
+		}
+			
+		private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
+			List<ASTNode> nodes = new LinkedList<ASTNode>();
+			for(Entry<ASTNode, Line> entry : map.entrySet()) 
+		         nodes.add(entry.getKey());
+			return nodes;
 		}
 		
 	};
