@@ -212,7 +212,10 @@ public class ActiveEditor implements Observer {
 	public String getClassFilePath() {
 		try {
 			String outputFolder = javaProject.getOutputLocation().toOSString().substring(getProjectName().length() + 2, javaProject.getOutputLocation().toOSString().length());
-			return javaProject.getResource().getLocation().toOSString() + IPath.SEPARATOR + outputFolder + IPath.SEPARATOR + getPackageName() + IPath.SEPARATOR + getClassName() + ".class";
+			if(!getPackageName().isEmpty())
+				return javaProject.getResource().getLocation().toOSString() + IPath.SEPARATOR + outputFolder + IPath.SEPARATOR + getPackageName() + IPath.SEPARATOR + getClassName() + ".class";
+			else 
+				return javaProject.getResource().getLocation().toOSString() + IPath.SEPARATOR + outputFolder + IPath.SEPARATOR + getClassName() + ".class";
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 			return "";

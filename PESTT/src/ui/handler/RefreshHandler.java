@@ -50,9 +50,10 @@ public class RefreshHandler extends AbstractHandler {
 			if(dot != null && !dot.equals(Description.EMPTY)) {
 				loadViews(event);
 				resetDataStructures(window);
+				createRules();
 				keepCommandOptions();
 			} else
-				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_MSG); 
+				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_DOT_MSG); 
 		} else 
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;
@@ -148,6 +149,10 @@ public class RefreshHandler extends AbstractHandler {
 			default:
 				return false;
 		}
+	}
+	
+	private void createRules() {
+		Activator.getDefault().getBytemanController().createScripts();
 	}
 
 	private void keepCommandOptions() {

@@ -17,7 +17,7 @@ public class DotProcess implements IDotProcess {
 	private PrintWriter stdin;
 	private Scanner stdout;
 
-	public Map<String, List<String>> DotToPlain(String dotsource) {
+	public Map<String, List<String>> dotToPlain(String dotsource) {
 		Map<String, List<String>> elements = null;
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);

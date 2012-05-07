@@ -25,6 +25,6 @@ public interface IDotProcess {
 	 * The plaintext contains the information associated with the graph elements.   
 	 * 
 	 ***/
-	public Map<String, List<String>> DotToPlain(String dotsource);
+	public Map<String, List<String>> dotToPlain(String dotsource);
 	
 }

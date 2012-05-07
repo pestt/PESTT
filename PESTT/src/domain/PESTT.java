@@ -8,6 +8,7 @@ import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.CoverageDataController;
 import domain.controllers.DefUsesController;
+import domain.controllers.BytemanController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
@@ -23,6 +24,7 @@ public class PESTT {
 	private EditorController editorController;
 	private CFGController cfgController;
 	private DefUsesController defusesController;
+	private BytemanController bytemanController;
 	
 	public PESTT() {
 		editorController = new EditorController();
@@ -36,6 +38,7 @@ public class PESTT {
 		cfgController = new CFGController();
 		cfgController.selectLayer(Layer.EMPTY.toString());
 		defusesController = new DefUsesController(new DefUsesSet());
+		bytemanController = new BytemanController();
 	}
 	
 	public SourceGraphController getSourceGraphController() {
@@ -68,5 +71,9 @@ public class PESTT {
 
 	public DefUsesController getDefUsesController() {
 		return defusesController;
+	}
+
+	public BytemanController getBytemanController() {
+		return bytemanController;
 	}
 }
