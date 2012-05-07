@@ -1,32 +1,40 @@
 package domain.coverage.instrument;
 
+import ui.constants.BytemanLog;
+
 public class Rules {
 	
-	public String createRuleForMethodEntry(String className, String methodName, String helperClass) {
-		return  "RULE trace " + methodName + " entry\n" + 
-				"CLASS " + className + "\n" + 
-				"METHOD " + methodName + "\n" +
-				"HELPER " + helperClass + "\n" +
-				"AT ENTRY\nIF true\nDO debug(\"entering\")\n" + 
+	public String createRuleForMethodEntry(String helper, String mthd, String cls) {
+		return  "RULE trace " + mthd + " entry\n" + 
+				"CLASS " + cls + "\n" + 
+				"METHOD " + mthd + "\n" +
+				"HELPER " + helper + "\n" +
+				"AT ENTRY\n" +
+				"IF true\n" +
+				"DO debug(\"" + BytemanLog.ENTERING_METHOD + mthd + "\")\n" + 
 				"ENDRULE\n\n";
 	}
 	
-	public String createRuleForMethodExit(String className, String methodName, String helperClass) {
-		return 	"RULE trace " + methodName + " exit\n" + 
-				"CLASS " + className + "\n" + 
-				"METHOD " + methodName + "\n" +
-				"HELPER " + helperClass + "\n" +
-				"AT EXIT\nIF true\nDO debug(\"exiting\")\n" + 
+	public String createRuleForMethodExit(String helper, String mthd, String cls) {
+		return 	"RULE trace " + mthd + " exit\n" + 
+				"CLASS " + cls + "\n" + 
+				"METHOD " + mthd + "\n" +
+				"HELPER " + helper + "\n" +
+				"AT EXIT\n" +
+				"IF true\n" +
+				"DO debug(\"" + BytemanLog.EXITING_METHOD + mthd  + "\")\n" + 
 				"ENDRULE\n\n";
 	}
 
-	public String createRuleForLine(String className, String methodName, Integer line, String helperClass) {
-		return 	"RULE trace " + methodName + " Line" + line + "\n" + 
-				"CLASS " + className + "\n" + 
-				"METHOD " + methodName + "\n" +
-				"HELPER " + helperClass + "\n" +
+	public String createRuleForLine(String helper, String mthd, String cls, int line) {
+		return 	"RULE trace " + mthd + " Line" + line + "\n" + 
+				"CLASS " + cls + "\n" + 
+				"METHOD " + mthd + "\n" +
+				"HELPER " + helper + "\n" +
 				"AT LINE " + line + "\n" + 
-				"IF true\nDO debug(\"passed in line " + line + "\")\n" +
+				"IF true\n" +
+//				"DO debug(\"passed in line " + line + "\")\n" +
+				"DO debug(\"" + line + "\")\n" +
 				"ENDRULE\n\n";
 	}	
 }

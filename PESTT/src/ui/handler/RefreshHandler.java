@@ -152,7 +152,7 @@ public class RefreshHandler extends AbstractHandler {
 	}
 	
 	private void createRules() {
-		Activator.getDefault().getBytemanController().getExecutedPath();
+		Activator.getDefault().getBytemanController().createScripts();
 	}
 
 	private void keepCommandOptions() {

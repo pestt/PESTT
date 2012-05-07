@@ -315,6 +315,12 @@
             id="PESTT.RefreshLogicCoverageCriteriaGraph"
             name="Refresh logic coverage graph">
       </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Run"
+            id="PESTT.Run"
+            name="Run">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -616,6 +622,22 @@
       <menuContribution
             allPopups="false"
             locationURI="toolbar:PESTT.ViewStructuralCoverage">
+         <command
+               commandId="PESTT.Run"
+               icon="icons/run.gif"
+               label="Run"
+               style="push"
+               tooltip="Run">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
          <command
                commandId="PESTT.AddTestRequirementManually"
                icon="icons/add_path.gif"
@@ -1156,6 +1178,26 @@
                      variable="activePartId">
                   <equals
                         value="PESTT.ViewDataFlowCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.RunHandler"
+            commandId="PESTT.Run">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
