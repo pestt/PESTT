@@ -2,7 +2,10 @@ package domain.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import main.activator.Activator;
 
@@ -11,12 +14,13 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import ui.editor.Line;
+import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 import domain.constants.Layer;
-import domain.coverage.instrument.FileCreator;
 import domain.coverage.instrument.ExecutedPaths;
+import domain.coverage.instrument.FileCreator;
 import domain.coverage.instrument.HelperClass;
 import domain.coverage.instrument.Rules;
 
@@ -69,28 +73,98 @@ public class BytemanController {
 		rulesFile.createFile(name);
 		rulesFile.writeFileContent(rules.createRuleForMethodEntry(helper, mthd, cls));
 		rulesFile.writeFileContent(rules.createRuleForMethodExit(helper, mthd, cls));
-		List<Integer> lines = getNodeFirstLineNumber();
-		for(Integer line : lines)
-			rulesFile.writeFileContent(rules.createRuleForLine(helper, mthd, cls, line));
+		List<EdgeLine> lines = getNodeFirstLineNumber();
+		for(EdgeLine el : lines)
+			rulesFile.writeFileContent(rules.createRuleForLine(helper, mthd, cls, el.edges, el.line));
 		rulesFile.close();
 		return rulesFile;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Integer> getNodeFirstLineNumber() {
-		List<Integer> lines = new ArrayList<Integer>();
-		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
+	private List<EdgeLine> getNodeFirstLineNumber() {
+		List<EdgeLine> lines = new ArrayList<EdgeLine>();
+		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); 
 		for(Node<Integer> node : sourceGraph.getNodes()) {
-			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
+			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node);
 			if(map != null) {
-				for(Line line : map.values()) 
-					if(!lines.contains(line.getStartLine())) {
-						lines.add(line.getStartLine());
-						break;
-					}
+				int nodeLine = map.values().iterator().next().getStartLine(); 
+				Set<Edge<Integer>> fromNode = sourceGraph.getNodeEdges(node);
+				if(isCondition(node)) 
+					for(Edge<Integer> edge : fromNode) {
+						HashMap<ASTNode, Line> instr = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(edge.getEndNode());
+						if(instr != null) {
+							int ruleLine = instr.values().iterator().next().getStartLine();
+							addToLines(lines, edge, ruleLine);
+						}
+					}	
+				else {
+					for(Edge<Integer> edge : fromNode)
+						if(isCondition(edge.getEndNode()))
+							addToLines(lines, edge, nodeLine);
+						else {
+							HashMap<ASTNode, Line> instr = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(edge.getEndNode());
+							if(instr != null) {
+								int ruleLine = instr.values().iterator().next().getStartLine();
+								addToLines(lines, edge, ruleLine);
+							}
+						}								
+				}
 			}
 		}
 		return lines;
+	}
+	
+	private void addToLines(List<EdgeLine> lines, Edge<Integer> edge, int line) {
+		boolean hasLine = false;
+		for(EdgeLine eg : lines)
+			if(eg.line == line) {
+				eg.edit(eg.edges.concat(" " + edge.toString()));
+				hasLine = true;
+				break;
+			}
+		if(!hasLine) {
+			lines.add(new EdgeLine(edge.toString(), line));
+		}
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean isCondition(Node<Integer> node) {
+		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node);
+		if(nodeInstructions != null) {
+			List<ASTNode> astNodes = getASTNodes(nodeInstructions);
+			switch(astNodes.get(0).getNodeType()) {
+				case ASTNode.IF_STATEMENT:
+				case ASTNode.DO_STATEMENT:
+				case ASTNode.FOR_STATEMENT:
+				case ASTNode.ENHANCED_FOR_STATEMENT:
+				case ASTNode.SWITCH_STATEMENT:
+				case ASTNode.WHILE_STATEMENT:
+					return true;
+			}
+		}
+		return false;
+	}
+		
+	private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
+		List<ASTNode> nodes = new LinkedList<ASTNode>();
+		for(Entry<ASTNode, Line> entry : map.entrySet()) 
+	         nodes.add(entry.getKey());
+		return nodes;
+	}
+	
+	private class EdgeLine {
+		private String edges;
+		private int line;
+		
+		public EdgeLine(String edges, int line) {
+			this.edges = edges;
+			this.line = line;
+		}
+		
+		public void edit(String edges) {
+			this.edges= edges;
+		}
 	}
 	
 	public void deleteScripts() {
@@ -106,6 +180,4 @@ public class BytemanController {
 		output.cleanFileContent();
 		return paths;
 	}
-	
-	 
 }
