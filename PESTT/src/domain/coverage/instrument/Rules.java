@@ -26,7 +26,7 @@ public class Rules {
 				"ENDRULE\n\n";
 	}
 
-	public String createRuleForLine(String helper, String mthd, String cls, int line) {
+	public String createRuleForLine(String helper, String mthd, String cls, String edges, int line) {
 		return 	"RULE trace " + mthd + " Line" + line + "\n" + 
 				"CLASS " + cls + "\n" + 
 				"METHOD " + mthd + "\n" +
@@ -34,7 +34,7 @@ public class Rules {
 				"AT LINE " + line + "\n" + 
 				"IF true\n" +
 //				"DO debug(\"passed in line " + line + "\")\n" +
-				"DO debug(\"" + line + "\")\n" +
+				"DO debug(\"" + edges + "\")\n" +
 				"ENDRULE\n\n";
 	}	
 }
