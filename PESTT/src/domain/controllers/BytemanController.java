@@ -9,6 +9,9 @@ import java.util.Set;
 
 import main.activator.Activator;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -31,7 +34,7 @@ public class BytemanController {
 	FileCreator rules;
 	FileCreator output;
 	
-	public String createScripts() {
+	public void createScripts() {
 		sourceGraph =  Activator.getDefault().getSourceGraphController().getSourceGraph();
 		String scriptFile = "rules.btm";
 		String outputFile = "output.txt";
@@ -45,7 +48,12 @@ public class BytemanController {
 		output = createOutputFile(scriptDir, outputFile);
 		helper = createHelperClass(sourceDir, pckg, helperClass, output.getAbsolutePath());
 		rules = createRulesFile(scriptDir, scriptFile, helper.getLocation(), mthd, cls);
-		return "";
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private FileCreator createOutputFile(String dir, String name) {
@@ -125,7 +133,6 @@ public class BytemanController {
 		if(!hasLine) {
 			lines.add(new EdgeLine(edge.toString(), line));
 		}
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -153,6 +160,30 @@ public class BytemanController {
 		return nodes;
 	}
 	
+	public void deleteScripts() {
+		helper.deleteFile();
+		output.deleteFile();
+		rules.deleteFile();
+		rules.deleteDirectory();
+		updateFiles();
+	}
+	
+	public List<Path<Integer>> getExecutedPaths() {
+		updateFiles();
+		ExecutedPaths reader = new ExecutedPaths(output.getAbsolutePath(), Activator.getDefault().getEditorController().getSelectedMethod());
+		List<Path<Integer>> paths = reader.getExecutedPaths();
+		output.cleanFileContent();
+		return paths;
+	}
+	
+	private void updateFiles() {
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private class EdgeLine {
 		private String edges;
 		private int line;
@@ -165,19 +196,5 @@ public class BytemanController {
 		public void edit(String edges) {
 			this.edges= edges;
 		}
-	}
-	
-	public void deleteScripts() {
-		helper.deleteFile();
-		output.deleteFile();
-		rules.deleteFile();
-		rules.deleteDirectory();
-	}
-	
-	public List<Path<Integer>> getExecutedPaths() {
-		ExecutedPaths reader = new ExecutedPaths(output.getAbsolutePath(), Activator.getDefault().getEditorController().getSelectedMethod());
-		List<Path<Integer>> paths = reader.getExecutedPaths();
-		output.cleanFileContent();
-		return paths;
 	}
 }
