@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import main.activator.Activator;
@@ -15,20 +16,20 @@ import adt.graph.Path;
 
 public class ExecutedPaths {
 
-	Graph<Integer> sourceGraph;
+	private Graph<Integer> sourceGraph;
 	String location;
-	String mthd;
-	List<Node<Integer>> pathNodes;
-	List<Edge<Integer>> loop;
-	
+	private String mthd;
+	private List<Node<Integer>> pathNodes;
+	private Stack<List<Edge<Integer>>> loop;
+
 	public ExecutedPaths(String location, String mthd) {
 		this.location = location;
 		this.mthd = mthd;
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		pathNodes = new ArrayList<Node<Integer>>();
-		loop = new ArrayList<Edge<Integer>>();
+		loop = new Stack<List<Edge<Integer>>>();
 	}
-	
+
 	public List<Path<Integer>> getExecutedPaths() {
 		List<Path<Integer>> paths = new ArrayList<Path<Integer>>();
 		try {
@@ -65,7 +66,7 @@ public class ExecutedPaths {
 
 	private String getPathString() {
 		if(!sourceGraph.isFinalNode(pathNodes.get(pathNodes.size() - 1)))
-			getFinalNode(pathNodes.get( pathNodes.size() - 1));
+			getFinalNode();
 		String path = "";
 		for(Node<Integer> node : pathNodes)
 			path += node.getValue() + ", ";
@@ -73,8 +74,17 @@ public class ExecutedPaths {
 		return path;
 	}
 
-	private void getFinalNode(Node<Integer> node) {
-		for(Edge<Integer> edge : sourceGraph.getNodeEdges(node))
+	private void getFinalNode() {
+		if(!loop.isEmpty()) {
+			while(!loop.isEmpty()) {
+				Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
+				if(e != null) 
+					pathNodes.add(e.getEndNode());
+				else
+					loop.pop();
+			}
+		}
+		for(Edge<Integer> edge : sourceGraph.getNodeEdges(pathNodes.get(pathNodes.size() - 1)))
 			if(sourceGraph.isFinalNode(edge.getEndNode())) {
 				pathNodes.add(edge.getEndNode());
 				break;
@@ -82,9 +92,16 @@ public class ExecutedPaths {
 	}
 
 	private void addNodeToPath(List<Edge<Integer>> edges) {
+		List<Edge<Integer>> toRemove = new ArrayList<Edge<Integer>>();
 		if(pathNodes.isEmpty()) {
-			pathNodes.add(edges.get(0).getBeginNode());
-			pathNodes.add(edges.get(0).getEndNode());
+			for(Edge<Integer> edge : edges)
+				if(sourceGraph.isInitialNode(edge.getBeginNode())) {
+					pathNodes.add(edges.get(0).getBeginNode());
+					pathNodes.add(edges.get(0).getEndNode());
+					toRemove.add(edge);
+				}
+			removeEdges(edges, toRemove);
+			loop.push(edges);
 		} else {
 			if(edges.size() == 1) {
 				if(pathNodes.get(pathNodes.size() - 1) == edges.get(0).getBeginNode())
@@ -92,7 +109,7 @@ public class ExecutedPaths {
 				else {
 					boolean breaking = false;
 					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
-						Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop);
+						Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
 						if(e != null) 
 							pathNodes.add(e.getEndNode());
 						else {
@@ -104,29 +121,38 @@ public class ExecutedPaths {
 						pathNodes.add(edges.get(0).getEndNode());
 				}
 			} else { 
-				Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), edges);
-				if(e != null) {
-					pathNodes.add(e.getEndNode());
-					Edge<Integer> e1 = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), edges);
-					if(e1 != null) {
-						pathNodes.add(e1.getEndNode());
+				if(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
+					int i = 0;
+					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
+						Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
+						if(e != null) 
+							pathNodes.add(e.getEndNode());
+						else if(i == 3) {
+							loop.pop();
+							i = 0;
+						}
+						i++;
+					}
+				}
+				toRemove.add(getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), edges));
+				if(toRemove.get(toRemove.size() - 1) != null) {
+					pathNodes.add(toRemove.get(toRemove.size() - 1).getEndNode());
+					toRemove.add(getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), edges));
+					if(toRemove.get(toRemove.size() - 1) != null) {
+						pathNodes.add(toRemove.get(toRemove.size() - 1).getEndNode());
 						if(edges.size() > 2) {
-							edges.remove(e);
-							edges.remove(e1);
-							addToLoop(edges);
+							removeEdges(edges, toRemove);
+							loop.push(edges);
 						}
 					}
-				} else {
-					addToLoop(edges);
 				}
 			}
 		}
 	}
-	
-	private void addToLoop(List<Edge<Integer>> edges) {
-		for(Edge<Integer> edge : edges)
-			if(!loop.contains(edge))
-				loop.add(edge);
+
+	private void removeEdges(List<Edge<Integer>> edges, List<Edge<Integer>> remove) {
+		for(Edge<Integer> edge : remove)
+			edges.remove(edge);
 	}
 
 	private List<Edge<Integer>> getEdges(String line) {
@@ -155,7 +181,7 @@ public class ExecutedPaths {
 					return edge;
 		return null;
 	}
-	
+
 	private Edge<Integer> getEdgeForBegin(int begin, List<Edge<Integer>> edges) {
 		for(Edge<Integer> edge : edges)
 			if(edge.getBeginNode().getValue() == begin)
