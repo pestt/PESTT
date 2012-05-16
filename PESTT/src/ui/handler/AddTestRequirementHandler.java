@@ -21,7 +21,7 @@ public class AddTestRequirementHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
 			if(Activator.getDefault().getEditorController().isEverythingMatching())
-				addNewTestReuirementPath(window);
+				addNewTestReuirementPath(window, "");
 			else 
 				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
 		else
@@ -29,11 +29,11 @@ public class AddTestRequirementHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private void addNewTestReuirementPath(IWorkbenchWindow window) throws ExecutionException {
+	private void addNewTestReuirementPath(IWorkbenchWindow window, String input) throws ExecutionException {
 		String message = "Please enter a test requirement:\n(e.g. 0, ..., 3)";
-		InputDialog dialog = new InputDialog(window.getShell(), message);
+		InputDialog dialog = new InputDialog(window.getShell(), message, "rui");
 		dialog.open();
-		String input = dialog.getInput();
+		input = dialog.getInput();
 		if(input != null)
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
@@ -41,11 +41,11 @@ public class AddTestRequirementHandler extends AbstractHandler {
 					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
 				else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
-					addNewTestReuirementPath(window);
+					addNewTestReuirementPath(window, input);
 				}
 			} else {
 				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
-				addNewTestReuirementPath(window);
+				addNewTestReuirementPath(window, input);
 			}
 	}
 }

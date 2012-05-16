@@ -22,7 +22,7 @@ public class AddTestPathHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
 			if(Activator.getDefault().getEditorController().isEverythingMatching())
-				addNewTestPath(window);
+				addNewTestPath(window, "");
 			else 
 				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
 		else
@@ -30,12 +30,12 @@ public class AddTestPathHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private void addNewTestPath(IWorkbenchWindow window) throws ExecutionException {
+	private void addNewTestPath(IWorkbenchWindow window, String input) throws ExecutionException {
 		Graph<Integer> sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		String message = "Please enter a executed graph:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
-		InputDialog dialog = new InputDialog(window.getShell(), message);
+		InputDialog dialog = new InputDialog(window.getShell(), message, input);
 		dialog.open();
-		String input = dialog.getInput();
+		input = dialog.getInput();
 		if(input != null)
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
@@ -43,11 +43,11 @@ public class AddTestPathHandler extends AbstractHandler {
 					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 				else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted graph is not valid.
-					addNewTestPath(window);
+					addNewTestPath(window, input);
 				}
 			} else {
 				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message displayed when the inserted graph is empty.
-				addNewTestPath(window);
+				addNewTestPath(window, input);
 			}
 	}	
 }

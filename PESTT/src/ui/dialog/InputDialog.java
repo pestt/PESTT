@@ -21,14 +21,15 @@ public class InputDialog extends Dialog {
 	private String message;
 	private String input;
 
-	public InputDialog(Shell parent, String message) {
-		this(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL, message);
+	public InputDialog(Shell parent, String message, String input) {
+		this(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL, message, input);
 	}
 
-	public InputDialog(Shell parent, int style, String message) {
+	public InputDialog(Shell parent, int style, String message, String input) {
 		super(parent, style);
 		setText("Input Dialog");
 		setMessage(message);
+		setInput(input);
 	}
 
 	public String getMessage() {
@@ -74,6 +75,7 @@ public class InputDialog extends Dialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
+		text.setText(input);
 
 		// Create the OK button and add a handler.
 		Button ok = new Button(shell, SWT.PUSH);
