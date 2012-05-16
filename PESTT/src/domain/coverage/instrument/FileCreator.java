@@ -28,8 +28,7 @@ public class FileCreator {
 	public void createFile(String name) {
 		try {
 			file = new File(getDirectoryLocation(), name);
-			boolean created;
-			created = this.file.createNewFile();
+			boolean created = this.file.createNewFile();
 			writer = new PrintWriter(this.file);
 			if(!created)
 				cleanFileContent();
@@ -40,6 +39,10 @@ public class FileCreator {
 	
 	public void deleteFile() {
 		file.delete();
+	}
+	
+	public File getFile() {
+		return file;
 	}
 	
 	public String getAbsolutePath() {

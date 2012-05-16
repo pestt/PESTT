@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import main.activator.Activator;
@@ -15,6 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.junit.JUnitCore;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 import ui.editor.Line;
 import adt.graph.Edge;
@@ -25,14 +30,41 @@ import domain.constants.Layer;
 import domain.coverage.instrument.ExecutedPaths;
 import domain.coverage.instrument.FileCreator;
 import domain.coverage.instrument.HelperClass;
+import domain.coverage.instrument.JUnitRunListener;
 import domain.coverage.instrument.Rules;
+import domain.events.ExecutionEndEvent;
 
-public class BytemanController {
+public class BytemanController implements Observer {
 	
-	Graph<Integer> sourceGraph;
-	FileCreator helper;
-	FileCreator rules;
-	FileCreator output;
+	private Graph<Integer> sourceGraph;
+	private FileCreator helper;
+	private FileCreator rules;
+	private FileCreator output;
+	private JUnitRunListener listener;
+	
+	@Override
+	public void update(Observable obs, Object data) {
+		if(data instanceof ExecutionEndEvent) {
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					getExecutedtestPaths();
+					deleteScripts();
+				}
+			});
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void addListener() {
+		listener = new JUnitRunListener();
+		listener.addObserver(this);
+		JUnitCore.addTestRunListener(listener);
+	}
+	
+	public void removeListener() {
+		listener.deleteObserver(this);
+	}
 	
 	public void createScripts() {
 		sourceGraph =  Activator.getDefault().getSourceGraphController().getSourceGraph();
@@ -48,12 +80,7 @@ public class BytemanController {
 		output = createOutputFile(scriptDir, outputFile);
 		helper = createHelperClass(sourceDir, pckg, helperClass, output.getAbsolutePath());
 		rules = createRulesFile(scriptDir, scriptFile, helper.getLocation(), mthd, cls);
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		updateFiles();
 	}
 
 	private FileCreator createOutputFile(String dir, String name) {
@@ -161,6 +188,7 @@ public class BytemanController {
 	}
 	
 	public void deleteScripts() {
+		removeListener();
 		helper.deleteFile();
 		output.deleteFile();
 		rules.deleteFile();
@@ -168,11 +196,17 @@ public class BytemanController {
 		updateFiles();
 	}
 	
-	public List<Path<Integer>> getExecutedPaths() {
+	private void getExecutedtestPaths() {
+		List<Path<Integer>> paths = getExecutedPaths();
+		for(Path<Integer> newTestPath : paths)
+			if(newTestPath != null) 
+				Activator.getDefault().getTestPathController().addTestPath(newTestPath);
+	}
+	
+	public List<Path<Integer>> getExecutedPaths() { 
 		updateFiles();
-		ExecutedPaths reader = new ExecutedPaths(output.getAbsolutePath(), Activator.getDefault().getEditorController().getSelectedMethod());
+		ExecutedPaths reader = new ExecutedPaths(output.getFile(), Activator.getDefault().getEditorController().getSelectedMethod());
 		List<Path<Integer>> paths = reader.getExecutedPaths();
-		output.cleanFileContent();
 		return paths;
 	}
 	

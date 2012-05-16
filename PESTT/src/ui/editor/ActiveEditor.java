@@ -129,6 +129,10 @@ public class ActiveEditor implements Observer {
 			editor.getDocumentProvider().getDocument(input).removePrenotifiedDocumentListener(listener);
 	}
 	
+	public IEditorPart getEditorPart() {
+		return part;
+	}
+	
 	public void createMarker(String markerType, int offset, int length) {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
 		marker.createMarks(markerType, offset, length);
@@ -274,8 +278,7 @@ public class ActiveEditor implements Observer {
 		javadoc.tags().add(newTag);
 	}
 	
-	private void applychanges(CompilationUnit unit) {
-		ITextEditor editor = (ITextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();;
+	private void applychanges(CompilationUnit unit) {		
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		TextEdit edit = unit.rewrite(document, javaProject.getOptions(true));
 		try {

@@ -5,6 +5,7 @@ import java.util.Observable;
 import main.activator.Activator;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.ui.IEditorPart;
 
 import ui.editor.ActiveEditor;
 import ui.source.GraphInformation;
@@ -22,6 +23,10 @@ public class EditorController extends Observable {
 	
 	public ActiveEditor getActiveEditor() {
 		return editor;
+	}
+	
+	public IEditorPart getEditorPart() {
+		return editor.getEditorPart();
 	}
 	
 	public String getPackageName() {

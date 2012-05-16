@@ -7,7 +7,6 @@ public class HelperClass {
 				"import java.io.BufferedWriter;\n" +
 				"import java.io.FileWriter;\n" +
 				"import java.io.IOException;\n" +
-				"import java.io.PrintWriter;\n" + 
 				"import org.jboss.byteman.rule.Rule;\n" +
 				"import org.jboss.byteman.rule.helper.Helper;\n\n" +
 				"public class PESTTHelper extends Helper {\n\n" +
@@ -16,9 +15,11 @@ public class HelperClass {
 				"\t}\n\n" +
 				"\tpublic boolean debug(String message) {\n" +
 				"\t\ttry {\n" +
-				"\t\t\tPrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(\"" + output + "\", true)));\n" +
-				"\t\t\tout.println(message);\n" +
-				"\t\t\tout.close();\n" +
+				"\t\t\tBufferedWriter writer = new BufferedWriter(new FileWriter(\"" + output + "\", true));\n" +
+				"\t\t\twriter.write(message);\n" +
+				"\t\t\twriter.newLine();\n" +
+				"\t\t\twriter.flush();\n" +
+				"\t\t\twriter.close();\n" +
 				"\t\t} catch (IOException e) {\n" +
 				"\t\t\te.printStackTrace();\n" +
 				"\t\t}\n" +

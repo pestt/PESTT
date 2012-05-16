@@ -22,7 +22,6 @@ public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 		this.graphElements = graphElements;
 	}
 	
-	
 	@Override
 	public void setLayoutContext(LayoutContext context) {
 		this.context = context;

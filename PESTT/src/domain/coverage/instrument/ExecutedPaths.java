@@ -17,13 +17,13 @@ import adt.graph.Path;
 public class ExecutedPaths {
 
 	private Graph<Integer> sourceGraph;
-	String location;
+	private File output;
 	private String mthd;
 	private List<Node<Integer>> pathNodes;
 	private Stack<List<Edge<Integer>>> loop;
 
-	public ExecutedPaths(String location, String mthd) {
-		this.location = location;
+	public ExecutedPaths(File output, String mthd) {
+		this.output = output;
 		this.mthd = mthd;
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		pathNodes = new ArrayList<Node<Integer>>();
@@ -33,7 +33,7 @@ public class ExecutedPaths {
 	public List<Path<Integer>> getExecutedPaths() {
 		List<Path<Integer>> paths = new ArrayList<Path<Integer>>();
 		try {
-			Scanner scanner = new Scanner(new File(location));
+			Scanner scanner = new Scanner(output);
 			while(scanner.hasNext()) {
 				pathNodes.clear();
 				loop.clear();
@@ -76,10 +76,14 @@ public class ExecutedPaths {
 
 	private void getFinalNode() {
 		if(!loop.isEmpty()) {
+			Node<Integer> last = pathNodes.get(pathNodes.size() - 1);
 			while(!loop.isEmpty()) {
 				Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
 				if(e != null) 
-					pathNodes.add(e.getEndNode());
+					if(e.getEndNode() != last)
+						pathNodes.add(e.getEndNode());
+					else
+						loop.pop();
 				else
 					loop.pop();
 			}
@@ -101,14 +105,15 @@ public class ExecutedPaths {
 					toRemove.add(edge);
 				}
 			removeEdges(edges, toRemove);
-			loop.push(edges);
+			if(!edges.isEmpty())
+				loop.push(edges);
 		} else {
 			if(edges.size() == 1) {
 				if(pathNodes.get(pathNodes.size() - 1) == edges.get(0).getBeginNode())
 					pathNodes.add(edges.get(0).getEndNode());
 				else {
 					boolean breaking = false;
-					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
+					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode() && !loop.isEmpty()) {
 						Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
 						if(e != null) 
 							pathNodes.add(e.getEndNode());
@@ -117,20 +122,21 @@ public class ExecutedPaths {
 							break;
 						}
 					}
-					if(!breaking)
+					if(!breaking && !sourceGraph.isFinalNode(pathNodes.get(pathNodes.size() - 1)))
 						pathNodes.add(edges.get(0).getEndNode());
 				}
 			} else { 
-				if(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
+				if(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode() && !loop.isEmpty()) {
 					int i = 0;
-					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode()) {
+					while(pathNodes.get(pathNodes.size() - 1) != edges.get(0).getBeginNode() && !loop.isEmpty()) {
 						Edge<Integer> e = getEdgeForBegin(pathNodes.get(pathNodes.size() - 1).getValue(), loop.peek());
-						if(e != null) 
-							pathNodes.add(e.getEndNode());
-						else if(i == 3) {
+						if(i == 3) {
 							loop.pop();
 							i = 0;
-						}
+						} else if(e != null)
+							pathNodes.add(e.getEndNode());
+						if(edges.containsAll(loop.peek()))
+							loop.pop();
 						i++;
 					}
 				}
