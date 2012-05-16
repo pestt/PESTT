@@ -31,7 +31,7 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 	private void removeTestRequirement(IWorkbenchWindow window) throws ExecutionException {
 		if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {	
 			AbstractPath<Integer> selectedPath = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement();
-			String message = "Are you sure that you want to delete this test requirement:\n" + selectedPath;
+			String message = Messages.TEST_REQUIREMENT_CONFIRM_REMOVE_MSG + selectedPath;
 			RemoveDialog dialog = new RemoveDialog(window.getShell(), message);
 			dialog.open();
 			String input = dialog.getInput();

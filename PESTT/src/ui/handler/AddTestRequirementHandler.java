@@ -31,7 +31,7 @@ public class AddTestRequirementHandler extends AbstractHandler {
 	
 	private void addNewTestReuirementPath(IWorkbenchWindow window, String input) throws ExecutionException {
 		String message = "Please enter a test requirement:\n(e.g. 0, ..., 3)";
-		InputDialog dialog = new InputDialog(window.getShell(), message, "rui");
+		InputDialog dialog = new InputDialog(window.getShell(), message, input);
 		dialog.open();
 		input = dialog.getInput();
 		if(input != null)

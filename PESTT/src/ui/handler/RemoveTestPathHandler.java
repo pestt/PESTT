@@ -32,14 +32,14 @@ public class RemoveTestPathHandler extends AbstractHandler {
 			String pathMessage = "";
 			for(Path<Integer> path : Activator.getDefault().getTestPathController().getSelectedTestPaths())
 				pathMessage += path.toString() +"\n";
-			String message = "Are you sure that you want to delete this graph:\n" + pathMessage;
+			String message = Messages.TEST_PATH_CONFIRM_REMOVE_MSG + pathMessage;
 			RemoveDialog dialog = new RemoveDialog(window.getShell(), message);
 			dialog.open();
 			String input = dialog.getInput();
 			if(input != null) {
 				Activator.getDefault().getTestPathController().removeCoverageData();
 				Activator.getDefault().getTestPathController().removeTestPath();
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SUCCESS_REMOVE_MSG); // message displayed when the graph is successfully remove.
+				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SUCCESS_REMOVE_MSG); // message displayed when the test path is successfully remove.
 			}
 		} else
 			MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SELECT_TO_REMOVE_MSG); // message displayed when there is no graph selected to be removed.

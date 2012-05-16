@@ -315,6 +315,18 @@
             id="PESTT.RefreshLogicCoverageCriteriaGraph"
             name="Refresh logic coverage graph">
       </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Edit  the selected test path"
+            id="PESTT.EditTestPath"
+            name="Edit Test Path">
+      </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Edit  the selected test requirement"
+            id="PESTT.EditTestRequirement"
+            name="Edit Test Requirement">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -633,6 +645,22 @@
             </visibleWhen>
          </command>
          <command
+               commandId="PESTT.EditTestRequirement"
+               icon="icons/edit.gif"
+               label="Edit a test requirement"
+               style="push"
+               tooltip="Edit the selected test requirement">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
                commandId="PESTT.RemoveTestRequirementManually"
                icon="icons/remove_path.gif"
                label="Remove the selected test requirement"
@@ -655,9 +683,25 @@
          <command
                commandId="PESTT.AddTestPathManually"
                icon="icons/add_graph.gif"
-               label="Add a new text path"
+               label="Edit the selected test path"
                style="push"
-               tooltip="Add a new executed graph">
+               tooltip="Add a new test path">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="PESTT.EditTestPath"
+               icon="icons/edit.gif"
+               label="Edit a test path"
+               style="push"
+               tooltip="Edit the selected test path">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -1156,6 +1200,46 @@
                      variable="activePartId">
                   <equals
                         value="PESTT.ViewDataFlowCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.EditTestPath"
+            commandId="PESTT.EditTestPath">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewStructuralCoverage">
+                  </equals>
+               </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.EditTestRequirement"
+            commandId="PESTT.EditTestRequirement">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditor">
+                  <instanceof
+                        value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="PESTT.ViewStructuralCoverage">
                   </equals>
                </with>
             </and>
