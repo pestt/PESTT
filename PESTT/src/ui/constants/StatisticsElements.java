@@ -6,5 +6,6 @@ public class StatisticsElements {
 	public static final String EDGES = "edges";
 	public static final String LINES = "lines";
 	public static final String TESTREQUIREMENTS = "test requirements";
+	public static final String INFEASIBLES = "infeasible";
 
 }

@@ -48,6 +48,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		statisticsSet.add(getEdgesStatistics(selectedTestPaths));
 		statisticsSet.add(getLinesStatistics(selectedTestPaths));
 		statisticsSet.add(getTestRequirementsStatistics());
+		statisticsSet.add(getInfeasiblesStatistics());
 		setChanged();
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
@@ -169,16 +170,29 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		return Activator.getDefault().getTestRequirementController().size();
 	}
 	
+	private String getInfeasiblesStatistics() {
+		String unit = StatisticsElements.INFEASIBLES;
+		int total = getTotalTestRequirements();
+		int infeasibles = getInfeasible();
+		String percentage = getPercentage(infeasibles, total);
+		return totalOutpu(unit, infeasibles, total, percentage);
+	}
+	
+	
 	private int getInfeasible() {
 		return Activator.getDefault().getTestRequirementController().sizeInfeasibles();
 	}
 	
 	private String getPercentage(int passed, int total) {
 		DecimalFormat formater = new DecimalFormat("#,##0.0");
+		if(passed == 0 && total == 0)
+			return "0%";
 		return formater.format(((double) passed / (double) total) * 100) + "%";
 	}
 	
 	private String totalOutpu(String unit, int passed, int total, String percentage) {
+		if(unit.equals(StatisticsElements.INFEASIBLES))
+			return "Total of " + unit + " " + StatisticsElements.TESTREQUIREMENTS + ": " + passed + " of " + total + " (" + percentage + ")";
 		return "Total of " + unit + " covered for all tests: " + passed + " of " + total + " (" + percentage + ")";
 	}
 
