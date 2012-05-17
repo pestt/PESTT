@@ -110,7 +110,7 @@ public class ActiveEditor implements Observer {
 	
 				@Override
 				public void documentAboutToBeChanged(DocumentEvent event) {
-					// do nothing
+					// does nothing
 				}
 	
 				@Override

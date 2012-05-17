@@ -33,7 +33,6 @@ public class Rules {
 				"HELPER " + helper + "\n" +
 				"AT LINE " + line + "\n" + 
 				"IF true\n" +
-//				"DO debug(\"passed in line " + line + "\")\n" +
 				"DO debug(\"" + edges + "\")\n" +
 				"ENDRULE\n\n";
 	}	

@@ -12,7 +12,7 @@ public class JUnitRun extends JUnitLaunchShortcut {
 	public void launch(IEditorPart editor, String mode) {
 		Activator.getDefault().getBytemanController().createScripts();
 		Activator.getDefault().getBytemanController().addListener();
-		super.launch(editor, mode);
+		super.launch(editor, mode);		
 		IEditorPart part = Activator.getDefault().getEditorController().getEditorPart();
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
 	}

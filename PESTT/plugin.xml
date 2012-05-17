@@ -355,7 +355,7 @@
             allPopups="false"
             locationURI="toolbar:PESTT.ViewLogicCoverageCriteria">
          <command
-               commandId="PESTT.RefreshStructuralCoverageCriteriaGraph"
+               commandId="PESTT.RefreshLogicCoverageCriteriaGraph"
                icon="icons/refresh.gif"
                label="Refresh"
                mnemonic="Alt+O"
@@ -949,300 +949,180 @@
             class="ui.handler.LayerHandler"
             commandId="PESTT.Layers">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewGraph">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.LinkHandler"
             commandId="PESTT.Link">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewGraph">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.RefreshHandler"
             commandId="PESTT.Refresh">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewGraph">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.AddTestPathHandler"
             commandId="PESTT.AddTestPathManually">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.RemoveTestPathHandler"
             commandId="PESTT.RemoveTestPathManually">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.AddTestRequirementHandler"
             commandId="PESTT.AddTestRequirementManually">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.RemoveTestRequirementHandler"
             commandId="PESTT.RemoveTestRequirementManually">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.ToursHandler"
             commandId="PESTT.Tours">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.TestRequirementsHandler"
             commandId="PESTT.TestRequirements">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.RefreshStructuralCriteriaGraphHandler"
             commandId="PESTT.RefreshStructuralCoverageCriteriaGraph">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewGraphCoverageCriteria">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.RefreshLogicCriteriaGraphHandler"
-            commandId="PESTT.RefreshStructuralCoverageCriteriaGraph">
+            commandId="PESTT.RefreshLogicCoverageCriteriaGraph">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewLogicCoverageCriteria">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.DefUsesHandler"
             commandId="PESTT.DefUses">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewDataFlowCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.DefUsesViewSelectHandler"
             commandId="PESTT.DefUsesViewSelect">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewDataFlowCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.EditTestPath"
             commandId="PESTT.EditTestPath">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
       <handler
             class="ui.handler.EditTestRequirement"
             commandId="PESTT.EditTestRequirement">
          <activeWhen>
-            <and>
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="org.eclipse.ui.texteditor.ITextEditor">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="PESTT.ViewStructuralCoverage">
-                  </equals>
-               </with>
-            </and>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
          </activeWhen>
       </handler>
    </extension>
