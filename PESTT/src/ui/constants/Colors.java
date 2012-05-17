@@ -21,6 +21,7 @@ public class Colors {
 	public static final Color VIOLET = new Color(null, 138, 43, 226);
 	public static final Color RED_COVERAGE = new Color(null, 255, 160, 160);
 	public static final Color GREEN_COVERAGE = new Color(null, 192, 255, 192);
+	public static final Color INFEASIBLE_COVERAGE = new Color(null, 212, 212, 255);
 	public static final Color YELLOW_COVERAGE = new Color(null, 255, 255, 155);
 	
 }

@@ -152,6 +152,10 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.GREEN_COVERAGE);
+			}else if(item.getText(2).equals(path.toString()) && item.getChecked()) {
+				item.setText(0, Integer.toString(n + 1));
+				item.setImage(1, images.getImage().get(Images.PASS));
+				item.setBackground(Colors.INFEASIBLE_COVERAGE);
 			} else {
 				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.FAIL));
