@@ -24,6 +24,7 @@ import ui.constants.Description;
 import ui.constants.TableViewers;
 import adt.graph.Graph;
 import adt.graph.Path;
+import domain.events.AutomaticTestPathChangedEvent;
 import domain.events.TestPathChangedEvent;
 
 public class TestPathsViewer extends AbstractTableViewer implements Observer {
@@ -52,6 +53,13 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
 			for(Path<Integer> path : ((TestPathChangedEvent) data).testPathSet)
+				testPaths.add(path);
+			if(testPaths.size() > 1)
+				testPaths.add(Description.TOTAL);
+			testPathhsViewer.setInput(testPaths);
+		} else if(data instanceof AutomaticTestPathChangedEvent) {
+			List<Object> testPaths = new ArrayList<Object>();
+			for(Path<Integer> path : ((AutomaticTestPathChangedEvent) data).testPathSet)
 				testPaths.add(path);
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);

@@ -192,7 +192,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	private String totalOutpu(String unit, int passed, int total, String percentage) {
 		if(unit.equals(StatisticsElements.INFEASIBLES))
-			return "Total of " + unit + " " + StatisticsElements.TESTREQUIREMENTS + ": " + passed + " of " + total + " (" + percentage + ")";
+			return "Total of " + unit + " paths: " + passed + " of " + total + " (" + percentage + ")";
 		return "Total of " + unit + " covered for all tests: " + passed + " of " + total + " (" + percentage + ")";
 	}
 

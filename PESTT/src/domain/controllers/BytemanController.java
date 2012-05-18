@@ -200,7 +200,7 @@ public class BytemanController implements Observer {
 		List<Path<Integer>> paths = getExecutedPaths();
 		for(Path<Integer> newTestPath : paths)
 			if(newTestPath != null) 
-				Activator.getDefault().getTestPathController().addTestPath(newTestPath);
+				Activator.getDefault().getTestPathController().addAutomaticTestPath(newTestPath);
 	}
 	
 	public List<Path<Integer>> getExecutedPaths() { 

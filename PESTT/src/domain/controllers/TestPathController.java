@@ -55,6 +55,14 @@ public class TestPathController extends Observable {
 		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
 		selectTestPath(null);
 	}
+	
+	public void addAutomaticTestPath(Path<Integer> newTestPath) {
+		testPathSet.addAutomatic(newTestPath);
+		List<ICoverageData> newData = new LinkedList<ICoverageData>();
+		newData.add(new CoverageData(newTestPath));
+		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
+		selectTestPath(null);
+	}
 
 	public void removeTestPath() {
 		testPathSet.remove(selectedTestPaths);

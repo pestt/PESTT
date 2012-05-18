@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import adt.graph.Path;
+import domain.events.AutomaticTestPathChangedEvent;
 import domain.events.TestPathChangedEvent;
 
 public class TestPathSet extends Observable {
@@ -22,6 +23,12 @@ public class TestPathSet extends Observable {
 		manuallyTestPathSet.add(newTestPath);
 		setChanged();
 		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+	}
+	
+	public void addAutomatic(Path<Integer> newTestPath) {
+		testPathSet.add(newTestPath);
+		setChanged();
+		notifyObservers(new AutomaticTestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 
 	public void remove(Set<Path<Integer>> selectedTestPaths) {
