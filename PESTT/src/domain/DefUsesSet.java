@@ -41,6 +41,7 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 	
 	
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestRequirementChangedEvent) 

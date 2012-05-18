@@ -133,6 +133,8 @@ public class RefreshHandler extends AbstractHandler {
 						List<ICoverageData> newData = new LinkedList<ICoverageData>();
 						newData.add(new CoverageData(path));
 						break;
+				default:
+					break;
 				}
 			else
 				MessageDialog.openInformation(window.getShell(), title, prefix + msg + sufix); // message displayed when the inserted test requirement is not valid.

@@ -79,6 +79,7 @@ public class SourceGraph extends Observable {
 		sourceGraph.accept(visitor);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static CompilationUnit parse(ICompilationUnit unit) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
