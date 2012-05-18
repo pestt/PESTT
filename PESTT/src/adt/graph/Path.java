@@ -85,6 +85,9 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 				
 				if((i < nodes.size() && nodes.get(i) != currentNode) || i >= nodes.size())
 					return false;
+				
+				if(i + 1 < nodes.size() && nodes.get(i + 1) == node) 
+					i++;
 			}
 			currentNode = nodes.get(i);
 			i++;
