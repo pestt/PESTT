@@ -178,11 +178,14 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 	private void setDefUsesStatus() {
 		Set<AbstractPath<Integer>> testRequirementsOfSelected = Activator.getDefault().getDefUsesController().getTestRequirementsOfSelected();
 		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
-		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
-			AbstractPath<Integer> path = iterator.next();
-			if(testRequirementsOfSelected.contains(path))
-				item.setBackground(Colors.YELLOW_COVERAGE);
-		}
+		if(testRequirementsOfSelected != null) {
+			for(TableItem item : testRequirementsViewer.getTable().getItems()) {
+				AbstractPath<Integer> path = iterator.next();
+				if(testRequirementsOfSelected.contains(path))
+					item.setBackground(Colors.YELLOW_COVERAGE);
+			}
+		} else 
+			MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_NEED_UPDATE_MSG);
 	}
 
 	private void setSelections() {

@@ -39,14 +39,10 @@ public class Perspective implements IPerspectiveFactory {
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView("org.eclipse.pde.runtime.LogView");
 		bottom.addView(IPageLayout.ID_TASK_LIST);
+		bottom.addView("org.eclipse.jdt.junit.ResultView");
 		
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.15f, editorarea);
 		left.addView(IPageLayout.ID_PROJECT_EXPLORER);
-		
-		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.45f, editorarea);
-		right.addView(Description.VIEW_GRAPH);
-		right.addView(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
-		right.addView(Description.VIEW_LOGIC_COVERAGE_CRITERIA);
 	}
 
 }

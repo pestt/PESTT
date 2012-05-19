@@ -97,8 +97,8 @@
                id="PESTT.ViewGraphCoverageCriteria"
                minimized="false"
                moveable="true"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="PESTT.ViewGraph"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -108,8 +108,8 @@
                id="PESTT.ViewLogicCoverageCriteria"
                minimized="false"
                moveable="true"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="PESTT.ViewGraph"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -120,7 +120,6 @@
                minimized="false"
                moveable="true"
                relationship="stack"
-               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -131,7 +130,6 @@
                minimized="false"
                moveable="true"
                relationship="stack"
-               relative="org.eclipse.pde.runtime.LogView"
                showTitle="true"
                standalone="false"
                visible="true">
