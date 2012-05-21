@@ -116,7 +116,7 @@ public class Graph implements Observer {
 		int index = 0;
 		Set<Entry<String, Edge>> set = edges.entrySet(); // the edge properties.
 		Iterator<Entry<String, Edge>> iterator = set.iterator();
-		while (iterator.hasNext()) {
+		while(iterator.hasNext()) {
 			Entry<String, Edge> entry = iterator.next();
 			Edge edge = entry.getValue(); // get the current connection of the list.
 			index = 0; // initialize the index.

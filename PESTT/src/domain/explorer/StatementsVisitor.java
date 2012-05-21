@@ -97,7 +97,6 @@ public class StatementsVisitor extends ASTVisitor {
 		return false;
 	}
 	
-
 	//only visit the method indicated by the user.
 	@SuppressWarnings("unchecked")
 	@Override  
@@ -174,9 +173,19 @@ public class StatementsVisitor extends ASTVisitor {
 						edgesToRemove.add(edgeToFinalNode);
 				} 
 			}
+
+			for(Node<Integer> n : sourceGraph.getNodes())
+				if(sourceGraph.getNodeEndEdges(n).size() == 0 && !sourceGraph.isInitialNode(n) && !nodesToRemove.contains(n)) {
+					edgesToRemove.addAll(sourceGraph.getNodeEdges(n));
+					nodesToRemove.add(n);
+				}
+			
+			for(Edge<Integer> edge : edgesToRemove)
+				sourceGraph.removeEdge(edge);
+			
 			for(Node<Integer> n : nodesToRemove)
 				sourceGraph.removeNode(n);
-
+				
 			if(!sourceGraph.getInitialNodes().iterator().hasNext()) 
 				sourceGraph.addInitialNode(sourceGraph.getNodes().iterator().next());
 
