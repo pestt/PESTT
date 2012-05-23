@@ -32,7 +32,7 @@ public class AddTestPathHandler extends AbstractHandler {
 	
 	private void addNewTestPath(IWorkbenchWindow window, String input) throws ExecutionException {
 		Graph<Integer> sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
-		String message = "Please enter a executed graph:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
+		String message = "Please enter a test path:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
 		InputDialog dialog = new InputDialog(window.getShell(), message, input);
 		dialog.open();
 		input = dialog.getInput();

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import ui.constants.Description;
+
 import main.activator.Activator;
 
 public class FileCreator {
@@ -51,7 +53,9 @@ public class FileCreator {
 	
 	public String getLocation() {
 		String pckg = Activator.getDefault().getEditorController().getPackageName();
-		return pckg + '.' + file.getName().substring(0, file.getName().length() - 5);
+		if(!pckg.equals(Description.EMPTY))
+			return pckg + '.' + file.getName().substring(0, file.getName().length() - 5);
+		return file.getName().substring(0, file.getName().length() - 5);
 	}
 	
 	public void cleanFileContent() {

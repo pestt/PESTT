@@ -1,9 +1,14 @@
 package domain.coverage.instrument;
 
+import ui.constants.Description;
+
 public class HelperClass {
 	
 	public String create(String pckg, String output) {
-		return 	"package " + pckg + ";\n\n" +
+		String str = "";
+		if(!pckg.equals(Description.EMPTY))
+			str = "package " + pckg + ";\n\n"; 
+		return 	str +
 				"import java.io.BufferedWriter;\n" +
 				"import java.io.FileWriter;\n" +
 				"import java.io.IOException;\n" +
