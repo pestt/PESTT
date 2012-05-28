@@ -14,8 +14,6 @@ import main.activator.Activator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.swt.widgets.Display;
@@ -26,10 +24,10 @@ import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
+import domain.constants.Byteman;
 import domain.constants.Layer;
 import domain.coverage.instrument.ExecutedPaths;
 import domain.coverage.instrument.FileCreator;
-import domain.coverage.instrument.HelperClass;
 import domain.coverage.instrument.JUnitRunListener;
 import domain.coverage.instrument.Rules;
 import domain.events.ExecutionEndEvent;
@@ -37,7 +35,6 @@ import domain.events.ExecutionEndEvent;
 public class BytemanController implements Observer {
 	
 	private Graph<Integer> sourceGraph;
-	private FileCreator helper;
 	private FileCreator rules;
 	private FileCreator output;
 	private JUnitRunListener listener;
@@ -49,7 +46,7 @@ public class BytemanController implements Observer {
 			display.syncExec(new Runnable() {
 				public void run() {
 					getExecutedtestPaths();
-					deleteScripts();
+					//deleteScripts();
 				}
 			});
 		}
@@ -67,19 +64,11 @@ public class BytemanController implements Observer {
 	}
 	
 	public void createScripts() {
-		sourceGraph =  Activator.getDefault().getSourceGraphController().getSourceGraph();
-		String scriptFile = "rules.btm";
-		String outputFile = "output.txt";
-		String helperClass = "PESTTHelper.java";
-		ICompilationUnit unit = Activator.getDefault().getEditorController().getCompilationUnit();
-		String sourceDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + unit.getParent().getParent().getElementName();
-		String scriptDir = unit.getJavaProject().getResource().getParent().getLocation().toOSString() + unit.getJavaProject().getPath().toOSString() + IPath.SEPARATOR + "script";
-		String pckg = Activator.getDefault().getEditorController().getPackageName();
+		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		String mthd = Activator.getDefault().getEditorController().getSelectedMethod();
-		String cls = Activator.getDefault().getEditorController().getClassName();
-		output = createOutputFile(scriptDir, outputFile);
-		helper = createHelperClass(sourceDir, pckg, helperClass, output.getAbsolutePath());
-		rules = createRulesFile(scriptDir, scriptFile, helper.getLocation(), mthd, cls);
+		String cls = Activator.getDefault().getEditorController().getClassName();		
+		output = createOutputFile(Byteman.SCRIPT_DIR, Byteman.OUTPUT_FILE);
+		rules = createRulesFile(Byteman.SCRIPT_DIR, Byteman.SCRIPT_FILE, Byteman.HELPER_LOCATIO, mthd, cls);
 		updateFiles();
 	}
 
@@ -88,17 +77,6 @@ public class BytemanController implements Observer {
 		output.createDirectory(dir);
 		output.createFile(name);
 		return output;
-	}
-	
-	private FileCreator createHelperClass(String dir, String pckg, String cls, String output) {
-		FileCreator helper = new FileCreator();
-		HelperClass helperClass = new HelperClass();
-		dir += IPath.SEPARATOR + pckg.replace('.', IPath.SEPARATOR);
-		helper.createDirectory(dir);
-		helper.createFile(cls);
-		helper.writeFileContent(helperClass.create(pckg, output));
-		helper.close();
-		return helper;
 	}
 
 	private FileCreator createRulesFile(String dir, String name, String helper, String mthd, String cls) {
@@ -189,7 +167,6 @@ public class BytemanController implements Observer {
 	
 	public void deleteScripts() {
 		removeListener();
-		helper.deleteFile();
 		output.deleteFile();
 		rules.deleteFile();
 		rules.deleteDirectory();

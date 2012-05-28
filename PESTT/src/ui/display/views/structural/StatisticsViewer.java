@@ -23,8 +23,8 @@ import org.eclipse.ui.PlatformUI;
 
 import ui.constants.Messages;
 import ui.constants.TableViewers;
-import ui.events.TourChangeEvent;
 import ui.events.StatisticsChangedEvent;
+import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import adt.graph.SequencePath;

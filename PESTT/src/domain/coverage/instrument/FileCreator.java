@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import ui.constants.Description;
-
 import main.activator.Activator;
+import ui.constants.Description;
 
 public class FileCreator {
 	

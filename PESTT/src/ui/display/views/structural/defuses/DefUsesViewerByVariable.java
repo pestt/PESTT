@@ -20,11 +20,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import adt.graph.AbstractPath;
-
 import ui.constants.Colors;
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
+import adt.graph.AbstractPath;
 import domain.events.DefUsesChangedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestRequirementSelectedEvent;

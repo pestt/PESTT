@@ -7,7 +7,7 @@ import org.eclipse.core.commands.ExecutionException;
 public class DrawGraphHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {	
 		new RefreshHandler().execute(event);
 		return null;
 	}

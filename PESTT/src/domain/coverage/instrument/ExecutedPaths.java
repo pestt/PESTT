@@ -8,11 +8,11 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 import main.activator.Activator;
-import ui.constants.BytemanLog;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
+import domain.constants.Byteman;
 
 public class ExecutedPaths {
 
@@ -50,9 +50,9 @@ public class ExecutedPaths {
 		boolean exit = false;
 		while(!entry || !exit) {
 			String line = scanner.nextLine();
-			if(line.compareTo(BytemanLog.ENTERING_METHOD + mthd) == 0)
+			if(line.compareTo(Byteman.ENTERING_METHOD + mthd) == 0)
 				entry = true;
-			else if(line.compareTo(BytemanLog.EXITING_METHOD + mthd) == 0)
+			else if(line.compareTo(Byteman.EXITING_METHOD + mthd) == 0)
 				exit = true;
 			else {
 				List<Edge<Integer>> edges = getEdges(line);

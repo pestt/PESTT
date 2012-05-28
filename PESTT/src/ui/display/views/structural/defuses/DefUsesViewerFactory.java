@@ -12,10 +12,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
-import domain.constants.DefUsesView;
-
 import ui.constants.Description;
 import ui.events.DefUsesChangeViewEvent;
+import domain.constants.DefUsesView;
 
 public class DefUsesViewerFactory implements Observer {
 	

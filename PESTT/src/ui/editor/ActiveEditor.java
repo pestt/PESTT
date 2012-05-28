@@ -149,6 +149,10 @@ public class ActiveEditor implements Observer {
 	public void everythingMatch() {
 		this.updated = true;;
 	}
+	
+	public IJavaProject getJavaProject() {
+		return javaProject;
+	}
 
 	public String getProjectName() {
 		return javaProject.getElementName();

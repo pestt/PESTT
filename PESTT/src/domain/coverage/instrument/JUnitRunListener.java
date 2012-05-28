@@ -11,6 +11,7 @@ public class JUnitRunListener extends Observable implements ITestRunListener {
 	
 	@Override
 	public void testStarted(String arg0, String arg1) {
+		// arg1 the name of the test.
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import java.util.Observable;
 import main.activator.Activator;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.IEditorPart;
 
 import ui.editor.ActiveEditor;
@@ -67,6 +68,10 @@ public class EditorController extends Observable {
 	
 	public void everythingMatch() {
 		editor.everythingMatch();
+	}
+	
+	public IJavaProject getJavaProject() {
+		return editor.getJavaProject();
 	}
 	
 	public void setGraphInformation(GraphInformation information) {

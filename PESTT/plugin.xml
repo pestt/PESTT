@@ -1250,7 +1250,7 @@
     <shortcut
           class="domain.coverage.instrument.JUnitRun"
           helpContextId="org.eclipse.jdt.junit.launch_shortcut"
-          icon="icons/junit.gif"
+          icon="icons/RunAs.gif"
           id="PESTT.JunitShortcut"
           label="PESTT - JUnit Test"
           modes="run, debug">

@@ -1,6 +1,6 @@
 package domain.coverage.instrument;
 
-import ui.constants.BytemanLog;
+import domain.constants.Byteman;
 
 public class Rules {
 	
@@ -11,7 +11,7 @@ public class Rules {
 				"HELPER " + helper + "\n" +
 				"AT ENTRY\n" +
 				"IF true\n" +
-				"DO debug(\"" + BytemanLog.ENTERING_METHOD + mthd + "\")\n" + 
+				"DO debug(\"" + Byteman.ENTERING_METHOD + mthd + "\")\n" + 
 				"ENDRULE\n\n";
 	}
 	
@@ -22,7 +22,7 @@ public class Rules {
 				"HELPER " + helper + "\n" +
 				"AT EXIT\n" +
 				"IF true\n" +
-				"DO debug(\"" + BytemanLog.EXITING_METHOD + mthd  + "\")\n" + 
+				"DO debug(\"" + Byteman.EXITING_METHOD + mthd  + "\")\n" + 
 				"ENDRULE\n\n";
 	}
 
