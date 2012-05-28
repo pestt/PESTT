@@ -89,7 +89,7 @@ public class JUnitRun extends JUnitLaunchShortcut {
 			JarFile jar = new JarFile(pluginPath.toOSString());
 			for(Enumeration<JarEntry> enumEntry = jar.entries(); enumEntry.hasMoreElements();) {
 				JarEntry entry = enumEntry.nextElement();
-				if(entry.getName().equals("PESTT_0.3.0/lib/byteman.jar")) {
+				if(entry.getName().equals("PESTT_0.4.0/lib/byteman.jar")) {
 					file = new File(System.getProperty("java.io.tmpdir") + IPath.SEPARATOR + "byteman.jar");
 					InputStream is = jar.getInputStream(entry);
 					FileOutputStream fos = new FileOutputStream(file);
