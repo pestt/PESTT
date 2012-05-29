@@ -31,7 +31,12 @@ import org.eclipse.ui.PlatformUI;
 
 import domain.constants.Byteman;
 
-public class JUnitRun extends JUnitLaunchShortcut {
+public class JUnitLaunch extends JUnitLaunchShortcut {
+	
+	private static final String PLUGIN_ID = Activator.getDefault().getBundle().getSymbolicName();
+	private static final String PLUGIN_VERSION = Activator.getDefault().getBundle().getVersion().toString();
+	private static final String PLUGIN_JAR = PLUGIN_ID + "_" + PLUGIN_VERSION + ".jar";
+	private static final String BYTEMAN_JAR = "lib" + IPath.SEPARATOR + "byteman.jar";
 
 	@Override
 	public void launch(IEditorPart editor, String mode) {
@@ -49,21 +54,16 @@ public class JUnitRun extends JUnitLaunchShortcut {
 				
 				IVMInstall jre = JavaRuntime.getDefaultVMInstall();
 				File jdkHome = jre.getInstallLocation();
-				
 				IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-				IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath, IRuntimeClasspathEntry.STANDARD_CLASSES);
-				
+				IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath, IRuntimeClasspathEntry.STANDARD_CLASSES);			
 				IPath toolsPath = new Path(jdkHome.getAbsolutePath()).append("lib").append("tools.jar");
 				IRuntimeClasspathEntry toolsEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(toolsPath);
-				toolsEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-							
+				toolsEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);						
 				IRuntimeClasspathEntry projectEntry = JavaRuntime.newDefaultProjectClasspathEntry(Activator.getDefault().getEditorController().getJavaProject()); 
-				projectEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);	
-				
-				IPath pluginPath = JavaCore.getClasspathVariable("ECLIPSE_HOME").append("plugins").append("PESTT_0.3.0.jar");
+				projectEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);					
+				IPath pluginPath = JavaCore.getClasspathVariable("ECLIPSE_HOME").append("plugins").append(PLUGIN_JAR);
 				IRuntimeClasspathEntry pluginEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(pluginPath);
-				pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-				
+				pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);				
 				List<String> classpath = new ArrayList<String>();
 				classpath.add(systemLibsEntry.getMemento());
 				classpath.add(toolsEntry.getMemento());
@@ -71,10 +71,8 @@ public class JUnitRun extends JUnitLaunchShortcut {
 				classpath.add(pluginEntry.getMemento());
 				ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);
-				
+				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);				
 				String bytemanPath = extractJar(pluginPath);
-				
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-javaagent:" + bytemanPath + "=script:" + Byteman.SCRIPT_DIR + IPath.SEPARATOR + Byteman.SCRIPT_FILE);
 				configuration = workingCopy.doSave();
 			}
@@ -89,7 +87,7 @@ public class JUnitRun extends JUnitLaunchShortcut {
 			JarFile jar = new JarFile(pluginPath.toOSString());
 			for(Enumeration<JarEntry> enumEntry = jar.entries(); enumEntry.hasMoreElements();) {
 				JarEntry entry = enumEntry.nextElement();
-				if(entry.getName().equals("PESTT_0.4.0/lib/byteman.jar")) {
+				if(entry.getName().equals(BYTEMAN_JAR)) {
 					file = new File(System.getProperty("java.io.tmpdir") + IPath.SEPARATOR + "byteman.jar");
 					InputStream is = jar.getInputStream(entry);
 					FileOutputStream fos = new FileOutputStream(file);

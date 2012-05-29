@@ -4,14 +4,16 @@ import java.util.Observable;
 
 import org.eclipse.jdt.junit.ITestRunListener;
 
-import domain.events.ExecutionEndEvent;
+import domain.events.EndTestsExecutionEvent;
+import domain.events.TestStartEvent;
 
 @SuppressWarnings("deprecation")
-public class JUnitRunListener extends Observable implements ITestRunListener {
+public class JUnitTestRunListener extends Observable implements ITestRunListener {
 	
 	@Override
 	public void testStarted(String arg0, String arg1) {
-		// arg1 the name of the test.
+		setChanged();
+		notifyObservers(new TestStartEvent(arg1));
 	}
 	
 	@Override
@@ -32,7 +34,7 @@ public class JUnitRunListener extends Observable implements ITestRunListener {
 	@Override
 	public void testRunEnded(long arg0) {
 		setChanged();
-		notifyObservers(new ExecutionEndEvent());
+		notifyObservers(new EndTestsExecutionEvent());
 	}
 	
 	@Override

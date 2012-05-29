@@ -23,7 +23,6 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "PESTT";
 	
-	
 	// The shared instance
 	private static Activator plugin;
 	private PESTT pestt;

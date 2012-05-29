@@ -1248,7 +1248,7 @@
  <extension
        point="org.eclipse.debug.ui.launchShortcuts">
     <shortcut
-          class="domain.coverage.instrument.JUnitRun"
+          class="domain.coverage.instrument.JUnitLaunch"
           helpContextId="org.eclipse.jdt.junit.launch_shortcut"
           icon="icons/RunAs.gif"
           id="PESTT.JunitShortcut"

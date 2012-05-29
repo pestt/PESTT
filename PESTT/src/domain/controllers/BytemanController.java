@@ -11,9 +11,6 @@ import java.util.Set;
 
 import main.activator.Activator;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.swt.widgets.Display;
@@ -28,33 +25,32 @@ import domain.constants.Byteman;
 import domain.constants.Layer;
 import domain.coverage.instrument.ExecutedPaths;
 import domain.coverage.instrument.FileCreator;
-import domain.coverage.instrument.JUnitRunListener;
+import domain.coverage.instrument.JUnitTestRunListener;
 import domain.coverage.instrument.Rules;
-import domain.events.ExecutionEndEvent;
+import domain.events.EndTestsExecutionEvent;
 
 public class BytemanController implements Observer {
 	
 	private Graph<Integer> sourceGraph;
-	private FileCreator rules;
 	private FileCreator output;
-	private JUnitRunListener listener;
+	private JUnitTestRunListener listener;
 	
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof ExecutionEndEvent) {
+		if(data instanceof EndTestsExecutionEvent) {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					getExecutedtestPaths();
-					//deleteScripts();
+					deleteScripts();
 				}
 			});
-		}
+		} 
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void addListener() {
-		listener = new JUnitRunListener();
+		listener = new JUnitTestRunListener();
 		listener.addObserver(this);
 		JUnitCore.addTestRunListener(listener);
 	}
@@ -68,8 +64,7 @@ public class BytemanController implements Observer {
 		String mthd = Activator.getDefault().getEditorController().getSelectedMethod();
 		String cls = Activator.getDefault().getEditorController().getClassName();		
 		output = createOutputFile(Byteman.SCRIPT_DIR, Byteman.OUTPUT_FILE);
-		rules = createRulesFile(Byteman.SCRIPT_DIR, Byteman.SCRIPT_FILE, Byteman.HELPER_LOCATIO, mthd, cls);
-		updateFiles();
+		createRulesFile(Byteman.SCRIPT_DIR, Byteman.SCRIPT_FILE, Byteman.HELPER_LOCATIO, mthd, cls);
 	}
 
 	private FileCreator createOutputFile(String dir, String name) {
@@ -165,13 +160,15 @@ public class BytemanController implements Observer {
 		return nodes;
 	}
 	
-	public void deleteScripts() {
+	
+	private void deleteScripts() {
 		removeListener();
-		output.deleteFile();
+	/*	output.deleteFile();
 		rules.deleteFile();
 		rules.deleteDirectory();
-		updateFiles();
+	*/
 	}
+	
 	
 	private void getExecutedtestPaths() {
 		List<Path<Integer>> paths = getExecutedPaths();
@@ -181,18 +178,9 @@ public class BytemanController implements Observer {
 	}
 	
 	public List<Path<Integer>> getExecutedPaths() { 
-		updateFiles();
 		ExecutedPaths reader = new ExecutedPaths(output.getFile(), Activator.getDefault().getEditorController().getSelectedMethod());
 		List<Path<Integer>> paths = reader.getExecutedPaths();
 		return paths;
-	}
-	
-	private void updateFiles() {
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.FOLDER, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private class EdgeLine {
