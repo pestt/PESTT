@@ -1,6 +1,7 @@
 package ui.display.views.structural;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -16,8 +17,13 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import ui.constants.Description;
@@ -57,6 +63,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
+			addTooltips();
 		} else if(data instanceof AutomaticTestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
 			for(Path<Integer> path : ((AutomaticTestPathChangedEvent) data).testPathSet)
@@ -64,6 +71,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
+			addTooltips();
 		}
 	}
 
@@ -108,15 +116,37 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 					}
 					else
 						testPaths.add((Path<Integer>) obj);
-		
 				if(hasTotal) {
 					testPaths.clear();
 					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
 						testPaths.add(path);
-				}
-					
+				}	
 				Activator.getDefault().getTestPathController().selectTestPath(testPaths);
 		    }
 		});
+	}
+	
+	private void addTooltips() {
+		Listener listener =  new Listener() {
+			
+			public void handleEvent(Event event) {
+				Point coords = new Point(event.x, event.y);
+				TableItem item = testPathhsViewer.getTable().getItem(coords);
+				Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().getTestPaths().iterator();
+				Path<Integer> path = null;
+				for(TableItem i : testPathhsViewer.getTable().getItems())  
+					if(iterator.hasNext()) {
+						path = iterator.next();
+						if(i == item)
+							break;
+					} else 
+						path = null;
+				if(path != null)
+					testPathhsViewer.getTable().setToolTipText(Activator.getDefault().getTestPathController().getTooltip(path));
+				else
+					testPathhsViewer.getTable().setToolTipText("");	
+			}
+		};
+		testPathhsViewer.getTable().addListener(SWT.MouseHover, listener);
 	}
 }

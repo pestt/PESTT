@@ -52,7 +52,6 @@ public class EditTestPath extends AbstractHandler {
 						Activator.getDefault().getTestPathController().removeCoverageData();
 						Activator.getDefault().getTestPathController().removeTestPath();
 						Activator.getDefault().getTestPathController().addTestPath(newTestPath);
-						MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SUCCESS_EDITED_MSG); // message displayed when the test path is successfully edited.
 					} else {
 						MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
 						editTestPath(window, input);

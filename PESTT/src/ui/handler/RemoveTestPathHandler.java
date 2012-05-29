@@ -39,7 +39,6 @@ public class RemoveTestPathHandler extends AbstractHandler {
 			if(input != null) {
 				Activator.getDefault().getTestPathController().removeCoverageData();
 				Activator.getDefault().getTestPathController().removeTestPath();
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SUCCESS_REMOVE_MSG); // message displayed when the test path is successfully remove.
 			}
 		} else
 			MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_SELECT_TO_REMOVE_MSG); // message displayed when there is no graph selected to be removed.

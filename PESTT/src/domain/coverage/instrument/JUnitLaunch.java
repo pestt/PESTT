@@ -50,8 +50,7 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(type);
 			if(configurations.length != 0) {
-				ILaunchConfiguration configuration = configurations[0];
-				
+				ILaunchConfiguration configuration = configurations[configurations.length - 1];
 				IVMInstall jre = JavaRuntime.getDefaultVMInstall();
 				File jdkHome = jre.getInstallLocation();
 				IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);

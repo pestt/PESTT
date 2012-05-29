@@ -42,12 +42,9 @@ public class TestPathSet extends Observable {
 	
 	public void clear() {
 		testPathSet.clear();
+		manuallyTestPathSet.clear();
 		setChanged();
 		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
-	}
-	
-	public void cleanTestPathManuallyAdded() {
-		manuallyTestPathSet.clear();
 	}
 	
 	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {		
@@ -56,5 +53,9 @@ public class TestPathSet extends Observable {
 	
 	public Iterable<Path<Integer>> getTestPaths() {
 		return testPathSet;
+	}
+	
+	public boolean isManuallyAdded(Path<Integer> path) {
+		return manuallyTestPathSet.contains(path);
 	}
 }

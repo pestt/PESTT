@@ -30,6 +30,7 @@ public abstract class AbstractTableViewer {
 				break;
 		}
 		Table table = viewer.getTable(); // create the table.
+		table.setToolTipText("");
 		table.setHeaderVisible(true); // show header.
 		table.setLinesVisible(true); // show table lines.
 		viewer.setContentProvider(new ArrayContentProvider()); // set the content provider.

@@ -28,12 +28,14 @@ import domain.coverage.instrument.FileCreator;
 import domain.coverage.instrument.JUnitTestRunListener;
 import domain.coverage.instrument.Rules;
 import domain.events.EndTestsExecutionEvent;
+import domain.events.TestStartEvent;
 
 public class BytemanController implements Observer {
 	
 	private Graph<Integer> sourceGraph;
 	private FileCreator output;
 	private JUnitTestRunListener listener;
+	private ArrayList<String> tests;
 	
 	@Override
 	public void update(Observable obs, Object data) {
@@ -43,13 +45,16 @@ public class BytemanController implements Observer {
 				public void run() {
 					getExecutedtestPaths();
 					deleteScripts();
-				}
+				} 
 			});
-		} 
+		} else if(data instanceof TestStartEvent) {
+			tests.add(((TestStartEvent) data).test);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void addListener() {
+		tests = new ArrayList<String>();
 		listener = new JUnitTestRunListener();
 		listener.addObserver(this);
 		JUnitCore.addTestRunListener(listener);
@@ -172,9 +177,12 @@ public class BytemanController implements Observer {
 	
 	private void getExecutedtestPaths() {
 		List<Path<Integer>> paths = getExecutedPaths();
-		for(Path<Integer> newTestPath : paths)
+		for(int i = 0; i < paths.size(); i++) {
+			Path<Integer> newTestPath = paths.get(i);
+			String tooltip = tests.get(i);
 			if(newTestPath != null) 
-				Activator.getDefault().getTestPathController().addAutomaticTestPath(newTestPath);
+				Activator.getDefault().getTestPathController().addAutomaticTestPath(newTestPath, tooltip);
+		}
 	}
 	
 	public List<Path<Integer>> getExecutedPaths() { 

@@ -35,10 +35,8 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 			RemoveDialog dialog = new RemoveDialog(window.getShell(), message);
 			dialog.open();
 			String input = dialog.getInput();
-			if(input != null) {
+			if(input != null) 
 				Activator.getDefault().getTestRequirementController().removeSelectedTestRequirement();
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_SUCCESS_REMOVE_MSG); // message displayed when the graph is successfully remove.
-			}
 		} else
 			MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG); // message displayed when there is no test requirement selected to be removed.
 	}		

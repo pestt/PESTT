@@ -39,12 +39,10 @@ public class TestRequirementSet extends Observable {
 	
 	public void clear() {
 		testRequirementSet.clear();
+		manuallyTestRequirementSet.clear();	
+		infeasibleSet.clear();
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
-	}
-	
-	public void clearTestRequirementsManuallyAdded() {
-		manuallyTestRequirementSet.clear();		
 	}
 	
 	public int size() {
@@ -59,12 +57,6 @@ public class TestRequirementSet extends Observable {
 	
 	public void disableInfeasible(AbstractPath<Integer> infeasible) {
 		infeasibleSet.remove(infeasible);
-		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
-	}
-	
-	public void clearInfeasibles() {
-		infeasibleSet.clear();
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}

@@ -44,7 +44,6 @@ public class EditTestRequirement extends AbstractHandler {
 					if(newTestRequirement != null) {
 						Activator.getDefault().getTestRequirementController().removeSelectedTestRequirement();
 						Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
-						MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_SUCCESS_EDITED_MSG); // message displayed when the test requirement is successfully edited.
 					} else {
 						MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 						editTestRequirement(window, input);

@@ -1,6 +1,7 @@
 package domain.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,12 +33,15 @@ import domain.events.TestPathSelectedEvent;
 
 public class TestPathController extends Observable {
 
+	private static final String MANUALLY = "Manually added";
 	private TestPathSet testPathSet;
 	private Set<Path<Integer>> selectedTestPaths;
 	private TourType selectedTourType;
+	private Map<Path<Integer>, String> tooltips;
 	
 	public TestPathController(TestPathSet testPathSet) {
 		this.testPathSet = testPathSet;
+		tooltips = new HashMap<Path<Integer>, String>();
 	}
 	
 	public void addObserverTestPath(Observer o) {
@@ -49,6 +53,7 @@ public class TestPathController extends Observable {
 	}
 
 	public void addTestPath(Path<Integer> newTestPath) {
+		insertTooltip(newTestPath, MANUALLY);
 		testPathSet.add(newTestPath);
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
@@ -56,27 +61,51 @@ public class TestPathController extends Observable {
 		selectTestPath(null);
 	}
 	
-	public void addAutomaticTestPath(Path<Integer> newTestPath) {
+	public void addAutomaticTestPath(Path<Integer> newTestPath, String tooltip) {
+		insertTooltip(newTestPath,tooltip);
 		testPathSet.addAutomatic(newTestPath);
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
 		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
 		selectTestPath(null);
 	}
+	
+	private void insertTooltip(Path<Integer> path, String tooltip) {
+		Path<Integer> remove = null;
+		for(Path<Integer> current : tooltips.keySet())
+			if(current.toString().equals(path.toString())) {
+				if(!tooltip.equals(MANUALLY))
+					if(testPathSet.isManuallyAdded(current)) {
+						Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
+						set.add(current);
+						testPathSet.remove(set);
+						remove = current;
+						break;
+					}	
+				path = current;
+				break;
+			}
+		if(remove != null)
+			tooltips.remove(remove);
+		tooltips.put(path, tooltip);
+	}
+	
+	public String getTooltip(Path<Integer> path) {
+		return tooltips.get(path);
+	}
 
 	public void removeTestPath() {
-		testPathSet.remove(selectedTestPaths);
-		for(Path<Integer> path : selectedTestPaths)
+		for(Path<Integer> path : selectedTestPaths) {
 			Activator.getDefault().getCoverageDataController().removeSelectedCoverageData(path);
+			tooltips.remove(path);
+		}
+		testPathSet.remove(selectedTestPaths);
 		selectTestPath(null);
 	}
 	
 	public void cleanTestPathSet() {
 		testPathSet.clear();
-	}
-	
-	public void cleanTestPathManuallyAdded() {
-		testPathSet.cleanTestPathManuallyAdded();
+		tooltips.clear();
 	}
 
 	public boolean isTestPathSelected() {
