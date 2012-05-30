@@ -19,12 +19,12 @@ public class CoverageData implements ICoverageData {
 
 	private HashMap<Integer, String> lineStatus;
 	
-	public CoverageData(Path<Integer> fakeExecutedPath) {
+	public CoverageData(Path<Integer> executedPath) {
 		lineStatus = new LinkedHashMap<Integer, String>();
-		setLineStatus(fakeExecutedPath);
+		setLineStatus(executedPath);
 	}
-	public CoverageData(LinkedHashMap<Integer, String> fakeLineStatus) {
-		lineStatus = fakeLineStatus;
+	public CoverageData(LinkedHashMap<Integer, String> lineStatus) {
+		this.lineStatus = lineStatus;
 	}
 	
 	public HashMap<Integer, String> getLineStatus() {
@@ -36,7 +36,7 @@ public class CoverageData implements ICoverageData {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setLineStatus(Path<Integer> fakeExecutedPath) {
+	private void setLineStatus(Path<Integer> executedPath) {
 		Graph<Integer> sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 		for(Node<Integer> node : sourceGraph.getNodes()) {
@@ -44,10 +44,10 @@ public class CoverageData implements ICoverageData {
 			if(map != null) 
 				for(Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
-					if(fakeExecutedPath.containsNode(node)) 
+					if(executedPath.containsNode(node)) 
 						lineStatus.put(line, Colors.GRENN_ID);
-					else 
-						lineStatus.put(line, Colors.RED_ID);
+					else if(!lineStatus.containsKey(line))
+						 lineStatus.put(line, Colors.RED_ID);
 				}
 		}
 	}

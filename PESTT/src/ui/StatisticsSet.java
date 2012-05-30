@@ -136,7 +136,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 				for(Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
 					if(data.getLineStatus(line).equals(Colors.GRENN_ID))
-					lines.add(line);
+						lines.add(line);
 				}
 		}
 		return lines;
@@ -144,13 +144,17 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	@SuppressWarnings("unchecked")
 	private int getTotalLines() {
-		int lines = 0;
+		List<Integer> lines = new LinkedList<Integer>();
 		for(Node<Integer> node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null)
-				lines += map.entrySet().size();
+				for(Entry<ASTNode, Line> entry : map.entrySet()) {
+					int line = entry.getValue().getStartLine();
+					if(!lines.contains(line))
+					lines.add(line);
+				}
 		}
-		return lines;
+		return lines.size();
 	}
 	
 	private String getTestRequirementsStatistics() {

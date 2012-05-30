@@ -1,5 +1,6 @@
 package ui.controllers;
 
+import java.util.List;
 import java.util.Observable;
 
 import main.activator.Activator;
@@ -7,6 +8,7 @@ import main.activator.Activator;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.zest.core.widgets.GraphItem;
 
 import ui.editor.ActiveEditor;
 import ui.source.GraphInformation;
@@ -90,10 +92,10 @@ public class EditorController extends Observable {
 		information.setLayerInformation(layer);		
 	}
 
-	public void setVisualCoverage(Object data) {
+	public void setVisualCoverage(Object data, List<GraphItem> items) {
 		if(Activator.getDefault().getCFGController().getLinkState()) // if the link button is on.
 			if(data instanceof TestPathSelectedEvent) 
-				information.setVisualCoverageStatus(Activator.getDefault().getTestPathController().getCoverageData());
+				information.setVisualCoverageStatus(Activator.getDefault().getTestPathController().getCoverageData(), items);
 			else 
 				information.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
 	}

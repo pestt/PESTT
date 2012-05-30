@@ -164,7 +164,7 @@ public class GraphInformation {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setVisualCoverageStatus(ICoverageData data) {
+	public void setVisualCoverageStatus(ICoverageData data, List<GraphItem> items) {
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph(); // set the sourceGraph.
 		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes()) {
@@ -175,12 +175,20 @@ public class GraphInformation {
 				Entry<ASTNode, Line> entry = map.entrySet().iterator().next();	
 				String colorStatus = data.getLineStatus(entry.getValue().getStartLine());
 				if(colorStatus != null)
-					if(colorStatus.equals(Colors.GRENN_ID))
+					if(colorStatus.equals(Colors.GRENN_ID) && isNodeSelected(items, node))
 						regionToSelect(nodesInstructions, MarkersType.FULL_COVERAGE_MARKER); // select the area in the editor.
-					else if(colorStatus.equals(Colors.RED_ID)) 
+					else if(colorStatus.equals(Colors.RED_ID) || !isNodeSelected(items, node) )
 						regionToSelect(nodesInstructions, MarkersType.NO_COVERAGE_MARKER); // select the area in the editor.
 			}
 		}
+	}
+	
+	private boolean isNodeSelected(List<GraphItem> items, adt.graph.Node<Integer> node) {
+		for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
+			if(!gnode.isDisposed() && gnode.getData().equals(node)) // if matches.
+				if(items.contains(gnode))
+					return items.contains(gnode); 
+		return false;
 	}
 		
 	public void creatorSelectToEditor() {

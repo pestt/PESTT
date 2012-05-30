@@ -239,7 +239,7 @@ public class Graph implements Observer {
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(data);
+		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
 	}
 	
 	private void selectTestPath(TestPathSelectedEvent data) {
@@ -247,7 +247,7 @@ public class Graph implements Observer {
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(data);
+		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
 	}
 	
 	private void selecDefUses() {
@@ -259,7 +259,7 @@ public class Graph implements Observer {
 				aux.addAll(selectInGraph(obj));
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(selectedDefUse);
+		Activator.getDefault().getEditorController().setVisualCoverage(selectedDefUse, aux);
 	}
 
 	private List<GraphItem> selectInGraph(AbstractPath<Integer> selectedTestRequirement) {
@@ -307,12 +307,11 @@ public class Graph implements Observer {
 
 	private void getGraphNode(List<GraphItem> aux, adt.graph.Node<Integer> node) {
 		for(GraphNode gnode : graphNodes)  // through all nodes in the graph.
-			if(!gnode.isDisposed()) {
+			if(!gnode.isDisposed()) 
 				if(gnode.getData().equals(node)) { // if matches.
 					aux.add(gnode); // add node item to the list.
 					break;
 				}
-			}
 	}
 
 	private List<GraphItem> selectTestPathSet(Set<Path<Integer>> selectedTestPaths) {
