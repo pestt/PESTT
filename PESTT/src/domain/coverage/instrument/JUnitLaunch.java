@@ -24,11 +24,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import ui.constants.Messages;
 import domain.constants.Byteman;
 
 public class JUnitLaunch extends JUnitLaunchShortcut {
@@ -40,45 +42,56 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 
 	@Override
 	public void launch(IEditorPart editor, String mode) {
-		Activator.getDefault().getBytemanController().createScripts();
-		Activator.getDefault().getBytemanController().addListener();
-		super.launch(editor, mode);		
-		IEditorPart part = Activator.getDefault().getEditorController().getEditorPart();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.jdt.junit.launchconfig");
-		try {
-			ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(type);
-			if(configurations.length != 0) {
-				ILaunchConfiguration configuration = configurations[configurations.length - 1];
-				IVMInstall jre = JavaRuntime.getDefaultVMInstall();
-				File jdkHome = jre.getInstallLocation();
-				IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-				IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath, IRuntimeClasspathEntry.STANDARD_CLASSES);			
-				IPath toolsPath = new Path(jdkHome.getAbsolutePath()).append("lib").append("tools.jar");
-				IRuntimeClasspathEntry toolsEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(toolsPath);
-				toolsEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);						
-				IRuntimeClasspathEntry projectEntry = JavaRuntime.newDefaultProjectClasspathEntry(Activator.getDefault().getEditorController().getJavaProject()); 
-				projectEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);					
-				IPath pluginPath = JavaCore.getClasspathVariable("ECLIPSE_HOME").append("plugins").append(PLUGIN_JAR);
-				IRuntimeClasspathEntry pluginEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(pluginPath);
-				pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);				
-				List<String> classpath = new ArrayList<String>();
-				classpath.add(systemLibsEntry.getMemento());
-				classpath.add(toolsEntry.getMemento());
-				classpath.add(projectEntry.getMemento());
-				classpath.add(pluginEntry.getMemento());
-				ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);				
-				String bytemanPath = extractJar(pluginPath);
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-javaagent:" + bytemanPath + "=script:" + Byteman.SCRIPT_DIR + IPath.SEPARATOR + Byteman.SCRIPT_FILE);
-				configuration = workingCopy.doSave();
+//		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+//		String toolsLocation = preferenceStore.getString(Preferences.TOOLS_PATH);
+//		if(toolsLocation != null && !toolsLocation.equals(Description.EMPTY)) {
+			Activator.getDefault().getBytemanController().createScripts();
+			Activator.getDefault().getBytemanController().addListener();
+			super.launch(editor, mode);		
+			IEditorPart part = Activator.getDefault().getEditorController().getEditorPart();
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.jdt.junit.launchconfig");
+			try {
+				ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(type);
+				if(configurations.length != 0) {
+					ILaunchConfiguration configuration = configurations[configurations.length - 1];
+	//				IVMInstall jre = JavaRuntime.getDefaultVMInstall();
+	//				File jdkHome = jre.getInstallLocation();
+					IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
+					IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath, IRuntimeClasspathEntry.STANDARD_CLASSES);			
+/*					IPath toolsPath = new Path(toolsLocation);
+					IPath toolsPath = new Path(jdkHome.getAbsolutePath()).append("lib").append("tools.jar");
+					IRuntimeClasspathEntry toolsEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(toolsPath);
+					toolsEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+*/					IRuntimeClasspathEntry projectEntry = JavaRuntime.newDefaultProjectClasspathEntry(Activator.getDefault().getEditorController().getJavaProject()); 
+					projectEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);					
+					IPath pluginPath = JavaCore.getClasspathVariable("ECLIPSE_HOME").append("plugins").append(PLUGIN_JAR);
+					IRuntimeClasspathEntry pluginEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(pluginPath);
+					pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);				
+					List<String> classpath = new ArrayList<String>();
+					classpath.add(systemLibsEntry.getMemento());
+//					classpath.add(toolsEntry.getMemento());
+					classpath.add(projectEntry.getMemento());
+					classpath.add(pluginEntry.getMemento());
+					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);				
+					String bytemanPath = extractJar(pluginPath);
+					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-javaagent:" + bytemanPath + "=script:" + Byteman.SCRIPT_DIR + IPath.SEPARATOR + Byteman.SCRIPT_FILE);
+					configuration = workingCopy.doSave();
+				}
+			} catch (CoreException e) {
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_TOOLS_MSG);
+				return;
 			}
-		} catch (CoreException e) {
-			e.printStackTrace();
+/*		} else {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_TOOLS_MSG);
+			return;
 		}
-	}
+*/	}
 
 	private String extractJar(IPath pluginPath) {
 		File file = null;

@@ -160,7 +160,7 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	private String getTestRequirementsStatistics() {
 		String unit = StatisticsElements.TESTREQUIREMENTS;;
 		Set<Path<Integer>> testRequirements = getTestPathCoverage();
-		int total = getTotalTestRequirements() - getInfeasible();
+		int total = getTotalTestRequirements();
 		int passed = testRequirements.size();
 		String percentage = getPercentage(passed, total);
 		return totalOutpu(unit, passed, total, percentage);
@@ -176,10 +176,8 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	private String getInfeasiblesStatistics() {
 		String unit = StatisticsElements.INFEASIBLES;
-		int total = getTotalTestRequirements();
 		int infeasibles = getInfeasible();
-		String percentage = getPercentage(infeasibles, total);
-		return totalOutpu(unit, infeasibles, total, percentage);
+		return totalOutpu(unit, infeasibles, 0, "");
 	}
 	
 	
@@ -196,7 +194,10 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	
 	private String totalOutpu(String unit, int passed, int total, String percentage) {
 		if(unit.equals(StatisticsElements.INFEASIBLES))
-			return "Total of " + unit + " paths: " + passed + " of " + total + " (" + percentage + ")";
+			return "Total of " + unit + " paths: " + passed;
+		if(unit.equals(StatisticsElements.TESTREQUIREMENTS)) 
+			if(getInfeasible() != 0)
+				return "Total of " + unit + " covered for all tests: " + passed + " of " + total + " (total) - " + getInfeasible() + " (infeasibles) " + " (" + getPercentage(passed, total - getInfeasible()) + ")";
 		return "Total of " + unit + " covered for all tests: " + passed + " of " + total + " (" + percentage + ")";
 	}
 

@@ -26,7 +26,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public void createFieldEditors() {
 		addField(new FileFieldEditor(Preferences.DOT_PATH, Preferences.DOT_PATH_LABEL, getFieldEditorParent()));
-		
+//		addField(new FileFieldEditor(Preferences.TOOLS_PATH, Preferences.TOOLS_PATH_LABEL, getFieldEditorParent()));
 		Link link = new Link(getFieldEditorParent(), SWT.NONE);
 		link.setText(Preferences.SUPPORT_PAGE);
 		link.addSelectionListener(new SelectionAdapter(){

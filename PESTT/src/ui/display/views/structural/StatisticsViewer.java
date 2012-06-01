@@ -91,7 +91,7 @@ public class StatisticsViewer extends AbstractTableViewer implements Observer {
 	
 	public void createColumnsToStatisticsViewer() {
 		String columnNames = TableViewers.STATISTICS; // the names of column.
-		int columnWidths = 200; // the width of column.
+		int columnWidths = 700; // the width of column.
 		TableViewerColumn col = createColumnsHeaders(statisticsViewer, columnNames, columnWidths, 0);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			
