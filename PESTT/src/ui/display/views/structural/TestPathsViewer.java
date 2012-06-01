@@ -30,7 +30,6 @@ import ui.constants.Description;
 import ui.constants.TableViewers;
 import adt.graph.Graph;
 import adt.graph.Path;
-import domain.events.AutomaticTestPathChangedEvent;
 import domain.events.TestPathChangedEvent;
 
 public class TestPathsViewer extends AbstractTableViewer implements Observer {
@@ -58,21 +57,23 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			for(Path<Integer> path : ((TestPathChangedEvent) data).testPathSet)
-				testPaths.add(path);
-			if(testPaths.size() > 1)
-				testPaths.add(Description.TOTAL);
-			testPathhsViewer.setInput(testPaths);
-			addTooltips();
-		} else if(data instanceof AutomaticTestPathChangedEvent) {
-			List<Object> testPaths = new ArrayList<Object>();
-			for(Path<Integer> path : ((AutomaticTestPathChangedEvent) data).testPathSet)
+			Set<Path<Integer>> paths = getPathSet(data);
+			for(Path<Integer> path : paths)
 				testPaths.add(path);
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
 			addTooltips();
 		}
+	}
+	
+	private Set<Path<Integer>> getPathSet(Object data) {
+		Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
+		for(Path<Integer> path : ((TestPathChangedEvent) data).testPathSet)
+			set.add(path);
+		for(Path<Integer> path : ((TestPathChangedEvent) data).manuallyAdded)
+			set.add(path);
+		return set;
 	}
 
 	public void dispose() {

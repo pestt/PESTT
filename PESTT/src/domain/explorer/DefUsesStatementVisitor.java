@@ -93,7 +93,9 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	public void endVisit(Assignment node) {
 		if(stored.size() > 1)
 			addToUses();
-		addToDefs();
+		if(!node.getOperator().toString().equals("="))
+			uses.add(stored.peek());
+		addToDefs();		
 	}
 
 	@Override

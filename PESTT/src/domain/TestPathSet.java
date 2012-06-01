@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import adt.graph.Path;
-import domain.events.AutomaticTestPathChangedEvent;
 import domain.events.TestPathChangedEvent;
 
 public class TestPathSet extends Observable {
@@ -19,7 +18,6 @@ public class TestPathSet extends Observable {
 	}
 
 	public void add(Path<Integer> newTestPath) {
-		testPathSet.add(newTestPath);
 		manuallyTestPathSet.add(newTestPath);
 		setChanged();
 		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
@@ -28,7 +26,7 @@ public class TestPathSet extends Observable {
 	public void addAutomatic(Path<Integer> newTestPath) {
 		testPathSet.add(newTestPath);
 		setChanged();
-		notifyObservers(new AutomaticTestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 
 	public void remove(Set<Path<Integer>> selectedTestPaths) {
@@ -40,7 +38,20 @@ public class TestPathSet extends Observable {
 		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 	
-	public void clear() {
+	public void clearAutomatic() {
+		testPathSet.clear();
+		setChanged();
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+	}
+	
+	public void clearManually() {
+		manuallyTestPathSet.clear();
+		setChanged();
+		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+	}
+	
+	
+	public void clearAll() {
 		testPathSet.clear();
 		manuallyTestPathSet.clear();
 		setChanged();

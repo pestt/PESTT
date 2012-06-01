@@ -103,8 +103,16 @@ public class TestPathController extends Observable {
 		selectTestPath(null);
 	}
 	
+	public void clearAutomaticTestPaths() {
+		testPathSet.clearAutomatic();
+	}
+	
+	public void clearManuallyTestPaths() {
+		testPathSet.clearManually();
+	}
+
 	public void cleanTestPathSet() {
-		testPathSet.clear();
+		testPathSet.clearAll();
 		tooltips.clear();
 	}
 

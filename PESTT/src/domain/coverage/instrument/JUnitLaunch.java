@@ -47,6 +47,7 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 //		if(toolsLocation != null && !toolsLocation.equals(Description.EMPTY)) {
 			Activator.getDefault().getBytemanController().createScripts();
 			Activator.getDefault().getBytemanController().addListener();
+			Activator.getDefault().getTestPathController().clearAutomaticTestPaths();
 			super.launch(editor, mode);		
 			IEditorPart part = Activator.getDefault().getEditorController().getEditorPart();
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
