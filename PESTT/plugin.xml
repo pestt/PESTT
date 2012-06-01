@@ -1256,6 +1256,18 @@
           modes="run, debug">
        <contextualLaunch>
           <enablement>
+          		<with variable="selection">
+					<count value="1">
+					</count>
+					<iterate>
+						<adapt type="org.eclipse.jdt.core.IJavaElement">
+							<test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+							<test property="org.eclipse.jdt.core.isInJavaProject"/>
+							<test property="org.eclipse.jdt.core.hasTypeOnClasspath" value="junit.framework.Test"/>
+							<test property="org.eclipse.jdt.junit.canLaunchAsJUnit" forcePluginActivation="true"/>
+						</adapt>
+					</iterate>
+               </with>
           </enablement>
        </contextualLaunch>
        <configurationType
