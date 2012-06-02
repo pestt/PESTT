@@ -40,7 +40,6 @@ public class DefUsesSet extends Observable implements Observer {
 		Activator.getDefault().getTestRequirementController().deleteObserverTestRequirement(this);
 	}
 	
-	
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void update(Observable obs, Object data) {
@@ -166,12 +165,15 @@ public class DefUsesSet extends Observable implements Observer {
 					if(begin == path.from()) 
 						for(Object use : uses) {
 							Node<Integer> end = null;
-							if(use instanceof Edge<?>)
-								end = ((Edge<Integer>) use).getEndNode();
-							else if(use instanceof Node<?>)
+							if(use instanceof Node<?>) {
 								end = ((Node<Integer>) use);
-							if(end == path.to()) 
-								paths.add(path);
+								if(end == path.to()) 
+									paths.add(path);
+							} else if(use instanceof Edge<?>) {
+								end = ((Edge<Integer>) use).getEndNode();
+								if(path.isEdgeOfPath((Edge<Integer>) use) && end == path.to() )
+									paths.add(path);
+							}
 						}
 				}
 				break;

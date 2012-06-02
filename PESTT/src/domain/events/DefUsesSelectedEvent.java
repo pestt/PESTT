@@ -1,7 +1,5 @@
 package domain.events;
 
-
-
 public class DefUsesSelectedEvent {
 	
 	public final Object selectedDefUse;
