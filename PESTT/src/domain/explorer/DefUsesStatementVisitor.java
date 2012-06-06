@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SwitchCase;
@@ -68,6 +69,14 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	
 	@Override
 	public boolean visit(QualifiedName node) {
+		uses.add(node.getQualifier().toString());
+		if(node.getName().resolveBinding().getKind() == IBinding.VARIABLE) {
+			IJavaElement javaElement = node.getName().resolveBinding().getJavaElement();
+			if(javaElement.getElementType() == IJavaElement.FIELD) 
+				stored.push(THIS + node.getName().toString());
+			else
+				stored.push(node.getName().toString());
+		}
 		return false;
 	}
 	
@@ -213,6 +222,12 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	public boolean visit(SwitchCase node) {
 		node.getExpression().accept(this);
 		return false;
+	}
+	
+	@Override
+	public void endVisit(ReturnStatement node) {
+		while(!stored.isEmpty())
+			addToUses();
 	}
 	
 	private void addToDefs() {

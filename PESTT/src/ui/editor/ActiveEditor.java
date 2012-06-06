@@ -263,7 +263,7 @@ public class ActiveEditor implements Observer {
 	private void setJavadocAnnotation(CompilationUnit unit, MethodDeclaration method, String criteria, String tour, Iterable<AbstractPath<Integer>> infeasibles, Iterable<Path<Integer>> testRequireents, Iterable<Path<Integer>> testPath) {	
 		boolean temp = updated;
 		Javadoc javadoc = method.getAST().newJavadoc();
-		method.setJavadoc(javadoc);
+		method.setJavadoc(javadoc);		
 		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
 		createTag(method, JavadocTagAnnotations.TOUR_TYPE, tour, javadoc);
 		for(AbstractPath<Integer> path : infeasibles)
