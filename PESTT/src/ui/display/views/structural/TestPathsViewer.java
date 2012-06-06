@@ -119,6 +119,8 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 						testPaths.add((Path<Integer>) obj);
 				if(hasTotal) {
 					testPaths.clear();
+					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPathsManuallyAdded())
+						testPaths.add(path);
 					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
 						testPaths.add(path);
 				}	

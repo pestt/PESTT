@@ -65,32 +65,19 @@ public class InputDialog extends Dialog {
 
 	private void createContents(final Shell shell) {
 		shell.setLayout(new GridLayout(2, true));
-		Label label = new Label(shell, SWT.NONE);
+		Label label = new Label(shell, SWT.BORDER);
 		label.setText(message);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
-		final Text text = new Text(shell, SWT.BORDER); // Display the input box.
+		final Text text = new Text(shell, SWT.NONE); // Display the input box.
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
 		text.setText(input);
 
-		// Create the OK button and add a handler.
-		Button ok = new Button(shell, SWT.PUSH);
 		StatusImages images = new StatusImages();
-		Image okImage = images.getImage().get(Images.PASS);
-		ok.setImage(okImage);
-		ok.setText("OK");
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		ok.setLayoutData(data);
-		ok.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				input = text.getText();
-				shell.close();
-			}
-		});
 
 		// Create the cancel button and add a handler.
 		Button cancel = new Button(shell, SWT.PUSH);
@@ -105,6 +92,20 @@ public class InputDialog extends Dialog {
 				shell.close();
 			}
 		});
+		
+		// Create the OK button and add a handler.
+				Button ok = new Button(shell, SWT.PUSH);
+				Image okImage = images.getImage().get(Images.PASS);
+				ok.setImage(okImage);
+				ok.setText("OK");
+				data = new GridData(GridData.FILL_HORIZONTAL);
+				ok.setLayoutData(data);
+				ok.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent event) {
+						input = text.getText();
+						shell.close();
+					}
+				});
 
 		// Set the OK button as the default, so user can type input and press Enter to dismiss
 		shell.setDefaultButton(ok);

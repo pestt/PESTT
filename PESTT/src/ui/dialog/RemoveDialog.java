@@ -69,9 +69,24 @@ public class RemoveDialog extends Dialog {
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
-		// Create the OK button and add a handler.
-		Button yes = new Button(shell, SWT.PUSH);
 		StatusImages images = new StatusImages();
+
+		// Create the NO button and add a handler.
+		Button no = new Button(shell, SWT.PUSH);
+		Image cancelImage = images.getImage().get(Images.FAIL);
+		no.setImage(cancelImage);
+		no.setText("No");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		no.setLayoutData(data);
+		no.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				input = null;
+				shell.close();
+			}
+		});
+		
+		// Create the YES button and add a handler.
+		Button yes = new Button(shell, SWT.PUSH);	
 		Image okImage = images.getImage().get(Images.PASS);
 		yes.setImage(okImage);
 		yes.setText("Yes");
@@ -80,20 +95,6 @@ public class RemoveDialog extends Dialog {
 		yes.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				input = "";
-				shell.close();
-			}
-		});
-
-		// Create the cancel button and add a handler.
-		Button cancel = new Button(shell, SWT.PUSH);
-		Image cancelImage = images.getImage().get(Images.FAIL);
-		cancel.setImage(cancelImage);
-		cancel.setText("No");
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		cancel.setLayoutData(data);
-		cancel.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				input = null;
 				shell.close();
 			}
 		});

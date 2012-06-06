@@ -77,7 +77,11 @@ public class RefreshHandler extends AbstractHandler {
 			viewDataFlowCriteria = (ViewDataFlowCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_DATA_FLOW_COVERAGE);
 			viewStructuralCriteria = (ViewStructuralCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_STRUCTURAL_COVERAGE);
 			viewGraphCoverageCriteria = (ViewGraphCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH_COVERAGE_CRITERIA); // get the view graph.
+			viewLogicCoverageCriteria = (ViewLogicCoverageCriteria) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_LOGIC_COVERAGE_CRITERIA);
 			viewGraph = (ViewGraph) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(Description.VIEW_GRAPH); // get the view graph.
+		} else {
+			Activator.getDefault().getCFGController().refreshStructuralCoverageGraph();
+			Activator.getDefault().getCFGController().refreshLogicCoverageGraph();
 		}
 	}
 	
