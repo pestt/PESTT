@@ -41,6 +41,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ui.constants.Description;
@@ -125,8 +126,11 @@ public class ActiveEditor implements Observer {
 	
 	private void deleteChangeListener() {
 		IEditorInput input = editor.getEditorInput();
-		if(editor != null && listener != null && input != null)
-			editor.getDocumentProvider().getDocument(input).removePrenotifiedDocumentListener(listener);
+		if(editor != null && listener != null && input != null) {
+			IDocumentProvider provider = editor.getDocumentProvider();
+			if(provider != null)
+				provider.getDocument(input).removePrenotifiedDocumentListener(listener);
+		}
 	}
 	
 	public IEditorPart getEditorPart() {
@@ -245,6 +249,7 @@ public class ActiveEditor implements Observer {
 				   data instanceof TourChangeEvent ||
 				   data instanceof TestRequirementChangedEvent ||
 				   data instanceof TestPathChangedEvent) {
+						marker.deleteAllMarkers();
 						String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
 						String tour = Activator.getDefault().getTestPathController().getSelectedTourType().toString();
 						Iterable<AbstractPath<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();

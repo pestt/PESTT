@@ -38,6 +38,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	private TableViewer testPathhsViewer;
 	private Control testPathsControl; // control of executedGraphViewer.
 	private IWorkbenchPartSite site;
+	private Listener listener;
 	
 	public TestPathsViewer(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
@@ -57,21 +58,23 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			Set<Path<Integer>> paths = getPathSet(data);
+			Set<Path<Integer>> paths = getPathSet(((TestPathChangedEvent) data).testPathSet, ((TestPathChangedEvent) data).manuallyAdded);
 			for(Path<Integer> path : paths)
 				testPaths.add(path);
 			if(testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
+			if(listener != null)
+				testPathhsViewer.getTable().removeListener(SWT.MouseHover, listener);
 			addTooltips();
 		}
 	}
 	
-	private Set<Path<Integer>> getPathSet(Object data) {
+	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic, Iterable<Path<Integer>> manually) {
 		Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
-		for(Path<Integer> path : ((TestPathChangedEvent) data).testPathSet)
+		for(Path<Integer> path : automatic)
 			set.add(path);
-		for(Path<Integer> path : ((TestPathChangedEvent) data).manuallyAdded)
+		for(Path<Integer> path : manually)
 			set.add(path);
 		return set;
 	}
@@ -130,20 +133,20 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	}
 	
 	private void addTooltips() {
-		Listener listener =  new Listener() {
+		listener =  new Listener() {
 			
 			public void handleEvent(Event event) {
 				Point coords = new Point(event.x, event.y);
 				TableItem item = testPathhsViewer.getTable().getItem(coords);
-				Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().getTestPaths().iterator();
+				Set<Path<Integer>> set = getPathSet(Activator.getDefault().getTestPathController().getTestPaths(), Activator.getDefault().getTestPathController().getTestPathsManuallyAdded());
+				Iterator<Path<Integer>> iterator = set.iterator();
 				Path<Integer> path = null;
 				for(TableItem i : testPathhsViewer.getTable().getItems())  
 					if(iterator.hasNext()) {
 						path = iterator.next();
 						if(i == item)
 							break;
-					} else 
-						path = null;
+					}
 				if(path != null)
 					testPathhsViewer.getTable().setToolTipText(Activator.getDefault().getTestPathController().getTooltip(path));
 				else

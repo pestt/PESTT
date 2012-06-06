@@ -43,7 +43,7 @@ public class BytemanController implements Observer {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
-					getExecutedtestPaths();
+					getExecutedTestPaths();
 					deleteScripts();
 				} 
 			});
@@ -175,7 +175,7 @@ public class BytemanController implements Observer {
 	}
 	
 	
-	private void getExecutedtestPaths() {
+	private void getExecutedTestPaths() {
 		List<Path<Integer>> paths = getExecutedPaths();
 		for(int i = 0; i < paths.size(); i++) {
 			Path<Integer> newTestPath = paths.get(i);

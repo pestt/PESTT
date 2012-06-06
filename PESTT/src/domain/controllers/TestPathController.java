@@ -62,15 +62,21 @@ public class TestPathController extends Observable {
 	}
 	
 	public void addAutomaticTestPath(Path<Integer> newTestPath, String tooltip) {
-		insertTooltip(newTestPath,tooltip);
-		testPathSet.addAutomatic(newTestPath);
+		boolean update = insertTooltip(newTestPath,tooltip);
+		if(!update) {
+			Activator.getDefault().getEditorController().setListenUpdates(false);
+			testPathSet.addAutomatic(newTestPath);
+			Activator.getDefault().getEditorController().setListenUpdates(true);
+		} else 
+			testPathSet.addAutomatic(newTestPath);
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
 		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
 		selectTestPath(null);
 	}
 	
-	private void insertTooltip(Path<Integer> path, String tooltip) {
+	private boolean insertTooltip(Path<Integer> path, String tooltip) {
+		boolean update = false;
 		Path<Integer> remove = null;
 		for(Path<Integer> current : tooltips.keySet())
 			if(current.toString().equals(path.toString())) {
@@ -80,6 +86,7 @@ public class TestPathController extends Observable {
 						set.add(current);
 						testPathSet.remove(set);
 						remove = current;
+						update = true;
 						break;
 					}	
 				path = current;
@@ -88,6 +95,7 @@ public class TestPathController extends Observable {
 		if(remove != null)
 			tooltips.remove(remove);
 		tooltips.put(path, tooltip);
+		return update;
 	}
 	
 	public String getTooltip(Path<Integer> path) {
@@ -104,10 +112,14 @@ public class TestPathController extends Observable {
 	}
 	
 	public void clearAutomaticTestPaths() {
+		for(Path<Integer> path : testPathSet.getTestPaths())
+			tooltips.remove(path);
 		testPathSet.clearAutomatic();
 	}
 	
 	public void clearManuallyTestPaths() {
+		for(Path<Integer> path : testPathSet.getTestPathsManuallyAdded())
+			tooltips.remove(path);
 		testPathSet.clearManually();
 	}
 
