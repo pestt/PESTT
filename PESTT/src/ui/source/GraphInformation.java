@@ -1,5 +1,6 @@
 package ui.source;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,6 +13,12 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.ISelectionListener;
@@ -89,14 +96,55 @@ public class GraphInformation {
 						List<ASTNode> instructions = getASTNodes(map);
 						if(instructions != null) 
 							regionToSelect(instructions, MarkersType.LINK_MARKER); // select the area in the editor.
-						else 
-							Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+					}
+				} else if(item instanceof GraphConnection) {
+					adt.graph.Node<Integer> node = sourceGraph.getNode(Integer.parseInt(((GraphConnection) item).getSource().getText()));
+					sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
+					HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
+					if(map != null) {
+						List<ASTNode> instructions = getASTNodes(map);
+						if(instructions != null && isProgramStatement(instructions)) {
+							List<ASTNode> exp = getExpression(instructions);
+							regionToSelect(exp, MarkersType.LINK_MARKER); // select the area in the editor.
+						}
 					}
 				}
 		} else 
 			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 	
+	private List<ASTNode> getExpression(List<ASTNode> instructions) {
+		List<ASTNode> exps = new ArrayList<ASTNode>();
+		ASTNode instruction = instructions.get(0);
+		switch(instruction.getNodeType()) {
+			case ASTNode.IF_STATEMENT:
+				IfStatement ifExp = (IfStatement) instruction;
+				exps.add((ASTNode) ifExp.getExpression());
+				break;
+			case ASTNode.DO_STATEMENT:
+				DoStatement doExp = (DoStatement) instruction;
+				exps.add((ASTNode) doExp.getExpression());
+				break;
+			case ASTNode.FOR_STATEMENT:
+				ForStatement forExp = (ForStatement) instruction;
+				exps.add((ASTNode) forExp.getExpression());
+				break;
+			case ASTNode.ENHANCED_FOR_STATEMENT:
+				EnhancedForStatement forEachExp = (EnhancedForStatement) instruction;
+				exps.add((ASTNode) forEachExp.getExpression());
+				break;
+			case ASTNode.SWITCH_STATEMENT:
+				SwitchStatement switchExp = (SwitchStatement) instruction;
+				exps.add((ASTNode) switchExp.getExpression());
+				break;
+			case ASTNode.WHILE_STATEMENT:
+				WhileStatement whileExp = (WhileStatement) instruction;
+				exps.add((ASTNode) whileExp.getExpression());
+				break;
+		}
+		return exps;
+	}
+
 	private void addInformationToLayers2_3_4(String value) {
 		setLayerInformation(Layer.EMPTY); // clean previous informations.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
@@ -171,14 +219,24 @@ public class GraphInformation {
 			sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null) {
-				List<ASTNode> nodesInstructions = getASTNodes(map);
+				List<ASTNode> instructions = getASTNodes(map);
 				Entry<ASTNode, Line> entry = map.entrySet().iterator().next();	
 				String colorStatus = data.getLineStatus(entry.getValue().getStartLine());
 				if(colorStatus != null)
-					if(colorStatus.equals(Colors.GRENN_ID) && isNodeSelected(items, node))
-						regionToSelect(nodesInstructions, MarkersType.FULL_COVERAGE_MARKER); // select the area in the editor.
-					else if(colorStatus.equals(Colors.RED_ID) || !isNodeSelected(items, node) )
-						regionToSelect(nodesInstructions, MarkersType.NO_COVERAGE_MARKER); // select the area in the editor.
+					if(colorStatus.equals(Colors.GRENN_ID) && isNodeSelected(items, node)) {
+						regionToSelect(instructions, MarkersType.FULL_COVERAGE_MARKER); // select the area in the editor.
+						if(isProgramStatement(instructions)) {
+							List<ASTNode> exp = getExpression(instructions);
+							regionToSelect(exp, MarkersType.FULL_COVERAGE_MARKER);
+						}
+					}	
+					else if(colorStatus.equals(Colors.RED_ID) || !isNodeSelected(items, node)) {
+						regionToSelect(instructions, MarkersType.NO_COVERAGE_MARKER); // select the area in the editor.
+						if(isProgramStatement(instructions)) {
+							List<ASTNode> exp = getExpression(instructions);
+							regionToSelect(exp, MarkersType.NO_COVERAGE_MARKER);
+						}
+					}
 			}
 		}
 	}
@@ -293,5 +351,19 @@ public class GraphInformation {
 		if(startPosition <= position && position <= endPosition) // if a position is in his node.
 			return true;
 		return false;
+	}
+	
+	private boolean isProgramStatement(List<ASTNode> ast) {
+		switch(ast.get(0).getNodeType()) {
+			case ASTNode.IF_STATEMENT:
+			case ASTNode.DO_STATEMENT:
+			case ASTNode.FOR_STATEMENT:
+			case ASTNode.ENHANCED_FOR_STATEMENT:
+			case ASTNode.SWITCH_STATEMENT:
+			case ASTNode.WHILE_STATEMENT:
+				return true;
+			default:
+				return false;
+		}
 	}
 }

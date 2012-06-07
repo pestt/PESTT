@@ -3,7 +3,6 @@ package adt.graph;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class GraphMetadataLayer {
 	private Map<Node<?>, Object> nodeMetadata;
 	private Map<Edge<?>, Object> edgeMetadata;

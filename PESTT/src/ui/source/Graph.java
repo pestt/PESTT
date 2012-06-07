@@ -96,16 +96,16 @@ public class Graph implements Observer {
 		while(iterator.hasNext()) {
 			Entry<String, Node> entry = iterator.next();
 			Node node = entry.getValue(); // get the current node of the list.
-			GraphNode gnode = new GraphNode(graph, SWT.NONE, node.getName()); // create the graph node.
-			gnode.setBackgroundColor(node.getBackgroundColor()); // sets the node background color.
-			gnode.setForegroundColor(node.getForegroundColor()); // sets the node text color.
-			gnode.setBorderColor(Colors.BLACK); // sets the node border color to black.
-			gnode.setHighlightColor(Colors.YELLOW); // sets he highlight color.
-			gnode.setBorderHighlightColor(Colors.BLACK); // sets the node border highlight color to black.
-			adt.graph.Node<Integer> sourceNode = sourceGraph.getNode(Integer.parseInt(gnode.getText())); // the correspondent source node.
-			gnode.setData(sourceNode); // associate the visualization node with the source node.	
-			new domain.GraphInformation().addInformationToLayer0(sourceGraph, sourceNode, gnode); // associate the the nodes of sourceGraph and layoutGraph.
-			graphNodes.add(gnode); // add the node to the list.
+			GraphNode layoutNode = new GraphNode(graph, SWT.NONE, node.getName()); // create the graph node.
+			layoutNode.setBackgroundColor(node.getBackgroundColor()); // sets the node background color.
+			layoutNode.setForegroundColor(node.getForegroundColor()); // sets the node text color.
+			layoutNode.setBorderColor(Colors.BLACK); // sets the node border color to black.
+			layoutNode.setHighlightColor(Colors.YELLOW); // sets he highlight color.
+			layoutNode.setBorderHighlightColor(Colors.BLACK); // sets the node border highlight color to black.
+			adt.graph.Node<Integer> sourceNode = sourceGraph.getNode(Integer.parseInt(layoutNode.getText())); // the correspondent source node.
+			layoutNode.setData(sourceNode); // associate the visualization node with the source node.	
+			new domain.GraphInformation().addInformationToLayer0(sourceGraph, sourceNode, layoutNode); // associate the the nodes of sourceGraph and layoutGraph.
+			graphNodes.add(layoutNode); // add the node to the list.
 		}
 	}
 	
@@ -146,27 +146,55 @@ public class Graph implements Observer {
 		}
 	}
 	
+	/**
+	 * The Graph nodes.
+	 * 
+	 * @return List<GraphNode>  - The Graph nodes.
+	 */
 	public List<GraphNode> getGraphNodes() {
-		return graphNodes; // the list of connections.
+		return graphNodes; // the list of nodes.
 	}
 	
+	/**
+	 * The Graph edges.
+	 * 
+	 * @return List<GraphConnection> - The Graph edges.
+	 */
 	public List<GraphConnection> getGraphEdges() {
 		return graphEdges; // the list of connections.
 	}
 	
+	/**
+	 * DEfine the Graph Layout Algorithm.
+	 * 
+	 * @param graphElements - The Graph elements.
+	 */
 	private void setLayout(GraphElements graphElements) {
 		 graph.setLayoutAlgorithm(new GraphLayoutAlgorithm(parent, graphElements), true);
 	}
 	
+	/**
+	 * The Graph selected items.
+	 * 
+	 * @return List<GraphItem> - The Graph selected items.
+	 */
 	@SuppressWarnings("unchecked")
 	public List<GraphItem> getSelected() {
-		return graph.getSelection(); // return the list with the selected nodes.
+		return graph.getSelection();
 	}
 	
+	/**
+	 * Select the items in the Graph.
+	 * 
+	 * @param items - The items to select in the Graph.
+	 */
 	public void setSelected(GraphItem[] items) {
 		graph.setSelection(items); // the items selected.
 	}
 	
+	/**
+	 * Unselect all select items in the Graph.
+	 */
 	private void unselectAll() {
 		GraphItem[] items = {};
 		setSelected(items);
@@ -219,6 +247,9 @@ public class Graph implements Observer {
 		}
 	}
 
+	/**
+	 * Inform user that the Graph need to be updated.
+	 */
 	private void graphNeedToBeUpdate() {
 		unselectAll();
 		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
@@ -226,6 +257,9 @@ public class Graph implements Observer {
 		MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 	}
 
+	/**
+	 * Brings the Graph vuew to the top.
+	 */
 	private void bringGraphToTop() {
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
@@ -234,6 +268,11 @@ public class Graph implements Observer {
 		}
 	}
 
+	/**
+	 * Select in the Graph, the selected test requirement path.
+	 * 
+	 * @param data - The selected test requirement paths.
+	 */
 	private void selectTestRequirement(TestRequirementSelectedEvent data) {
 		bringGraphToTop();
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
@@ -242,6 +281,11 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
 	}
 	
+	/**
+	 * Select in the Graph, the selected test path.
+	 * 
+	 * @param data - The selected test paths.
+	 */
 	private void selectTestPath(TestPathSelectedEvent data) {
 		bringGraphToTop();
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
@@ -327,24 +371,12 @@ public class Graph implements Observer {
 		return total;
 	}
 	
-	private void automaticEdgeSelectopn() {
-		List<GraphItem> aux = new LinkedList<GraphItem>();
-		List<GraphItem> selected = getSelected();
-		for(GraphConnection gconnection : graphEdges) 
-			if(!selected.contains(gconnection) && selected.contains(gconnection.getSource()) && selected.contains(gconnection.getDestination())) 
-				aux.add(gconnection); 
-			
-		aux.addAll(selected);
-		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class);
-		setSelected(items);
-	}
-	
 	private void createSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 				
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(e.item != null && e.item instanceof GraphNode ) {
+				if(e.item != null && (e.item instanceof GraphNode || e.item instanceof GraphConnection)) {
 					automaticEdgeSelectopn();
 					if(Activator.getDefault().getEditorController().isEverythingMatching())
 						Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
@@ -361,6 +393,18 @@ public class Graph implements Observer {
 			}
 		};	
 		graph.addSelectionListener(event); // add the SelectionAdapter to the graph. 
+	}
+	
+	private void automaticEdgeSelectopn() {
+		List<GraphItem> aux = new LinkedList<GraphItem>();
+		List<GraphItem> selected = getSelected();
+		for(GraphConnection gconnection : graphEdges) 
+			if(!selected.contains(gconnection) && selected.contains(gconnection.getSource()) && selected.contains(gconnection.getDestination())) 
+				aux.add(gconnection); 
+			
+		aux.addAll(selected);
+		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class);
+		setSelected(items);
 	}
 	
 	private void removeSelectionListener() {
