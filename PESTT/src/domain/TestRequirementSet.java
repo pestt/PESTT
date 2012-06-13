@@ -8,6 +8,7 @@ import adt.graph.AbstractPath;
 import adt.graph.InfinitePath;
 import adt.graph.Path;
 import domain.coverage.algorithms.ICoverageAlgorithms;
+import domain.events.InfeasibleChangedEvent;
 import domain.events.TestRequirementChangedEvent;
 
 
@@ -52,13 +53,13 @@ public class TestRequirementSet extends Observable {
 	public void enableInfeasible(AbstractPath<Integer> infeasible) {
 		infeasibleSet.add(infeasible);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
+		notifyObservers(new InfeasibleChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 	
 	public void disableInfeasible(AbstractPath<Integer> infeasible) {
 		infeasibleSet.remove(infeasible);
 		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
+		notifyObservers(new InfeasibleChangedEvent(getTestRequirements(), getInfeasiblesTestRequirements(), getTestRequirementsManuallyAdded(), hasInfinitePath()));
 	}
 	
 	public boolean isInfeasible(AbstractPath<Integer> selectedTestRequirement) {

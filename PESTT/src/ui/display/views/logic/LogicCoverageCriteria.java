@@ -39,10 +39,11 @@ public class LogicCoverageCriteria implements Observer {
 
 	private void create() {
 		graph.clear();
+		removeSelectionListener();
 		setNodes();
 		setEdges();
 		setLayout();
-		createSelectionListener();
+		addSelectionListener();
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
 	}
@@ -145,7 +146,7 @@ public class LogicCoverageCriteria implements Observer {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 	}
 
-	private void createSelectionListener() {
+	private void addSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 
 			@Override
@@ -158,6 +159,11 @@ public class LogicCoverageCriteria implements Observer {
 			}
 		};	
 		graph.addSelectionListener(event);				
+	}
+	
+	private void removeSelectionListener() {
+		if(event != null)
+			graph.removeSelectionListener(event);
 	}
 
 	private GraphItem getSelected() {

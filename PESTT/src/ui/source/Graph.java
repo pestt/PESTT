@@ -248,7 +248,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Inform user that the Graph need to be updated.
+	 * Inform users that the Graph need to be updated.
 	 */
 	private void graphNeedToBeUpdate() {
 		unselectAll();
@@ -258,7 +258,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Brings the Graph vuew to the top.
+	 * Brings the Graph view to the top.
 	 */
 	private void bringGraphToTop() {
 		try {
@@ -269,7 +269,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Select in the Graph, the selected test requirement path.
+	 * Show in the Graph, the selected test requirement path.
 	 * 
 	 * @param data - The selected test requirement paths.
 	 */
@@ -282,7 +282,7 @@ public class Graph implements Observer {
 	}
 	
 	/**
-	 * Select in the Graph, the selected test path.
+	 * Show in the Graph, the selected test path.
 	 * 
 	 * @param data - The selected test paths.
 	 */
@@ -294,6 +294,9 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
 	}
 	
+	/**
+	 * Show in the Graph, the selected test path.
+	 */
 	private void selecDefUses() {
 		bringGraphToTop();
 		List<GraphItem> aux = new LinkedList<GraphItem>();
@@ -394,6 +397,10 @@ public class Graph implements Observer {
 		};	
 		graph.addSelectionListener(event); // add the SelectionAdapter to the graph. 
 	}
+		
+	private void removeSelectionListener() {
+		graph.removeSelectionListener(event); // remove the SelectionAdapter from the graph.
+	}
 	
 	private void automaticEdgeSelectopn() {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
@@ -405,9 +412,5 @@ public class Graph implements Observer {
 		aux.addAll(selected);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class);
 		setSelected(items);
-	}
-	
-	private void removeSelectionListener() {
-		graph.removeSelectionListener(event); // remove the SelectionAdapter from the graph.
 	}
 }

@@ -3,6 +3,7 @@ package ui.editor;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +29,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -39,18 +39,17 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
-import ui.constants.Messages;
 import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.SourceGraph;
+import domain.events.InfeasibleChangedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
@@ -71,13 +70,8 @@ public class ActiveEditor implements Observer {
 	public ActiveEditor() {
 		listenUpdates = true;
 		updated = true;
-		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
-		Activator.getDefault().getTestPathController().addObserverTestPath(this);
-		Activator.getDefault().getTestPathController().addObserver(this);
 		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		editor = (ITextEditor) part; // obtain the text editor.
-		addChangeListener();
 		ISelection select = editor.getSelectionProvider().getSelection(); // the selected text.
 		textSelect = (ITextSelection) select; // get the text selected.
 		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the file
@@ -93,8 +87,12 @@ public class ActiveEditor implements Observer {
 		}
 	}
 	
-	public void setListenUpdates(boolean listenUpdates) {
-		this.listenUpdates = listenUpdates;
+	public void addObservers() {
+		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
+		Activator.getDefault().getTestPathController().addObserverTestPath(this);
+		Activator.getDefault().getTestPathController().addObserver(this);
+		addChangeListener();
 	}
 	
 	public void deleteObservers() {
@@ -131,6 +129,10 @@ public class ActiveEditor implements Observer {
 			if(provider != null)
 				provider.getDocument(input).removePrenotifiedDocumentListener(listener);
 		}
+	}
+	
+	public void setListenUpdates(boolean listenUpdates) {
+		this.listenUpdates = listenUpdates;
 	}
 	
 	public IEditorPart getEditorPart() {
@@ -246,6 +248,7 @@ public class ActiveEditor implements Observer {
 			MethodDeclaration method = getMethodDeclaration(unit);
 			if(method != null && Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 				if(data instanceof TestRequirementSelectedCriteriaEvent  ||
+				   data instanceof InfeasibleChangedEvent || 
 				   data instanceof TourChangeEvent ||
 				   data instanceof TestRequirementChangedEvent ||
 				   data instanceof TestPathChangedEvent) {
@@ -253,40 +256,118 @@ public class ActiveEditor implements Observer {
 						String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
 						String tour = Activator.getDefault().getTestPathController().getSelectedTourType().toString();
 						Iterable<AbstractPath<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
-						Iterable<Path<Integer>> manuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
-						Iterable<Path<Integer>> testPath = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
-						setJavadocAnnotation(unit, method, criteria, tour, infeasibles, manuallyAdded, testPath);		
+						Iterable<Path<Integer>> testRequirementsManuallyAdded = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+						Iterable<Path<Integer>> testPathManuallyAdded = Activator.getDefault().getTestPathController().getTestPathsManuallyAdded();
+						setJavadocAnnotation(unit, method, criteria, tour, infeasibles, testRequirementsManuallyAdded, testPathManuallyAdded);		
 				}
 		}
 	}
 	
+	/***
+	 * Update the method Javadoc annotations.
+	 * 
+	 * @param unit - The current CompilationUnit.
+	 * @param method - The method in use.
+	 * @param criteria - The selected coverage criteria.
+	 * @param tour - The tour in use.
+	 * @param infeasibles - The infeasible paths identified.
+	 * @param testRequireents - The Test Requirements manually added to Test Requirement set. 
+	 * @param testPath - The Test Paths manually added to Test Path set. 
+	 */
 	private void setJavadocAnnotation(CompilationUnit unit, MethodDeclaration method, String criteria, String tour, Iterable<AbstractPath<Integer>> infeasibles, Iterable<Path<Integer>> testRequireents, Iterable<Path<Integer>> testPath) {	
 		boolean temp = updated;
-		Javadoc javadoc = method.getAST().newJavadoc();
-		method.setJavadoc(javadoc);		
-		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA, criteria, javadoc);
-		createTag(method, JavadocTagAnnotations.TOUR_TYPE, tour, javadoc);
-		for(AbstractPath<Integer> path : infeasibles)
-			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH, path.toString(), javadoc);
-		for(Path<Integer> path : testRequireents)
-			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, path.toString(), javadoc);
-		for(Path<Integer> path : testPath)
-			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, path.toString(), javadoc); 
+		Javadoc javadoc = getJavadoc(method);
+		List<String> input = new ArrayList<String>();
+		input.add(criteria);
+		createTag(method, JavadocTagAnnotations.COVERAGE_CRITERIA.getTag(), getTextInput(method, input), javadoc);
+		input.clear();
+		input.add(tour);
+		createTag(method, JavadocTagAnnotations.TOUR_TYPE.getTag(), getTextInput(method, input), javadoc);
+		input.clear();
+		for(AbstractPath<Integer> path : infeasibles) {
+			input.add(path.toString());
+			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH.getTag(), getTextInput(method, input), javadoc);		
+			input.clear();
+		}
+		for(Path<Integer> path : testRequireents) {
+			input.add(path.toString());
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag(), getTextInput(method, input), javadoc);
+			input.clear();
+		}
+		for(Path<Integer> path : testPath) {
+			input.add(path.toString());
+			createTag(method, JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag(), getTextInput(method, input), javadoc); 
+			input.clear();
+		}		
 		applychanges(unit);
 		updated = temp;
 		verifyChanges(method);
 	}
+	
+	private List<TextElement> getTextInput(MethodDeclaration method, List<String> inputs) {
+		List<TextElement> input = new ArrayList<TextElement>();
+		for(String text : inputs) {
+			TextElement newText = method.getAST().newTextElement();
+			newText.setText(text);
+			input.add(newText);
+		}
+		return input;
+	}
 
 	@SuppressWarnings("unchecked")
-	private void createTag(MethodDeclaration method, JavadocTagAnnotations tagAnnotation, String input, Javadoc javadoc) {
+	private void createTag(MethodDeclaration method, String tagAnnotation, List<TextElement> input, Javadoc javadoc) {
 		TagElement newTag = method.getAST().newTagElement();
-		newTag.setTagName(tagAnnotation.getTag());
-		TextElement newText = method.getAST().newTextElement();
-		newText.setText(input);
-		newTag.fragments().add(newText);
+		newTag.setTagName(tagAnnotation);
+		newTag.fragments().addAll(input);
 		javadoc.tags().add(newTag);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Javadoc getJavadoc(MethodDeclaration method) {
+		List<TagElement> currentTags = method.getJavadoc().tags();
+		List<TagElement> tagToKeep = new ArrayList<TagElement>();
+ 		for(TagElement tag : currentTags)
+ 			if(tag.getTagName() != null) {
+				if(!tag.getTagName().equals(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()) &&
+				   !tag.getTagName().equals(JavadocTagAnnotations.TOUR_TYPE.getTag()) &&
+				   !tag.getTagName().equals(JavadocTagAnnotations.INFEASIBLE_PATH.getTag()) &&
+				   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()) &&
+				   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()))
+						tagToKeep.add(tag);
+ 			} else
+ 				tagToKeep.add(tag);
+ 		Javadoc javadoc = method.getAST().newJavadoc();
+ 		method.setJavadoc(javadoc);
+ 		if(!tagToKeep.isEmpty()) {
+ 			List<String> input = new ArrayList<String>();
+ 			input.add("");
+ 			createTag(method, null,  getTextInput(method, input), javadoc);
+	 		for(TagElement tag : tagToKeep) {
+	 			List<TextElement> fragments = tag.fragments();
+	 			input.clear();
+	 			for(TextElement text : fragments)
+	 				if(tag.getTagName() != null) {
+	 					if(fragments.indexOf(text) == 0)
+	 						input.add(text.getText().substring(1, text.getText().length()) + "\n *");
+	 					else if(fragments.indexOf(text) == fragments.size() - 1)
+	 						input.add(text.getText());
+	 					else
+	 						input.add(text.getText() + "\n *");
+	 				} else {
+	 					if(fragments.indexOf(text) == fragments.size() - 1)
+	 						input.add(text.getText());
+	 					else
+	 						input.add(text.getText() + "\n *");
+	 				}
+	 			createTag(method, tag.getTagName(),  getTextInput(method, input), javadoc);
+	 		}
+	 		input.clear();
+	 		input.add("");
+ 			createTag(method, null,  getTextInput(method, input), javadoc);
+ 		}
+ 		return javadoc; 		
+	}
+
 	private void applychanges(CompilationUnit unit) {		
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		TextEdit edit = unit.rewrite(document, javaProject.getOptions(true));
@@ -311,11 +392,8 @@ public class ActiveEditor implements Observer {
 			SourceGraph source = new SourceGraph(); 
 			source.create(compilationUnit, getSelectedMethod());
 			Activator.getDefault().getSourceGraphController().updateMetadataInformation(source.getSourceGraph());
-		} else {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
-			updated = true;
-		}
+		} else
+			updated = false;
 	}
 	
 	private byte[] getMethodHash(MethodDeclaration method) {

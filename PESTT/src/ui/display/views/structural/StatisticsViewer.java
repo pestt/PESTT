@@ -64,21 +64,24 @@ public class StatisticsViewer extends AbstractTableViewer implements Observer {
 				statistics.add(iterator.next());
 			statisticsViewer.setInput(statistics);
 		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
-			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-			if(selectedTestPaths != null)
-				if(!selectedTestPaths.isEmpty())
-					if(!containsSequencePaths())
-						Activator.getDefault().getTestPathController().getStatistics();
-					else {
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						MessageDialog.openInformation(window.getShell(), Messages.STATISTICS_TITLE, Messages.STATISTICS_MSG + "\n" + Messages.STATISTICS_REASON_MSG);
-						List<String> msg = new ArrayList<String>();
-						msg.add(Messages.STATISTICS_MSG);
-						msg.add(Messages.STATISTICS_REASON_MSG);
-						statisticsViewer.setInput(msg);
-					}
-				else
-					Activator.getDefault().getStatisticsController().cleanStatisticsSet();
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
+				if(selectedTestPaths != null)
+					if(!selectedTestPaths.isEmpty())
+						if(!containsSequencePaths())
+							Activator.getDefault().getTestPathController().getStatistics();
+						else {
+							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+							MessageDialog.openInformation(window.getShell(), Messages.STATISTICS_TITLE, Messages.STATISTICS_MSG + "\n" + Messages.STATISTICS_REASON_MSG);
+							List<String> msg = new ArrayList<String>();
+							msg.add(Messages.STATISTICS_MSG);
+							msg.add(Messages.STATISTICS_REASON_MSG);
+							statisticsViewer.setInput(msg);
+						}
+					else
+						Activator.getDefault().getStatisticsController().cleanStatisticsSet();
+			} else
+				Activator.getDefault().getStatisticsController().cleanStatisticsSet();
 		} else if(data instanceof TestPathChangedEvent)
 			Activator.getDefault().getStatisticsController().cleanStatisticsSet();
 		else if(data instanceof TestRequirementChangedEvent) 

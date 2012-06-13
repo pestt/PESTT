@@ -43,6 +43,7 @@ public class RefreshHandler extends AbstractHandler {
 		if(Activator.getDefault().getEditorController().getActiveEditor() != null)
 			Activator.getDefault().getEditorController().getActiveEditor().deleteObservers();
 		Activator.getDefault().getEditorController().setEditor(new ActiveEditor());
+		Activator.getDefault().getEditorController().getActiveEditor().addObservers();
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getEditorController().isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();

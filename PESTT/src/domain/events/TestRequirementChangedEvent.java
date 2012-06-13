@@ -10,10 +10,10 @@ public class TestRequirementChangedEvent {
 	public final Iterable<AbstractPath<Integer>> infeasigles;
 	public final boolean hasInfinitePath;
 	
-	public TestRequirementChangedEvent(Iterable<AbstractPath<Integer>> iterable, Iterable<AbstractPath<Integer>> iterable2, Iterable<Path<Integer>> manuallyAdded, boolean hasInfinitePath) {
-		this.testRequirementSet = iterable;
+	public TestRequirementChangedEvent(Iterable<AbstractPath<Integer>> testRequirementSet, Iterable<AbstractPath<Integer>> infeasigles, Iterable<Path<Integer>> manuallyAdded, boolean hasInfinitePath) {
+		this.testRequirementSet = testRequirementSet;
 		this.manuallyAdded = manuallyAdded;
-		this.infeasigles = iterable2;
+		this.infeasigles = infeasigles;
 		this.hasInfinitePath = hasInfinitePath;
 	}
 }

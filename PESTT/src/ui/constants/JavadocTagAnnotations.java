@@ -11,7 +11,7 @@ public enum JavadocTagAnnotations {
 	
 	private final String tag;
 	
-	JavadocTagAnnotations(String tag) {
+	private JavadocTagAnnotations(String tag) {
 		this.tag = tag;
 	}
 	

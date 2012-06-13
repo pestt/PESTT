@@ -9,9 +9,6 @@ import java.util.TreeSet;
 import main.activator.Activator;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -73,12 +70,15 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 			cleanPathStatus();
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
 		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
-			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-			if(selectedTestPaths != null)
-				if(!selectedTestPaths.isEmpty())
-					setPathStatus();
-				else
-					cleanPathStatus();
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
+				if(selectedTestPaths != null)
+					if(!selectedTestPaths.isEmpty())
+						setPathStatus();
+					else
+						cleanPathStatus();
+			} else
+				cleanPathStatus();
 		} else if(data instanceof TestPathChangedEvent) 
 			cleanPathStatus();
 		else if(data instanceof DefUsesSelectedEvent) {
@@ -94,6 +94,9 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		testRequirementsControl.dispose();
 	}
 
+	/***
+	 * Create the table columns.
+	 */
 	private void createColumnsToTestRequirement() {
 		String[] columnNames = new String[] {TableViewers.INFEASIBLE, TableViewers.STATUS, TableViewers.TEST_REQUIREMENTS}; // the names of columns.
 		int[] columnWidths = new int[] {80, 55, 200}; // the width of columns.
@@ -116,7 +119,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 			}
 		});
 
-		// third column is for test paths.
+		// third column is for test requirement paths.
 		col = createColumnsHeaders(testRequirementsViewer, columnNames[2], columnWidths[2], 2);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
@@ -128,6 +131,9 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		});
 	}
 	
+	/***
+	 * Clears all visual status (Colors and images).
+	 */
 	private void cleanPathStatus() {
 		int n = 0;
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
@@ -141,6 +147,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		}
 	}
 
+	/***
+	 * Sets the visual status for the test requirements according to the selected test path.
+	 * The visual status to the test requirements are:
+	 * - Green (Background and pass icon) if the test requirement is covered by the test path.
+	 * - Red (Background and cross icon) if the test requirement is not covered by the test path.
+	 * - Blue (Background and pass icon) if the test requirement is infeasible.
+	 */
 	private void setPathStatus() {
 		int n = 0;
 		StatusImages images = new StatusImages();
@@ -165,6 +178,11 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		}
 	}
 	
+	/***
+	 * Mark all infeasible path in the view.
+	 * 
+	 * @param infeasigles - The set of infeasible path.
+	 */
 	private void setInfeasibles(Iterable<AbstractPath<Integer>> infeasigles) {
 		for(AbstractPath<Integer> path : infeasigles) 
 			for(TableItem item : testRequirementsViewer.getTable().getItems()) {
@@ -175,6 +193,10 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 			}
 	}
 
+	/***
+	 * Show all test requirements associated to the selected def-use (variable or node).
+	 * The test requirements appear in yellow.
+	 */
 	private void setDefUsesStatus() {
 		Set<AbstractPath<Integer>> testRequirementsOfSelected = Activator.getDefault().getDefUsesController().getTestRequirementsOfSelected();
 		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
@@ -188,30 +210,46 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 			MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_NEED_UPDATE_MSG);
 	}
 
-	private void setSelections() {
-		testRequirementsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@SuppressWarnings("unchecked")
-			public void selectionChanged(final SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
-				AbstractPath<Integer> selected = (AbstractPath<Integer>) selection.getFirstElement(); // get the path selected.
-				Activator.getDefault().getTestRequirementController().selectTestRequirement(selected);
-		    }
-		});
-		
+	/***
+	 * Sets the selection listener for this view.
+	 *
+	 * In this view exists two types of listener:
+	 * - One for the row selection - selects one test requirement.
+	 * - One for the checkbox selection - enable/disable a infeasible path.
+	 *
+	 * Note that when a user select the checkbox (to enable or disable one infeasible path) 
+	 * the listener fired two evens:
+	 * - one corresponding to the enable/disable of the checkbox.
+	 * - and one for the row selection. 
+	 */
+	private void setSelections() {	
 		testRequirementsViewer.getTable().addListener(SWT.Selection, new Listener() {
-		    
+		    			
 			public void handleEvent(Event event) {
-		        if(event.detail == SWT.CHECK)
-		        	for(TableItem item : testRequirementsViewer.getTable().getItems()) 
+		        if(event.detail == SWT.CHECK) { // when user enable/disable an infeasible path.
+		        	Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
+		    		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
+		    			AbstractPath<Integer> selected = iterator.next();
 		        		if(item == event.item) {
 		        			Activator.getDefault().getEditorController().removeALLMarkers();
 		        			if(item.getChecked())
-		        				Activator.getDefault().getTestRequirementController().enableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+		        				Activator.getDefault().getTestRequirementController().enableInfeasible(selected);
 		        			else 
-		        				Activator.getDefault().getTestRequirementController().disableInfeasible(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+		        				Activator.getDefault().getTestRequirementController().disableInfeasible(selected);
+		        			break;
 		        		}
-		      }
-		    });
+		    		}
+		        } else if(event.detail == SWT.NONE) { // when user selects a table row.
+		    		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
+		    		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
+		    			AbstractPath<Integer> selected = iterator.next();
+		    			if(item == event.item) {
+		    				Activator.getDefault().getTestRequirementController().selectTestRequirement(selected);
+		    				break;
+		    			}
+		    		}
+		        }
+			}
+		}); 
 	}
 }
