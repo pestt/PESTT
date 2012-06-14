@@ -179,7 +179,7 @@ public class DefUsesSet extends Observable implements Observer {
 				break;
 		}
 	}
-	
+
 	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {
 		return nodeedgeTestRequirements.get(obj);
 	}

@@ -43,7 +43,7 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlg
 						node = ((Edge<V>) obj).getBeginNode();
 					else 
 						node = ((Node<V>) obj);
-					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph, uses);
+					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph, defs, uses);
 					node.accept(visitor);
 				}
 		}
@@ -52,16 +52,20 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlg
 
 	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
 		
+		private List<Object> defs;
 		private List<Object> uses;
 		
-		public SimplePathCoverageVisitor(Graph<V> graph, List<Object> uses) {
+		public SimplePathCoverageVisitor(Graph<V> graph, List<Object> defs, List<Object> uses) {
 			this.graph = graph;
+			this.defs = defs;
 			this.uses = uses;
 			pathNodes.clear();
 		}
 		
 		@Override
 		public boolean visit(Node<V> node) {
+			if(!isClearPath(node))
+				return false;
 			if(pathNodes.contains(node)) {
 				if(pathNodes.getFirst() == node) {
 					pathNodes.addLast(node);
@@ -76,16 +80,52 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlg
 			return true;
 		}
 
+		private boolean isClearPath(Node<V> node) {
+			if(!pathNodes.isEmpty())
+				if(isDefNode(node)) 
+					if(pathNodes.getFirst() != node) {
+						pathNodes.addLast(node);
+						if(!isUseNode(node)) {
+							pathNodes.removeLast();
+						} else {
+							addPath(pathNodes);
+							pathNodes.removeLast();
+						}
+						return false;	
+					}
+			return true;
+		}
+		
 		@SuppressWarnings("unchecked")
-		private boolean isUseNode(Node<V> node) {
-			for(Object obj : uses) {
+		private boolean isDefNode(Node<V> node) {
+			for(Object obj : defs) {
 				Node<V> n;
 				if(obj instanceof Edge<?>) 
-					n = ((Edge<V>) obj).getEndNode();
+					n = ((Edge<V>) obj).getBeginNode();
 				else 
 					n = ((Node<V>) obj);
 				if(n == node)
 					return true;
+			}
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		private boolean isUseNode(Node<V> node) {
+			for(Object obj : uses) {
+				Node<V> n = null;
+				if(obj instanceof Edge<?>) {
+					if(pathNodes.size() > 1) {
+						pathNodes.removeLast();
+						if(pathNodes.getLast() == ((Edge<V>) obj).getBeginNode())
+							n = ((Edge<V>) obj).getEndNode();
+						pathNodes.addLast(node);
+					}
+				} else 
+					n = ((Node<V>) obj);
+				if(n != null)
+					if(n == node)
+						return true;
 			}
 			return false;
 		}

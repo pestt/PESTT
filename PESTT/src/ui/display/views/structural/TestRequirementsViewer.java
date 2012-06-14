@@ -50,6 +50,11 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		Activator.getDefault().getDefUsesController().addObserver(this);
 	}
 
+	/***
+	 * Creates the table viewer for the Test Requirements.
+	 * 
+	 * @return TableViewer - The Table Viewer.
+	 */
 	public TableViewer create() {
 		testRequirementsViewer = createViewTable(parent, site, TableViewers.TESTREQUIREMENTSVIEWER);
 		testRequirementsControl = testRequirementsViewer.getControl();
@@ -162,6 +167,12 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 			AbstractPath<Integer> path = iterator.next();
 			if(coveredPaths.contains(path)) {
+				if(item.getChecked()) { 
+					MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, "The path " + path.toString() + Messages.TEST_REQUIREMENT_NOT_INFEASIBLE_MSG);
+					item.setChecked(false);
+					Activator.getDefault().getTestRequirementController().disableInfeasible(path);
+					Activator.getDefault().getTestPathController().getStatistics();
+				}
 				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.GREEN_COVERAGE);
