@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -227,6 +228,19 @@ public class StatementsVisitor extends ASTVisitor {
 		return true;
 	}
 
+	@Override  
+	public boolean visit(ThrowStatement node) {
+		if(!prevNode.isEmpty()) {
+			Edge<Integer> edge = createConnection(); // create the edge from the previous node to the throws node.
+			infos.addInformationToLayer2(sourceGraph, edge, "throws;"); // add information to previous node - throws.
+			sourceGraph.addFinalNode(edge.getEndNode()); // add the throws node to the final nodes.
+			infos.addInformationToLayer1(sourceGraph, edge.getEndNode(), node, unit); // add information to throws node.
+			returnFlag = true;
+			finalnode = null;
+		}
+		return false;
+	}
+	
 	@Override  
 	public boolean visit(TypeDeclarationStatement node) {
 		infos.addInformationToLayer1(sourceGraph, prevNode.peek(), node, unit);
