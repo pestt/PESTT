@@ -4,7 +4,6 @@ import domain.graph.visitors.IGraphVisitor;
 
 public class Edge<V extends Comparable<V>> {
 
-	
 	/**
 	 * The Edge begin Node.
 	 */
@@ -53,6 +52,20 @@ public class Edge<V extends Comparable<V>> {
 		visitor.visitEdge(this);
 	}
 	
+	/***
+	 * 
+	 * @param o - The other Edge;
+	 * @return int - 0 If the two edges are equal.
+	 * 				 1 If this Edge is bigger than the other.
+	 * 			    -1 If this Edge is lesser than the other. 
+	 */
+	public int compareTo(Edge<V> o) {
+		if(beginNode.compareTo(o.getBeginNode()) == 0)
+			return endNode.compareTo(o.getEndNode());
+		else
+			return beginNode.compareTo(o.getBeginNode());
+	}
+	
 	/**
 	 * The Edge representation.
 	 * 
@@ -62,5 +75,4 @@ public class Edge<V extends Comparable<V>> {
 	public String toString() {
 		return "(" + beginNode + ", " + endNode + ")";
 	}
-
 }

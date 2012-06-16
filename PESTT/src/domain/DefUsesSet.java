@@ -40,7 +40,6 @@ public class DefUsesSet extends Observable implements Observer {
 		Activator.getDefault().getTestRequirementController().deleteObserverTestRequirement(this);
 	}
 	
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void update(Observable obs, Object data) {
 		if(data instanceof TestRequirementChangedEvent) 
@@ -50,16 +49,28 @@ public class DefUsesSet extends Observable implements Observer {
 				case ALL_USES:
 					getTestRequirements(((TestRequirementChangedEvent) data).testRequirementSet);
 					break;
+				default:
+					break;
 			}		
 	}
 
-	public void put(Object node, List<List<String>> defuses) {
-		nodeedgeDefUses.put(node, defuses);
+	/***
+	 * Insert a new element in the list.
+	 * Update the variables list.
+	 * 
+	 * @param obj - The Object associated to the def-uses (Node or edge).
+	 * @param defuses - The list of Def-Uses to the Object.
+	 */
+	public void put(Object obj, List<List<String>> defuses) {
+		getDefUsesByNodeEdge(obj, defuses);
 		getDefUsesByVariables();
 		setChanged();
 		notifyObservers(new DefUsesChangedEvent(nodeedgeDefUses, variableDefUses));
 	}
 	
+	/***
+	 * Clear all structures and notify the view.
+	 */
 	public void clear() {
 		nodeedgeDefUses.clear();
 		variableDefUses.clear();
@@ -69,6 +80,11 @@ public class DefUsesSet extends Observable implements Observer {
 		notifyObservers(new DefUsesChangedEvent(nodeedgeDefUses, variableDefUses));
 	}
 	
+	/***
+	 * Varify if the set is empty;
+	 * @return boolean - true if yes.
+	 * 				     false otherwise.
+	 */
 	public boolean isEmpty() {
 		return nodeedgeDefUses.isEmpty();
 	}
@@ -78,6 +94,42 @@ public class DefUsesSet extends Observable implements Observer {
 		notifyObservers(new DefUsesChangedEvent(nodeedgeDefUses, variableDefUses));
 	}
 	
+	private void getDefUsesByNodeEdge(Object obj, List<List<String>> defuses) {
+		if(nodeedgeDefUses.isEmpty())
+			nodeedgeDefUses.put(obj, defuses);
+		else {
+			Map<Object, List<List<String>>> aux = new LinkedHashMap<Object, List<List<String>>>();
+			int pos = -1;
+			int res;	
+			int i = 0;
+			for(Object key : nodeedgeDefUses.keySet()) {
+				res = compare(key, obj);
+				if(res == 1) {
+					pos = i;
+					break;
+				}
+				i++;
+			}
+			if(pos == -1)
+				nodeedgeDefUses.put(obj, defuses);
+			else {
+				i = 0;
+				for(Object key : nodeedgeDefUses.keySet()) {
+					List<List<String>> vars = nodeedgeDefUses.get(key);
+					if(i == pos) 
+						aux.put(obj, defuses);
+					aux.put(key, vars);
+					i++;
+				}
+				nodeedgeDefUses.clear();
+				nodeedgeDefUses = aux;
+			}
+		}
+	}
+	
+	/***
+	 * Get the def-uses for all variables.
+	 */
 	private void getDefUsesByVariables() {
 		variableDefUses.clear();
 		Set<String> vars = getVariable();
@@ -85,36 +137,108 @@ public class DefUsesSet extends Observable implements Observer {
 			variableDefUses.put(var, getNodesEdgesDefUses(var));
 	}
 	
+	/***
+	 * Get the nodes and edges for a variable.
+	 * 
+	 * @param var - The variable to get the nodes and edges.
+	 * @return List<List<Object>> - A List with two list.
+	 * 								One to the nodes and edges of variable definitions.
+	 * 								Other to the node and edges of variable uses.
+	 */
 	private List<List<Object>> getNodesEdgesDefUses(String var) {
 		List<List<Object>> nodeedges = new LinkedList<List<Object>>();
 		List<Object> defs = new LinkedList<Object>();
 		List<Object> uses = new LinkedList<Object>();
 		for(Object key : nodeedgeDefUses.keySet()) {
 			List<List<String>> vars = nodeedgeDefUses.get(key);
-			if(vars.get(0).contains(var))
-				defs.add(key);
-			if(vars.get(1).contains(var))
-				uses.add(key);
+			if(vars.get(0).contains(var)) {
+				if(defs.isEmpty())
+					defs.add(key);
+				else 
+					addToList(defs, key);
+			}
+			if(vars.get(1).contains(var)) {
+				if(uses.isEmpty())
+					uses.add(key);
+				else 
+					addToList(uses, key);
+			}
 		}
 		nodeedges.add(defs);
 		nodeedges.add(uses);
 		return nodeedges;
 	}
+	
+	/***
+	 * Add the object to the right place in the list.
+	 * 
+	 * @param list - The list to add the Object.
+	 * @param obj - The Object to be added.
+	 * @param compare - The result of compare the last Object in the list and the Object to be added.
+	 */
+	private void addToList(List<Object> list, Object obj) {
+		int pos = -1;
+		int res;
+		for(Object o : list) {
+			res = compare(o, obj);
+			if(res == 1) {
+				pos = list.indexOf(o);
+				break;
+			}
+		}
+		if(pos == -1)
+			list.add(obj);
+		else
+			list.add(pos, obj);
+	}
 
+	/***
+	 * Compare two object to see which one is bigger.
+	 * 
+	 * @param inList - The Object in the list.
+	 * @param toAdd - The Object to add to the list.
+	 * @return int - 0 if they are equal;
+	 * 				 1 if the Object in the list is bigger then the Object to add.
+	 * 				-1 if the Object in the list is lesser than the Object to add. 
+	 */
+	@SuppressWarnings("unchecked")
+	private int compare(Object inList, Object toAdd) {
+		Node<Integer> nodeInList;
+		Node<Integer> nodeToAdd;
+		Edge<Integer> edgeInList;
+		Edge<Integer> edgeToAdd;
+		if(inList instanceof Node<?>) {
+			nodeInList = (Node<Integer>) inList;
+			if(toAdd instanceof Node<?>) 
+				nodeToAdd = (Node<Integer>) toAdd;
+			else 
+				nodeToAdd = ((Edge<Integer>) toAdd).getBeginNode();
+			return nodeInList.compareTo(nodeToAdd);
+		} else {
+			if(toAdd instanceof Node<?>) {
+				nodeInList = ((Edge<Integer>) inList).getBeginNode();
+				nodeToAdd = (Node<Integer>) toAdd;
+				return nodeInList.compareTo(nodeToAdd);
+			} else {
+				edgeInList = (Edge<Integer>) inList;
+				edgeToAdd = (Edge<Integer>) toAdd;
+				return edgeInList.compareTo(edgeToAdd);
+			}
+		}
+	}
+
+	/***
+	 * Get all variables.
+	 * 
+	 * @return Set<String> - The set of variables.
+	 */
 	private Set<String> getVariable() {
 		Set<String> vars = new TreeSet<String>();
 		for(Object key : nodeedgeDefUses.keySet()) {
 			List<List<String>> varList = nodeedgeDefUses.get(key);
-			vars.addAll(parseVariable(varList.get(0)));
-			vars.addAll(parseVariable(varList.get(1)));
+			vars.addAll(varList.get(0));
+			vars.addAll(varList.get(1));
 		}
-		return vars;
-	}
-
-	private List<String> parseVariable(List<String> input) {
-		List<String> vars = new LinkedList<String>();
-		for(String str : input)
-			vars.add(str);
 		return vars;
 	}
 	
