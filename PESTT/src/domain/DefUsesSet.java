@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import adt.graph.AbstractPath;
 import adt.graph.Edge;
 import adt.graph.Node;
 import domain.constants.DefUsesView;
+import domain.constants.GraphCoverageCriteriaId;
 import domain.events.DefUsesChangedEvent;
 import domain.events.TestRequirementChangedEvent;
 
@@ -335,10 +337,63 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {
-		return nodeedgeTestRequirements.get(obj);
+		return getTestRequirements(nodeedgeTestRequirements.get(obj));
 	}
 	
 	public Set<AbstractPath<Integer>> getTestRequirementsToVariable(String str) {
-		return variableTestRequirements.get(str);
+		return getTestRequirements(variableTestRequirements.get(str));
 	}
+	
+	private Set<AbstractPath<Integer>> getTestRequirements(Set<AbstractPath<Integer>> list) {
+		GraphCoverageCriteriaId criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria();
+		Set<AbstractPath<Integer>> result = new LinkedHashSet<AbstractPath<Integer>>();
+		List<Node<Integer>> first = new ArrayList<Node<Integer>>();
+		List<Node<Integer>> last = new ArrayList<Node<Integer>>();
+		switch(criteria) {
+			case ALL_DU_PATHS:
+				result = list;
+				break;
+			case ALL_DEFS:
+				for(AbstractPath<Integer> path : list) {
+					if(first.isEmpty()) {
+						first.add(path.from());
+						result.add(path);
+					} else {						
+						if(!first.contains(path.from())) {
+							first.add(path.from());
+							result.add(path);
+						}
+					}
+				}
+				break;
+			case ALL_USES:
+				for(AbstractPath<Integer> path : list) {
+					if(first.isEmpty()) {
+						first.add(path.from());
+						last.add(path.to());
+						result.add(path);
+					} else {
+						boolean contains = false;
+						Iterator<Node<Integer>> iterator = last.iterator();
+						for(Node<Integer> fnode : first) {
+							Node<Integer> lnode = iterator.next();
+							if(fnode == path.from() && lnode == path.to()) {
+								contains = true;
+								break;
+							}
+						}
+						if(!contains) {
+							first.add(path.from());
+							last.add(path.to());
+							result.add(path);
+						}
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		return result;
+	}
+	
 }
