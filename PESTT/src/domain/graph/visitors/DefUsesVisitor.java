@@ -11,6 +11,8 @@ import java.util.TreeSet;
 import main.activator.Activator;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -111,9 +113,16 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addToDefs(Set<String> defs) {
+		List<EnumDeclaration> enumdeclarations = Activator.getDefault().getSourceGraphController().getEnumClassAttributes();
 		List<VariableDeclarationFragment> attributes = Activator.getDefault().getSourceGraphController().getClassAttributes();
 		List<SingleVariableDeclaration> params = Activator.getDefault().getSourceGraphController().getMethodParameters();
+		for(EnumDeclaration enumDeclaration : enumdeclarations) {
+			List<EnumConstantDeclaration> enumFields = enumDeclaration.enumConstants();
+			for(EnumConstantDeclaration enumField : enumFields)
+				defs.add(enumDeclaration.getName().toString() + "." + enumField.toString());
+		}
 		for(VariableDeclarationFragment attribute : attributes)
 			defs.add(THIS + attribute.getName().toString());
 		for(SingleVariableDeclaration param : params) 

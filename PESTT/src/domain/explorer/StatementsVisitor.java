@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
@@ -65,6 +66,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private byte[] hash;
 	private List<SingleVariableDeclaration> params;
 	private List<VariableDeclarationFragment> attributes;
+	private List<EnumDeclaration> enumFields;
 
 	public StatementsVisitor(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
@@ -74,7 +76,8 @@ public class StatementsVisitor extends ASTVisitor {
 		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
-		attributes = new LinkedList<VariableDeclarationFragment>(); // the class atriutes.
+		attributes = new LinkedList<VariableDeclarationFragment>(); // the class attributes.
+		enumFields = new LinkedList<EnumDeclaration>(); // the enum class attributes.
 		prevNode = new Stack<Node<Integer>>(); // stack that contain the predecessor nodes.
 		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
@@ -89,6 +92,12 @@ public class StatementsVisitor extends ASTVisitor {
 		infos = new GraphInformation(); // the graph informations.
 	}
 	
+	@Override  
+	public boolean visit(EnumDeclaration node) {
+		enumFields.add(node);
+		return false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(FieldDeclaration node) {
@@ -96,7 +105,7 @@ public class StatementsVisitor extends ASTVisitor {
 			List<VariableDeclarationFragment> fragments = node.fragments();
 			for(VariableDeclarationFragment attribute : fragments)
 				attributes.add(attribute);
-		}
+		} 
 		return false;
 	}
 	
@@ -152,6 +161,10 @@ public class StatementsVisitor extends ASTVisitor {
 	
 	public List<VariableDeclarationFragment> getClassAttributes() {
 		return attributes;
+	}
+	
+	public List<EnumDeclaration> getEnumClassAttributes() {
+		return enumFields;
 	}
 
 	@SuppressWarnings("unchecked")

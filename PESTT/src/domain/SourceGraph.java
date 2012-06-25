@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -28,6 +29,7 @@ public class SourceGraph extends Observable {
 	private byte[] hash;
 	private List<SingleVariableDeclaration> params;
 	private List<VariableDeclarationFragment> attributes;
+	private List<EnumDeclaration> enumFields;
 	
 	public SourceGraph() {
 		sourceGraph = new Graph<Integer>();
@@ -43,6 +45,7 @@ public class SourceGraph extends Observable {
 		hash = visitor.getMethodHash();
 		params = visitor.getMethodParameters();
 		attributes = visitor.getClassAttributes();
+		enumFields = visitor.getEnumClassAttributes();
 		setChanged();
 		notifyObservers(new CFGCreateEvent(sourceGraph));
 	}
@@ -61,6 +64,10 @@ public class SourceGraph extends Observable {
 	
 	public List<VariableDeclarationFragment> getClassAttributes() {
 		return attributes;
+	}
+	
+	public List<EnumDeclaration> getEnumClassAttributes() {
+		return enumFields;
 	}
 	
 	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {

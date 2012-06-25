@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -44,6 +45,10 @@ public class SourceGraphController {
 	
 	public List<VariableDeclarationFragment> getClassAttributes() {
 		return sourceGraph.getClassAttributes();
+	}
+	
+	public List<EnumDeclaration> getEnumClassAttributes() {
+		return sourceGraph.getEnumClassAttributes();
 	}
 
 	public Graph<Integer> getSourceGraph() {
