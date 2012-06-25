@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -102,6 +103,7 @@ public class DefUsesSet extends Observable implements Observer {
 			int pos = -1;
 			int res;	
 			int i = 0;
+			addExtraDefs();
 			for(Object key : nodeedgeDefUses.keySet()) {
 				res = compare(key, obj);
 				if(res == 1) {
@@ -127,6 +129,34 @@ public class DefUsesSet extends Observable implements Observer {
 		}
 	}
 	
+	private void addExtraDefs() {
+		for(Object key : nodeedgeDefUses.keySet()) {
+			List<List<String>> vars = nodeedgeDefUses.get(key);
+			List<String> extraDefs = getExtraDefs(getVariable(), vars.get(0));
+			if(extraDefs != null && !extraDefs.isEmpty()) {
+				for(String def : extraDefs)
+					if(!vars.get(0).contains(def))
+						vars.get(0).add(def);
+				Set<String> str = new TreeSet<String>();
+				str.addAll(vars.get(0));
+				vars.remove(0);
+				List<String> newDefs = new ArrayList<String>();
+				for(String s : str)
+					newDefs.add(s);
+				vars.add(0, newDefs);
+			}
+		}
+	}
+
+	private List<String> getExtraDefs(Set<String> allDefs, List<String> list) {
+		List<String> extra = new LinkedList<String>();
+		for(String all : allDefs)
+			for(String def : list)
+				if(all.contains(def) && !all.equals(def)) 
+					extra.add(all);
+		return extra;
+	}
+
 	/***
 	 * Get the def-uses for all variables.
 	 */

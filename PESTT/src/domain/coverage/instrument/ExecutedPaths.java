@@ -104,7 +104,7 @@ public class ExecutedPaths {
 					pathNodes.add(edges.get(0).getEndNode());
 					toRemove.add(edge);
 				}
-			removeEdges(edges, toRemove);
+			edges.removeAll(toRemove);
 			if(!edges.isEmpty())
 				loop.push(edges);
 		} else {
@@ -147,18 +147,14 @@ public class ExecutedPaths {
 					if(toRemove.get(toRemove.size() - 1) != null) {
 						pathNodes.add(toRemove.get(toRemove.size() - 1).getEndNode());
 						if(edges.size() > 2) {
-							removeEdges(edges, toRemove);
+							edges.removeAll(toRemove);
 							loop.push(edges);
 						}
 					}
-				}
+				} else 
+					loop.push(edges);
 			}
 		}
-	}
-
-	private void removeEdges(List<Edge<Integer>> edges, List<Edge<Integer>> remove) {
-		for(Edge<Integer> edge : remove)
-			edges.remove(edge);
 	}
 
 	private List<Edge<Integer>> getEdges(String line) {

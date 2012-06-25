@@ -324,18 +324,7 @@ public class ActiveEditor implements Observer {
 	
 	@SuppressWarnings("unchecked")
 	private Javadoc getJavadoc(MethodDeclaration method) {
-		List<TagElement> currentTags = method.getJavadoc().tags();
-		List<TagElement> tagToKeep = new ArrayList<TagElement>();
- 		for(TagElement tag : currentTags)
- 			if(tag.getTagName() != null) {
-				if(!tag.getTagName().equals(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()) &&
-				   !tag.getTagName().equals(JavadocTagAnnotations.TOUR_TYPE.getTag()) &&
-				   !tag.getTagName().equals(JavadocTagAnnotations.INFEASIBLE_PATH.getTag()) &&
-				   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()) &&
-				   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()))
-						tagToKeep.add(tag);
- 			} else
- 				tagToKeep.add(tag);
+		List<TagElement> tagToKeep = keepTags(method);
  		Javadoc javadoc = method.getAST().newJavadoc();
  		method.setJavadoc(javadoc);
  		if(!tagToKeep.isEmpty()) {
@@ -345,19 +334,22 @@ public class ActiveEditor implements Observer {
 	 		for(TagElement tag : tagToKeep) {
 	 			List<TextElement> fragments = tag.fragments();
 	 			input.clear();
-	 			for(TextElement text : fragments)
-	 				if(tag.getTagName() != null) {
-	 					if(fragments.indexOf(text) == 0)
-	 						input.add(text.getText().substring(1, text.getText().length()) + "\n *");
-	 					else if(fragments.indexOf(text) == fragments.size() - 1)
-	 						input.add(text.getText());
-	 					else
-	 						input.add(text.getText() + "\n *");
-	 				} else {
-	 					if(fragments.indexOf(text) == fragments.size() - 1)
-	 						input.add(text.getText());
-	 					else
-	 						input.add(text.getText() + "\n *");
+	 			for(Object obj : fragments)
+	 				if(obj instanceof TextElement) {
+	 					TextElement text = (TextElement) obj;
+		 				if(tag.getTagName() != null) {
+		 					if(fragments.indexOf(text) == 0)
+		 						input.add(text.getText().substring(1, text.getText().length()) + "\n *");
+		 					else if(fragments.indexOf(text) == fragments.size() - 1)
+		 						input.add(text.getText());
+		 					else
+		 						input.add(text.getText() + "\n *");
+		 				} else {
+		 					if(fragments.indexOf(text) == fragments.size() - 1)
+		 						input.add(text.getText());
+		 					else
+		 						input.add(text.getText() + "\n *");
+		 				}
 	 				}
 	 			createTag(method, tag.getTagName(),  getTextInput(method, input), javadoc);
 	 		}
@@ -366,6 +358,38 @@ public class ActiveEditor implements Observer {
  			createTag(method, null,  getTextInput(method, input), javadoc);
  		}
  		return javadoc; 		
+	}
+
+	/***
+	 * View all tags in the method Javadoc.
+	 * If the tags is external to the program it must be kept.
+	 * @param method
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<TagElement> keepTags(MethodDeclaration method) {
+		List<TagElement> tagToKeep = new ArrayList<TagElement>();
+		if(method.getJavadoc() != null) {
+			List<TagElement> currentTags = method.getJavadoc().tags();
+	 		for(TagElement tag : currentTags)
+	 			if(tag.getTagName() != null) {
+					if(!tag.getTagName().equals(JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()) &&
+					   !tag.getTagName().equals(JavadocTagAnnotations.TOUR_TYPE.getTag()) &&
+					   !tag.getTagName().equals(JavadocTagAnnotations.INFEASIBLE_PATH.getTag()) &&
+					   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH.getTag()) &&
+					   !tag.getTagName().equals(JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag()))
+							tagToKeep.add(tag);
+					else {
+						if(tag.fragments().size() > 1) {
+							tag.fragments().remove(0);
+							tag.setTagName(null);
+							tagToKeep.add(tag);
+						}
+					}
+	 			} else
+	 				tagToKeep.add(tag);
+		}
+		return tagToKeep;
 	}
 
 	private void applychanges(CompilationUnit unit) {		

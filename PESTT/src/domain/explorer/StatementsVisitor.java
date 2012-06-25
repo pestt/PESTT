@@ -92,9 +92,11 @@ public class StatementsVisitor extends ASTVisitor {
 	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(FieldDeclaration node) {
-		List<VariableDeclarationFragment> fragments = node.fragments();
-		for(VariableDeclarationFragment attribute : fragments)
-			attributes.add(attribute);
+		if(node.getParent().getParent().getNodeType() != ASTNode.TYPE_DECLARATION) {
+			List<VariableDeclarationFragment> fragments = node.fragments();
+			for(VariableDeclarationFragment attribute : fragments)
+				attributes.add(attribute);
+		}
 		return false;
 	}
 	

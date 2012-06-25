@@ -69,13 +69,18 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	
 	@Override
 	public boolean visit(QualifiedName node) {
-		uses.add(node.getQualifier().toString());
 		if(node.getName().resolveBinding().getKind() == IBinding.VARIABLE) {
 			IJavaElement javaElement = node.getName().resolveBinding().getJavaElement();
-			if(javaElement.getElementType() == IJavaElement.FIELD) 
-				stored.push(THIS + node.getName().toString());
-			else
-				stored.push(node.getName().toString());
+			switch(javaElement.getElementType()) {
+				case IJavaElement.FIELD:
+					if(node.getQualifier().resolveBinding().getKind() != IBinding.TYPE) 
+						uses.add(node.getQualifier().toString());
+					stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+					break;
+				default:
+					stored.push(node.getName().toString());
+					break;
+			}
 		}
 		return false;
 	}
