@@ -71,17 +71,20 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	public boolean visit(QualifiedName node) {
 		if(node.getName().resolveBinding().getKind() == IBinding.VARIABLE) {
 			IJavaElement javaElement = node.getName().resolveBinding().getJavaElement();
-			switch(javaElement.getElementType()) {
-				case IJavaElement.FIELD:
-					if(node.getQualifier().resolveBinding().getKind() != IBinding.TYPE)
-						if(!isSubElement(node.getQualifier().toString()))
-							uses.add(node.getQualifier().toString());
-					stored.push(node.getQualifier().toString() + "." + node.getName().toString());
-					break;
-				default:
-					stored.push(node.getName().toString());
-					break;
-			}
+			if(javaElement != null) {
+				switch(javaElement.getElementType()) {
+					case IJavaElement.FIELD:
+						if(node.getQualifier().resolveBinding().getKind() != IBinding.TYPE)
+							if(!isSubElement(node.getQualifier().toString()))
+								uses.add(node.getQualifier().toString());
+						stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+						break;
+					default:
+						stored.push(node.getName().toString());
+						break;
+				}
+			} else
+				stored.push(node.getName().toString());
 		}
 		return false;
 	}
