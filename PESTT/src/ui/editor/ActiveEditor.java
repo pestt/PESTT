@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -339,7 +340,7 @@ public class ActiveEditor implements Observer {
 	 					TextElement text = (TextElement) obj;
 		 				if(tag.getTagName() != null) {
 		 					if(fragments.indexOf(text) == 0)
-		 						input.add(text.getText().substring(1, text.getText().length()) + "\n *");
+		 						input.add(text.getText().substring(1, text.getText().length()) + "\n");
 		 					else if(fragments.indexOf(text) == fragments.size() - 1)
 		 						input.add(text.getText());
 		 					else
@@ -350,6 +351,9 @@ public class ActiveEditor implements Observer {
 		 					else
 		 						input.add(text.getText() + "\n *");
 		 				}
+	 				} else {
+	 					SimpleName text = (SimpleName) obj;
+	 					input.add(text.getIdentifier());
 	 				}
 	 			createTag(method, tag.getTagName(),  getTextInput(method, input), javadoc);
 	 		}
