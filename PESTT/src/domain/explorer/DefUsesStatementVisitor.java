@@ -83,8 +83,10 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 						stored.push(node.getName().toString());
 						break;
 				}
-			} else
+			} else {
+				uses.add(node.getQualifier().toString());
 				stored.push(node.getName().toString());
+			}
 		}
 		return false;
 	}
