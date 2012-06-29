@@ -259,12 +259,11 @@ public class GraphInformation {
 				if(selection instanceof ITextSelection && Activator.getDefault().getEditorController().isEverythingMatching()) {				
 					ITextSelection textSelected = (ITextSelection) selection; // get the text selected in the editor.
 					String currentMethod = getSelectedMethod(textSelected);
-					if(currentMethod != null) {
+					if(currentMethod != null)
 						if(textSelected.getLength() != 0 && currentMethod.equals(Activator.getDefault().getEditorController().getSelectedMethod())) {
-							selectNode(textSelected.getOffset());
+							selectInGraph(textSelected.getOffset());
 							return;
 						}
-					}
 				}
 				Activator.getDefault().getEditorController().removeALLMarkers();
 			}
@@ -297,35 +296,51 @@ public class GraphInformation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void selectNode(int position) {
+	private void selectInGraph(int position) {
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph(); // set the sourceGraph.
 		List<GraphItem> aux = new LinkedList<GraphItem>(); // auxiliary list to store selected items.
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes()) { // through all nodes.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
 			if(map != null) {
-				List<ASTNode> info = getASTNodes(map);
-				if(info != null && findNode(info, position)) { // verify if it is the node.
-					for(GraphNode gnode : layoutGraph.getGraphNodes()) { // through all GraphNodes.
-						if(gnode.getData().equals(node)) { // if matches with the node.
+				List<ASTNode> instructions = getASTNodes(map);
+				if(instructions != null && findNode(instructions, position))  // verify if it is the node.
+					for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all GraphNodes.
+						if(gnode.getData().equals(node))  // if matches with the node.
 							aux.add(gnode); // adds the GraphNode to the list.
+			}
+		}
+		if(aux.isEmpty()) {
+			for(adt.graph.Node<Integer> node : sourceGraph.getNodes())
+				for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node)) { // through all nodes.
+					HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
+					if(map != null) {
+						List<ASTNode> instructions = getASTNodes(map);
+						if(instructions != null) {
+							List<ASTNode> exp = getExpression(instructions);
+							if(!exp.isEmpty() && findNode(exp, position)) 							
+								for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // through all GraphEdges.
+									if(gconnection.getData().equals(edge))  // if matches with the edge.
+										aux.add(gconnection); // adds the GraphEdge to the list.
 						}
 					}
 				}
-			}
 		}
 		while(!aux.isEmpty() && aux.size() != 1) // one word is assigned to only one node.
-			aux.remove(0); // remove all the others.
+			if(!(aux.get(0) instanceof GraphConnection))
+				aux.remove(0); // remove all the others.
+			else
+				break;
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		layoutGraph.setSelected(items); // the list of selected items.
 		setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
 	}
 	
 	
-	private boolean findNode(List<ASTNode> info, int position) {
-		int startPosition = findStartPosition(info); // get the start position.
+	private boolean findNode(List<ASTNode> instructions, int position) {
+		int startPosition = findStartPosition(instructions); // get the start position.
 		int endPosition = 0;
-		ASTNode aNode = info.get(0); // the first element of the list.
+		ASTNode aNode = instructions.get(0); // the first element of the list.
 		switch(aNode.getNodeType()) {
 			case ASTNode.IF_STATEMENT:
 			case ASTNode.DO_STATEMENT:
@@ -343,7 +358,7 @@ public class GraphInformation {
 				break;
 			default:
 				if(aNode.getStartPosition() <= startPosition)
-					endPosition = info.get(info.size() - 1).getStartPosition() + info.get(info.size() - 1).getLength(); // select the block of instructions associated to the selected node.
+					endPosition = instructions.get(instructions.size() - 1).getStartPosition() + instructions.get(instructions.size() - 1).getLength(); // select the block of instructions associated to the selected node.
 				else
 					endPosition = aNode.getStartPosition() + aNode.getLength(); // select the block of instructions associated to the selected node.
 				break;

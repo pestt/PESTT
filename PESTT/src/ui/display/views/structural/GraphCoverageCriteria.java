@@ -105,7 +105,7 @@ public class GraphCoverageCriteria implements Observer {
 
 		GraphNode nc = new GraphNode(graph, SWT.SINGLE, "    Node\nCoverage\n" + insertTrace(9) + "\n     (NC)");
 		nc.setData(GraphCoverageCriteriaId.NODE);
-		nc.setTooltip(new Label("Node Coverage (NC):\nTest requirements contains each reachable node in Grpah."));
+		nc.setTooltip(new Label("Node Coverage (NC):\nTest requirements contains each reachable node in Graph."));
 		nodes.put(GraphCoverageCriteriaId.NODE, nc); 
 		
 		for(GraphNode gnode : nodes.values()) {
