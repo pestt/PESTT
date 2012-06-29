@@ -75,7 +75,7 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements ICoverageAlg
 				return false;
 			}
 			pathNodes.addLast(node);
-			if(graph.isFinalNode(node) || isUseNode(node)) 
+			if(isUseNode(node)) 
 				addPath(pathNodes);
 			return true;
 		}
