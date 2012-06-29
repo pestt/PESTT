@@ -19,8 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import ui.constants.Colors;
+import ui.constants.Description;
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
 import adt.graph.AbstractPath;
@@ -57,8 +60,11 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 			cleanDefUsesStatus();
 			setDefUses(((DefUsesChangedEvent) data).variableDefUses);
 		} else if(data instanceof TestRequirementSelectedEvent) {
-			cleanDefUsesStatus();
-			setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
+			if(((TestRequirementSelectedEvent) data).selectedTestRequirement != null) {
+				bringViewToTop();
+				cleanDefUsesStatus();
+				setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
+			}
 		} else if(data instanceof TestPathChangedEvent) 
 			cleanDefUsesStatus();
 	}
@@ -155,11 +161,22 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 			str = str.substring(0, str.length() - 2);
 		return str;
 	}
+	
+	private void bringViewToTop() {
+		defUsesViewer.setSelection(null);
+		Activator.getDefault().getDefUsesController().selectDefUse(null);
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_DATA_FLOW_COVERAGE);
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}		
+	}
 
 	private void setSelections() {
 		defUsesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(final SelectionChangedEvent event) {
+				cleanDefUsesStatus();
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
 				Object selected = selection.getFirstElement();
 				Activator.getDefault().getDefUsesController().selectDefUse(selected);

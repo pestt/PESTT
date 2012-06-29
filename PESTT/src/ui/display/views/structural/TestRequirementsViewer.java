@@ -20,9 +20,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import ui.StatusImages;
 import ui.constants.Colors;
+import ui.constants.Description;
 import ui.constants.Images;
 import ui.constants.Messages;
 import ui.constants.TableViewers;
@@ -89,10 +92,21 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		else if(data instanceof DefUsesSelectedEvent) {
 			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
 			if(selectedDefUses != null) {
+				bringViewToTop();
 				cleanPathStatus();
 				setDefUsesStatus();
 			}
 		}
+	}
+
+	private void bringViewToTop() {
+		testRequirementsViewer.setSelection(null);
+		Activator.getDefault().getTestRequirementController().selectTestRequirement(null);
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_STRUCTURAL_COVERAGE);
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	public void dispose() {
@@ -237,6 +251,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		testRequirementsViewer.getTable().addListener(SWT.Selection, new Listener() {
 		    			
 			public void handleEvent(Event event) {
+				cleanPathStatus();
 		        if(event.detail == SWT.CHECK) { // when user enable/disable an infeasible path.
 		        	Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
 		    		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
