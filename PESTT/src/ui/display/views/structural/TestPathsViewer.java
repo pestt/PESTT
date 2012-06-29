@@ -141,12 +141,14 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				Set<Path<Integer>> set = getPathSet(Activator.getDefault().getTestPathController().getTestPaths(), Activator.getDefault().getTestPathController().getTestPathsManuallyAdded());
 				Iterator<Path<Integer>> iterator = set.iterator();
 				Path<Integer> path = null;
-				for(TableItem i : testPathhsViewer.getTable().getItems())  
+				for(TableItem i : testPathhsViewer.getTable().getItems()) {  
+					path = null;
 					if(iterator.hasNext()) {
 						path = iterator.next();
 						if(i == item)
 							break;
 					}
+				}
 				if(path != null)
 					testPathhsViewer.getTable().setToolTipText(Activator.getDefault().getTestPathController().getTooltip(path));
 				else
