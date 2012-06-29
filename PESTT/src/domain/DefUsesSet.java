@@ -134,7 +134,7 @@ public class DefUsesSet extends Observable implements Observer {
 	private void addExtraDefs() {
 		for(Object key : nodeedgeDefUses.keySet()) {
 			List<List<String>> vars = nodeedgeDefUses.get(key);
-			List<String> extraDefs = getExtraDefs(getVariable(), vars.get(0));
+			List<String> extraDefs = getExtraDefs(getAllVariables(), vars.get(0));
 			if(extraDefs != null && !extraDefs.isEmpty()) {
 				for(String def : extraDefs)
 					if(!vars.get(0).contains(def))
@@ -150,12 +150,13 @@ public class DefUsesSet extends Observable implements Observer {
 		}
 	}
 
-	private List<String> getExtraDefs(Set<String> allDefs, List<String> list) {
+	private List<String> getExtraDefs(Set<String> allVariables, List<String> defs) {
 		List<String> extra = new LinkedList<String>();
-		for(String all : allDefs)
-			for(String def : list)
-				if(all.contains(def) && !all.equals(def)) 
-					extra.add(all);
+		for(String all : allVariables)
+			for(String def : defs)
+				if(def.length() < all.length())
+					if(all.substring(0, def.length()).equals(def) && !all.equals(def) && !extra.contains(all)) 
+						extra.add(all);
 		return extra;
 	}
 
@@ -164,7 +165,7 @@ public class DefUsesSet extends Observable implements Observer {
 	 */
 	private void getDefUsesByVariables() {
 		variableDefUses.clear();
-		Set<String> vars = getVariable();
+		Set<String> vars = getAllVariables();
 		for(String var : vars) 
 			variableDefUses.put(var, getNodesEdgesDefUses(var));
 	}
@@ -264,7 +265,7 @@ public class DefUsesSet extends Observable implements Observer {
 	 * 
 	 * @return Set<String> - The set of variables.
 	 */
-	private Set<String> getVariable() {
+	private Set<String> getAllVariables() {
 		Set<String> vars = new TreeSet<String>();
 		for(Object key : nodeedgeDefUses.keySet()) {
 			List<List<String>> varList = nodeedgeDefUses.get(key);
