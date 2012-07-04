@@ -5,7 +5,7 @@ public class Messages {
 	public static final String DRAW_GRAPH_TITLE = "PESTT - Draw Graph";
 	public static final String DRAW_GRAPH_MSG = "You need to draw the Graph first.\n" +
 												"Select a method in the editor then click in the button to draw.";
-	public static final String GRAPH_UPDATE_MSG = "The graph need to be updated.";
+	public static final String GRAPH_UPDATE_MSG = "The graph needs to be updated.";
 	
 	public static final String COVERAGE_TITLE = "PESTT - Coverage Criteria";
 	public static final String COVERAGE_SELECT_MSG = "You need to select a coverage criteria in the Graph Coverage Criteria view.";
