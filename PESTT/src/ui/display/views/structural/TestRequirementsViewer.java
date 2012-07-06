@@ -20,12 +20,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 import ui.StatusImages;
 import ui.constants.Colors;
-import ui.constants.Description;
 import ui.constants.Images;
 import ui.constants.Messages;
 import ui.constants.TableViewers;
@@ -36,6 +33,7 @@ import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementChangedEvent;
+import domain.events.TestRequirementSelectedCriteriaEvent;
 
 public class TestRequirementsViewer extends AbstractTableViewer implements Observer {
 
@@ -48,6 +46,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
+		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
@@ -68,23 +67,26 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof TestRequirementChangedEvent) {
+		if(data instanceof TestRequirementSelectedCriteriaEvent)
+			Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
+		else if(data instanceof TestRequirementChangedEvent) {
+			cleanPathStatus();
 			if(((TestRequirementChangedEvent) data).hasInfinitePath)
 				MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
 			Set<AbstractPath<Integer>> testRequirements = new TreeSet<AbstractPath<Integer>>();
 			for(AbstractPath<Integer> path : ((TestRequirementChangedEvent) data).testRequirementSet)
 				testRequirements.add(path);
 			testRequirementsViewer.setInput(testRequirements);
-			cleanPathStatus();
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
 		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-				if(selectedTestPaths != null)
-					if(!selectedTestPaths.isEmpty())
-						setPathStatus();
-					else
-						cleanPathStatus();
+				if(selectedTestPaths != null && !selectedTestPaths.isEmpty()) {
+					testRequirementsViewer.setSelection(null);
+					Activator.getDefault().getTestRequirementController().selectTestRequirement(null);	
+					setPathStatus();
+				} else
+					cleanPathStatus();
 			} else
 				cleanPathStatus();
 		} else if(data instanceof TestPathChangedEvent) 
@@ -92,21 +94,12 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		else if(data instanceof DefUsesSelectedEvent) {
 			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
 			if(selectedDefUses != null) {
-				bringViewToTop();
 				cleanPathStatus();
+				testRequirementsViewer.setSelection(null);
+				Activator.getDefault().getTestRequirementController().selectTestRequirement(null);
 				setDefUsesStatus();
 			}
 		}
-	}
-
-	private void bringViewToTop() {
-		testRequirementsViewer.setSelection(null);
-		Activator.getDefault().getTestRequirementController().selectTestRequirement(null);
-		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_STRUCTURAL_COVERAGE);
-		} catch (PartInitException e) {
-			e.printStackTrace();
-		}		
 	}
 
 	public void dispose() {
@@ -169,8 +162,8 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 	/***
 	 * Sets the visual status for the test requirements according to the selected test path.
 	 * The visual status to the test requirements are:
-	 * - Green (Background and pass icon) if the test requirement is covered by the test path.
-	 * - Red (Background and cross icon) if the test requirement is not covered by the test path.
+	 * - Green (Background and pass icon) if the test requirement is covered by the selected test path.
+	 * - Red (Background and cross icon) if the test requirement is not covered by the selected test path.
 	 * - Blue (Background and pass icon) if the test requirement is infeasible.
 	 */
 	private void setPathStatus() {
@@ -190,7 +183,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.GREEN_COVERAGE);
-			}else if(item.getText(2).equals(path.toString()) && item.getChecked()) {
+			} else if(item.getText(2).equals(path.toString()) && item.getChecked()) {
 				item.setText(0, Integer.toString(n + 1));
 				item.setImage(1, images.getImage().get(Images.PASS));
 				item.setBackground(Colors.INFEASIBLE_COVERAGE);

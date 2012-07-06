@@ -26,11 +26,17 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.TableViewers;
+import ui.events.TourChangeEvent;
+import adt.graph.AbstractPath;
 import adt.graph.Graph;
 import adt.graph.Path;
 import domain.events.TestPathChangedEvent;
+import domain.events.TestPathSelectedEvent;
+import domain.events.TestRequirementSelectedCriteriaEvent;
+import domain.events.TestRequirementSelectedEvent;
 
 public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
@@ -44,6 +50,8 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
+		Activator.getDefault().getTestPathController().addObserver(this);
+		Activator.getDefault().getTestRequirementController().addObserver(this);
 	}
 	
 	public TableViewer create() {
@@ -56,7 +64,19 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof TestPathChangedEvent) {
+		if(data instanceof TestRequirementSelectedCriteriaEvent) {
+			testPathhsViewer.setSelection(null);
+			Activator.getDefault().getTestPathController().selectTestPath(null);
+		} else if(data instanceof TestRequirementSelectedEvent || data instanceof TourChangeEvent ) {
+			AbstractPath<Integer> testRequirement = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement();
+			if(testRequirement != null) {
+				testPathhsViewer.setSelection(null);
+				Activator.getDefault().getTestPathController().selectTestPath(null);
+				cleanPathStatus();
+				setPathStatus(testRequirement);
+			}
+		} else if(data instanceof TestPathChangedEvent) {
+			cleanPathStatus();
 			List<Object> testPaths = new ArrayList<Object>();
 			Set<Path<Integer>> paths = getPathSet(((TestPathChangedEvent) data).testPathSet, ((TestPathChangedEvent) data).manuallyAdded);
 			for(Path<Integer> path : paths)
@@ -67,9 +87,10 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			if(listener != null)
 				testPathhsViewer.getTable().removeListener(SWT.MouseHover, listener);
 			addTooltips();
-		}
+		} else if(data instanceof TestPathSelectedEvent )
+			cleanPathStatus();
 	}
-	
+
 	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic, Iterable<Path<Integer>> manually) {
 		Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
 		for(Path<Integer> path : automatic)
@@ -103,11 +124,45 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				}
 			}
 		});
-	}	
+	}
+	
+	/***
+	 * Clears all visual status (Colors).
+	 */
+	private void cleanPathStatus() {
+		int n = 0;
+		for(TableItem item : testPathhsViewer.getTable().getItems()) {
+			if(n % 2 == 0)
+				item.setBackground(Colors.WHITE);
+			else 
+				item.setBackground(Colors.GREY);
+			n++;
+		}
+	}
+	
+	/***
+	 * Sets the visual status for the test path according to the selected test requirement.
+	 * The visual status to the test path are:
+	 * - Green (Background) if the selected test requirement is covered by the test path.
+	 * - Red (Background) if the selected test requirement is not covered by the test path.
+	 */
+	private void setPathStatus(AbstractPath<Integer> testRequirement) {
+		Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().getTestPaths().iterator();
+		for(TableItem item : testPathhsViewer.getTable().getItems()) {
+			if(iterator.hasNext()) {
+				Path<Integer> path = iterator.next();
+				Set<Path<Integer>> coveredPaths = Activator.getDefault().getTestRequirementController().getTestPathCoverage(path);
+				if(coveredPaths.contains(testRequirement)) 
+					item.setBackground(Colors.GREEN_COVERAGE);
+				else
+					item.setBackground(Colors.RED_COVERAGE);
+			}
+		}
+	}
 	
 	private void setSelections() {
 		testPathhsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
+			
 			@SuppressWarnings("unchecked")
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.

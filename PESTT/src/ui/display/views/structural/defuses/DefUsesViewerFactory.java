@@ -38,9 +38,11 @@ public class DefUsesViewerFactory implements Observer {
 		switch(view) {
 			case NODE_EDGE:
 				viewer = new DefUsesViewerByNodeEdge(parent, site);
+				viewer.addObservers();
 				return viewer.create();
 			case VARIABLE:
 				viewer = new DefUsesViewerByVariable(parent, site);
+				viewer.addObservers();
 				return viewer.create();
 			default:
 				return null;
@@ -52,8 +54,10 @@ public class DefUsesViewerFactory implements Observer {
 		if(data instanceof DefUsesChangeViewEvent) 
 			if(parent != null) {
 				view = ((DefUsesChangeViewEvent) data).selectedDefUseView;
-				if(viewer != null)
+				if(viewer != null) {
+					viewer.deleteObservers();
 					viewer.dispose();
+				}
 				createTebleViewer(parent, site);
 				parent.layout();
 			}

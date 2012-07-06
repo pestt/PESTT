@@ -1,7 +1,6 @@
 package ui.controllers;
 
 import java.util.List;
-import java.util.Observable;
 
 import main.activator.Activator;
 
@@ -15,7 +14,7 @@ import ui.source.GraphInformation;
 import domain.constants.Layer;
 import domain.events.TestPathSelectedEvent;
 
-public class EditorController extends Observable {
+public class EditorController {
 	
 	private ActiveEditor editor;
 	private GraphInformation information;	

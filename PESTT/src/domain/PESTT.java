@@ -4,6 +4,7 @@ import ui.StatisticsSet;
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
+import ui.controllers.ViewController;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;
@@ -25,6 +26,7 @@ public class PESTT {
 	private CFGController cfgController;
 	private DefUsesController defusesController;
 	private BytemanController bytemanController;
+	private ViewController viewController;
 	
 	public PESTT() {
 		editorController = new EditorController();
@@ -39,6 +41,7 @@ public class PESTT {
 		cfgController.selectLayer(Layer.EMPTY.toString());
 		defusesController = new DefUsesController(new DefUsesSet());
 		bytemanController = new BytemanController();
+		viewController = new ViewController();
 	}
 	
 	public SourceGraphController getSourceGraphController() {
@@ -75,5 +78,9 @@ public class PESTT {
 
 	public BytemanController getBytemanController() {
 		return bytemanController;
+	}
+
+	public ViewController getViewController() {
+		return viewController;
 	}
 }

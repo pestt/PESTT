@@ -1,13 +1,12 @@
 package ui.controllers;
 
-import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
 import ui.StatisticsSet;
 import adt.graph.Path;
 
-public class StatisticsController extends Observable {
+public class StatisticsController {
 
 	private StatisticsSet statisticsSet;
 	

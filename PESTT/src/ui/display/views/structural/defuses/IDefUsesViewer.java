@@ -7,5 +7,9 @@ public interface IDefUsesViewer {
 	public TableViewer create();
 	
 	public void dispose();
+	
+	public void addObservers();
+	
+	public void deleteObservers();
 
 }

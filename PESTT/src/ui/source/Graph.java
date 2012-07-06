@@ -19,7 +19,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
@@ -204,7 +203,6 @@ public class Graph implements Observer {
 	public void update(Observable obs, Object data) {
 		if(data instanceof CFGCreateEvent) {
 			create(((CFGCreateEvent) data).sourceGraph);
-			bringGraphToTop();
 			Activator.getDefault().getEditorController().everythingMatch();
 		} else if(data instanceof TestRequirementSelectedEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching())
@@ -258,23 +256,11 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Brings the Graph view to the top.
-	 */
-	private void bringGraphToTop() {
-		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_GRAPH);
-		} catch (PartInitException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Show in the Graph, the selected test requirement path.
 	 * 
 	 * @param data - The selected test requirement paths.
 	 */
 	private void selectTestRequirement(TestRequirementSelectedEvent data) {
-		bringGraphToTop();
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
@@ -287,7 +273,6 @@ public class Graph implements Observer {
 	 * @param data - The selected test paths.
 	 */
 	private void selectTestPath(TestPathSelectedEvent data) {
-		bringGraphToTop();
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
@@ -298,7 +283,6 @@ public class Graph implements Observer {
 	 * Show in the Graph, the selected test path.
 	 */
 	private void selecDefUses() {
-		bringGraphToTop();
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		Set<List<Object>> selectedDefUse = Activator.getDefault().getDefUsesController().getSelectedDefUse();
 		for(List<Object> list : selectedDefUse)

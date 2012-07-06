@@ -45,4 +45,9 @@ public class Messages {
 	
 	public static final String DEF_USES_TITLE = "PESTT - Definitions and Uses";
 	public static final String DEF_USES_MSG = "You need to generate the DefUses in the Data Flow Coverage Criteria View.";
+	public static final String DEF_USES_CRITERIA_SELECT_MSG = "To use this option you need to select on of the following criterias in the\n" +
+															  "Graph Coverage Criteria View:\n" + 
+															  "All_dU-Paths Coverage.\n" +
+															  "All-Uses Coverage.\n" +
+															  "All-Defs Coverage.";
 }

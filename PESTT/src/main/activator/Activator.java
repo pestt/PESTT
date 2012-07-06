@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
+import ui.controllers.ViewController;
 import domain.PESTT;
 import domain.controllers.BytemanController;
 import domain.controllers.CoverageDataController;
@@ -106,5 +107,9 @@ public class Activator extends AbstractUIPlugin {
 	
 	public BytemanController getBytemanController() {
 		return pestt.getBytemanController();
+	}
+	
+	public ViewController getViewController() {
+		return pestt.getViewController();
 	}
 }

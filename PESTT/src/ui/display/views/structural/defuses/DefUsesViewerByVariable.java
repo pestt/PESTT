@@ -19,16 +19,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 import ui.constants.Colors;
-import ui.constants.Description;
 import ui.constants.TableViewers;
 import ui.display.views.structural.AbstractTableViewer;
 import adt.graph.AbstractPath;
 import domain.events.DefUsesChangedEvent;
 import domain.events.TestPathChangedEvent;
+import domain.events.TestRequirementSelectedCriteriaEvent;
 import domain.events.TestRequirementSelectedEvent;
 
 public class DefUsesViewerByVariable extends AbstractTableViewer implements IDefUsesViewer, Observer {
@@ -41,9 +39,18 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 	public DefUsesViewerByVariable(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
+	}
+	
+	public void addObservers() {
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
+	}
+	
+	public void deleteObservers() {
+		Activator.getDefault().getDefUsesController().deleteObserverDefUses(this);
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
+		Activator.getDefault().getTestPathController().deleteObserver(this);
 	}
 
 	public TableViewer create() {
@@ -56,13 +63,16 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof DefUsesChangedEvent) {
+		if(data instanceof TestRequirementSelectedCriteriaEvent)
+			Activator.getDefault().getDefUsesController().clearDefUsesSet();
+		else if(data instanceof DefUsesChangedEvent) {
 			cleanDefUsesStatus();
 			setDefUses(((DefUsesChangedEvent) data).variableDefUses);
 		} else if(data instanceof TestRequirementSelectedEvent) {
 			if(((TestRequirementSelectedEvent) data).selectedTestRequirement != null) {
-				bringViewToTop();
 				cleanDefUsesStatus();
+				defUsesViewer.setSelection(null);
+				Activator.getDefault().getDefUsesController().selectDefUse(null);
 				setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
 			}
 		} else if(data instanceof TestPathChangedEvent) 
@@ -160,16 +170,6 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		if(str.length() > 1)
 			str = str.substring(0, str.length() - 2);
 		return str;
-	}
-	
-	private void bringViewToTop() {
-		defUsesViewer.setSelection(null);
-		Activator.getDefault().getDefUsesController().selectDefUse(null);
-		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(Description.VIEW_DATA_FLOW_COVERAGE);
-		} catch (PartInitException e) {
-			e.printStackTrace();
-		}		
 	}
 
 	private void setSelections() {
