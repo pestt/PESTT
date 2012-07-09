@@ -29,11 +29,13 @@ import ui.constants.TableViewers;
 import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
+import domain.events.DefUsesChangedEvent;
 import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
+import domain.events.TestRequirementSelectedEvent;
 
 public class TestRequirementsViewer extends AbstractTableViewer implements Observer {
 
@@ -49,6 +51,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
+		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
 	}
 
@@ -70,7 +73,6 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		if(data instanceof TestRequirementSelectedCriteriaEvent)
 			Activator.getDefault().getTestRequirementController().cleanTestRequirementSet();
 		else if(data instanceof TestRequirementChangedEvent) {
-			cleanPathStatus();
 			if(((TestRequirementChangedEvent) data).hasInfinitePath)
 				MessageDialog.openInformation(parent.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
 			Set<AbstractPath<Integer>> testRequirements = new TreeSet<AbstractPath<Integer>>();
@@ -78,26 +80,26 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 				testRequirements.add(path);
 			testRequirementsViewer.setInput(testRequirements);
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
-		} else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
+		} else if(data instanceof TestRequirementSelectedEvent) { 
+			cleanPathStatus();
+			if(!Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) 
+				testRequirementsViewer.setSelection(null);
+		} else if(data instanceof TestPathChangedEvent || data instanceof DefUsesChangedEvent) 
+			Activator.getDefault().getTestRequirementController().unSelectTestRequirements();
+		else if(data instanceof TestPathSelectedEvent || data instanceof TourChangeEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
 				if(selectedTestPaths != null && !selectedTestPaths.isEmpty()) {
-					testRequirementsViewer.setSelection(null);
-					Activator.getDefault().getTestRequirementController().selectTestRequirement(null);	
+					Activator.getDefault().getTestRequirementController().unSelectTestRequirements();	
 					setPathStatus();
-				} else
-					cleanPathStatus();
-			} else
-				cleanPathStatus();
-		} else if(data instanceof TestPathChangedEvent) 
-			cleanPathStatus();
-		else if(data instanceof DefUsesSelectedEvent) {
-			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
-			if(selectedDefUses != null) {
-				cleanPathStatus();
-				testRequirementsViewer.setSelection(null);
-				Activator.getDefault().getTestRequirementController().selectTestRequirement(null);
-				setDefUsesStatus();
+				} 
+			}
+		} else if(data instanceof DefUsesSelectedEvent) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				if(Activator.getDefault().getDefUsesController().isDefUseSelected()) {
+					Activator.getDefault().getTestRequirementController().unSelectTestRequirements();
+					setDefUsesStatus();
+				}
 			}
 		}
 	}
@@ -249,14 +251,12 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		        	Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
 		    		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 		    			AbstractPath<Integer> selected = iterator.next();
-		        		if(item == event.item) {
-		        			Activator.getDefault().getEditorController().removeALLMarkers();
+		        		if(item == event.item) 
 		        			if(item.getChecked())
 		        				Activator.getDefault().getTestRequirementController().enableInfeasible(selected);
 		        			else 
 		        				Activator.getDefault().getTestRequirementController().disableInfeasible(selected);
 		        			break;
-		        		}
 		    		}
 		        } else if(event.detail == SWT.NONE) { // when user selects a table row.
 		    		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();

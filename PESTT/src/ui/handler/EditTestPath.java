@@ -49,7 +49,6 @@ public class EditTestPath extends AbstractHandler {
 				if(!input.equals(Description.EMPTY)) {
 					Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
 					if(newTestPath != null) {
-						Activator.getDefault().getTestPathController().removeCoverageData();
 						Activator.getDefault().getTestPathController().removeTestPath();
 						Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 					} else {

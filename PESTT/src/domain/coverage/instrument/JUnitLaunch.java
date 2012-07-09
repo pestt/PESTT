@@ -47,7 +47,7 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 		Activator.getDefault().getTestPathController().clearAutomaticTestPaths();
 		super.launch(editor, mode);		
 		IEditorPart part = Activator.getDefault().getEditorController().getEditorPart();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
+		Activator.getDefault().getViewController().bringEditorToTop(part);
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.jdt.junit.launchconfig");
 		try {

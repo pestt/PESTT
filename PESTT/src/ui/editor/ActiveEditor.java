@@ -115,7 +115,6 @@ public class ActiveEditor implements Observer {
 	
 				@Override
 				public void documentChanged(DocumentEvent event) {
-					removeALLMarkers();
 					updated = false;
 				}
 			};
@@ -141,12 +140,13 @@ public class ActiveEditor implements Observer {
 	}
 	
 	public void createMarker(String markerType, int offset, int length) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
+		Activator.getDefault().getViewController().bringEditorToTop(part);
 		marker.createMarks(markerType, offset, length);
 	}
 
 	public void removeALLMarkers() {
 		marker.deleteAllMarkers();
+		Activator.getDefault().getViewController().bringEditorToTop(part);
 	}
 	
 	public boolean isEverythingMatching() {
@@ -253,7 +253,6 @@ public class ActiveEditor implements Observer {
 				   data instanceof TourChangeEvent ||
 				   data instanceof TestRequirementChangedEvent ||
 				   data instanceof TestPathChangedEvent) {
-						marker.deleteAllMarkers();
 						String criteria = Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria().toString();
 						String tour = Activator.getDefault().getTestPathController().getSelectedTourType().toString();
 						Iterable<AbstractPath<Integer>> infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
@@ -416,7 +415,6 @@ public class ActiveEditor implements Observer {
 		byte[] tempHash = getMethodHash(temp);
 		boolean result = Arrays.equals(currentHash, tempHash) ? true : false;
 		if(isEverythingMatching() && result) {
-			Activator.getDefault().getEditorController().removeALLMarkers();
 			SourceGraph source = new SourceGraph(); 
 			source.create(compilationUnit, getSelectedMethod());
 			Activator.getDefault().getSourceGraphController().updateMetadataInformation(source.getSourceGraph());

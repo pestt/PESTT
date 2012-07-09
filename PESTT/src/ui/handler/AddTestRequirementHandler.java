@@ -37,7 +37,7 @@ public class AddTestRequirementHandler extends AbstractHandler {
 		if(input != null)
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null)
+				if(newTestRequirement != null) 
 					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
 				else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.

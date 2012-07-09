@@ -33,8 +33,11 @@ import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Graph;
 import adt.graph.Path;
+import domain.events.DefUsesChangedEvent;
+import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
+import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 import domain.events.TestRequirementSelectedEvent;
 
@@ -51,7 +54,10 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		this.site = site;
 		Activator.getDefault().getTestPathController().addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
+		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
+		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
+		Activator.getDefault().getDefUsesController().addObserver(this);
 	}
 	
 	public TableViewer create() {
@@ -64,19 +70,21 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof TestRequirementSelectedCriteriaEvent) {
-			testPathhsViewer.setSelection(null);
-			Activator.getDefault().getTestPathController().selectTestPath(null);
+		if(data instanceof TestRequirementSelectedCriteriaEvent) 
+			Activator.getDefault().getTestPathController().unSelectTestPaths();
+		else if(data instanceof TestRequirementChangedEvent || data instanceof DefUsesChangedEvent)
+			Activator.getDefault().getTestPathController().unSelectTestPaths();
+		else if(data instanceof DefUsesSelectedEvent) {
+			if(Activator.getDefault().getDefUsesController().isDefUseSelected())
+				Activator.getDefault().getTestPathController().unSelectTestPaths();
 		} else if(data instanceof TestRequirementSelectedEvent || data instanceof TourChangeEvent ) {
-			AbstractPath<Integer> testRequirement = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement();
-			if(testRequirement != null) {
-				testPathhsViewer.setSelection(null);
-				Activator.getDefault().getTestPathController().selectTestPath(null);
-				cleanPathStatus();
-				setPathStatus(testRequirement);
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {
+					Activator.getDefault().getTestPathController().unSelectTestPaths();
+					setPathStatus(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+				}
 			}
 		} else if(data instanceof TestPathChangedEvent) {
-			cleanPathStatus();
 			List<Object> testPaths = new ArrayList<Object>();
 			Set<Path<Integer>> paths = getPathSet(((TestPathChangedEvent) data).testPathSet, ((TestPathChangedEvent) data).manuallyAdded);
 			for(Path<Integer> path : paths)
@@ -87,8 +95,11 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			if(listener != null)
 				testPathhsViewer.getTable().removeListener(SWT.MouseHover, listener);
 			addTooltips();
-		} else if(data instanceof TestPathSelectedEvent )
+		} else if(data instanceof TestPathSelectedEvent) {
 			cleanPathStatus();
+			if(!Activator.getDefault().getTestPathController().isTestPathSelected()) 
+				testPathhsViewer.setSelection(null);
+		}
 	}
 
 	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic, Iterable<Path<Integer>> manually) {
@@ -147,7 +158,8 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	 * - Red (Background) if the selected test requirement is not covered by the test path.
 	 */
 	private void setPathStatus(AbstractPath<Integer> testRequirement) {
-		Iterator<Path<Integer>> iterator = Activator.getDefault().getTestPathController().getTestPaths().iterator();
+		Set<Path<Integer>> paths = getPathSet(Activator.getDefault().getTestPathController().getTestPaths(), Activator.getDefault().getTestPathController().getTestPathsManuallyAdded());
+		Iterator<Path<Integer>> iterator = paths.iterator();
 		for(TableItem item : testPathhsViewer.getTable().getItems()) {
 			if(iterator.hasNext()) {
 				Path<Integer> path = iterator.next();

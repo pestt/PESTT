@@ -81,6 +81,10 @@ public class DefUsesController extends Observable {
 		setChanged();
 		notifyObservers(new DefUsesSelectedEvent(selected));		
 	}
+	
+	public void unSelectDefUses() {
+		selectDefUse(null);
+	}
 
 	public void selectView(String selected) {
 		if(selected.equals(DefUsesView.VARIABLE.toString()))

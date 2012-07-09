@@ -59,7 +59,7 @@ public class Graph implements Observer {
 		Activator.getDefault().getDefUsesController().addObserver(this);
 		Activator.getDefault().getSourceGraphController().addObserverSourceGraph(this);
 		Activator.getDefault().getCFGController().addObserver(this);
-		Activator.getDefault().getEditorController().setGraphInformation(new GraphInformation(this));
+		Activator.getDefault().getEditorController().setGraphInformation(new VisualInformation(this));
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
 		if(dot != null && !dot.equals(Description.EMPTY))
@@ -204,44 +204,40 @@ public class Graph implements Observer {
 		if(data instanceof CFGCreateEvent) {
 			create(((CFGCreateEvent) data).sourceGraph);
 			Activator.getDefault().getEditorController().everythingMatch();
-		} else if(data instanceof TestRequirementSelectedEvent) {
-			if(Activator.getDefault().getEditorController().isEverythingMatching())
-				if(((TestRequirementSelectedEvent) data).selectedTestRequirement == null) {
-					unselectAll();
-					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-				} else
-					selectTestRequirement(((TestRequirementSelectedEvent) data));
-			else 
-				graphNeedToBeUpdate();
-		} else if(data instanceof TestPathSelectedEvent) {
-			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
-				if(((TestPathSelectedEvent) data).selectedTestPaths == null) {
-					unselectAll();
-					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-				} else
-					selectTestPath(((TestPathSelectedEvent) data));
-			else
-				graphNeedToBeUpdate();
-		} else if(data instanceof LinkChangeEvent) {
+		} else if(data instanceof LayerChangeEvent) 
+			Activator.getDefault().getEditorController().setLayerInformation(((LayerChangeEvent) data).layer);
+		else if(data instanceof LinkChangeEvent) {
 			if(((LinkChangeEvent) data).state) {
-				Activator.getDefault().getEditorController().creatorSelectToEditor(); // create the SelectionListener to the editor.
+				Activator.getDefault().getEditorController().createSelectToEditor(); // create the SelectionListener to the editor.
 				createSelectionListener(); // create the SelectionAdapter event to the nodes.
 		    } else {
 		    	Activator.getDefault().getEditorController().removeSelectToEditor(); // remove the SelectionListener to the editor.
 		    	removeSelectionListener(); // remove the SelectionAdapter event to the nodes.
-		    	Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 		    }
-		} else if(data instanceof LayerChangeEvent) {
-			Activator.getDefault().getEditorController().setLayerInformation(((LayerChangeEvent) data).layer);
+		} else if(data instanceof TestRequirementSelectedEvent) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching())
+				if(((TestRequirementSelectedEvent) data).selectedTestRequirement == null)
+					unselectAll();
+				else
+					selectTestRequirement(((TestRequirementSelectedEvent) data));
+			else if(((TestRequirementSelectedEvent) data).selectedTestRequirement != null) 
+				graphNeedToBeUpdate();
+		} else if(data instanceof TestPathSelectedEvent) {
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
+				if(((TestPathSelectedEvent) data).selectedTestPaths == null || ((TestPathSelectedEvent) data).selectedTestPaths.isEmpty()) 
+					unselectAll();
+				else
+					selectTestPath(((TestPathSelectedEvent) data));
+			else if(((TestPathSelectedEvent) data).selectedTestPaths != null) 
+				graphNeedToBeUpdate();
 		} else if(data instanceof DefUsesSelectedEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) 
-				if(((DefUsesSelectedEvent) data).selectedDefUse == null) {
+				if(((DefUsesSelectedEvent) data).selectedDefUse == null) 
 					unselectAll();
-					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-				} else
+				else
 					selecDefUses();
-			else 
-				graphNeedToBeUpdate();
+			else if(((DefUsesSelectedEvent) data).selectedDefUse != null)
+					graphNeedToBeUpdate();
 		}
 	}
 
@@ -250,7 +246,6 @@ public class Graph implements Observer {
 	 */
 	private void graphNeedToBeUpdate() {
 		unselectAll();
-		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 	}
@@ -264,7 +259,7 @@ public class Graph implements Observer {
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
+		Activator.getDefault().getEditorController().addVisualCoverage(data, aux);
 	}
 	
 	/**
@@ -276,7 +271,7 @@ public class Graph implements Observer {
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(data, aux);
+		Activator.getDefault().getEditorController().addVisualCoverage(data, aux);
 	}
 	
 	/**
@@ -290,7 +285,7 @@ public class Graph implements Observer {
 				aux.addAll(selectInGraph(obj));
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length, GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
-		Activator.getDefault().getEditorController().setVisualCoverage(selectedDefUse, aux);
+		Activator.getDefault().getEditorController().addVisualCoverage(selectedDefUse, aux);
 	}
 
 	private List<GraphItem> selectInGraph(AbstractPath<Integer> selectedTestRequirement) {
@@ -372,10 +367,10 @@ public class Graph implements Observer {
 						MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 					}
 				} else if(e.item == null) {
-					Activator.getDefault().getEditorController().setListenUpdates(false);
-					Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-					Activator.getDefault().getTestPathController().unSelect();
-					Activator.getDefault().getEditorController().setListenUpdates(true);
+					Activator.getDefault().getEditorController().removeVisualCoverage(); // removes all visual information in the editor.
+					Activator.getDefault().getTestPathController().unSelectTestPaths();
+					Activator.getDefault().getTestRequirementController().unSelectTestRequirements();
+					Activator.getDefault().getDefUsesController().unSelectDefUses();
 				}	
 			}
 		};	

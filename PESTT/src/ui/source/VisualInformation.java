@@ -36,7 +36,7 @@ import ui.editor.Line;
 import domain.constants.Layer;
 import domain.coverage.data.ICoverageData;
 
-public class GraphInformation {
+public class VisualInformation {
 
 	private static final String ALL = "All";
 	private static final String TRUE = "True";
@@ -46,7 +46,7 @@ public class GraphInformation {
 	private ui.source.Graph layoutGraph;
 	private ISelectionListener listener;
 	
-	public GraphInformation(ui.source.Graph layoutGraph) {
+	public VisualInformation(ui.source.Graph layoutGraph) {
 		this.layoutGraph = layoutGraph;
 	}
 	
@@ -73,6 +73,7 @@ public class GraphInformation {
 	
 	private void clear() {
 		sourceGraph.selectMetadataLayer(Layer.EMPTY.getLayer()); // change to the empty layer.
+		removeVisualCoverage(); // removes the marks in the editor.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes())  // search in the sourceGraph for all node.
 			for(adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))  // search in the sourceGraph for all edges.
 				for(GraphConnection gconnection : layoutGraph.getGraphEdges())  // search in the layoutGraph for all edges.
@@ -80,13 +81,12 @@ public class GraphInformation {
 						gconnection.setText(Description.EMPTY); // clear the visible information.
 						break;
 					}
-		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 
 	@SuppressWarnings("unchecked")
 	private void addInformationToLayer1() {
-		if(!layoutGraph.getSelected().isEmpty()) { // verify if there are nodes selected.
-			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+		removeVisualCoverage(); // removes the marks in the editor.
+		if(!layoutGraph.getSelected().isEmpty()) // verify if there are nodes selected.
 			for(GraphItem item : layoutGraph.getSelected()) // through all graph items.
 				if(item instanceof GraphNode) { // verify if is a GraphNode.
 					adt.graph.Node<Integer> node = sourceGraph.getNode(Integer.parseInt(item.getText())); // get the node.
@@ -109,8 +109,6 @@ public class GraphInformation {
 						}
 					}
 				}
-		} else 
-			Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
 	}
 	
 	private List<ASTNode> getExpression(List<ASTNode> instructions) {
@@ -212,9 +210,9 @@ public class GraphInformation {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setVisualCoverageStatus(ICoverageData data, List<GraphItem> items) {
+	public void addVisualCoverageStatus(ICoverageData data, List<GraphItem> items) {
 		sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph(); // set the sourceGraph.
-		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+		removeVisualCoverage(); // removes the marks in the editor.
 		for(adt.graph.Node<Integer> node : sourceGraph.getNodes()) {
 			sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(node); // get the information in this layer to this node.
@@ -241,6 +239,12 @@ public class GraphInformation {
 		}
 	}
 	
+	public void removeVisualCoverage() {
+		Activator.getDefault().getEditorController().setListenUpdates(false);
+		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
+		Activator.getDefault().getEditorController().setListenUpdates(true);
+	}
+	
 	private boolean isNodeSelected(List<GraphItem> items, adt.graph.Node<Integer> node) {
 		for(GraphNode gnode : layoutGraph.getGraphNodes())  // through all nodes in the graph.
 			if(!gnode.isDisposed() && gnode.getData().equals(node)) // if matches.
@@ -249,7 +253,7 @@ public class GraphInformation {
 		return false;
 	}
 		
-	public void creatorSelectToEditor() {
+	public void createSelectToEditor() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		// adding a listener
 		listener = new ISelectionListener() {
@@ -265,7 +269,7 @@ public class GraphInformation {
 							return;
 						}
 				}
-				Activator.getDefault().getEditorController().removeALLMarkers();
+				removeVisualCoverage();
 			}
 		};
 		page.addSelectionListener(listener);
@@ -274,6 +278,7 @@ public class GraphInformation {
 	
 	public void removeSelectToEditor() {
 		if(listener != null) {
+			removeVisualCoverage();
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); // get the active page.
 			page.removeSelectionListener(listener); // remove the listener.
 		}

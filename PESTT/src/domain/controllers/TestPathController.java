@@ -28,7 +28,6 @@ import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.coverage.data.CoverageData;
 import domain.coverage.data.ICoverageData;
-import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 
 public class TestPathController extends Observable {
@@ -58,7 +57,7 @@ public class TestPathController extends Observable {
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
 		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
-		selectTestPath(null);
+		unSelectTestPaths();
 	}
 	
 	public void addAutomaticTestPath(Path<Integer> newTestPath, String tooltip) {
@@ -72,7 +71,7 @@ public class TestPathController extends Observable {
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
 		Activator.getDefault().getCoverageDataController().addCoverageData(newTestPath, newData);
-		selectTestPath(null);
+		unSelectTestPaths();
 	}
 	
 	private boolean insertTooltip(Path<Integer> path, String tooltip) {
@@ -108,7 +107,7 @@ public class TestPathController extends Observable {
 			tooltips.remove(path);
 		}
 		testPathSet.remove(selectedTestPaths);
-		selectTestPath(null);
+		unSelectTestPaths();
 	}
 	
 	public void clearAutomaticTestPaths() {
@@ -140,6 +139,10 @@ public class TestPathController extends Observable {
 		this.selectedTestPaths = selectedTestPaths;
 		setChanged();
 		notifyObservers(new TestPathSelectedEvent(selectedTestPaths));
+	}
+	
+	public void unSelectTestPaths() {
+		selectTestPath(null);
 	}
 	
 	public TourType getSelectedTourType() {
@@ -209,16 +212,6 @@ public class TestPathController extends Observable {
 		}
 
 		return new CoverageData(coverageData);
-	}
-	
-	public void removeCoverageData() {
-		for(Path<Integer> path : selectedTestPaths)
-			Activator.getDefault().getCoverageDataController().removeSelectedCoverageData(path);	
-	}
-
-	public void unSelect() {
-		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
 	}
 	
 	public Path<Integer> createTestPath(String input) {

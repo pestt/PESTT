@@ -9,6 +9,7 @@ import java.util.Set;
 import main.activator.Activator;
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -104,6 +105,10 @@ public class ViewController implements Observer {
 			default:
 				return false;
 		}
+	}
+
+	public void bringEditorToTop(IEditorPart part) {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
 	}
 	
 

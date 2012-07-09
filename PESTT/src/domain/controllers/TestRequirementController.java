@@ -44,14 +44,14 @@ public class TestRequirementController extends Observable {
 
 	public void addTestRequirement(Path<Integer> newTestRequirement) {
 		testRequirementSet.add(newTestRequirement);
-		selectTestRequirement(null);
+		unSelectTestRequirements();
 	}
 
 	public void removeSelectedTestRequirement() {
 		if(testRequirementSet.isInfeasible(selectedTestRequirement))
 			testRequirementSet.disableInfeasible(selectedTestRequirement);
 		testRequirementSet.remove(selectedTestRequirement);
-		selectTestRequirement(null);
+		unSelectTestRequirements();
 	}
 	
 	public void cleanTestRequirementSet() {
@@ -133,6 +133,10 @@ public class TestRequirementController extends Observable {
 		this.selectedTestRequirement = selected;
 		setChanged();
 		notifyObservers(new TestRequirementSelectedEvent(selected));
+	}
+	
+	public void unSelectTestRequirements() {
+		selectTestRequirement(null);
 	}
 	
 	public boolean isCoverageCriteriaSelected() {

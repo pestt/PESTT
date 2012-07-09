@@ -10,14 +10,14 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.zest.core.widgets.GraphItem;
 
 import ui.editor.ActiveEditor;
-import ui.source.GraphInformation;
+import ui.source.VisualInformation;
 import domain.constants.Layer;
 import domain.events.TestPathSelectedEvent;
 
 public class EditorController {
 	
 	private ActiveEditor editor;
-	private GraphInformation information;	
+	private VisualInformation visualInfo;	
 	
 	public void setEditor(ActiveEditor editor) {
 		this.editor = editor;
@@ -75,27 +75,31 @@ public class EditorController {
 		return editor.getJavaProject();
 	}
 	
-	public void setGraphInformation(GraphInformation information) {
-		this.information = information;		
+	public void setGraphInformation(VisualInformation information) {
+		this.visualInfo = information;		
 	}
 	
-	public void creatorSelectToEditor() {
-		information.creatorSelectToEditor();
+	public void createSelectToEditor() {
+		visualInfo.createSelectToEditor();
 	}
 	
 	public void removeSelectToEditor() {
-		information.removeSelectToEditor();
+		visualInfo.removeSelectToEditor();
 	}
 	
 	public void setLayerInformation(Layer layer) {
-		information.setLayerInformation(layer);		
+		visualInfo.setLayerInformation(layer);		
 	}
 
-	public void setVisualCoverage(Object data, List<GraphItem> items) {
+	public void addVisualCoverage(Object data, List<GraphItem> items) {
 		if(Activator.getDefault().getCFGController().getLinkState()) // if the link button is on.
 			if(data instanceof TestPathSelectedEvent) 
-				information.setVisualCoverageStatus(Activator.getDefault().getTestPathController().getCoverageData(), items);
+				visualInfo.addVisualCoverageStatus(Activator.getDefault().getTestPathController().getCoverageData(), items);
 			else 
-				information.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
+				visualInfo.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
+	}
+	
+	public void removeVisualCoverage() {
+		visualInfo.removeVisualCoverage();
 	}
 }

@@ -39,7 +39,7 @@ public class AddTestPathHandler extends AbstractHandler {
 		if(input != null)
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
-				if(newTestPath != null)
+				if(newTestPath != null) 
 					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
 				else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
