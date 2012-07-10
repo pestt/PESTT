@@ -146,7 +146,8 @@ public class ActiveEditor implements Observer {
 
 	public void removeALLMarkers() {
 		marker.deleteAllMarkers();
-		Activator.getDefault().getViewController().bringEditorToTop(part);
+		//Activator.getDefault().getViewController().bringEditorToTop(part);
+		part.setFocus();
 	}
 	
 	public boolean isEverythingMatching() {

@@ -268,8 +268,8 @@ public class VisualInformation {
 							selectInGraph(textSelected.getOffset());
 							return;
 						}
+					removeVisualCoverage();
 				}
-				removeVisualCoverage();
 			}
 		};
 		page.addSelectionListener(listener);

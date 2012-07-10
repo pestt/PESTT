@@ -75,15 +75,19 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		else if(data instanceof TestRequirementChangedEvent || data instanceof DefUsesChangedEvent)
 			Activator.getDefault().getTestPathController().unSelectTestPaths();
 		else if(data instanceof DefUsesSelectedEvent) {
-			if(Activator.getDefault().getDefUsesController().isDefUseSelected())
-				Activator.getDefault().getTestPathController().unSelectTestPaths();
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				if(Activator.getDefault().getDefUsesController().isDefUseSelected())
+					Activator.getDefault().getTestPathController().unSelectTestPaths();
+			} else 
+				testPathhsViewer.setSelection(null);
 		} else if(data instanceof TestRequirementSelectedEvent || data instanceof TourChangeEvent ) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {
 					Activator.getDefault().getTestPathController().unSelectTestPaths();
 					setPathStatus(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
 				}
-			}
+			} else 
+				testPathhsViewer.setSelection(null);
 		} else if(data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
 			Set<Path<Integer>> paths = getPathSet(((TestPathChangedEvent) data).testPathSet, ((TestPathChangedEvent) data).manuallyAdded);
@@ -165,9 +169,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				Path<Integer> path = iterator.next();
 				Set<Path<Integer>> coveredPaths = Activator.getDefault().getTestRequirementController().getTestPathCoverage(path);
 				if(coveredPaths.contains(testRequirement)) 
-					item.setBackground(Colors.GREEN_COVERAGE);
-				else
-					item.setBackground(Colors.RED_COVERAGE);
+					item.setBackground(Colors.YELLOW_COVERAGE);
 			}
 		}
 	}
@@ -178,23 +180,25 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			@SuppressWarnings("unchecked")
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
-				boolean hasTotal = false;
-				Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
-				for(Object obj : selection.toList())
-					if(obj instanceof String) {
-						hasTotal = true;
-						break;
-					}
-					else
-						testPaths.add((Path<Integer>) obj);
-				if(hasTotal) {
-					testPaths.clear();
-					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPathsManuallyAdded())
-						testPaths.add(path);
-					for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
-						testPaths.add(path);
-				}	
-				Activator.getDefault().getTestPathController().selectTestPath(testPaths);
+				if(selection.getFirstElement() != null) {
+					boolean hasTotal = false;
+					Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
+					for(Object obj : selection.toList())
+						if(obj instanceof String) {
+							hasTotal = true;
+							break;
+						}
+						else
+							testPaths.add((Path<Integer>) obj);
+					if(hasTotal) {
+						testPaths.clear();
+						for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPathsManuallyAdded())
+							testPaths.add(path);
+						for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
+							testPaths.add(path);
+					}	
+					Activator.getDefault().getTestPathController().selectTestPath(testPaths);
+				}
 		    }
 		});
 	}

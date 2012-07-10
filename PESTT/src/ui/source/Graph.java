@@ -237,7 +237,7 @@ public class Graph implements Observer {
 				else
 					selecDefUses();
 			else if(((DefUsesSelectedEvent) data).selectedDefUse != null)
-					graphNeedToBeUpdate();
+				graphNeedToBeUpdate();
 		}
 	}
 
@@ -362,10 +362,8 @@ public class Graph implements Observer {
 					automaticEdgeSelectopn();
 					if(Activator.getDefault().getEditorController().isEverythingMatching())
 						Activator.getDefault().getEditorController().setLayerInformation(Layer.INSTRUCTIONS);
-					else {
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
-					}
+					else 
+						graphNeedToBeUpdate();
 				} else if(e.item == null) {
 					Activator.getDefault().getEditorController().removeVisualCoverage(); // removes all visual information in the editor.
 					Activator.getDefault().getTestPathController().unSelectTestPaths();

@@ -58,8 +58,6 @@ public class ViewController implements Observer {
 			if(selectedTestRequirement != null) {
 				bringViewToTop(Description.VIEW_GRAPH);
 				bringViewToTop(Description.VIEW_STRUCTURAL_COVERAGE);
-				if(isADefUsesCoverageVriteria() && !Activator.getDefault().getDefUsesController().isEmpty()) 
-					bringViewToTop(Description.VIEW_DATA_FLOW_COVERAGE);
 			}
 		} else if(data instanceof TestPathSelectedEvent) {
 			Set<Path<Integer>>  selectedTestPathSelectedEvent = ((TestPathSelectedEvent) data).selectedTestPaths;
@@ -71,8 +69,7 @@ public class ViewController implements Observer {
 			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
 			if(selectedDefUses != null) {
 				bringViewToTop(Description.VIEW_GRAPH);
-				if(isADefUsesCoverageVriteria() && !Activator.getDefault().getDefUsesController().isEmpty())
-					bringViewToTop(Description.VIEW_STRUCTURAL_COVERAGE);
+				bringViewToTop(Description.VIEW_DATA_FLOW_COVERAGE);
 			}
 		}
 	}
@@ -93,17 +90,6 @@ public class ViewController implements Observer {
 		for(String viewId : views) {
 			if(HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(viewId) == null)
 				bringViewToTop(viewId);	
-		}
-	}
-	
-	private boolean isADefUsesCoverageVriteria() {
-		switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
-			case ALL_DU_PATHS:
-			case ALL_USES:
-			case ALL_DEFS:
-				return true;
-			default:
-				return false;
 		}
 	}
 

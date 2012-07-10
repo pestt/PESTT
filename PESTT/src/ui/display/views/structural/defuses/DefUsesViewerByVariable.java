@@ -79,14 +79,20 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements IDef
 		else if(data instanceof DefUsesChangedEvent) {
 			setDefUses(((DefUsesChangedEvent) data).variableDefUses);
 		} else if(data instanceof TestRequirementSelectedEvent) {
-			if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {
-				Activator.getDefault().getDefUsesController().unSelectDefUses();
-				setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
-			}
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {
+					Activator.getDefault().getDefUsesController().unSelectDefUses();
+					setDefUsesStatus(((TestRequirementSelectedEvent) data).selectedTestRequirement);
+				}
+			} else 
+				defUsesViewer.setSelection(null);
 		} else if(data instanceof TestPathSelectedEvent) {
-			Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-			if(selectedTestPaths != null && !selectedTestPaths.isEmpty())
-				Activator.getDefault().getDefUsesController().unSelectDefUses();
+			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+				Set<Path<Integer>> selectedTestPaths = Activator.getDefault().getTestPathController().getSelectedTestPaths();
+				if(selectedTestPaths != null && !selectedTestPaths.isEmpty())
+					Activator.getDefault().getDefUsesController().unSelectDefUses();
+			} else 
+				defUsesViewer.setSelection(null);
 		} else if(data instanceof DefUsesSelectedEvent) {
 			cleanDefUsesStatus();
 			if(!Activator.getDefault().getDefUsesController().isDefUseSelected()) 

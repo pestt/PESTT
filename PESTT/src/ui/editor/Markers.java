@@ -31,7 +31,7 @@ public class Markers {
 			file.deleteMarkers(MarkersType.LINK_MARKER, true, IResource.DEPTH_INFINITE);
 			file.deleteMarkers(MarkersType.FULL_COVERAGE_MARKER, true, IResource.DEPTH_INFINITE);
 			file.deleteMarkers(MarkersType.NO_COVERAGE_MARKER, true, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
+	} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}

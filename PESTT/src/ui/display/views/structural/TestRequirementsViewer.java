@@ -93,14 +93,16 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 					Activator.getDefault().getTestRequirementController().unSelectTestRequirements();	
 					setPathStatus();
 				} 
-			}
+			} else 
+				testRequirementsViewer.setSelection(null);
 		} else if(data instanceof DefUsesSelectedEvent) {
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				if(Activator.getDefault().getDefUsesController().isDefUseSelected()) {
 					Activator.getDefault().getTestRequirementController().unSelectTestRequirements();
 					setDefUsesStatus();
 				}
-			}
+			} else 
+				testRequirementsViewer.setSelection(null);
 		}
 	}
 
