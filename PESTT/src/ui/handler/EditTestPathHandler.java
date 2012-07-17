@@ -16,7 +16,7 @@ import ui.constants.Messages;
 import ui.dialog.InputDialog;
 import adt.graph.Path;
 
-public class EditTestPath extends AbstractHandler {
+public class EditTestPathHandler extends AbstractHandler {
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);

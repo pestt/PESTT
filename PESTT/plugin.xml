@@ -325,6 +325,12 @@
             id="PESTT.EditTestRequirement"
             name="Edit Test Requirement">
       </command>
+      <command
+            categoryId="PESTT.CategoryViewStructuralCoverage"
+            description="Find the necessary test paths"
+            id="PESTT.GenerateTestPath"
+            name="Find the necessary test paths">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -418,7 +424,7 @@
                   label="Test requirements">
                <command
                      commandId="PESTT.AddTestRequirementManually"
-                     icon="icons/add_path.gif"
+                     icon="icons/add_requirement.gif"
                      label="Add a new test requirement"
                      style="push"
                      tooltip="Add a new test requirement">
@@ -434,7 +440,7 @@
                </command>
                <command
                      commandId="PESTT.RemoveTestRequirementManually"
-                     icon="icons/remove_path.gif"
+                     icon="icons/remove_requirement.gif"
                      label="Remove the selected test requirement"
                      style="push"
                      tooltip="Remove the selected test requirement">
@@ -450,7 +456,7 @@
                </command>
                <command
                      commandId="PESTT.AddTestPathManually"
-                     icon="icons/add_graph.gif"
+                     icon="icons/add_test.gif"
                      label="Add a new executed graph"
                      style="push"
                      tooltip="Add a new executed graph">
@@ -466,7 +472,7 @@
                </command>
                <command
                      commandId="PESTT.RemoveTestPathManually"
-                     icon="icons/remove_graph.gif"
+                     icon="icons/remove_test.gif"
                      label="Remove the selected graph"
                      style="push"
                      tooltip="Remove the selected graph">
@@ -627,8 +633,28 @@
             allPopups="false"
             locationURI="toolbar:PESTT.ViewStructuralCoverage">
          <command
+               commandId="PESTT.GenerateTestPath"
+               icon="icons/find_test.gif"
+               label="Find the necessary test paths"
+               style="push"
+               tooltip="Find the necessary test paths.">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="PESTT.Perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <separator
+               name="PESTT.separator3"
+               visible="true">
+         </separator>
+         <command
                commandId="PESTT.AddTestRequirementManually"
-               icon="icons/add_path.gif"
+               icon="icons/add_requirement.gif"
                label="Add a new test requirement"
                style="push"
                tooltip="Add a new test requirement">
@@ -660,7 +686,7 @@
          </command>
          <command
                commandId="PESTT.RemoveTestRequirementManually"
-               icon="icons/remove_path.gif"
+               icon="icons/remove_requirement.gif"
                label="Remove the selected test requirement"
                style="push"
                tooltip="Remove the selected test requirement">
@@ -680,8 +706,8 @@
          </separator>
          <command
                commandId="PESTT.AddTestPathManually"
-               icon="icons/add_graph.gif"
-               label="Edit the selected test path"
+               icon="icons/add_test.gif"
+               label="Add a new test path"
                style="push"
                tooltip="Add a new test path">
             <visibleWhen
@@ -712,7 +738,7 @@
          </command>
          <command
                commandId="PESTT.RemoveTestPathManually"
-               icon="icons/remove_graph.gif"
+               icon="icons/remove_test.gif"
                label="Remove the selected test path"
                style="push"
                tooltip="Remove the selected graph">
@@ -1100,7 +1126,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="ui.handler.EditTestPath"
+            class="ui.handler.EditTestPathHandler"
             commandId="PESTT.EditTestPath">
          <activeWhen>
             <with
@@ -1112,8 +1138,20 @@
          </activeWhen>
       </handler>
       <handler
-            class="ui.handler.EditTestRequirement"
+            class="ui.handler.EditTestRequirementHandler"
             commandId="PESTT.EditTestRequirement">
+         <activeWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.GenerateTestPathHandler"
+            commandId="PESTT.GenerateTestPath">
          <activeWhen>
             <with
                   variable="activeEditor">
@@ -1284,4 +1322,3 @@
     </shortcut>
  </extension>
   </plugin>
-

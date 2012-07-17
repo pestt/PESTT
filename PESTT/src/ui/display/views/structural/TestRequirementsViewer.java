@@ -254,12 +254,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 		        	Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();
 		    		for(TableItem item : testRequirementsViewer.getTable().getItems()) {
 		    			AbstractPath<Integer> selected = iterator.next();
-		        		if(item == event.item) 
+		        		if(item == event.item) {
 		        			if(item.getChecked())
 		        				Activator.getDefault().getTestRequirementController().enableInfeasible(selected);
 		        			else 
 		        				Activator.getDefault().getTestRequirementController().disableInfeasible(selected);
 		        			break;
+		        		}
 		    		}
 		        } else if(event.detail == SWT.NONE) { // when user selects a table row.
 		    		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault().getTestRequirementController().getTestRequirements().iterator();

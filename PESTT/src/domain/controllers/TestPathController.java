@@ -61,7 +61,7 @@ public class TestPathController extends Observable {
 	}
 	
 	public void addAutomaticTestPath(Path<Integer> newTestPath, String tooltip) {
-		boolean update = insertTooltip(newTestPath,tooltip);
+		boolean update = insertTooltip(newTestPath, tooltip);
 		if(!update) {
 			Activator.getDefault().getEditorController().setListenUpdates(false);
 			testPathSet.addAutomatic(newTestPath);
