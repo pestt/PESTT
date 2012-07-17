@@ -62,8 +62,9 @@ public class Graph implements Observer {
 		Activator.getDefault().getEditorController().setGraphInformation(new VisualInformation(this));
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
-		if(dot != null && !dot.equals(Description.EMPTY))
-			create(Activator.getDefault().getSourceGraphController().getSourceGraph());
+		if(dot != null && !dot.equals(Description.EMPTY)) {
+			// create(Activator.getDefault().getSourceGraphController().getSourceGraph());
+		}
 	}
 	
 	private void create(adt.graph.Graph<Integer> sourceGraph) {

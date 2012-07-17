@@ -80,6 +80,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements Obser
 				testRequirements.add(path);
 			testRequirementsViewer.setInput(testRequirements);
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
+			cleanPathStatus();
 		} else if(data instanceof TestRequirementSelectedEvent) { 
 			cleanPathStatus();
 			if(!Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) 

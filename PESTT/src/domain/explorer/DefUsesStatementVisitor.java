@@ -75,9 +75,12 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 				switch(javaElement.getElementType()) {
 					case IJavaElement.FIELD:
 						if(node.getQualifier().resolveBinding().getKind() != IBinding.TYPE)
-							if(!isSubElement(node.getQualifier().toString()))
+							if(node.getQualifier().resolveBinding().getJavaElement().getElementType() == IJavaElement.FIELD)
+								uses.add(THIS + node.toString());
+							else {
 								uses.add(node.getQualifier().toString());
-						stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+								stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+							}
 						break;
 					default:
 						stored.push(node.getName().toString());
@@ -251,16 +254,9 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 
 	private void addToUses() {
 		if(!stored.isEmpty())
-			if(stored.peek() != EMPTY && !defs.contains(stored.peek()) && !isSubElement(stored.peek()))
+			if(stored.peek() != EMPTY && !defs.contains(stored.peek()))
 				uses.add(stored.pop());
 			else
 				stored.pop();	
-	}
-
-	private boolean isSubElement(String peek) {
-		for(String str : defs)
-			if(str.equals(peek) || peek.contains(str))
-				return true;
-		return false;
 	}
 }

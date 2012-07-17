@@ -19,6 +19,7 @@ import ui.constants.Colors;
 import ui.constants.StatisticsElements;
 import ui.editor.Line;
 import ui.events.StatisticsChangedEvent;
+import adt.graph.AbstractPath;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
@@ -49,6 +50,8 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		statisticsSet.add(getLinesStatistics(selectedTestPaths));
 		statisticsSet.add(getTestRequirementsStatistics());
 		statisticsSet.add(getInfeasiblesStatistics());
+		statisticsSet.add(getCyclomaticComplexity());
+		statisticsSet.add(getMinOfTestRequired());
 		setChanged();
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
@@ -185,6 +188,47 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 		return Activator.getDefault().getTestRequirementController().sizeInfeasibles();
 	}
 	
+	private String getCyclomaticComplexity() {
+		String unit = StatisticsElements.CYCLOMATIC;
+		int edges = getTotalEdges();
+		int nodes = getTotalNodes();
+		int finalNodes = getTotalFinalNodes();
+		int complexity = edges - nodes + finalNodes; 
+		return totalOutpu(unit, complexity, 0, "");
+	}
+	
+	private int getTotalFinalNodes() {
+		int size = 0;
+		Iterator<Node<Integer>> iterator = graph.getFinalNodes().iterator();
+		while(iterator.hasNext()) {
+			size++;
+			iterator.next();
+		}
+		return size;
+	}
+	
+	private String getMinOfTestRequired() {
+		String unit = StatisticsElements.TESTREQUIRED;
+		Iterable<AbstractPath<Integer>> automatic = Activator.getDefault().getTestRequirementController().getTestRequirements();
+		Iterable<Path<Integer>> manually = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
+		int begin = 0;
+		int end = 0;
+		for(AbstractPath<Integer> path : automatic) {
+			if(graph.isInitialNode(path.from()))
+				begin++;
+			if(graph.isFinalNode(path.to()))
+				end++;
+		}
+		for(Path<Integer> path : manually) {
+			if(graph.isInitialNode(path.from()))
+				begin++;
+			if(graph.isFinalNode(path.to()))
+				end++;
+		}
+		int required = Math.max(begin,  end);
+		return totalOutpu(unit, required, 0, "");		
+	}
+	
 	private String getPercentage(int passed, int total) {
 		DecimalFormat formater = new DecimalFormat("#,##0.0");
 		if(passed == 0 && total == 0)
@@ -193,6 +237,10 @@ public class StatisticsSet extends Observable implements Iterable<String>{
 	}
 	
 	private String totalOutpu(String unit, int passed, int total, String percentage) {
+		if(unit.equals(StatisticsElements.CYCLOMATIC))
+			return unit + ": " + passed;
+		if(unit.equals(StatisticsElements.TESTREQUIRED))
+			return unit + ": " + passed;
 		if(unit.equals(StatisticsElements.INFEASIBLES))
 			return "Total of " + unit + " paths: " + passed;
 		if(unit.equals(StatisticsElements.TESTREQUIREMENTS)) 
