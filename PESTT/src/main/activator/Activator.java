@@ -8,7 +8,6 @@ import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
 import ui.controllers.ViewController;
-import domain.PESTT;
 import domain.controllers.BytemanController;
 import domain.controllers.CoverageDataController;
 import domain.controllers.DefUsesController;

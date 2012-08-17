@@ -9,6 +9,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import domain.constants.TestType;
+
 import ui.constants.Description;
 import ui.constants.Messages;
 import ui.dialog.InputDialog;
@@ -40,7 +42,7 @@ public class AddTestPathHandler extends AbstractHandler {
 			if(!input.equals(Description.EMPTY)) {
 				Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
 				if(newTestPath != null) 
-					Activator.getDefault().getTestPathController().addTestPath(newTestPath);
+					Activator.getDefault().getTestPathController().addTestPath(newTestPath, TestType.MANUALLY);
 				else {
 					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
 					addNewTestPath(window, input);

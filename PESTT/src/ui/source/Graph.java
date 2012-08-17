@@ -63,7 +63,7 @@ public class Graph implements Observer {
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
 		if(dot != null && !dot.equals(Description.EMPTY)) {
-			// create(Activator.getDefault().getSourceGraphController().getSourceGraph());
+			 create(Activator.getDefault().getSourceGraphController().getSourceGraph());
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package domain.coverage.instrument;
+package domain.tests.instrument;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -81,7 +81,7 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 	private void addTestPath(AbstractPath<Integer> path, List<Node<Integer>> nodes) {
 		visited.add(path);
 		nodes.addAll(getPathNodes(path));
-		int i = 1;
+		int i = 0;
 		while(!graph.isFinalNode(nodes.get(nodes.size() - 1))) {
 			List<Node<Integer>> next = getNextNode(nodes.subList(i, nodes.size()));
 			if(next != null && !next.isEmpty()) 
@@ -120,14 +120,17 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 		for(AbstractPath<Integer> path : candidates) {
 			find = true;
 			List<Node<Integer>> lst = getPathNodes(path);
-			for(int i = 0; i < list.size(); i++)
+			
+			for(int i = 0; i < list.size() && i < lst.size(); i++)
 				if(list.get(i) != lst.get(i)) {
 					find = false;
 					break;
 				}
+				
 			if(find) {
 				visited.add(path);
-				return lst.subList(list.size(), lst.size());
+				if(lst.size() > list.size())
+					return lst.subList(list.size(), lst.size());
 			}
 			
 		}

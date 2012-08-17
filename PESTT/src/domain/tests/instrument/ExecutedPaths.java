@@ -1,4 +1,4 @@
-package domain.coverage.instrument;
+package domain.tests.instrument;
 
 import java.io.File;
 import java.util.ArrayList;

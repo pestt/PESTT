@@ -36,7 +36,7 @@ public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 	} 
 	
 	
-	private void setNodePosition(GraphElements graphelements, Map<String, Node> nodeslist, EntityLayout[] graphnodes) {
+	private void setNodePosition(GraphElements graphelements, Map<String, Node> nodeslist, EntityLayout[] graphNodes) {
 		double pointX = 0;
 		double pointY = 0;
 		int current = 0;
@@ -48,8 +48,8 @@ public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 			Node node = entry.getValue();
 			pointX = convertX(layoutWidth, graphelements.getGraphWidth(), node.getXPosition());
 			pointY = convertY(layoutHeight, graphelements.getGraphHeight(), node.getYPosition());
-			EntityLayout nodeentity = graphnodes[current++];
-			nodeentity.setLocation(pointX, pointY);
+			EntityLayout nodeEntity = graphNodes[current++];
+			nodeEntity.setLocation(pointX, pointY);
 		}
 	}
 

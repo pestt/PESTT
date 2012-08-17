@@ -1,4 +1,4 @@
-package domain.coverage.instrument;
+package domain.tests.instrument;
 
 import domain.constants.Byteman;
 

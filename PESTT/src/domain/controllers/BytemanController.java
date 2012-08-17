@@ -23,12 +23,12 @@ import adt.graph.Node;
 import adt.graph.Path;
 import domain.constants.Byteman;
 import domain.constants.Layer;
-import domain.coverage.instrument.ExecutedPaths;
-import domain.coverage.instrument.FileCreator;
-import domain.coverage.instrument.JUnitTestRunListener;
-import domain.coverage.instrument.Rules;
 import domain.events.EndTestsExecutionEvent;
 import domain.events.TestStartEvent;
+import domain.tests.instrument.ExecutedPaths;
+import domain.tests.instrument.FileCreator;
+import domain.tests.instrument.JUnitTestRunListener;
+import domain.tests.instrument.Rules;
 
 public class BytemanController implements Observer {
 	

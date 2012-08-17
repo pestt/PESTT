@@ -1,4 +1,4 @@
-package domain.explorer;
+package domain.ast.visitors;
 
 import java.util.List;
 import java.util.Set;
@@ -33,7 +33,7 @@ import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-public class DefUsesStatementVisitor extends ASTVisitor {
+public class DefUsesCollector extends ASTVisitor {
 	
 	private static final String EMPTY = null; 
 	private static final String THIS = "this.";
@@ -41,7 +41,7 @@ public class DefUsesStatementVisitor extends ASTVisitor {
 	private Set<String> uses;
 	private Stack<String> stored;
 	
-	public DefUsesStatementVisitor(Set<String> defs, Set<String> uses) {
+	public DefUsesCollector(Set<String> defs, Set<String> uses) {
 		this.defs = defs;
 		this.uses = uses;
 		stored = new Stack<String>();

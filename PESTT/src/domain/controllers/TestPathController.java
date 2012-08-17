@@ -25,6 +25,7 @@ import adt.graph.Node;
 import adt.graph.Path;
 import domain.TestPathSet;
 import domain.constants.Layer;
+import domain.constants.TestType;
 import domain.constants.TourType;
 import domain.coverage.data.CoverageData;
 import domain.coverage.data.ICoverageData;
@@ -32,7 +33,6 @@ import domain.events.TestPathSelectedEvent;
 
 public class TestPathController extends Observable {
 
-	private static final String MANUALLY = "Manually added";
 	private TestPathSet testPathSet;
 	private Set<Path<Integer>> selectedTestPaths;
 	private TourType selectedTourType;
@@ -51,8 +51,8 @@ public class TestPathController extends Observable {
 		testPathSet.deleteObserver(o);
 	}
 
-	public void addTestPath(Path<Integer> newTestPath) {
-		insertTooltip(newTestPath, MANUALLY);
+	public void addTestPath(Path<Integer> newTestPath, String tooltip) {
+		insertTooltip(newTestPath, tooltip);
 		testPathSet.add(newTestPath);
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
@@ -79,7 +79,7 @@ public class TestPathController extends Observable {
 		Path<Integer> remove = null;
 		for(Path<Integer> current : tooltips.keySet())
 			if(current.toString().equals(path.toString())) {
-				if(!tooltip.equals(MANUALLY))
+				if(!tooltip.equals(TestType.MANUALLY))
 					if(testPathSet.isManuallyAdded(current)) {
 						Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
 						set.add(current);

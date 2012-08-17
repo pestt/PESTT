@@ -10,7 +10,8 @@ import org.eclipse.core.commands.ExecutionException;
 
 import adt.graph.Graph;
 import adt.graph.Path;
-import domain.coverage.instrument.GenerateTestPaths;
+import domain.constants.TestType;
+import domain.tests.instrument.GenerateTestPaths;
 
 public class GenerateTestPathHandler extends AbstractHandler {
 	
@@ -19,10 +20,8 @@ public class GenerateTestPathHandler extends AbstractHandler {
 		Graph<Integer> graph = Activator.getDefault().getSourceGraphController().getSourceGraph();
 		Set<Path<Integer>> paths = new GenerateTestPaths<Integer>(graph).getTestPaths();
 		if(paths != null && !paths.isEmpty()) {
-			Activator.getDefault().getEditorController().setListenUpdates(false);
 			for(Path<Integer> newTestPath : paths)
-				Activator.getDefault().getTestPathController().addTestPath(newTestPath);
-			Activator.getDefault().getEditorController().setListenUpdates(true);
+				Activator.getDefault().getTestPathController().addTestPath(newTestPath, TestType.AUTOMATIC);
 		}
 		return null;
 	}	

@@ -27,6 +27,7 @@ import ui.editor.ActiveEditor;
 import adt.graph.Path;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.Layer;
+import domain.constants.TestType;
 import domain.coverage.data.CoverageData;
 import domain.coverage.data.ICoverageData;
 
@@ -103,7 +104,7 @@ public class RefreshHandler extends AbstractHandler {
 						Activator.getDefault().getTestRequirementController().enableInfeasible(path);
 						break;
 					case ADDITIONAL_TEST_PATH:
-						Activator.getDefault().getTestPathController().addTestPath(path);
+						Activator.getDefault().getTestPathController().addTestPath(path, TestType.MANUALLY);
 						List<ICoverageData> newData = new LinkedList<ICoverageData>();
 						newData.add(new CoverageData(path));
 						break;

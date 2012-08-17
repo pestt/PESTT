@@ -16,10 +16,10 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
 import adt.graph.Node;
+import domain.ast.visitors.GraphBuilder;
 import domain.constants.Layer;
 import domain.events.CFGCreateEvent;
 import domain.events.CFGUpdateEvent;
-import domain.explorer.StatementsVisitor;
 import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraph extends Observable {
@@ -38,7 +38,7 @@ public class SourceGraph extends Observable {
 	public void create(ICompilationUnit unit, String methodName) {
 		// Now create the AST for the ICompilationUnits
 		CompilationUnit parser = parse(unit);
-		StatementsVisitor visitor = new StatementsVisitor(methodName, parser);
+		GraphBuilder visitor = new GraphBuilder(methodName, parser);
 		parser.accept(visitor);
 		sourceGraph = visitor.getGraph();
 		javadocAnnotations = visitor.getJavadocAnnotations();

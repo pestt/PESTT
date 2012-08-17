@@ -19,14 +19,14 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import ui.editor.Line;
 import adt.graph.Edge;
 import adt.graph.Node;
+import domain.ast.visitors.DefUsesCollector;
 import domain.constants.Layer;
-import domain.explorer.DefUsesStatementVisitor;
 
 public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisitor<Integer> {
 	
 	private static final String THIS = "this.";
 	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one time.
-	private DefUsesStatementVisitor visitor;
+	private DefUsesCollector visitor;
 	
 	public DefUsesVisitor() {
 		visitedNodes = new HashSet<Node<Integer>>();
@@ -43,7 +43,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 			Set<String> uses = new TreeSet<String>();
 			if(graph.isInitialNode(node))
 				addToDefs(defs);
-			visitor = new DefUsesStatementVisitor(defs, uses);
+			visitor = new DefUsesCollector(defs, uses);
 			if(nodeInstructions != null) {
 				List<ASTNode> astNodes = getASTNodes(nodeInstructions);
 				if(!isProgramStatement(astNodes))
@@ -65,7 +65,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(edge.getBeginNode());
 		Set<String> defs = new TreeSet<String>();
 		Set<String> uses = new TreeSet<String>();
-		visitor = new DefUsesStatementVisitor(defs, uses);
+		visitor = new DefUsesCollector(defs, uses);
 		if(nodeInstructions != null) {
 			List<ASTNode> astNodes = getASTNodes(nodeInstructions);
 			if(isProgramStatement(astNodes))

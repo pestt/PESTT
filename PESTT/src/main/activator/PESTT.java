@@ -1,10 +1,15 @@
-package domain;
+package main.activator;
 
 import ui.StatisticsSet;
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
 import ui.controllers.ViewController;
+import domain.CoverageDataSet;
+import domain.DefUsesSet;
+import domain.SourceGraph;
+import domain.TestPathSet;
+import domain.TestRequirementSet;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;

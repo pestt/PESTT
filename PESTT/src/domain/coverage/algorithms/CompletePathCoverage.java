@@ -1,17 +1,12 @@
 package domain.coverage.algorithms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-
-import ui.editor.Line;
 import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
 import adt.graph.Graph;
@@ -19,25 +14,24 @@ import adt.graph.InfinitePath;
 import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SequencePath;
-import domain.constants.Layer;
 import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageAlgorithms<V> {
 
 	private Graph<V> graph;
-	private LinkedList<Node<V>> nodes;
-	private Set<AbstractPath<V>> paths;	
+	private LinkedList<Node<V>> pathNodes;
+	private Set<AbstractPath<V>> completePaths;	
 	
 	public CompletePathCoverage(Graph<V> graph) {
 		this.graph = graph;
-		paths = new TreeSet<AbstractPath<V>>();
-		nodes = new LinkedList<Node<V>>();
+		completePaths = new TreeSet<AbstractPath<V>>();
+		pathNodes = new LinkedList<Node<V>>();
 	}
 
 	public Set<AbstractPath<V>> getTestRequirements() {
 		CompletePathCoverageVisitor cpcv = new CompletePathCoverageVisitor(graph);
 		graph.accept(cpcv);
-		return paths;
+		return completePaths;
 	}
 	
 	private class CompletePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
@@ -55,20 +49,17 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 			CyclePath<V> currentCycle = stack.peek();
 			if(currentCycle.containsNode(node))
 				return false;
-			if(nodes.contains(node) && !graph.isInitialNode(node) && isDoLoop(node))
-				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
-			else if(nodes.contains(node) && !graph.isInitialNode(node) && !isDoLoop(node))
-				stack.push(new CyclePath<V>(nodes.subList(nodes.lastIndexOf(node), nodes.size())));
-			nodes.addLast(node);
-			if(graph.isFinalNode(node)) {
-				paths.add(parseNodes(nodes)); 
-			}
+			if(pathNodes.contains(node) && !graph.isInitialNode(node)) 
+				stack.push(new CyclePath<V>(pathNodes.subList(pathNodes.lastIndexOf(node), pathNodes.size())));
+			pathNodes.addLast(node);
+			if(graph.isFinalNode(node)) 
+				completePaths.add(parseNodes(pathNodes));
 			return true;
 		}
 
 		@Override
 		public void endVisit(Node<V> node) {
-			nodes.removeLast();
+			pathNodes.removeLast();
 			CyclePath<V> topPath = stack.peek();
 			if (topPath.iterator().hasNext() && stack.peek().from() == node)
 				stack.pop();
@@ -91,13 +82,12 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 					innerCycleStart = cycleStart + innerCycleStart + 1;    // absolute index 
 					int innerCycleEnd = nodes.lastIndexOf(nodes.get(innerCycleStart));
 					InfinitePath<V> innerPathInfinite = new InfinitePath<V> ();
-						innerPathInfinite.addSubPath(new Path<V>(nodes.subList(cycleStart, innerCycleStart)));
-						innerPathInfinite.addSubPath(parseNodes (nodes.subList(innerCycleStart, innerCycleEnd + 1)));
-						if (innerCycleEnd + 1 < cycleEnd)
-							innerPathInfinite.addSubPath(parseNodes(nodes.subList(innerCycleEnd + 1, cycleEnd + 1)));	
-						innerPath = innerPathInfinite;
-				}
-				else
+					innerPathInfinite.addSubPath(new Path<V>(nodes.subList(cycleStart, innerCycleStart)));
+					innerPathInfinite.addSubPath(parseNodes (nodes.subList(innerCycleStart, innerCycleEnd + 1)));
+					if (innerCycleEnd + 1 < cycleEnd)
+						innerPathInfinite.addSubPath(parseNodes(nodes.subList(innerCycleEnd + 1, cycleEnd + 1)));	
+					innerPath = innerPathInfinite;
+				} else
 					innerPath = new CyclePath<V>(nodes.subList(cycleStart, cycleEnd + 1));
 				
 				AbstractPath<V> posCycle = null;
@@ -125,25 +115,6 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 				i++;
 			}
 			return -1;
-		}
-		
-		@SuppressWarnings("unchecked")
-		private boolean isDoLoop(Node<V> node) {
-			graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
-			HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph.getMetadata(node);
-			if(nodeInstructions != null) {
-				List<ASTNode> astNodes = getASTNodes(nodeInstructions);
-				if(astNodes.get(0).getNodeType() == ASTNode.DO_STATEMENT)
-					return true;
-			}
-			return false;
-		}
-			
-		private List<ASTNode> getASTNodes(HashMap<ASTNode, Line> map) {
-			List<ASTNode> nodes = new LinkedList<ASTNode>();
-			for(Entry<ASTNode, Line> entry : map.entrySet()) 
-		         nodes.add(entry.getKey());
-			return nodes;
 		}
 		
 	};

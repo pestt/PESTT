@@ -1,4 +1,4 @@
-package domain.explorer;
+package domain.ast.visitors;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Edge;
 import adt.graph.Graph;
@@ -47,7 +46,7 @@ import domain.GraphInformation;
 import domain.constants.Layer;
 import domain.graph.visitors.RenumNodesGraphVisitor;
 
-public class StatementsVisitor extends ASTVisitor {
+public class GraphBuilder extends ASTVisitor {
 
 	private static final String NEG = "¬"; 
 	private Graph<Integer> sourceGraph;
@@ -68,7 +67,7 @@ public class StatementsVisitor extends ASTVisitor {
 	private List<VariableDeclarationFragment> attributes;
 	private List<EnumDeclaration> enumFields;
 
-	public StatementsVisitor(String methodName, CompilationUnit unit) {
+	public GraphBuilder(String methodName, CompilationUnit unit) {
 		this.methodName = methodName; // name of the method to be analyzed.
 		this.unit = unit;
 		nodeNum = 0; // number of the node.
@@ -373,21 +372,13 @@ public class StatementsVisitor extends ASTVisitor {
 	@Override  
 	public boolean visit(ForStatement node) {
 		Edge<Integer> edge = createConnection(); // initialization of the ForStatement.
-		String initializers = Description.EMPTY;
-		for(Object initNode : node.initializers()) {
-			initializers += initNode.toString() + ", ";
+		for(Object initNode : node.initializers()) 
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(), (ASTNode) initNode, unit); // add information to noInitFor node.
-		}
-		initializers = initializers.substring(0, initializers.length() - 2);
 		Node<Integer> noFor = edge.getEndNode(); // the initial node of the ForStatement.
 		infos.addInformationToLayer1(sourceGraph, noFor, node, unit);
     	Node<Integer> incFor = sourceGraph.addNode(++nodeNum); // the node of the incFor.
-    	String updaters = Description.EMPTY;
-    	for(Object incNode : node.updaters()) {
-    		updaters += incNode.toString() + ", ";
+    	for(Object incNode : node.updaters()) 
     		infos.addInformationToLayer1(sourceGraph, incFor, (ASTNode) incNode, unit);
-    	}
-    	updaters = updaters.substring(0, updaters.length() - 2);
     	Node<Integer> noEndFor = sourceGraph.addNode(++nodeNum); // the final node of the ForStatement.
     	breakNode.push(noEndFor); // if a break occur goes to the final node of the ForStatement.
     	continueNode.push(incFor); // if a continue occur goes to the incFor node.
