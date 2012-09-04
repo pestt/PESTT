@@ -130,8 +130,7 @@ public class ExecutedPaths {
 		}
 	}
 
-	private void addFirstNodesToPath(List<Edge<Integer>> edges,
-			List<Edge<Integer>> toRemove) {
+	private void addFirstNodesToPath(List<Edge<Integer>> edges, List<Edge<Integer>> toRemove) {
 		for(Edge<Integer> edge : edges)
 			if(sourceGraph.isInitialNode(edge.getBeginNode())) {
 				pathNodes.add(edges.get(0).getBeginNode());

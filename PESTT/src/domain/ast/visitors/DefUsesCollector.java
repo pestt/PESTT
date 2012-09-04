@@ -39,32 +39,32 @@ public class DefUsesCollector extends ASTVisitor {
 	private static final String THIS = "this.";
 	private Set<String> defs;
 	private Set<String> uses;
-	private Stack<String> stored;
+	private Stack<String> stack;
 	
 	public DefUsesCollector(Set<String> defs, Set<String> uses) {
 		this.defs = defs;
 		this.uses = uses;
-		stored = new Stack<String>();
+		stack = new Stack<String>();
 	}
 	
 	@Override
 	public void endVisit(StringLiteral node) {
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
 	public void endVisit(CharacterLiteral node) {
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
 	public void endVisit(NumberLiteral node) {
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
 	public void endVisit(BooleanLiteral node) {
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
@@ -79,16 +79,16 @@ public class DefUsesCollector extends ASTVisitor {
 								uses.add(THIS + node.toString());
 							else {
 								uses.add(node.getQualifier().toString());
-								stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+								stack.push(node.getQualifier().toString() + "." + node.getName().toString());
 							}
 						break;
 					default:
-						stored.push(node.getName().toString());
+						stack.push(node.getName().toString());
 						break;
 				}
 			} else {
 				uses.add(node.getQualifier().toString());
-				stored.push(node.getQualifier().toString() + "." + node.getName().toString());
+				stack.push(node.getQualifier().toString() + "." + node.getName().toString());
 			}
 		}
 		return false;
@@ -99,25 +99,24 @@ public class DefUsesCollector extends ASTVisitor {
 		if(node.resolveBinding().getKind() == IBinding.VARIABLE) {
 			IJavaElement javaElement = node.resolveBinding().getJavaElement();
 			if(javaElement.getElementType() == IJavaElement.FIELD) 
-				stored.push(THIS + node.toString());
+				stack.push(THIS + node.toString());
 			else
-				stored.push(node.toString());
+				stack.push(node.toString());
 		}
 	}	
 	
 	@Override
 	public void endVisit(VariableDeclarationFragment node) {
-		if(stored.size() > 1)
+		if(stack.size() > 1)
 			addToUses();
 		addToDefs();
 	}
 	
 	@Override
 	public void endVisit(Assignment node) {
-		if(stored.size() > 1)
-			addToUses();
+		addToUses();
 		if(!node.getOperator().toString().equals("="))
-			uses.add(stored.peek());
+			uses.add(stack.peek());
 		addToDefs();		
 	}
 
@@ -132,35 +131,33 @@ public class DefUsesCollector extends ASTVisitor {
 		}
 		addToUses();
 		addToUses();
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
 	public void endVisit(PostfixExpression node) {
-		String top = stored.peek();
+		String top = stack.peek();
 		addToUses();
-		stored.push(top);
-		addToDefs();
+		defs.add(top);
 	}
 
 	@Override
 	public void endVisit(PrefixExpression node) {
-		String top = stored.peek();
+		String top = stack.peek();
 		addToUses();
-		stored.push(top);
-		addToDefs();
+		defs.add(top);
 	}
 	
 	@Override
 	public void endVisit(ExpressionStatement node) {
-		while(!stored.isEmpty())
+		while(!stack.isEmpty())
 			addToUses();
 	}	
 	
 	@Override
 	public void endVisit(ArrayCreation node) {
 		addToUses();
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
@@ -170,7 +167,7 @@ public class DefUsesCollector extends ASTVisitor {
 			addToUses();
 			size--;
 		}
-		stored.push(EMPTY);
+		stack.push(EMPTY);
 	}
 	
 	@Override
@@ -184,10 +181,10 @@ public class DefUsesCollector extends ASTVisitor {
 		List<Expression> args = node.arguments();
 		if(node.getExpression() != null)
 			node.getExpression().accept(this);
-		int size = stored.size();
+		int size = stack.size();
 		for(Expression exp : args)
 			exp.accept(this);
-		while(stored.size() != size)
+		while(stack.size() != size)
 			addToUses();
 		return false;
 	}
@@ -234,29 +231,31 @@ public class DefUsesCollector extends ASTVisitor {
 	
 	@Override
 	public boolean visit(SwitchCase node) {
-		node.getExpression().accept(this);
+		Expression exp = node.getExpression();
+		if(exp != null)
+			node.getExpression().accept(this);
 		return false;
 	}
 	
 	@Override
 	public void endVisit(ReturnStatement node) {
-		while(!stored.isEmpty())
+		while(!stack.isEmpty())
 			addToUses();
 	}
 	
 	private void addToDefs() {
-		if(!stored.isEmpty())
-			if(stored.peek() != EMPTY)
-				defs.add(stored.pop());
+		if(!stack.isEmpty())
+			if(stack.peek() != EMPTY)
+				defs.add(stack.pop());
 			else
-				stored.pop();
+				stack.pop();
 	}
 
 	private void addToUses() {
-		if(!stored.isEmpty())
-			if(stored.peek() != EMPTY && !defs.contains(stored.peek()))
-				uses.add(stored.pop());
+		if(!stack.isEmpty())
+			if(stack.peek() != EMPTY && !defs.contains(stack.peek()))
+				uses.add(stack.pop());
 			else
-				stored.pop();	
+				stack.pop();	
 	}
 }

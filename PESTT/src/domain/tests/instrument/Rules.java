@@ -5,7 +5,7 @@ import domain.constants.Byteman;
 public class Rules {
 	
 	public String createRuleForMethodEntry(String helper, String mthd, String cls) {
-		return  "RULE trace " + mthd + " entry\n" + 
+		return  "RULE " + mthd + " entry\n" + 
 				"CLASS " + cls + "\n" + 
 				"METHOD " + mthd + "\n" +
 				"HELPER " + helper + "\n" +
@@ -16,7 +16,7 @@ public class Rules {
 	}
 	
 	public String createRuleForMethodExit(String helper, String mthd, String cls) {
-		return 	"RULE trace " + mthd + " exit\n" + 
+		return 	"RULE " + mthd + " exit\n" + 
 				"CLASS " + cls + "\n" + 
 				"METHOD " + mthd + "\n" +
 				"HELPER " + helper + "\n" +
@@ -27,7 +27,7 @@ public class Rules {
 	}
 
 	public String createRuleForLine(String helper, String mthd, String cls, String edges, int line) {
-		return 	"RULE trace " + mthd + " Line" + line + "\n" + 
+		return 	"RULE " + mthd + " Line" + line + "\n" + 
 				"CLASS " + cls + "\n" + 
 				"METHOD " + mthd + "\n" +
 				"HELPER " + helper + "\n" +

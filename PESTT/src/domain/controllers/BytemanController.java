@@ -105,7 +105,7 @@ public class BytemanController implements Observer {
 				if(isCondition(node)) 
 					for(Edge<Integer> edge : fromNode) {
 						HashMap<ASTNode, Line> instr = (HashMap<ASTNode, Line>) sourceGraph.getMetadata(edge.getEndNode());
-						if(instr != null) {
+						if(instr != null) {	
 							int ruleLine = instr.values().iterator().next().getStartLine();
 							addToLines(lines, edge, ruleLine);
 						}
