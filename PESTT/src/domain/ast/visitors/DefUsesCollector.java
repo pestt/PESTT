@@ -173,6 +173,7 @@ public class DefUsesCollector extends ASTVisitor {
 	@Override
 	public void endVisit(ArrayAccess node) {
 		addToUses();
+		stack.push(EMPTY);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -61,8 +61,11 @@ public class CompletePathCoverage<V extends Comparable<V>> implements ICoverageA
 		public void endVisit(Node<V> node) {
 			pathNodes.removeLast();
 			CyclePath<V> topPath = stack.peek();
-			if (topPath.iterator().hasNext() && stack.peek().from() == node)
+			if (topPath.iterator().hasNext() && stack.peek().from() == node) {
+				System.out.println(topPath.toString());
+				System.out.println(topPath.iterator().hasNext());
 				stack.pop();
+			}
 		}
 		
 		private AbstractPath<V> parseNodes(List<Node<V>> nodes) {

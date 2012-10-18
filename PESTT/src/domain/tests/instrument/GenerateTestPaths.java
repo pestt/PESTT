@@ -19,38 +19,39 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 	private Graph<Integer> graph;
 	private Set<Path<Integer>> paths;
 	private Set<AbstractPath<Integer>> requirements;
-	private Iterable<AbstractPath<Integer>> infeasibles;
 	private Set<AbstractPath<Integer>> visited;
 	private Set<AbstractPath<Integer>> original;
 	private Path<Integer> simplePath;
 	private Node<Integer> begin;
+	private List<AbstractPath<Integer>> terminate;
 	
 	public GenerateTestPaths(Graph<Integer> graph) {
 		this.graph = graph;
 		paths = new TreeSet<Path<Integer>>();
 		requirements = new TreeSet<AbstractPath<Integer>>();
 		visited = new TreeSet<AbstractPath<Integer>>();
+		terminate = new ArrayList<AbstractPath<Integer>>();
 		Iterable<AbstractPath<Integer>> automatic = Activator.getDefault().getTestRequirementController().getTestRequirements();
 		Iterable<Path<Integer>> manually = Activator.getDefault().getTestRequirementController().getTestRequirementsManuallyAdded();
-		infeasibles = Activator.getDefault().getTestRequirementController().getInfeasiblesTestRequirements();
-		getRequirements(automatic, manually);
+		getAllRequirements(automatic, manually);
 		original = requirements;
 	}
 	
-	private void getRequirements(Iterable<AbstractPath<Integer>> automatic, Iterable<Path<Integer>> manually) {
+	private void getAllRequirements(Iterable<AbstractPath<Integer>> automatic, Iterable<Path<Integer>> manually) {
 		for(AbstractPath<Integer> path : automatic)
-			if(!isInfeasile(path))
+			if(!Activator.getDefault().getTestRequirementController().isInfeasiblesTestRequirements(path))
 				requirements.add(path);
 		for(Path<Integer> path : manually)
-			if(!isInfeasile(path))
+			if(!Activator.getDefault().getTestRequirementController().isInfeasiblesTestRequirements(path))
 				requirements.add(path);
-	}
-	
-	private boolean isInfeasile(AbstractPath<Integer> path) {
-		for(AbstractPath<Integer> p : infeasibles)
-			if(p == path)
-				return true;
-		return false;
+		Set<AbstractPath<Integer>> temp = requirements;
+		List<AbstractPath<Integer>> toRemove = new ArrayList<AbstractPath<Integer>>();
+		for(AbstractPath<Integer> current : requirements)
+			for(AbstractPath<Integer> path : temp)
+				if(current.compareTo(path) != 0 && path.isSubPath(current))
+					if(!toRemove.contains(current))
+						toRemove.add(current);
+		requirements.removeAll(toRemove);
 	}
 
 	public Set<Path<Integer>> getTestPaths() {
@@ -69,9 +70,9 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 					Node<Integer> start = graph.getInitialNodes().iterator().next();
 					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph);
 					start.accept(visitor);
-					List<Node<Integer>> pre = getPathNodes(simplePath);
-					pre.remove(pre.size() - 1);
-					nodes.addAll(pre);
+					List<Node<Integer>> missingNodes = getPathNodes(simplePath);
+					missingNodes.remove(missingNodes.size() - 1);
+					nodes.addAll(missingNodes);
 					addTestPath(path, nodes);
 				}
 			}
@@ -82,59 +83,75 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 		visited.add(path);
 		nodes.addAll(getPathNodes(path));
 		int i = 0;
+		AbstractPath<Integer> last = null;
+		int pos = -1;
 		while(!graph.isFinalNode(nodes.get(nodes.size() - 1))) {
 			List<Node<Integer>> next = getNextNode(nodes.subList(i, nodes.size()));
-			if(next != null && !next.isEmpty()) 
+			if(next != null && !next.isEmpty()) { 
 				nodes.addAll(next);
+				last = null;
+				pos = -1;
+			} else {
+				if(last == null && !terminate.isEmpty()) {
+					last = terminate.get(0);
+					
+					pos = i;
+				}
+			}
+			terminate.clear();
 			i++;
 			if(i >= nodes.size())
 				break;	
 		}
+		if(last != null && pos != -1) {
+			visited.add(last);
+			List<Node<Integer>> selectedPathNodes = getPathNodes(last);
+			i = 0;
+			while(nodes.get(pos) == selectedPathNodes.get(i)) {
+				i++;
+				pos++;
+				if(pos >= nodes.size())
+					break;
+			}
+			
+			nodes.addAll(selectedPathNodes.subList(i, selectedPathNodes.size()));
+		}
+		if(!graph.isFinalNode(nodes.get(nodes.size() - 1))) {
+			SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(graph);
+			nodes.get(nodes.size() - 1).accept(visitor);
+			nodes.remove(nodes.size() - 1);
+			nodes.addAll(getPathNodes(simplePath));
+		}
 		paths.add(new Path<Integer>(nodes));
 	}
 
-	private List<Node<Integer>> getNextNode(List<Node<Integer>> list) {
+	private List<Node<Integer>> getNextNode(List<Node<Integer>> nodesSublist) {
 		List<AbstractPath<Integer>> candidates = new ArrayList<AbstractPath<Integer>>();
-		List<AbstractPath<Integer>> terminate = new ArrayList<AbstractPath<Integer>>();
 		for(AbstractPath<Integer> path : original)
 			if(!visited.contains(path)) 
-				if(path.from() == list.get(0))
+				if(isCandidate(nodesSublist, path))
 					if(graph.isFinalNode(path.to()))
 						terminate.add(path);
 					else
 						candidates.add(path);	
-
-		List<Node<Integer>> nodes;
-		if(candidates.isEmpty() &&  terminate.isEmpty())
-			return null;
 		
-		nodes = getNodes(list, candidates);
-		if(nodes != null)
-			return nodes;
-		else
-			return getNodes(list, terminate);
+		List<Node<Integer>> nodesToAdd;
+		if(!candidates.isEmpty()) {
+			AbstractPath<Integer> selectedPath = candidates.get(candidates.size() - 1);
+			List<Node<Integer>> selectedPathNodes = getPathNodes(selectedPath);
+			visited.add(selectedPath);
+			nodesToAdd = selectedPathNodes.subList(nodesSublist.size(), selectedPathNodes.size());
+			return nodesToAdd;
+		} else
+			return null;
 	}
 
-	private List<Node<Integer>> getNodes(List<Node<Integer>> list, List<AbstractPath<Integer>> candidates) {
-		boolean find;
-		for(AbstractPath<Integer> path : candidates) {
-			find = true;
-			List<Node<Integer>> lst = getPathNodes(path);
-			
-			for(int i = 0; i < list.size() && i < lst.size(); i++)
-				if(list.get(i) != lst.get(i)) {
-					find = false;
-					break;
-				}
-				
-			if(find) {
-				visited.add(path);
-				if(lst.size() > list.size())
-					return lst.subList(list.size(), lst.size());
-			}
-			
-		}
-		return null;
+	private boolean isCandidate(List<Node<Integer>> nodesSublist, AbstractPath<Integer> path) {
+		List<Node<Integer>> pathNodes = getPathNodes(path);
+		for(int i = 0; i < nodesSublist.size() && i < pathNodes.size(); i++)
+			if(pathNodes.get(i) != nodesSublist.get(i)) 
+				return false;
+		return true;
 	}
 
 	private List<Node<Integer>> getPathNodes(AbstractPath<Integer> path) {
@@ -147,21 +164,27 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<Integer> {
 		
 		private Deque<Node<Integer>> pathNodes;
+		private List<Node<Integer>> visitedNodes;
 		
 		public SimplePathCoverageVisitor(Graph<Integer> graph) {
 			this.graph = graph;
 			pathNodes = new LinkedList<Node<Integer>>();
+			visitedNodes = new ArrayList<Node<Integer>>();
 		}
 			
 		@Override
 		public boolean visit(Node<Integer> node) {
-			if(node == begin) {
-				pathNodes.addLast(node);
-				simplePath = new Path<Integer>(pathNodes);
-				return false;
+			if(!visitedNodes.contains(node)) {
+				visitedNodes.add(node);
+				if(node == begin || graph.isFinalNode(node)) {
+					pathNodes.addLast(node);
+					simplePath = new Path<Integer>(pathNodes);
+					return false;
+				}
+				pathNodes.addLast(node);				 
+				return true;
 			}
-			pathNodes.addLast(node);				 
-			return true;
+			return false;
 		}
 		
 		@Override

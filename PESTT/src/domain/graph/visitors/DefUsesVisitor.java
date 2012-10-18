@@ -115,10 +115,10 @@ public class DefUsesVisitor<V extends Comparable<V>> extends DepthFirstGraphVisi
 	
 	@SuppressWarnings("unchecked")
 	private void addToDefs(Set<String> defs) {
-		List<EnumDeclaration> enumdeclarations = Activator.getDefault().getSourceGraphController().getEnumClassAttributes();
+		List<EnumDeclaration> enumDeclarations = Activator.getDefault().getSourceGraphController().getEnumClassAttributes();
 		List<VariableDeclarationFragment> attributes = Activator.getDefault().getSourceGraphController().getClassAttributes();
 		List<SingleVariableDeclaration> params = Activator.getDefault().getSourceGraphController().getMethodParameters();
-		for(EnumDeclaration enumDeclaration : enumdeclarations) {
+		for(EnumDeclaration enumDeclaration : enumDeclarations) {
 			List<EnumConstantDeclaration> enumFields = enumDeclaration.enumConstants();
 			for(EnumConstantDeclaration enumField : enumFields)
 				defs.add(enumDeclaration.getName().toString() + "." + enumField.toString());

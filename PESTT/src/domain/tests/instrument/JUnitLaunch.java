@@ -1,20 +1,18 @@
 package domain.tests.instrument;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import main.activator.Activator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -68,7 +66,7 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 				ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);				
-				String bytemanPath = extractJar(pluginPath);
+				String bytemanPath = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("/")).toURI()).getAbsolutePath() + IPath.SEPARATOR + BYTEMAN_JAR;
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-javaagent:" + bytemanPath + "=script:" + Byteman.SCRIPT_DIR + IPath.SEPARATOR + Byteman.SCRIPT_FILE);
 				configuration = workingCopy.doSave();
 			}
@@ -76,31 +74,10 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_TOOLS_MSG);
 			return;
-		}
-	}
-
-	private String extractJar(IPath pluginPath) {
-		File file = null;
-		try {
-			JarFile jar = new JarFile(pluginPath.toOSString());
-			for(Enumeration<JarEntry> enumEntry = jar.entries(); enumEntry.hasMoreElements();) {
-				JarEntry entry = enumEntry.nextElement();
-				if(entry.getName().equals(BYTEMAN_JAR)) {
-					file = new File(System.getProperty("java.io.tmpdir") + IPath.SEPARATOR + "byteman.jar");
-					InputStream is = jar.getInputStream(entry);
-					FileOutputStream fos = new FileOutputStream(file);
-					while (is.available() > 0) {
-						fos.write(is.read());
-						fos.flush();
-					}
-					fos.close();
-					is.close();
-				}
-			}
-			jar.close();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return file.getAbsolutePath();
-	}	
+	}
 }
