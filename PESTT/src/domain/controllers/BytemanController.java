@@ -25,10 +25,10 @@ import domain.constants.Byteman;
 import domain.constants.Layer;
 import domain.events.EndTestsExecutionEvent;
 import domain.events.TestStartEvent;
-import domain.tests.instrument.ExecutedPaths;
-import domain.tests.instrument.FileCreator;
-import domain.tests.instrument.JUnitTestRunListener;
-import domain.tests.instrument.Rules;
+import domain.tests.execution.ExecutedPaths;
+import domain.tests.execution.instrument.FileCreator;
+import domain.tests.execution.instrument.Rules;
+import domain.tests.execution.launch.JUnitTestRunListener;
 
 public class BytemanController implements Observer {
 	
@@ -168,10 +168,6 @@ public class BytemanController implements Observer {
 	
 	private void deleteScripts() {
 		removeListener();
-	/*	output.deleteFile();
-		rules.deleteFile();
-		rules.deleteDirectory();
-	*/
 	}
 	
 	

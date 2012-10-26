@@ -103,4 +103,8 @@ public abstract class AbstractPath<V extends Comparable<V>> implements Iterable<
 		}
 		return false;
 	}
+	
+	public String toString() {
+		return "rui";
+	}
 }

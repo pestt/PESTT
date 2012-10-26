@@ -11,7 +11,7 @@ import org.eclipse.core.commands.ExecutionException;
 import adt.graph.Graph;
 import adt.graph.Path;
 import domain.constants.TestType;
-import domain.tests.instrument.GenerateTestPaths;
+import domain.tests.generation.GenerateTestPaths;
 
 public class GenerateTestPathHandler extends AbstractHandler {
 	

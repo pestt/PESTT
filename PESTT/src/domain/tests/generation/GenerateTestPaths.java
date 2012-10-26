@@ -1,4 +1,4 @@
-package domain.tests.instrument;
+package domain.tests.generation;
 
 import java.util.ArrayList;
 import java.util.Deque;

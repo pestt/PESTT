@@ -34,7 +34,6 @@ Export-Package: adt.graph;uses:="domain.graph.visitors",
  domain.dot.processor,
  domain.events;uses:="adt.graph,domain.constants",
  domain.graph.visitors;uses:="adt.graph",
- domain.tests.instrument;uses:="org.eclipse.jdt.junit.launcher,org.eclipse.ui,org.eclipse.jdt.junit",
  main.activator;
   uses:="domain.controllers,
    org.eclipse.jface.resource,

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Path<V extends Comparable<V>> extends AbstractPath<V> {
-		
+
 	private List<Node<V>> nodes;
 
 	// pre: nodes.size() > 0
@@ -18,7 +18,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	public Iterator<Node<V>> iterator() {
 		return nodes.iterator();
 	}
-
+	
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();

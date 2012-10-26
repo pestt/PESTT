@@ -331,6 +331,12 @@
             id="PESTT.GenerateTestPath"
             name="Find the necessary test paths">
       </command>
+      <command
+            categoryId="PESTT.Category"
+            description="Export definitions to XML file."
+            id="PESTT.ExportToXML"
+            name="ExportToXML">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -511,6 +517,23 @@
                   mnemonic="Alt+G"
                   style="push"
                   tooltip="Draw Graph">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="PESTT.Perspective">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="PESTT.ExportToXML"
+                  icon="icons/xml.gif"
+                  label="ExportToXML"
+                  mnemonic="Alt+X"
+                  style="push"
+                  tooltip="Export definitions to XML file">
                <visibleWhen
                      checkEnabled="false">
                   <with
@@ -1152,6 +1175,18 @@
       <handler
             class="ui.handler.GenerateTestPathHandler"
             commandId="PESTT.GenerateTestPath">
+         <activeWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.ExportToXMLHandler"
+            commandId="PESTT.ExportToXML">
          <activeWhen>
             <with
                   variable="activeEditor">

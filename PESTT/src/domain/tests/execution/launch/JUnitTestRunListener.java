@@ -1,4 +1,4 @@
-package domain.tests.instrument;
+package domain.tests.execution.launch;
 
 import java.util.Observable;
 
