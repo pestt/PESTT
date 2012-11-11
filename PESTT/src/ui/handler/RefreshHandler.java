@@ -12,7 +12,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -22,7 +21,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import ui.constants.Description;
 import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
-import ui.constants.Preferences;
 import ui.editor.ActiveEditor;
 import adt.graph.Path;
 import domain.constants.GraphCoverageCriteriaId;
@@ -44,14 +42,9 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getViewController().addObserverToViews();
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if(Activator.getDefault().getEditorController().isInMethod()) { // if the text selected is the name of the method.
-			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-			String dot = preferenceStore.getString(Preferences.DOT_PATH);
-			if(dot != null && !dot.equals(Description.EMPTY)) {
-				Activator.getDefault().getViewController().loadNecessaryViews(event);
-				resetDataStructures(window);
-				keepCommandOptions();
-			} else
-				MessageDialog.openInformation(window.getShell(), Messages.PREFERENCES_TITLE, Messages.PREFERENCES_DOT_MSG); 
+			Activator.getDefault().getViewController().loadNecessaryViews(event);
+			resetDataStructures(window);
+			keepCommandOptions(); 
 		} else 
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;

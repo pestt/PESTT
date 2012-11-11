@@ -11,7 +11,7 @@ import javax.xml.bind.PropertyException;
 
 public class Storage {
 
-	private static final String INFO_XML = "./info.xml";
+	private static final String INFO_XML = "pestt_info.xml";
 	JAXBContext context;
 
 	public Storage() {

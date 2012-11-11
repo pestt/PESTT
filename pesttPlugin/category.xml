@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/pesttPlugin_1.0.0.qualifier.jar" id="pesttPlugin" version="1.0.0.qualifier">
+   <feature url="features/pesttPlugin_0.5.0.jar" id="pesttPlugin" version="0.5">
       <category name="pestt"/>
    </feature>
    <category-def name="pestt" label="pestt"/>
