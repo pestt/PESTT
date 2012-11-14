@@ -22,9 +22,7 @@ public class DotProcess implements IDotProcess {
 	public Map<String, List<String>> dotToPlain(String dotsource) {
 		Map<String, List<String>> elements = null;
 		try {
-			String dot = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("/")).toURI()).getAbsolutePath() + IPath.SEPARATOR + "lib" + IPath.SEPARATOR + "dot" + IPath.SEPARATOR;
-			String dotLocation = getDotLocation();
-			dot += dotLocation;
+			String dot = getDotLocation();
 			String cmd = dot + " -Tplain"; // the Graphviz command.
 			Process p = Runtime.getRuntime().exec(cmd, null, null); // run the Graphviz command.
 			stdin = new PrintWriter(p.getOutputStream()); // pass the dot string.
@@ -36,8 +34,6 @@ public class DotProcess implements IDotProcess {
 			close(); // close the input and output streams.
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
 		}
 		return elements;
 	}
@@ -48,15 +44,21 @@ public class DotProcess implements IDotProcess {
 	}
 	
 	private String getDotLocation() {
-		String str = "";
-		String os = System.getProperty("os.name");
-		os = os.substring(0, 3).toLowerCase();
-		if(os.equals("lin"))
-			str = "lin" + IPath.SEPARATOR + "dot";
-		else if(os.equals("mac")) 
-			str = "mac" + IPath.SEPARATOR + "dot";
-		else if(os.equals("win")) 
-			str = "win" + IPath.SEPARATOR + "dot.exe";
-		return str;
+			try {
+				String str = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("/")).toURI()).getAbsolutePath() + IPath.SEPARATOR + "lib" + IPath.SEPARATOR + "dot" + IPath.SEPARATOR;
+				String os = System.getProperty("os.name").substring(0, 3).toLowerCase();
+				if(os.equals("lin"))
+					str += "lin" + File.separator + "dot";
+				else if(os.equals("mac")) 
+					str += "mac" + IPath.SEPARATOR + "dot";
+				else if(os.equals("win")) 
+					str += "win" + IPath.SEPARATOR + "dot.exe";
+				return str;
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
 	}
 }
