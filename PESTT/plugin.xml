@@ -1321,7 +1321,7 @@
  <extension
        point="org.eclipse.debug.ui.launchShortcuts">
     <shortcut
-          class="domain.tests.instrument.JUnitLaunch"
+          class="domain.tests.execution.launch.JUnitLaunch"
           helpContextId="org.eclipse.jdt.junit.launch_shortcut"
           icon="icons/RunAs.gif"
           id="PESTT.JunitShortcut"
