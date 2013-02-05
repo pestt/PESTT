@@ -9,9 +9,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
+import main.activator.Activator;
+
+import org.eclipse.core.runtime.IPath;
+
 public class Storage {
 
-	private static final String INFO_XML = "pestt_info.xml";
+	private static final String INFO_XML = Activator.getDefault().getEditorController().getJavaProject().getProject().getRawLocation().toOSString() + IPath.SEPARATOR + "pestt_info.xml";
 	JAXBContext context;
 
 	public Storage() {
@@ -26,7 +30,6 @@ public class Storage {
 		try {	     
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(info, System.out);
 			Writer writer = new FileWriter(INFO_XML);
 			marshaller.marshal(info, writer);
 			writer.close();

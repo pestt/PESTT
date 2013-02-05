@@ -80,6 +80,7 @@ public class BytemanController implements Observer {
 	}
 
 	private FileCreator createRulesFile(String dir, String name, String helper, String mthd, String cls) {
+		mthd = mthd.substring(0, mthd.indexOf("("));
 		FileCreator rulesFile = new FileCreator();
 		Rules rules = new Rules();
 		rulesFile.createDirectory(dir);
@@ -181,8 +182,10 @@ public class BytemanController implements Observer {
 		}
 	}
 	
-	public List<Path<Integer>> getExecutedPaths() { 
-		ExecutedPaths reader = new ExecutedPaths(output.getFile(), Activator.getDefault().getEditorController().getSelectedMethod());
+	public List<Path<Integer>> getExecutedPaths() {
+		String mthd = Activator.getDefault().getEditorController().getSelectedMethod();
+		mthd = mthd.substring(0, mthd.indexOf("("));
+		ExecutedPaths reader = new ExecutedPaths(output.getFile(), mthd);
 		List<Path<Integer>> paths = reader.getExecutedPaths();
 		return paths;
 	}

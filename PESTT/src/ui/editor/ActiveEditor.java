@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -204,8 +205,17 @@ public class ActiveEditor implements Observer {
 					int cursorPosition = textSelect.getOffset();
 					int methodStart = method.getSourceRange().getOffset();
 					int methodEnd = method.getSourceRange().getOffset() + method.getSourceRange().getLength();
-					if(methodStart <= cursorPosition && cursorPosition <= methodEnd)
-						return method.getElementName();
+					if(methodStart <= cursorPosition && cursorPosition <= methodEnd) {
+						String[] parameterTypes = method.getParameterTypes();
+						String[] parameterNames = method.getParameterNames();
+						String name = method.getElementName() + "("; 
+						for (int i=0; i< parameterTypes.length; ++i)
+							name += Signature.toString(parameterTypes[i]) + " " + parameterNames[i] + ", ";
+						if(parameterTypes.length != 0)
+							name = name.substring(0, name.length() - 2);
+						name += ")";
+						return name;
+					}
 				}
 		} catch (JavaModelException e) {
 			e.printStackTrace();

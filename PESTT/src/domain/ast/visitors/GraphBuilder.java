@@ -108,11 +108,12 @@ public class GraphBuilder extends ASTVisitor {
 		return false;
 	}
 	
-	//only visit the method indicated by the user.
+	//only visit the method indicated by the user.	
 	@SuppressWarnings("unchecked")
 	@Override  
 	public boolean visit(MethodDeclaration node) {
-		if(node.getName().getIdentifier().equals(methodName)) {
+		String signature = getMethodSignature(node);
+		if(signature.equals(methodName)) {
 			hash = getMethodHash(node);
 			if(node.getJavadoc() != null) {
 				javadocAnnotations.put(JavadocTagAnnotations.COVERAGE_CRITERIA, getProperty(node.getJavadoc(), JavadocTagAnnotations.COVERAGE_CRITERIA.getTag()));
@@ -125,6 +126,18 @@ public class GraphBuilder extends ASTVisitor {
 			return true;
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String getMethodSignature(MethodDeclaration node) {
+		String signature = node.getName() + "(";
+		List<SingleVariableDeclaration> methodParams = node.parameters();
+		for(SingleVariableDeclaration param : methodParams)
+			signature += param.toString() + ", ";
+		if(!methodParams.isEmpty())
+			signature = signature.substring(0, signature.length() - 2);
+		signature += ")";
+		return signature;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -169,7 +182,8 @@ public class GraphBuilder extends ASTVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void endVisit(MethodDeclaration node) {
-		if(node.getName().getIdentifier().equals(methodName)) {
+		String signature = getMethodSignature(node);
+		if(signature.equals(methodName)) {
 			List<Node<Integer>> nodesToRemove = new LinkedList<Node<Integer>>();
 			List<Edge<Integer>> edgesToRemove = new LinkedList<Edge<Integer>>();
 			for(Node<Integer> graphNode : sourceGraph.getNodes()) {
