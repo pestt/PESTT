@@ -2,7 +2,7 @@
 <feature
       id="pesttPlugin"
       label="PesttPlugin"
-      version="0.5"
+      version="0.5.1"
       provider-name="Gloss DI/FCUL">
 
    <copyright>

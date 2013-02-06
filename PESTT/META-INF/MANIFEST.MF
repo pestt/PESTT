@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PESTT
 Bundle-SymbolicName: PESTT;singleton:=true
-Bundle-Version: 0.5
+Bundle-Version: 0.5.1
 Bundle-Activator: main.activator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  JavaSE-1.7
