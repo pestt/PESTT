@@ -1,7 +1,6 @@
 package ui.display.views.structural;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -18,46 +17,33 @@ import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import ui.constants.Colors;
 import ui.events.RefreshStructuralGraphEvent;
-import ui.source.Edge;
-import ui.source.GraphElements;
-import ui.source.GraphLayoutAlgorithm;
-import ui.source.Node;
 import domain.constants.GraphCoverageCriteriaId;
-import domain.dot.processor.DotProcess;
-import domain.dot.processor.IDotProcess;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 
-public class GraphCoverageCriteria implements Observer {
+@SuppressWarnings("deprecation")
+public class CopyOfGraphCoverageCriteria implements Observer {
 	
 	private Graph graph;
 	private Map<GraphCoverageCriteriaId, GraphNode> nodes;
 	private SelectionAdapter event;	
-	private Composite parent;
 
-	public GraphCoverageCriteria(Composite parent) {
+	public CopyOfGraphCoverageCriteria(Composite parent) {
 		graph = new Graph(parent, SWT.NONE);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getCFGController().addObserver(this);
-		this.parent = parent;
 		create();
 	}
 
 	private void create() {
 		graph.clear();
 		removeSelectionListener();
-		IDotProcess dotProcess = new DotProcess(); // the object that parse the information to build the layoutGraph.
-		Map<String, List<String>> map = dotProcess.dotToPlain(dotString()); // the information to build the layoutGraph.
-		GraphElements elements = new GraphElements(map);
-		setLayout(elements);
-		setNodes(elements.getNodesInfo());
-		setEdges(elements.getEdgesInfo());
-		
-		//setNodes();
-		//setEdges();
-		//setLayout();
+		setNodes();
+		setEdges();
+		setLayout();
 		addSelectionListener();
 		if(Activator.getDefault().getTestRequirementController().isCoverageCriteriaSelected()) 
 			setSelected(nodes.get(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()));
@@ -69,7 +55,7 @@ public class GraphCoverageCriteria implements Observer {
 	}
 
 	
-	private void setNodes(Map<String, Node> nodesx) {
+	private void setNodes() {
 		nodes = new HashMap<GraphCoverageCriteriaId, GraphNode>();
 		GraphNode cpc = new GraphNode(graph, SWT.SINGLE, "Complete Path\n      Coverage\n" + insertTrace(14) + "\n            (CPC)");
 		cpc.setData(GraphCoverageCriteriaId.COMPLETE_PATH);
@@ -130,7 +116,7 @@ public class GraphCoverageCriteria implements Observer {
 		}
 	}
 	
-	private void setEdges(Map<String, Edge> edges) {
+	private void setEdges() {
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.COMPLETE_PATH), nodes.get(GraphCoverageCriteriaId.PRIME_PATH));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.COMPLETE_PATH), nodes.get(GraphCoverageCriteriaId.EDGE_PAIR));
 		new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes.get(GraphCoverageCriteriaId.PRIME_PATH), nodes.get(GraphCoverageCriteriaId.ALL_DU_PATHS));
@@ -151,23 +137,12 @@ public class GraphCoverageCriteria implements Observer {
 		return line;
 	}
 
-	
-	/**
-	 * DEfine the Graph Layout Algorithm.
-	 * 
-	 * @param graphElements - The Graph elements.
-	 */
-	private void setLayout(GraphElements graphElements) {
-		 graph.setLayoutAlgorithm(new GraphLayoutAlgorithm(parent, graphElements), true);
-	}
-	
-/*	private void setLayout() {
+	private void setLayout() {
 		TreeLayoutAlgorithm la = new TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN);
 		la.setResizing(false);
 		graph.setLayoutAlgorithm(la, true);
 	}
-*/
-	
+
 	private void addSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 
@@ -207,34 +182,4 @@ public class GraphCoverageCriteria implements Observer {
 		else if(data instanceof RefreshStructuralGraphEvent)
 			create();
 	}
-	
-	private String dotString() {
-		return "digraph finite_state_machine { " +
-	                "rankdir=TD;" +
-	                "size=\"10,10\";" +
-	                "node [shape = box];" +
-	                "CPC [label=\"Complete Path\\nCoverage\"];" +
-	                "PPC [label=\"Prime Path\\nCoverage\"];" +	
-	                "EC [label=\"Edge\\nCoverage\"];" +
-	                "ADUPC [label=\"All DU Paths\\nCoverage\"];" +
-	                "AUC [label=\"All Uses\\nCoverage\"];" +
-	                "CRTC [label = \"Complete Round\\nTrip Coverage\"];"+
-	                "SRTC [label = \"Simple Round\\nTrip Coverage\"];" +
-	                "ADC [label = \"All Defs\\nCoverage\"];" +
-	                "NC [label = \"Node\\nCoverage\"];" +
-	                "EPC [label = \"Edge pair\\nCoverage\"];" +
-	                "CPC -> EPC;" +
-	                "CPC -> PPC;" +
-	                "PPC -> ADUPC;" +
-	                "PPC -> EC;" +
-	                "PPC -> CRTC;" +
-	                "CRTC -> SRTC;" +
-	                "ADUPC -> AUC;" +
-	                "AUC -> ADC;" +
-	                "AUC -> EC;" +
-	                "EPC -> EC;" +
-	                "EC -> NC;" +
-	                "}\n";
-	}
-	
 }

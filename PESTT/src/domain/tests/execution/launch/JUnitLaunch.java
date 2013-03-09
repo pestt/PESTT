@@ -18,7 +18,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -33,9 +32,6 @@ import domain.constants.Byteman;
 
 public class JUnitLaunch extends JUnitLaunchShortcut {
 	
-	private static final String PLUGIN_ID = Activator.getDefault().getBundle().getSymbolicName();
-	private static final String PLUGIN_VERSION = Activator.getDefault().getBundle().getVersion().toString();
-	private static final String PLUGIN_JAR = PLUGIN_ID + "_" + PLUGIN_VERSION + ".jar";
 	private static final String BYTEMAN_JAR = "lib" + IPath.SEPARATOR + "byteman.jar";
 
 	@Override
@@ -56,17 +52,22 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 				IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath, IRuntimeClasspathEntry.STANDARD_CLASSES);			
 				IRuntimeClasspathEntry projectEntry = JavaRuntime.newDefaultProjectClasspathEntry(Activator.getDefault().getEditorController().getJavaProject()); 
 				projectEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);					
-				IPath pluginPath = JavaCore.getClasspathVariable("ECLIPSE_HOME").append("plugins").append(PLUGIN_JAR);
-				IRuntimeClasspathEntry pluginEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(pluginPath);
-				pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);				
+				// Add plugin folder - for finding the byteman helper classes
+				String pluginPath = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("/")).toURI()).getAbsolutePath();
+				IRuntimeClasspathEntry pluginEntry = JavaRuntime.newStringVariableClasspathEntry(pluginPath);
+				pluginEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);	
+				// Add plugin bin folder - for running under eclipse development environment.
+				IRuntimeClasspathEntry pluginEntryBin = JavaRuntime.newStringVariableClasspathEntry(pluginPath + IPath.SEPARATOR + "bin");
+				pluginEntryBin.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);	
 				List<String> classpath = new ArrayList<String>();
 				classpath.add(systemLibsEntry.getMemento());
 				classpath.add(projectEntry.getMemento());
 				classpath.add(pluginEntry.getMemento());
+				classpath.add(pluginEntryBin.getMemento());
 				ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);				
-				String bytemanPath = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("/")).toURI()).getAbsolutePath() + IPath.SEPARATOR + BYTEMAN_JAR;
+				String bytemanPath = pluginPath + IPath.SEPARATOR + BYTEMAN_JAR;
 				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-javaagent:" + bytemanPath + "=script:" + Byteman.SCRIPT_DIR + IPath.SEPARATOR + Byteman.SCRIPT_FILE);
 				configuration = workingCopy.doSave();
 			}
