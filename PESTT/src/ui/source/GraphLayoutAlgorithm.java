@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
+import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.zest.layouts.LayoutAlgorithm;
-import org.eclipse.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
 public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 	

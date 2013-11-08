@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.zest.core.widgets.GraphNode;
 
 import ui.editor.Line;
 import adt.graph.Edge;

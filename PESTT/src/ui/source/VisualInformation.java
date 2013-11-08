@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 
 import main.activator.Activator;
 
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
+import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -25,9 +28,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.zest.core.widgets.GraphConnection;
-import org.eclipse.zest.core.widgets.GraphItem;
-import org.eclipse.zest.core.widgets.GraphNode;
 
 import ui.constants.Colors;
 import ui.constants.Description;

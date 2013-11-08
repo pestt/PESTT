@@ -3,22 +3,22 @@ package ui.display.views.structural;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Map.Entry;
 
 import main.activator.Activator;
 
 import org.eclipse.draw2d.Label;
+import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
+import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.zest.core.widgets.Graph;
-import org.eclipse.zest.core.widgets.GraphConnection;
-import org.eclipse.zest.core.widgets.GraphItem;
-import org.eclipse.zest.core.widgets.GraphNode;
-import org.eclipse.zest.core.widgets.ZestStyles;
 
 import ui.constants.Colors;
 import ui.events.RefreshStructuralGraphEvent;

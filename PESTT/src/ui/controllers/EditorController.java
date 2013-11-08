@@ -4,10 +4,10 @@ import java.util.List;
 
 import main.activator.Activator;
 
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.zest.core.widgets.GraphItem;
 
 import ui.editor.ActiveEditor;
 import ui.source.VisualInformation;

@@ -12,6 +12,10 @@ import java.util.Set;
 
 import main.activator.Activator;
 
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
+import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -20,10 +24,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.zest.core.widgets.GraphConnection;
-import org.eclipse.zest.core.widgets.GraphItem;
-import org.eclipse.zest.core.widgets.GraphNode;
-import org.eclipse.zest.core.widgets.ZestStyles;
 
 import ui.constants.Colors;
 import ui.constants.Description;
@@ -44,7 +44,7 @@ import domain.graph.visitors.DotGraphVisitor;
 
 public class Graph implements Observer {
 	
-	private org.eclipse.zest.core.widgets.Graph graph;
+	private org.eclipse.gef4.zest.core.widgets.Graph graph;
 	private adt.graph.Graph<Integer> sourceGraph;
 	private List<GraphNode> graphNodes;
 	private List<GraphConnection> graphEdges;
@@ -53,7 +53,7 @@ public class Graph implements Observer {
 	
 	public Graph(Composite parent) {
 		this.parent = parent;
-		graph = new org.eclipse.zest.core.widgets.Graph(parent, SWT.NONE);
+		graph = new org.eclipse.gef4.zest.core.widgets.Graph(parent, SWT.NONE);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
