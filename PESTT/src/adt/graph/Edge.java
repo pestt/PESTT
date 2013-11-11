@@ -5,20 +5,22 @@ import domain.graph.visitors.IGraphVisitor;
 public class Edge<V extends Comparable<V>> {
 
 	/**
-	 * The Edge begin Node.
+	 * The Edge's begin Node.
 	 */
 	private Node<V> beginNode;
-	
+
 	/**
-	 * The Edge end Node.
+	 * The Edge's end Node.
 	 */
 	private Node<V> endNode;
 
 	/**
-	 * Create a new Edge Object.
+	 * Creates a new Edge Object.
 	 * 
-	 * @param begin - The begin Node of the Edge.
-	 * @param end - The end Node of the Edge.
+	 * @param begin
+	 *            - The begin Node of the Edge.
+	 * @param end
+	 *            - The end Node of the Edge.
 	 */
 	public Edge(Node<V> begin, Node<V> end) {
 		this.beginNode = begin;
@@ -26,7 +28,7 @@ public class Edge<V extends Comparable<V>> {
 	}
 
 	/**
-	 * Get the begin Node of the Edge.
+	 * Gets the begin Node of the Edge.
 	 * 
 	 * @return Node<V> - The begin Node of the Edge.
 	 */
@@ -35,7 +37,7 @@ public class Edge<V extends Comparable<V>> {
 	}
 
 	/**
-	 * Get the end Node of the Edge.
+	 * Gets the end Node of the Edge.
 	 * 
 	 * @return Node<V> - The end Node of the Edge.
 	 */
@@ -44,28 +46,30 @@ public class Edge<V extends Comparable<V>> {
 	}
 
 	/**
-	 * Visit the Edge in the Graph.
+	 * Visits the Edge in the Graph.
 	 * 
-	 * @param visitor - The visitor to apply.
+	 * @param visitor
+	 *            - The visitor to apply.
 	 */
 	public void accept(IGraphVisitor<V> visitor) {
 		visitor.visitEdge(this);
 	}
-	
+
 	/***
+	 * Compares two Edges.
 	 * 
-	 * @param o - The other Edge;
-	 * @return int - 0 If the two edges are equal.
-	 * 				 1 If this Edge is bigger than the other.
-	 * 			    -1 If this Edge is lesser than the other. 
+	 * @param o
+	 *            - The other Edge;
+	 * @return int - 0 If the two edges are equal. 1 If this Edge is bigger than
+	 *         the other. -1 If this Edge is smaller than the other.
 	 */
 	public int compareTo(Edge<V> o) {
-		if(beginNode.compareTo(o.getBeginNode()) == 0)
+		if (beginNode.compareTo(o.getBeginNode()) == 0)
 			return endNode.compareTo(o.getEndNode());
 		else
 			return beginNode.compareTo(o.getBeginNode());
 	}
-	
+
 	/**
 	 * The Edge representation.
 	 * 

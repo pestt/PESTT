@@ -48,20 +48,23 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	private Control testPathsControl; // control of executedGraphViewer.
 	private IWorkbenchPartSite site;
 	private Listener listener;
-	
+
 	public TestPathsViewer(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
-		Activator.getDefault().getTestPathController().addObserverTestPath(this);
+		Activator.getDefault().getTestPathController()
+				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
-		Activator.getDefault().getTestRequirementController().addObserverTestRequirement(this);
+		Activator.getDefault().getTestRequirementController()
+				.addObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
 	}
-	
+
 	public TableViewer create() {
-		testPathhsViewer = createViewTable(parent, site, TableViewers.TESTPATHSVIEWER);
+		testPathhsViewer = createViewTable(parent, site,
+				TableViewers.TESTPATHSVIEWER);
 		testPathsControl = testPathhsViewer.getControl();
 		createColumnsToExecutedGraphViewer();
 		setSelections(); // associate path to the ViewGraph elements.
@@ -70,47 +73,62 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof TestRequirementSelectedCriteriaEvent) 
+		if (data instanceof TestRequirementSelectedCriteriaEvent)
 			Activator.getDefault().getTestPathController().unSelectTestPaths();
-		else if(data instanceof TestRequirementChangedEvent || data instanceof DefUsesChangedEvent)
+		else if (data instanceof TestRequirementChangedEvent
+				|| data instanceof DefUsesChangedEvent)
 			Activator.getDefault().getTestPathController().unSelectTestPaths();
-		else if(data instanceof DefUsesSelectedEvent) {
-			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
-				if(Activator.getDefault().getDefUsesController().isDefUseSelected())
-					Activator.getDefault().getTestPathController().unSelectTestPaths();
-			} else 
+		else if (data instanceof DefUsesSelectedEvent) {
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching()) {
+				if (Activator.getDefault().getDefUsesController()
+						.isDefUseSelected())
+					Activator.getDefault().getTestPathController()
+							.unSelectTestPaths();
+			} else
 				testPathhsViewer.setSelection(null);
-		} else if(data instanceof TestRequirementSelectedEvent || data instanceof TourChangeEvent ) {
-			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
-				if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected()) {
-					Activator.getDefault().getTestPathController().unSelectTestPaths();
-					setPathStatus(Activator.getDefault().getTestRequirementController().getSelectedTestRequirement());
+		} else if (data instanceof TestRequirementSelectedEvent
+				|| data instanceof TourChangeEvent) {
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching()) {
+				if (Activator.getDefault().getTestRequirementController()
+						.isTestRequirementSelected()) {
+					Activator.getDefault().getTestPathController()
+							.unSelectTestPaths();
+					setPathStatus(Activator.getDefault()
+							.getTestRequirementController()
+							.getSelectedTestRequirement());
 				}
-			} else 
+			} else
 				testPathhsViewer.setSelection(null);
-		} else if(data instanceof TestPathChangedEvent) {
+		} else if (data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			Set<Path<Integer>> paths = getPathSet(((TestPathChangedEvent) data).testPathSet, ((TestPathChangedEvent) data).manuallyAdded);
-			for(Path<Integer> path : paths)
+			Set<Path<Integer>> paths = getPathSet(
+					((TestPathChangedEvent) data).testPathSet,
+					((TestPathChangedEvent) data).manuallyAdded);
+			for (Path<Integer> path : paths)
 				testPaths.add(path);
-			if(testPaths.size() > 1)
+			if (testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
 			testPathhsViewer.setInput(testPaths);
-			if(listener != null)
-				testPathhsViewer.getTable().removeListener(SWT.MouseHover, listener);
+			if (listener != null)
+				testPathhsViewer.getTable().removeListener(SWT.MouseHover,
+						listener);
 			addTooltips();
-		} else if(data instanceof TestPathSelectedEvent) {
+		} else if (data instanceof TestPathSelectedEvent) {
 			cleanPathStatus();
-			if(!Activator.getDefault().getTestPathController().isTestPathSelected()) 
+			if (!Activator.getDefault().getTestPathController()
+					.isTestPathSelected())
 				testPathhsViewer.setSelection(null);
 		}
 	}
 
-	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic, Iterable<Path<Integer>> manually) {
+	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic,
+			Iterable<Path<Integer>> manually) {
 		Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
-		for(Path<Integer> path : automatic)
+		for (Path<Integer> path : automatic)
 			set.add(path);
-		for(Path<Integer> path : manually)
+		for (Path<Integer> path : manually)
 			set.add(path);
 		return set;
 	}
@@ -118,19 +136,20 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	public void dispose() {
 		testPathsControl.dispose();
 	}
-	
+
 	private void createColumnsToExecutedGraphViewer() {
 		String columnNames = TableViewers.TEST_PATTHS; // the names of column.
 		int columnWidths = 500; // the width of column.
-		TableViewerColumn col = createColumnsHeaders(testPathhsViewer, columnNames, columnWidths, 0);
+		TableViewerColumn col = createColumnsHeaders(testPathhsViewer,
+				columnNames, columnWidths, 0);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
 			@Override
 			public void update(ViewerCell cell) {
-				if(cell.getElement() instanceof Graph<?>) {
+				if (cell.getElement() instanceof Graph<?>) {
 					Graph<?> graph = (Graph<?>) cell.getElement();
 					cell.setText(graph.toString());
-				} else if(cell.getElement() instanceof Path<?>) {
+				} else if (cell.getElement() instanceof Path<?>) {
 					Path<?> path = (Path<?>) cell.getElement();
 					cell.setText(path.toString());
 				} else {
@@ -140,90 +159,107 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			}
 		});
 	}
-	
+
 	/***
 	 * Clears all visual status (Colors).
 	 */
 	private void cleanPathStatus() {
 		int n = 0;
-		for(TableItem item : testPathhsViewer.getTable().getItems()) {
-			if(n % 2 == 0)
+		for (TableItem item : testPathhsViewer.getTable().getItems()) {
+			if (n % 2 == 0)
 				item.setBackground(Colors.WHITE);
-			else 
+			else
 				item.setBackground(Colors.GREY);
 			n++;
 		}
 	}
-	
+
 	/***
-	 * Sets the visual status for the test path according to the selected test requirement.
-	 * The visual status to the test path are:
-	 * - Green (Background) if the selected test requirement is covered by the test path.
-	 * - Red (Background) if the selected test requirement is not covered by the test path.
+	 * Sets the visual status for the test path according to the selected test
+	 * requirement. The visual status to the test path are: - Green (Background)
+	 * if the selected test requirement is covered by the test path. - Red
+	 * (Background) if the selected test requirement is not covered by the test
+	 * path.
 	 */
 	private void setPathStatus(AbstractPath<Integer> testRequirement) {
-		Set<Path<Integer>> paths = getPathSet(Activator.getDefault().getTestPathController().getTestPaths(), Activator.getDefault().getTestPathController().getTestPathsManuallyAdded());
+		Set<Path<Integer>> paths = getPathSet(Activator.getDefault()
+				.getTestPathController().getTestPaths(), Activator.getDefault()
+				.getTestPathController().getTestPathsManuallyAdded());
 		Iterator<Path<Integer>> iterator = paths.iterator();
-		for(TableItem item : testPathhsViewer.getTable().getItems()) {
-			if(iterator.hasNext()) {
+		for (TableItem item : testPathhsViewer.getTable().getItems()) {
+			if (iterator.hasNext()) {
 				Path<Integer> path = iterator.next();
-				Set<Path<Integer>> coveredPaths = Activator.getDefault().getTestRequirementController().getTestPathCoverage(path);
-				if(coveredPaths.contains(testRequirement)) 
+				Set<Path<Integer>> coveredPaths = Activator.getDefault()
+						.getTestRequirementController()
+						.getTestPathCoverage(path);
+				if (coveredPaths.contains(testRequirement))
 					item.setBackground(Colors.YELLOW_COVERAGE);
 			}
 		}
 	}
-	
+
 	private void setSelections() {
-		testPathhsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@SuppressWarnings("unchecked")
-			public void selectionChanged(final SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection(); // get the selection.
-				if(selection.getFirstElement() != null) {
-					boolean hasTotal = false;
-					Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
-					for(Object obj : selection.toList())
-						if(obj instanceof String) {
-							hasTotal = true;
-							break;
+		testPathhsViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					@SuppressWarnings("unchecked")
+					public void selectionChanged(
+							final SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) event
+								.getSelection(); // get the selection.
+						if (selection.getFirstElement() != null) {
+							boolean hasTotal = false;
+							Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
+							for (Object obj : selection.toList())
+								if (obj instanceof String) {
+									hasTotal = true;
+									break;
+								} else
+									testPaths.add((Path<Integer>) obj);
+							if (hasTotal) {
+								testPaths.clear();
+								for (Path<Integer> path : Activator
+										.getDefault().getTestPathController()
+										.getTestPathsManuallyAdded())
+									testPaths.add(path);
+								for (Path<Integer> path : Activator
+										.getDefault().getTestPathController()
+										.getTestPaths())
+									testPaths.add(path);
+							}
+							Activator.getDefault().getTestPathController()
+									.selectTestPath(testPaths);
 						}
-						else
-							testPaths.add((Path<Integer>) obj);
-					if(hasTotal) {
-						testPaths.clear();
-						for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPathsManuallyAdded())
-							testPaths.add(path);
-						for(Path<Integer> path : Activator.getDefault().getTestPathController().getTestPaths())
-							testPaths.add(path);
-					}	
-					Activator.getDefault().getTestPathController().selectTestPath(testPaths);
-				}
-		    }
-		});
+					}
+				});
 	}
-	
+
 	private void addTooltips() {
-		listener =  new Listener() {
-			
+		listener = new Listener() {
+
 			public void handleEvent(Event event) {
 				Point coords = new Point(event.x, event.y);
 				TableItem item = testPathhsViewer.getTable().getItem(coords);
-				Set<Path<Integer>> set = getPathSet(Activator.getDefault().getTestPathController().getTestPaths(), Activator.getDefault().getTestPathController().getTestPathsManuallyAdded());
+				Set<Path<Integer>> set = getPathSet(Activator.getDefault()
+						.getTestPathController().getTestPaths(), Activator
+						.getDefault().getTestPathController()
+						.getTestPathsManuallyAdded());
 				Iterator<Path<Integer>> iterator = set.iterator();
 				Path<Integer> path = null;
-				for(TableItem i : testPathhsViewer.getTable().getItems()) {  
+				for (TableItem i : testPathhsViewer.getTable().getItems()) {
 					path = null;
-					if(iterator.hasNext()) {
+					if (iterator.hasNext()) {
 						path = iterator.next();
-						if(i == item)
+						if (i == item)
 							break;
 					}
 				}
-				if(path != null)
-					testPathhsViewer.getTable().setToolTipText(Activator.getDefault().getTestPathController().getTooltip(path));
+				if (path != null)
+					testPathhsViewer.getTable().setToolTipText(
+							Activator.getDefault().getTestPathController()
+									.getTooltip(path));
 				else
-					testPathhsViewer.getTable().setToolTipText("");	
+					testPathhsViewer.getTable().setToolTipText("");
 			}
 		};
 		testPathhsViewer.getTable().addListener(SWT.MouseHover, listener);

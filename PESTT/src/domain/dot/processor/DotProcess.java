@@ -19,17 +19,22 @@ public class DotProcess implements IDotProcess {
 
 	public Map<String, List<String>> dotToPlain(String dotsource) {
 		Map<String, List<String>> elements = null;
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		IPreferenceStore preferenceStore = Activator.getDefault()
+				.getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
 		String cmd = dot + " -Tplain"; // the Graphviz command.
 		try {
-			Process p = Runtime.getRuntime().exec(cmd, null, null); // run the Graphviz command.
-			stdin = new PrintWriter(p.getOutputStream()); // pass the dot string.
+			Process p = Runtime.getRuntime().exec(cmd, null, null); // run the
+																	// Graphviz
+																	// command.
+			stdin = new PrintWriter(p.getOutputStream()); // pass the dot
+															// string.
 			stdin.write(dotsource);
 			stdin.flush();
 			stdout = new Scanner(p.getInputStream()); // gets the plain graph.
 			Parser parser = new Parser();
-			elements = parser.parsePlainInfo(stdout); // parse the plain graph information.
+			elements = parser.parsePlainInfo(stdout); // parse the plain graph
+														// information.
 			close(); // close the input and output streams.
 		} catch (IOException e) {
 			e.printStackTrace();

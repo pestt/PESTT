@@ -18,38 +18,65 @@ import adt.graph.Graph;
 import adt.graph.Path;
 
 public class AddTestPathHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
-			if(Activator.getDefault().getEditorController().isEverythingMatching())
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching())
 				addNewTestPath(window, "");
-			else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+			else
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+			MessageDialog.openInformation(window.getShell(),
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
 	}
-	
-	private void addNewTestPath(IWorkbenchWindow window, String input) throws ExecutionException {
-		Graph<Integer> sourceGraph = Activator.getDefault().getSourceGraphController().getSourceGraph();
-		String message = "Please enter a test path:\n(e.g. " + sourceGraph.getInitialNodes().iterator().next() + ", ..., " + sourceGraph.getFinalNodes().iterator().next() + ")";
+
+	private void addNewTestPath(IWorkbenchWindow window, String input)
+			throws ExecutionException {
+		Graph<Integer> sourceGraph = Activator.getDefault()
+				.getSourceGraphController().getSourceGraph();
+		String message = "Please enter a test path:\n(e.g. "
+				+ sourceGraph.getInitialNodes().iterator().next() + ", ..., "
+				+ sourceGraph.getFinalNodes().iterator().next() + ")";
 		InputDialog dialog = new InputDialog(window.getShell(), message, input);
 		dialog.open();
 		input = dialog.getInput();
-		if(input != null)
-			if(!input.equals(Description.EMPTY)) {
-				Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
-				if(newTestPath != null) 
-					Activator.getDefault().getTestPathController().addTestPath(newTestPath, TestType.MANUALLY);
+		if (input != null)
+			if (!input.equals(Description.EMPTY)) {
+				Path<Integer> newTestPath = Activator.getDefault()
+						.getTestPathController().createTestPath(input);
+				if (newTestPath != null)
+					Activator.getDefault().getTestPathController()
+							.addTestPath(newTestPath, TestType.MANUALLY);
 				else {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
+					MessageDialog.openInformation(window.getShell(),
+							Messages.TEST_PATH_TITLE,
+							Messages.TEST_PATH_INVALID_INPUT_MSG); // message
+																	// displayed
+																	// when the
+																	// inserted
+																	// test path
+																	// is not
+																	// valid.
 					addNewTestPath(window, input);
 				}
 			} else {
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message displayed when the inserted test path is empty.
+				MessageDialog.openInformation(window.getShell(),
+						Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message
+																					// displayed
+																					// when
+																					// the
+																					// inserted
+																					// test
+																					// path
+																					// is
+																					// empty.
 				addNewTestPath(window, input);
 			}
-	}	
+	}
 }

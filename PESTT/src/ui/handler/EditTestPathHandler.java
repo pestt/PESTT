@@ -19,48 +19,76 @@ import ui.dialog.InputDialog;
 import adt.graph.Path;
 
 public class EditTestPathHandler extends AbstractHandler {
-	
+
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
-			if(Activator.getDefault().getEditorController().isEverythingMatching())
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching())
 				editTestPath(window, "");
-			else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+			else
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+			MessageDialog.openInformation(window.getShell(),
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
 	}
-	
-	private void editTestPath(IWorkbenchWindow window, String input) throws ExecutionException {
-		if(Activator.getDefault().getTestPathController().isTestPathSelected()) {
-			if(input.equals(Description.EMPTY)) {
-				Set<Path<Integer>> selected = Activator.getDefault().getTestPathController().getSelectedTestPaths();
-				if(selected.size() != 1) {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_WARNING_EDITED_MSG);
+
+	private void editTestPath(IWorkbenchWindow window, String input)
+			throws ExecutionException {
+		if (Activator.getDefault().getTestPathController().isTestPathSelected()) {
+			if (input.equals(Description.EMPTY)) {
+				Set<Path<Integer>> selected = Activator.getDefault()
+						.getTestPathController().getSelectedTestPaths();
+				if (selected.size() != 1) {
+					MessageDialog.openInformation(window.getShell(),
+							Messages.TEST_PATH_TITLE,
+							Messages.TEST_PATH_WARNING_EDITED_MSG);
 					return;
 				}
 				input = selected.iterator().next().toString();
 				input = input.substring(1, input.length() - 1);
 			}
 			String message = Messages.SAVE_CHANGES;
-			InputDialog dialog = new InputDialog(window.getShell(), message, input);
+			InputDialog dialog = new InputDialog(window.getShell(), message,
+					input);
 			dialog.open();
 			input = dialog.getInput();
-			if(input != null)
-				if(!input.equals(Description.EMPTY)) {
-					Path<Integer> newTestPath = Activator.getDefault().getTestPathController().createTestPath(input);
-					if(newTestPath != null) {
-						Activator.getDefault().getTestPathController().removeTestPath();
-						Activator.getDefault().getTestPathController().addTestPath(newTestPath, TestType.MANUALLY);
+			if (input != null)
+				if (!input.equals(Description.EMPTY)) {
+					Path<Integer> newTestPath = Activator.getDefault()
+							.getTestPathController().createTestPath(input);
+					if (newTestPath != null) {
+						Activator.getDefault().getTestPathController()
+								.removeTestPath();
+						Activator.getDefault().getTestPathController()
+								.addTestPath(newTestPath, TestType.MANUALLY);
 					} else {
-						MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
+						MessageDialog.openInformation(window.getShell(),
+								Messages.TEST_PATH_TITLE,
+								Messages.TEST_PATH_INVALID_INPUT_MSG); // message
+																		// displayed
+																		// when
+																		// the
+																		// inserted
+																		// test
+																		// path
+																		// is
+																		// not
+																		// valid.
 						editTestPath(window, input);
 					}
 				} else {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message displayed when the inserted test path is empty.
+					MessageDialog.openInformation(window.getShell(),
+							Messages.TEST_PATH_TITLE,
+							Messages.TEST_PATH_INPUT_MSG); // message displayed
+															// when the inserted
+															// test path is
+															// empty.
 					editTestPath(window, input);
 				}
 		}
 	}
-}	
+}

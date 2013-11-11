@@ -1,5 +1,5 @@
 package domain.dot.processor;
- 
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,21 +10,23 @@ import java.util.Map;
  * @version 1.0
  * @project PEST
  * 
- * Interface that provides the signature of the methods responsible
-  * for transforming the dot string in the dot plaintext information.
- *  
- ***/ 
+ *          Interface that provides the signature of the methods responsible for
+ *          transforming the dot string in the dot plaintext information.
+ * 
+ ***/
 public interface IDotProcess {
-	
+
 	/***
 	 * 
-	 * @param dotsource - The dot string.
+	 * @param dotsource
+	 *            - The dot string.
 	 * @return Scanner with information about the dot plaintext.
 	 * 
-	 * Method responsible for converting the dot string in plaintext.
-	 * The plaintext contains the information associated with the graph elements.   
+	 *         Method responsible for converting the dot string in plaintext.
+	 *         The plaintext contains the information associated with the graph
+	 *         elements.
 	 * 
 	 ***/
 	public Map<String, List<String>> dotToPlain(String dotsource);
-	
+
 }

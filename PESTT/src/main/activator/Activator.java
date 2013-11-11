@@ -22,11 +22,11 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "PESTT";
-	
+
 	// The shared instance
 	private static Activator plugin;
 	private PESTT pestt;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -36,7 +36,10 @@ public class Activator extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -45,7 +48,10 @@ public class Activator extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
@@ -54,45 +60,46 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
-	 /** 
-     * Returns an image descriptor for the image file at the given 
-     * plug-in relative path 
-     * 
-     * @param path the path 
-     * @return the image descriptor 
-     */  
-    public static ImageDescriptor getImageDescriptor(String path) {  
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);  
-    } 
-    
-    public SourceGraphController getSourceGraphController() {
+
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public SourceGraphController getSourceGraphController() {
 		return pestt.getSourceGraphController();
 	}
-    
-    public TestRequirementController getTestRequirementController() {
+
+	public TestRequirementController getTestRequirementController() {
 		return pestt.getTestRequirementController();
 	}
-    
-    public TestPathController getTestPathController() {
+
+	public TestPathController getTestPathController() {
 		return pestt.getTestPathController();
 	}
-    
-    public CoverageDataController getCoverageDataController() {
+
+	public CoverageDataController getCoverageDataController() {
 		return pestt.getCoverageDataController();
 	}
-    
-    public StatisticsController getStatisticsController() {
+
+	public StatisticsController getStatisticsController() {
 		return pestt.getStatisticsController();
 	}
-    
-    public EditorController getEditorController() {
+
+	public EditorController getEditorController() {
 		return pestt.getEditorController();
 	}
 
@@ -103,11 +110,11 @@ public class Activator extends AbstractUIPlugin {
 	public DefUsesController getDefUsesController() {
 		return pestt.getDefUsesController();
 	}
-	
+
 	public BytemanController getBytemanController() {
 		return pestt.getBytemanController();
 	}
-	
+
 	public ViewController getViewController() {
 		return pestt.getViewController();
 	}

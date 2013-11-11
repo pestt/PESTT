@@ -8,15 +8,15 @@ import domain.jaxb.InformationDetails;
 import domain.jaxb.Storage;
 
 public class ExportToXMLHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		InformationDetails info = new InformationDetails();
 		info.setInformation();
-	    Storage storage = new Storage();
-	    storage.objectToXML(info);
-	    //info.XMLToObject();
-	    return null;
+		Storage storage = new Storage();
+		storage.objectToXML(info);
+		// info.XMLToObject();
+		return null;
 	}
 
 }

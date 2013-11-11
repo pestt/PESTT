@@ -21,54 +21,56 @@ public class DefUsesController extends Observable {
 	private DefUsesSet defUsesSet;
 	private Object selectedDefUse;
 	private DefUsesView selectedDefUseView;
-	
+
 	public DefUsesController(DefUsesSet defUsesSet) {
 		this.defUsesSet = defUsesSet;
 	}
-	
+
 	public void addObserverDefUses(Observer o) {
 		defUsesSet.addObserver(o);
 	}
-	
+
 	public void deleteObserverDefUses(Observer o) {
 		defUsesSet.deleteObserver(o);
 	}
-	
+
 	public void addObserverToDefUses() {
 		defUsesSet.addObserver();
 	}
-	
+
 	public void deleteObserverToDefUses() {
 		defUsesSet.deleteObserver();
 	}
-	
+
 	public void put(Object node, List<List<String>> defuses) {
 		defUsesSet.put(node, defuses);
 	}
-	
+
 	public void clearDefUsesSet() {
 		defUsesSet.clear();
 	}
 
 	public void generateDefUses() {
 		DefUsesVisitor<Integer> defusesVisitor = new DefUsesVisitor<Integer>();
-		Activator.getDefault().getSourceGraphController().applyVisitor(defusesVisitor);
+		Activator.getDefault().getSourceGraphController()
+				.applyVisitor(defusesVisitor);
 	}
-	
+
 	public boolean isDefUseSelected() {
 		return selectedDefUse != null;
 	}
-	
+
 	public Set<List<Object>> getSelectedDefUse() {
 		Set<List<Object>> set = new HashSet<List<Object>>();
-		switch(selectedDefUseView) {
-			case NODE_EDGE:
-				List<Object> list = new LinkedList<Object>();
-				list.add(selectedDefUse);
-				set.add(list);
+		switch (selectedDefUseView) {
+		case NODE_EDGE:
+			List<Object> list = new LinkedList<Object>();
+			list.add(selectedDefUse);
+			set.add(list);
 			break;
 		case VARIABLE:
-			List<List<Object>> varValues = defUsesSet.getDefUsesByVariable().get(selectedDefUse);
+			List<List<Object>> varValues = defUsesSet.getDefUsesByVariable()
+					.get(selectedDefUse);
 			set.add(varValues.get(0));
 			set.add(varValues.get(1));
 			break;
@@ -79,50 +81,51 @@ public class DefUsesController extends Observable {
 	public void selectDefUse(Object selected) {
 		this.selectedDefUse = selected;
 		setChanged();
-		notifyObservers(new DefUsesSelectedEvent(selected));		
+		notifyObservers(new DefUsesSelectedEvent(selected));
 	}
-	
+
 	public void unSelectDefUses() {
 		selectDefUse(null);
 	}
 
 	public void selectView(String selected) {
-		if(selected.equals(DefUsesView.VARIABLE.toString()))
+		if (selected.equals(DefUsesView.VARIABLE.toString()))
 			this.selectedDefUseView = DefUsesView.VARIABLE;
-		else 
+		else
 			this.selectedDefUseView = DefUsesView.NODE_EDGE;
 		setChanged();
 		notifyObservers(new DefUsesChangeViewEvent(selectedDefUseView));
-		if(!defUsesSet.isEmpty())
+		if (!defUsesSet.isEmpty())
 			defUsesSet.notifyChanges();
 	}
 
 	public DefUsesView getSelectedView() {
 		return selectedDefUseView;
 	}
-	
+
 	public Map<Object, List<List<String>>> getDefUsesByNodeEdge() {
 		return defUsesSet.getDefUsesByNodeEdge();
 	}
-	
+
 	public Map<String, List<List<Object>>> getDefUsesByVariable() {
 		return defUsesSet.getDefUsesByVariable();
 	}
 
 	public Set<AbstractPath<Integer>> getTestRequirementsOfSelected() {
-		switch(selectedDefUseView) {
-			case NODE_EDGE:
-				return defUsesSet.getTestRequirementsToNode(selectedDefUse);
-			case VARIABLE:
-				return defUsesSet.getTestRequirementsToVariable((String) selectedDefUse);
+		switch (selectedDefUseView) {
+		case NODE_EDGE:
+			return defUsesSet.getTestRequirementsToNode(selectedDefUse);
+		case VARIABLE:
+			return defUsesSet
+					.getTestRequirementsToVariable((String) selectedDefUse);
 		}
 		return null;
 	}
-	
+
 	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {
-		return defUsesSet. getTestRequirementsToNode(obj);
+		return defUsesSet.getTestRequirementsToNode(obj);
 	}
-	
+
 	public Set<AbstractPath<Integer>> getTestRequirementsToVariable(String str) {
 		return defUsesSet.getTestRequirementsToVariable(str);
 	}

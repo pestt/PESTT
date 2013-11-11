@@ -16,7 +16,9 @@ public class HelperClass extends Helper {
 
 	public boolean debug(String message) {
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(System.getProperty("java.io.tmpdir") + IPath.SEPARATOR + "script" + IPath.SEPARATOR + "output.txt", true));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(
+					System.getProperty("java.io.tmpdir") + IPath.SEPARATOR
+							+ "script" + IPath.SEPARATOR + "output.txt", true));
 			writer.write(message);
 			writer.newLine();
 			writer.flush();

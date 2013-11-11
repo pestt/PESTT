@@ -16,7 +16,7 @@ import ui.StatusImages;
 import ui.constants.Images;
 
 public class RemoveDialog extends Dialog {
-	
+
 	private String message;
 	private String input;
 
@@ -47,7 +47,8 @@ public class RemoveDialog extends Dialog {
 	}
 
 	public String open() {
-		Shell shell = new Shell(getParent(), getStyle()); // create the dialog window.
+		Shell shell = new Shell(getParent(), getStyle()); // create the dialog
+															// window.
 		shell.setText(getText());
 		createContents(shell);
 		shell.pack();
@@ -84,9 +85,9 @@ public class RemoveDialog extends Dialog {
 				shell.close();
 			}
 		});
-		
+
 		// Create the YES button and add a handler.
-		Button yes = new Button(shell, SWT.PUSH);	
+		Button yes = new Button(shell, SWT.PUSH);
 		Image okImage = images.getImage().get(Images.PASS);
 		yes.setImage(okImage);
 		yes.setText("Yes");
@@ -99,7 +100,8 @@ public class RemoveDialog extends Dialog {
 			}
 		});
 
-		// Set the OK button as the default, so user can type input and press Enter to dismiss
+		// Set the OK button as the default, so user can type input and press
+		// Enter to dismiss
 		shell.setDefaultButton(yes);
 	}
 }
