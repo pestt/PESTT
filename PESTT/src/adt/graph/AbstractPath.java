@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 public abstract class AbstractPath<V extends Comparable<V>> implements Iterable<Node<V>>, Comparable<AbstractPath<V>> {
 
-	/**
+	/** 
 	 * Verifies if a path is sub-path of the current path.
 	 * 
 	 * @param path - The path to verify.
