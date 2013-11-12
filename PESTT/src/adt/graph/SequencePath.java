@@ -21,6 +21,7 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 
 	/**
 	 * Adds a subpath.
+	 * 
 	 * @param subPath
 	 */
 	public void addSubPath(AbstractPath<V> subPath) {
@@ -38,6 +39,7 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 
 	/**
 	 * Converts a subpath to String.
+	 * 
 	 * @param path
 	 * @return
 	 */

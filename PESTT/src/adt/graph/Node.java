@@ -11,7 +11,9 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	/**
 	 * Creates a new Node
-	 * @param value - the value associated to this Node.
+	 * 
+	 * @param value
+	 *            - the value associated to this Node.
 	 */
 	public Node(V value) {
 		this.value = value;
@@ -19,6 +21,7 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	/**
 	 * Gets the value of this Node.
+	 * 
 	 * @return this Node's value.
 	 */
 	public V getValue() {
@@ -32,6 +35,7 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	/**
 	 * Visits this Node.
+	 * 
 	 * @param visitor
 	 */
 	public void accept(IGraphVisitor<V> visitor) {
@@ -40,6 +44,7 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	/**
 	 * Sets the value of this Node.
+	 * 
 	 * @param value
 	 */
 	public void setValue(V value) {

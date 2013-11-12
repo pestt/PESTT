@@ -71,7 +71,8 @@ public class Graph<V extends Comparable<V>> {
 	/**
 	 * Adds a new Node to the Graph.
 	 * 
-	 * @param Node&lt;V&gt; node - The new Node.
+	 * @param Node
+	 *            &lt;V&gt; node - The new Node.
 	 */
 	public void addNode(Node<V> node) {
 		if (!containsNode(node)) {
@@ -83,7 +84,8 @@ public class Graph<V extends Comparable<V>> {
 	/**
 	 * Adds a Node to the Graph's initial nodes.
 	 * 
-	 * @param Node&lt;V&gt; - The Node to add to the initial nodes.
+	 * @param Node
+	 *            &lt;V&gt; - The Node to add to the initial nodes.
 	 */
 	public void addInitialNode(Node<V> node) {
 		addNode(node);
@@ -119,7 +121,8 @@ public class Graph<V extends Comparable<V>> {
 	/**
 	 * Adds a Node to the Graph final nodes.
 	 * 
-	 * @param Node&lt;V&gt; - The Node to add to the Graph's final nodes.
+	 * @param Node
+	 *            &lt;V&gt; - The Node to add to the Graph's final nodes.
 	 */
 	public void addFinalNode(Node<V> node) {
 		if (!containsNode(node))

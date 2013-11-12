@@ -14,6 +14,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 
 	/**
 	 * Creates a new path from the given collection of nodes.
+	 * 
 	 * @param nodes
 	 * @requires nodes.size() > 0
 	 */
@@ -53,6 +54,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 
 	/**
 	 * TODO
+	 * 
 	 * @param i
 	 * @param path
 	 * @return True if this path is consecutive.
@@ -85,8 +87,9 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	/**
-	 * TODO
-	 * Verifies if the current path tours another with a consecutive side trip.
+	 * TODO Verifies if the current path tours another with a consecutive side
+	 * trip.
+	 * 
 	 * @param i
 	 * @param path
 	 * @return

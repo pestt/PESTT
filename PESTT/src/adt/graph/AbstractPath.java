@@ -35,15 +35,19 @@ public abstract class AbstractPath<V extends Comparable<V>> implements
 	 */
 	public abstract boolean toursWithDetour(AbstractPath<V> path);
 
-	/***
+	/**
 	 * Compares two paths.
 	 * 
 	 * @param other
 	 *            - The other path.
-	 * @return int - 1 if the current path has more nodes than the other. -1 if
-	 *         the other path has more nodes than the current path. 0 if they
-	 *         are equal. -1 or 1 if the current node of the current path is
-	 *         greater or lower than the current node of other path.
+	 * 
+	 * @return <ul>
+	 *         <li>1 if the current path has more nodes than the other.</li>
+	 *         <li>-1 if the other path has more nodes than the current path.</li>
+	 *         <li>0 if they are equal.</li>
+	 *         <li>-1 or 1 if the current node of the current path is greater or
+	 *         lower than the current node of other path.</li>
+	 *         </ul>
 	 */
 	@Override
 	public int compareTo(AbstractPath<V> other) {
@@ -61,7 +65,7 @@ public abstract class AbstractPath<V extends Comparable<V>> implements
 	/**
 	 * The first node of the current path.
 	 * 
-	 * @return Node<V> - The first node of the current path.
+	 * @return Node&lt;V&gt; - The first node of the current path.
 	 */
 	public Node<V> from() {
 		return this.iterator().next();
@@ -70,7 +74,7 @@ public abstract class AbstractPath<V extends Comparable<V>> implements
 	/**
 	 * The last node of current path.
 	 * 
-	 * @return Node<V> - The last node of the current path.
+	 * @return Node&lt;V&gt; - The last node of the current path.
 	 */
 	public Node<V> to() {
 		Node<V> lastNode = null;

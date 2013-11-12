@@ -30,7 +30,7 @@ public class Edge<V extends Comparable<V>> {
 	/**
 	 * Gets the begin Node of the Edge.
 	 * 
-	 * @return Node<V> - The begin Node of the Edge.
+	 * @return Node&lt;V&gt; - The begin Node of the Edge.
 	 */
 	public Node<V> getBeginNode() {
 		return beginNode;
@@ -39,7 +39,7 @@ public class Edge<V extends Comparable<V>> {
 	/**
 	 * Gets the end Node of the Edge.
 	 * 
-	 * @return Node<V> - The end Node of the Edge.
+	 * @return Node&lt;V&gt; - The end Node of the Edge.
 	 */
 	public Node<V> getEndNode() {
 		return endNode;
@@ -60,8 +60,11 @@ public class Edge<V extends Comparable<V>> {
 	 * 
 	 * @param o
 	 *            - The other Edge;
-	 * @return int - 0 If the two edges are equal. 1 If this Edge is bigger than
-	 *         the other. -1 If this Edge is smaller than the other.
+	 *            <ul>
+	 * @return <li>0 If the two edges are equal.</li> <li>1 If this Edge is
+	 *         bigger than the other.</li> <li>-1 If this Edge is smaller than
+	 *         the other.</li>
+	 *         </ul>
 	 */
 	public int compareTo(Edge<V> o) {
 		if (beginNode.compareTo(o.getBeginNode()) == 0)
