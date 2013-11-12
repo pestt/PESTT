@@ -19,7 +19,7 @@ public class StatisticsController {
 	}
 
 	public void getStatistics(Set<Path<Integer>> selectedTestPaths) {
-		statisticsSet.getStatsitics(selectedTestPaths);
+		statisticsSet.getStatistics(selectedTestPaths);
 	}
 
 	public void cleanStatisticsSet() {

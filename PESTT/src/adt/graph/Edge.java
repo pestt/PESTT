@@ -60,7 +60,7 @@ public class Edge<V extends Comparable<V>> {
 	 * 
 	 * @param o
 	 *            - The other Edge;
-	 *            <ul>
+	 *         <ul>
 	 * @return <li>0 If the two edges are equal.</li> <li>1 If this Edge is
 	 *         bigger than the other.</li> <li>-1 If this Edge is smaller than
 	 *         the other.</li>

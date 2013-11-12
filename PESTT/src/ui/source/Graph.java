@@ -179,7 +179,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * DEfine the Graph Layout Algorithm.
+	 * Define the Graph's Layout Algorithm.
 	 * 
 	 * @param graphElements
 	 *            - The Graph elements.
@@ -190,9 +190,9 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * The Graph selected items.
+	 * The Graph's selected items.
 	 * 
-	 * @return List<GraphItem> - The Graph selected items.
+	 * @return List&lt;GraphItem&gt; - The Graph selected items.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GraphItem> getSelected() {
@@ -200,7 +200,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Select the items in the Graph.
+	 * Selects the items in the Graph.
 	 * 
 	 * @param items
 	 *            - The items to select in the Graph.
@@ -210,7 +210,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Unselect all select items in the Graph.
+	 * Unselects all select items in the Graph.
 	 */
 	private void unselectAll() {
 		GraphItem[] items = {};
@@ -260,7 +260,7 @@ public class Graph implements Observer {
 					.isEverythingMatching())
 				if (((DefUsesSelectedEvent) data).selectedDefUse == null)
 					unselectAll();
-				else
+			else
 					selecDefUses();
 			else if (((DefUsesSelectedEvent) data).selectedDefUse != null)
 				graphNeedToBeUpdate();
@@ -268,7 +268,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Inform users that the Graph need to be updated.
+	 * Informs users that the Graph needs to be updated.
 	 */
 	private void graphNeedToBeUpdate() {
 		unselectAll();
@@ -279,7 +279,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Show in the Graph, the selected test requirement path.
+	 * Shows the selected test requirement paths in the Graph.
 	 * 
 	 * @param data
 	 *            - The selected test requirement paths.
@@ -294,7 +294,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Show in the Graph, the selected test path.
+	 * Shows the selected test paths in the Graph.
 	 * 
 	 * @param data
 	 *            - The selected test paths.
@@ -309,7 +309,7 @@ public class Graph implements Observer {
 	}
 
 	/**
-	 * Show in the Graph, the selected test path.
+	 * Show the selected test path in the Graph.
 	 */
 	private void selecDefUses() {
 		List<GraphItem> aux = new LinkedList<GraphItem>();

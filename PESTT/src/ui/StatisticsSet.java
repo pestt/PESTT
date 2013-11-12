@@ -42,7 +42,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
 
-	public void getStatsitics(Set<Path<Integer>> selectedTestPaths) {
+	public void getStatistics(Set<Path<Integer>> selectedTestPaths) {
 		graph = Activator.getDefault().getSourceGraphController()
 				.getSourceGraph();
 		statisticsSet.clear();
@@ -69,7 +69,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		int total = getTotalNodes();
 		int passed = nodes.size();
 		String percentage = getPercentage(passed, total);
-		return totalOutpu(unit, passed, total, percentage);
+		return totalOutput(unit, passed, total, percentage);
 	}
 
 	private int getTotalNodes() {
@@ -90,7 +90,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		int total = getTotalEdges();
 		int passed = edges.size();
 		String percentage = getPercentage(passed, total);
-		return totalOutpu(unit, passed, total, percentage);
+		return totalOutput(unit, passed, total, percentage);
 	}
 
 	private List<Edge<Integer>> getCoveredEdges(Path<Integer> path) {
@@ -128,7 +128,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		int total = getTotalLines();
 		int passed = lines.size();
 		String percentage = getPercentage(passed, total);
-		return totalOutpu(unit, passed, total, percentage);
+		return totalOutput(unit, passed, total, percentage);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -175,7 +175,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		int total = getTotalTestRequirements();
 		int passed = testRequirements.size();
 		String percentage = getPercentage(passed, total);
-		return totalOutpu(unit, passed, total, percentage);
+		return totalOutput(unit, passed, total, percentage);
 	}
 
 	private Set<Path<Integer>> getTestPathCoverage() {
@@ -190,7 +190,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	private String getInfeasiblesStatistics() {
 		String unit = StatisticsElements.INFEASIBLES;
 		int infeasibles = getInfeasible();
-		return totalOutpu(unit, infeasibles, 0, "");
+		return totalOutput(unit, infeasibles, 0, "");
 	}
 
 	private int getInfeasible() {
@@ -204,7 +204,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		int nodes = getTotalNodes();
 		int finalNodes = getTotalFinalNodes();
 		int complexity = edges - nodes + finalNodes;
-		return totalOutpu(unit, complexity, 0, "");
+		return totalOutput(unit, complexity, 0, "");
 	}
 
 	private int getTotalFinalNodes() {
@@ -239,7 +239,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 				end++;
 		}
 		int required = Math.max(begin, end);
-		return totalOutpu(unit, required, 0, "");
+		return totalOutput(unit, required, 0, "");
 	}
 
 	private String getPercentage(int passed, int total) {
@@ -249,7 +249,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		return formater.format(((double) passed / (double) total) * 100) + "%";
 	}
 
-	private String totalOutpu(String unit, int passed, int total,
+	private String totalOutput(String unit, int passed, int total,
 			String percentage) {
 		if (unit.equals(StatisticsElements.CYCLOMATIC))
 			return unit + ": " + passed;

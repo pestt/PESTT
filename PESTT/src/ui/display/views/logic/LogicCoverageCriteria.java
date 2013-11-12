@@ -1,5 +1,22 @@
 package ui.display.views.logic;
 
+import static ui.constants.Tooltips.CACC;
+import static ui.constants.Tooltips.CACC_NODE;
+import static ui.constants.Tooltips.CC;
+import static ui.constants.Tooltips.CC_NODE;
+import static ui.constants.Tooltips.COC;
+import static ui.constants.Tooltips.COC_NODE;
+import static ui.constants.Tooltips.GACC;
+import static ui.constants.Tooltips.GACC_NODE;
+import static ui.constants.Tooltips.GICC;
+import static ui.constants.Tooltips.GICC_NODE;
+import static ui.constants.Tooltips.PC;
+import static ui.constants.Tooltips.PC_NODE;
+import static ui.constants.Tooltips.RACC;
+import static ui.constants.Tooltips.RACC_NODE;
+import static ui.constants.Tooltips.RICC;
+import static ui.constants.Tooltips.RICC_NODE;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -57,85 +74,54 @@ public class LogicCoverageCriteria implements Observer {
 
 	private void setNodes() {
 		nodes = new HashMap<LogicCoverageCriteriaId, GraphNode>();
-		GraphNode coc = new GraphNode(graph, SWT.SINGLE,
-				"Complete Clause\n        Coverage\n" + insertTrace(16)
-						+ "\n            (CoC)");
+		GraphNode coc = new GraphNode(graph, SWT.SINGLE, COC_NODE
+				+ insertTrace(16) + "\n            (CoC)");
 		coc.setData(LogicCoverageCriteriaId.COMPLETE_CLAUSE);
-		coc.setTooltip(new Label(
-				"Combinatorial Coverage (or Complete Clause Coverage) (CoC):\nFor each p ∈ P, Test requirements has test requirements for the clauses in Cp to evaluate to each possible combination of truth values."));
+		coc.setTooltip(new Label(COC));
 		nodes.put(LogicCoverageCriteriaId.COMPLETE_CLAUSE, coc);
 
-		GraphNode racc = new GraphNode(graph, SWT.SINGLE,
-				"Restricted Active\n Clause Coverage\n" + insertTrace(16)
-						+ "\n          (RACC)");
+		GraphNode racc = new GraphNode(graph, SWT.SINGLE, RACC_NODE
+				+ insertTrace(16) + "\n          (RACC)");
 		racc.setData(LogicCoverageCriteriaId.RESTRICTED_ACTIVE_CLAUSE);
-		racc.setTooltip(new Label(
-				"Restricted Active Clause Coverage (RACC):\nFor each p ∈ P and each major clause ci ∈ Cp , choose minor clauses cj, j != i so that ci determines p.\n"
-						+ "Test requirements has two requirements for each ci: ci evaluates to true and ci evaluates to false.\n"
-						+ "The values chosen for the minor clauses cj must be the same when ci is true as when ci is false."));
+		racc.setTooltip(new Label(RACC));
 		nodes.put(LogicCoverageCriteriaId.RESTRICTED_ACTIVE_CLAUSE, racc);
 
-		GraphNode ricc = new GraphNode(graph, SWT.SINGLE,
-				"Restricted Inactive\n  Clause Coverage\n" + insertTrace(18)
-						+ "\n           (RICC)");
+		GraphNode ricc = new GraphNode(graph, SWT.SINGLE, RICC_NODE
+				+ insertTrace(18) + "\n           (RICC)");
 		ricc.setData(LogicCoverageCriteriaId.RESTRICTED_INACTIVE_CLAUSE);
-		ricc.setTooltip(new Label(
-				"Restricted Inactive Clause Coverage (RICC):\nFor each p ∈ P and each major clause ci ∈ Cp, choose minor clauses cj, j = i so that ci does not determine p.\n"
-						+ "Test requirements has four requirements for ci under these circumstances:\n"
-						+ "(1) ci evaluates to true with p true,\n"
-						+ "(2) ci evaluates to false with p true,\n"
-						+ "(3) ci evaluates to true with p false, and\n"
-						+ "(4) ci evaluates to false with p false.\n"
-						+ "The values chosen for the minor clauses cj must be the same in cases (1) and (2),\n"
-						+ "and the values chosen for the minor clauses cj must also be the same in cases (3) and (4)."));
+		ricc.setTooltip(new Label(RICC));
 		nodes.put(LogicCoverageCriteriaId.RESTRICTED_INACTIVE_CLAUSE, ricc);
 
-		GraphNode cacc = new GraphNode(graph, SWT.SINGLE,
-				"Correlated Active\n Clause Coverage\n" + insertTrace(17)
-						+ "\n           (CACC)");
+		GraphNode cacc = new GraphNode(graph, SWT.SINGLE, CACC_NODE
+				+ insertTrace(17) + "\n           (CACC)");
 		cacc.setData(LogicCoverageCriteriaId.CORRELATED_ACTIVE_CLAUSE);
-		cacc.setTooltip(new Label(
-				"Correlated Active Clause Coverage (CACC):\nFor each p ∈ P and each major clause ci ∈ C p, choose minor clauses cj, j = i so that ci determines p.\n"
-						+ "Test requirements has two requirements for each ci: ci evaluates to true and ci evaluates to false.\n"
-						+ "The values chosen for the minor clauses cj must cause p to be true for one value of the major clause ci and false for the other."));
+		cacc.setTooltip(new Label(CACC
+
+		));
 		nodes.put(LogicCoverageCriteriaId.CORRELATED_ACTIVE_CLAUSE, cacc);
 
-		GraphNode gacc = new GraphNode(graph, SWT.SINGLE,
-				"  General Active\nClause Coverage\n" + insertTrace(16)
-						+ "\n          (GACC)");
+		GraphNode gacc = new GraphNode(graph, SWT.SINGLE, GACC_NODE
+				+ insertTrace(16) + "\n          (GACC)");
 		gacc.setData(LogicCoverageCriteriaId.GENERAL_ACTIVE_CLAUSE);
-		gacc.setTooltip(new Label(
-				"General Active Clause Coverage (GACC):\nFor each p ∈ P and each major clause ci ∈ Cp, choose minor clauses cj, j != i so that ci determines p.\n"
-						+ "Test requirements has two requirements for each ci: ci evaluates to true and ci evaluates to false.\n"
-						+ "The values chosen for the minor clauses cj do not need to be the same when ci is true as when ci is false.\n"));
+		gacc.setTooltip(new Label(GACC));
 		nodes.put(LogicCoverageCriteriaId.GENERAL_ACTIVE_CLAUSE, gacc);
 
-		GraphNode gicc = new GraphNode(graph, SWT.SINGLE,
-				"General Inactive\nClause Coverage\n" + insertTrace(16)
-						+ "\n          (GICC)");
+		GraphNode gicc = new GraphNode(graph, SWT.SINGLE, GICC_NODE
+				+ insertTrace(16) + "\n          (GICC)");
 		gicc.setData(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE);
-		gicc.setTooltip(new Label(
-				"General Inactive Clause Coverage (GICC):\nFor each p ∈ P and each major clause ci ∈ C p, choose minor clauses cj, j = i so that ci does not determine p.\n"
-						+ "Test requirements has four requirements for ci under these circumstances:\n "
-						+ "(1) ci evaluates to true with p true,\n"
-						+ "(2) ci evaluates to false with p true,\n"
-						+ "(3) ci evaluates to true with p false, and\n "
-						+ "(4) ci evaluates to false with p false.\n"
-						+ "The values chosen for the minor clauses cj may vary amongst the four cases."));
+		gicc.setTooltip(new Label(GICC));
 		nodes.put(LogicCoverageCriteriaId.GENERAL_INACTIVE_CLAUSE, gicc);
 
-		GraphNode cc = new GraphNode(graph, SWT.SINGLE, "   Clause\nCoverage\n"
+		GraphNode cc = new GraphNode(graph, SWT.SINGLE, CC_NODE
 				+ insertTrace(9) + "\n     (CC)");
 		cc.setData(LogicCoverageCriteriaId.CLAUSE);
-		cc.setTooltip(new Label(
-				"Clause Coverage (CC):\nFor each c ∈ C, Test Requirements contains two requirements: c evaluates to true, and c evaluates to false."));
+		cc.setTooltip(new Label(CC));
 		nodes.put(LogicCoverageCriteriaId.CLAUSE, cc);
 
-		GraphNode pc = new GraphNode(graph, SWT.SINGLE, "Predicate\nCoverage\n"
+		GraphNode pc = new GraphNode(graph, SWT.SINGLE, PC_NODE
 				+ insertTrace(10) + "\n      (PC)");
 		pc.setData(LogicCoverageCriteriaId.PREDICATE);
-		pc.setTooltip(new Label(
-				"Predicate Coverage (PC):\nFor each p ∈ P, Test requirements contains two requirements: p evaluates to true, and p evaluates to false."));
+		pc.setTooltip(new Label(PC));
 		nodes.put(LogicCoverageCriteriaId.PREDICATE, pc);
 
 		for (GraphNode gnode : nodes.values()) {

@@ -317,7 +317,7 @@ public class ActiveEditor implements Observer {
 	}
 
 	/***
-	 * Update the method Javadoc annotations.
+	 * Updates the method Javadoc annotations.
 	 * 
 	 * @param unit
 	 *            - The current CompilationUnit.
@@ -442,8 +442,8 @@ public class ActiveEditor implements Observer {
 	}
 
 	/***
-	 * View all tags in the method Javadoc. If the tags is external to the
-	 * program it must be kept.
+	 * Views all tags in the method Javadoc. If the tags are external to the
+	 * program they must be kept.
 	 * 
 	 * @param method
 	 * @return

@@ -1,5 +1,27 @@
 package ui.display.views.structural;
 
+import static ui.constants.Tooltips.ADC;
+import static ui.constants.Tooltips.ADC_NODE;
+import static ui.constants.Tooltips.ADUPC;
+import static ui.constants.Tooltips.ADUPC_NODE;
+import static ui.constants.Tooltips.AUC;
+import static ui.constants.Tooltips.AUC_NODE;
+import static ui.constants.Tooltips.CPC;
+import static ui.constants.Tooltips.CPC_NODE;
+import static ui.constants.Tooltips.CRTC;
+import static ui.constants.Tooltips.CRTC_NODE;
+import static ui.constants.Tooltips.EC;
+import static ui.constants.Tooltips.EC_NODE;
+import static ui.constants.Tooltips.EPC;
+import static ui.constants.Tooltips.EPC_NODE;
+import static ui.constants.Tooltips.NC;
+import static ui.constants.Tooltips.NC_NODE;
+import static ui.constants.Tooltips.PPC;
+import static ui.constants.Tooltips.PPC_NODE;
+import static ui.constants.Tooltips.SRTC;
+import static ui.constants.Tooltips.SRTC_NODE;
+import static ui.constants.Tooltips.dotString;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +37,7 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -85,75 +108,30 @@ public class GraphCoverageCriteria implements Observer {
 	private Map<String, NodeMetaInfo> nodesMetaInfo() {
 		Map<String, NodeMetaInfo> nodesMetaInfo = new HashMap<String, NodeMetaInfo>();
 
-		nodesMetaInfo
-				.put("CPC",
-						new NodeMetaInfo("Complete Path\n      Coverage\n"
-								+ insertTrace(14) + "\n            (CPC)",
-								GraphCoverageCriteriaId.COMPLETE_PATH,
-								"Complete Path Coverage (CPC):\nTest requirements contains all paths in Graph."));
-		nodesMetaInfo
-				.put("PPC",
-						new NodeMetaInfo(
-								"Prime Path\n Coverage\n" + insertTrace(11)
-										+ "\n      (PPC)",
-								GraphCoverageCriteriaId.PRIME_PATH,
-								"Prime Path Coverage (PPC):\nTest requirements contains each prime path in Graph."));
-		nodesMetaInfo
-				.put("EC",
-						new NodeMetaInfo(
-								"     Edge\n Coverage\n" + insertTrace(10)
-										+ "\n      (EC)",
-								GraphCoverageCriteriaId.EDGE,
-								"Edge Coverage (EC):\nTest requirements contains each reachable path of length up to 1, inclusive, in Graph."));
-		nodesMetaInfo
-				.put("ADUPC",
-						new NodeMetaInfo(
-								"All-du-Paths\n  Coverage\n " + insertTrace(11)
-										+ "\n    (ADUPC)",
-								GraphCoverageCriteriaId.ALL_DU_PATHS,
-								"All-du-Paths Coverage (ADUPC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains every path d in S."));
-		nodesMetaInfo
-				.put("AUC",
-						new NodeMetaInfo(
-								"  All-Uses\nCoverage\n" + insertTrace(9)
-										+ "\n    (AUC)",
-								GraphCoverageCriteriaId.ALL_USES,
-								"All-Uses Coverage (AUC):\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains at least one path d in S."));
-		nodesMetaInfo
-				.put("CRTC",
-						new NodeMetaInfo(
-								"Complete Round\n   Trip Coverage\n"
-										+ insertTrace(16)
-										+ "\n           (CRTC)",
-								GraphCoverageCriteriaId.COMPLETE_ROUND_TRIP,
-								"Complete Round Trip Coverage (CRTC):\nTest requirements contains all round-trip paths for each reachable node in Graph."));
-		nodesMetaInfo
-				.put("SRTC",
-						new NodeMetaInfo(
-								"Simple Round\nTrip Coverage\n"
-										+ insertTrace(13) + "\n        (SRTC)",
-								GraphCoverageCriteriaId.SIMPLE_ROUND_TRIP,
-								"Simple Round Trip Coverage (SRTC):\nTest requirements contains at least one round-trip path\n for each reachable node in Graph that begins and ends a round-trip path."));
-		nodesMetaInfo
-				.put("ADC",
-						new NodeMetaInfo(
-								"  All-Defs\nCoverage\n" + insertTrace(9)
-										+ "\n    (ADC)",
-								GraphCoverageCriteriaId.ALL_DEFS,
-								"All-Defs Coverage (ADC):\nFor each def-path set S = du(n, v),\nTest requirements contains at least one path d in S."));
-		nodesMetaInfo
-				.put("EPC",
-						new NodeMetaInfo(
-								"Edge-Pair\nCoverage\n" + insertTrace(9)
-										+ "\n     (EPC)",
-								GraphCoverageCriteriaId.EDGE_PAIR,
-								"Edge-Pair Coverage (EPC):\nTest requirements contains each reachable path of length up to 2, inclusive, in Graph."));
-		nodesMetaInfo
-				.put("NC",
-						new NodeMetaInfo("    Node\nCoverage\n"
-								+ insertTrace(9) + "\n     (NC)",
-								GraphCoverageCriteriaId.NODE,
-								"Node Coverage (NC):\nTest requirements contains each reachable node in Graph."));
+		nodesMetaInfo.put("CPC", new NodeMetaInfo(CPC_NODE + insertTrace(14)
+				+ "\n            (CPC)", GraphCoverageCriteriaId.COMPLETE_PATH,
+				CPC));
+		nodesMetaInfo.put("PPC", new NodeMetaInfo(PPC_NODE + insertTrace(11)
+				+ "\n      (PPC)", GraphCoverageCriteriaId.PRIME_PATH, PPC));
+		nodesMetaInfo.put("EC", new NodeMetaInfo(EC_NODE + insertTrace(10)
+				+ "\n      (EC)", GraphCoverageCriteriaId.EDGE, EC));
+		nodesMetaInfo.put("ADUPC", new NodeMetaInfo(ADUPC_NODE
+				+ insertTrace(11) + "\n    (ADUPC)",
+				GraphCoverageCriteriaId.ALL_DU_PATHS, ADUPC));
+		nodesMetaInfo.put("AUC", new NodeMetaInfo(AUC_NODE + insertTrace(9)
+				+ "\n    (AUC)", GraphCoverageCriteriaId.ALL_USES, AUC));
+		nodesMetaInfo.put("CRTC", new NodeMetaInfo(CRTC_NODE + insertTrace(16)
+				+ "\n           (CRTC)",
+				GraphCoverageCriteriaId.COMPLETE_ROUND_TRIP, CRTC));
+		nodesMetaInfo.put("SRTC", new NodeMetaInfo(SRTC_NODE + insertTrace(13)
+				+ "\n        (SRTC)",
+				GraphCoverageCriteriaId.SIMPLE_ROUND_TRIP, SRTC));
+		nodesMetaInfo.put("ADC", new NodeMetaInfo(ADC_NODE + insertTrace(9)
+				+ "\n    (ADC)", GraphCoverageCriteriaId.ALL_DEFS, ADC));
+		nodesMetaInfo.put("EPC", new NodeMetaInfo(EPC_NODE + insertTrace(9)
+				+ "\n     (EPC)", GraphCoverageCriteriaId.EDGE_PAIR, EPC));
+		nodesMetaInfo.put("NC", new NodeMetaInfo(NC_NODE + insertTrace(9)
+				+ "\n     (NC)", GraphCoverageCriteriaId.NODE, NC));
 
 		return nodesMetaInfo;
 	}
@@ -220,7 +198,7 @@ public class GraphCoverageCriteria implements Observer {
 	}
 
 	/**
-	 * DEfine the Graph Layout Algorithm.
+	 * Define the Graph Layout Algorithm.
 	 * 
 	 * @param graphElements
 	 *            - The Graph elements.
@@ -230,11 +208,11 @@ public class GraphCoverageCriteria implements Observer {
 				new GraphLayoutAlgorithm(parent, graphElements), true);
 	}
 
-	/*
-	 * private void setLayout() { TreeLayoutAlgorithm la = new
-	 * TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN); la.setResizing(false);
-	 * graph.setLayoutAlgorithm(la, true); }
-	 */
+	
+	  private void setLayout() { TreeLayoutAlgorithm la = new
+	  TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN); la.setResizing(false);
+	  graph.setLayoutAlgorithm(la, true); }
+	 
 
 	private void addSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
@@ -282,22 +260,7 @@ public class GraphCoverageCriteria implements Observer {
 	}
 
 	private String dotString() {
-		return "digraph finite_state_machine { " + "rankdir=TD;"
-				+ "size=\"10,10\";" + "node [shape = box];"
-				+ "CPC [label=\"Complete Path\\nCoverage\"];"
-				+ "PPC [label=\"Prime Path\\nCoverage\"];"
-				+ "EC [label=\"Edge\\nCoverage\"];"
-				+ "ADUPC [label=\"All DU Paths\\nCoverage\"];"
-				+ "AUC [label=\"All Uses\\nCoverage\"];"
-				+ "CRTC [label = \"Complete Round\\nTrip Coverage\"];"
-				+ "SRTC [label = \"Simple Round\\nTrip Coverage\"];"
-				+ "ADC [label = \"All Defs\\nCoverage\"];"
-				+ "NC [label = \"Node\\nCoverage\"];"
-				+ "EPC [label = \"Edge pair\\nCoverage\"];" + "CPC -> EPC;"
-				+ "CPC -> PPC;" + "PPC -> ADUPC;" + "PPC -> EC;"
-				+ "PPC -> CRTC;" + "CRTC -> SRTC;" + "ADUPC -> AUC;"
-				+ "AUC -> ADC;" + "AUC -> EC;" + "EPC -> EC;" + "EC -> NC;"
-				+ "}\n";
+		return dotString;
 	}
 
 }

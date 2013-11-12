@@ -11,12 +11,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import domain.constants.TestType;
-
 import ui.constants.Description;
 import ui.constants.Messages;
 import ui.dialog.InputDialog;
 import adt.graph.Path;
+import domain.constants.TestType;
 
 public class EditTestPathHandler extends AbstractHandler {
 

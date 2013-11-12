@@ -10,14 +10,14 @@ public class Messages {
 	public static final String COVERAGE_TITLE = "PESTT - Coverage Criteria";
 	public static final String COVERAGE_SELECT_MSG = "You need to select a coverage criteria in the Graph Coverage Criteria view.";
 
-	public static final String SAVE_CHANGES = "Are you sure that you want to save the changes:";
+	public static final String SAVE_CHANGES = "Are you sure that you want to save the changes?";
 
 	public static final String TEST_PATH_TITLE = "PESTT - Test Path";
 	public static final String TEST_PATH_INPUT_MSG = "You need to enter a test path.";
 	public static final String TEST_PATH_INVALID_INPUT_MSG = "You need to enter a valid test path.";
 	public static final String TEST_PATH_BECAME_INVALID_INPUT_MSG = "The following test paths is no longer valid.";
-	public static final String TEST_PATH_REMOVE_MSG = "It will be removed from the list";
-	public static final String TEST_PATH_CONFIRM_REMOVE_MSG = "Are you sure that you want to delete this test path:\n";
+	public static final String TEST_PATH_REMOVE_MSG = "It will be removed from the list.";
+	public static final String TEST_PATH_CONFIRM_REMOVE_MSG = "Are you sure that you want to delete this test path?\n";
 	public static final String TEST_PATH_SELECT_TO_REMOVE_MSG = "You need to select a test path to be removed.";
 	public static final String TEST_PATH_SELECT_TO_EDIT_MSG = "You need to select a test path to be edited.";
 	public static final String TEST_PATH_WARNING_EDITED_MSG = "You can only edit one test path at a time.";
@@ -26,10 +26,10 @@ public class Messages {
 	public static final String TEST_REQUIREMENT_INPUT_MSG = "You need to enter a test requirement.";
 	public static final String TEST_REQUIREMENT_INVALID_INPUT_MSG = "You need to enter a valid test requirement.";
 	public static final String TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG = "The following test requirement is no longer valid.";
-	public static final String TEST_REQUIREMENT_REMOVE_MSG = "It will be removed from the list";
-	public static final String TEST_REQUIREMENT_CONFIRM_REMOVE_MSG = "Are you sure that you want to delete this test requirement:\n";
+	public static final String TEST_REQUIREMENT_REMOVE_MSG = "It will be removed from the list.";
+	public static final String TEST_REQUIREMENT_CONFIRM_REMOVE_MSG = "Are you sure that you want to delete this test requirement?\n";
 	public static final String TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG = "You need to select a test requirement to be removed.";
-	public static final String TEST_REQUIREMENT_INFINITE_MSG = "The number of test requirements is infinite. (The method contains cycles).";
+	public static final String TEST_REQUIREMENT_INFINITE_MSG = "The number of test requirements is infinite (the method contains cycles).";
 	public static final String TEST_REQUIREMENT_SELECT_TO_EDIT_MSG = "You need to select a test requirement to be edited.";
 	public static final String TEST_REQUIREMENT_WARNING_EDITED_MSG = "You can only edit one test requirement at a time.";
 	public static final String TEST_REQUIREMENT_NEED_UPDATE_MSG = "You need to update the test requirements.";
@@ -47,6 +47,6 @@ public class Messages {
 	public static final String DEF_USES_MSG = "You need to generate the DefUses in the Data Flow Coverage Criteria View.";
 	public static final String DEF_USES_CRITERIA_SELECT_MSG = "To use this option you need to select on of the following criterias in the\n"
 			+ "Graph Coverage Criteria View:\n"
-			+ "All_dU-Paths Coverage.\n"
+			+ "All_DU-Paths Coverage.\n"
 			+ "All-Uses Coverage.\n" + "All-Defs Coverage.";
 }

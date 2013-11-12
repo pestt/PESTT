@@ -188,11 +188,16 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 
 	/***
 	 * Sets the visual status for the test requirements according to the
-	 * selected test path. The visual status to the test requirements are: -
+	 * selected test path. The visual status to the test requirements are:
+	 * <ul>
+	 * <li>
 	 * Green (Background and pass icon) if the test requirement is covered by
-	 * the selected test path. - Red (Background and cross icon) if the test
-	 * requirement is not covered by the selected test path. - Blue (Background
-	 * and pass icon) if the test requirement is infeasible.
+	 * the selected test path.</li>
+	 * <li>Red (Background and cross icon) if the test requirement is not
+	 * covered by the selected test path.</li>
+	 * <li>Blue (Background and pass icon) if the test requirement is
+	 * infeasible.</li>
+	 * </ul>
 	 */
 	private void setPathStatus() {
 		int n = 0;
@@ -237,9 +242,9 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	}
 
 	/***
-	 * Mark all infeasible path in the view.
+	 * Mark all infeasible paths in the view.
 	 * 
-	 * @param infeasigles
+	 * @param infeasibles
 	 *            - The set of infeasible path.
 	 */
 	private void setInfeasibles(Iterable<AbstractPath<Integer>> infeasigles) {
@@ -279,13 +284,18 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	/***
 	 * Sets the selection listener for this view.
 	 * 
-	 * In this view exists two types of listener: - One for the row selection -
-	 * selects one test requirement. - One for the checkbox selection -
-	 * enable/disable a infeasible path.
+	 * In this view two types of listener exist:
+	 * <ul>
+	 * <li>One for the row selection - selects one test requirement,</li>
+	 * <li>one for the checkbox selection - enable/disable a infeasible path.</li>
+	 * </ul>
 	 * 
-	 * Note that when a user select the checkbox (to enable or disable one
-	 * infeasible path) the listener fired two evens: - one corresponding to the
-	 * enable/disable of the checkbox. - and one for the row selection.
+	 * Note that when a user selects the checkbox (to enable or disable one
+	 * infeasible path) the listener fired two events:
+	 * <ul>
+	 * <li>one corresponding to the enable/disable of the checkbox</li>
+	 * <li>- and one for the row selection.</li>
+	 * </ul>
 	 */
 	private void setSelections() {
 		testRequirementsViewer.getTable().addListener(SWT.Selection,
