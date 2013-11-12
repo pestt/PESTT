@@ -70,8 +70,7 @@ public class JUnitLaunch extends JUnitLaunchShortcut {
 						.newStringVariableClasspathEntry(pluginPath);
 				pluginEntry
 						.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-				// Add plugin bin folder - for running under eclipse development
-				// environment.
+				// Add plugin bin folder - for running under eclipse development environment.
 				IRuntimeClasspathEntry pluginEntryBin = JavaRuntime
 						.newStringVariableClasspathEntry(pluginPath
 								+ IPath.SEPARATOR + "bin");

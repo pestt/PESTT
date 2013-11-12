@@ -51,9 +51,7 @@ public class TestRequirementsHandler extends AbstractHandler {
 				} else
 					MessageDialog.openInformation(window.getShell(),
 							Messages.COVERAGE_TITLE,
-							Messages.COVERAGE_SELECT_MSG); // message displayed
-															// when the graph is
-															// not draw.
+							Messages.COVERAGE_SELECT_MSG); // message displayed when the graph is not draw.
 			else
 				MessageDialog.openInformation(window.getShell(),
 						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);

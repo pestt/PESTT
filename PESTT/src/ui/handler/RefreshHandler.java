@@ -47,16 +47,7 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getViewController().addObserverToViews();
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
-		if (Activator.getDefault().getEditorController().isInMethod()) { // if
-																			// the
-																			// text
-																			// selected
-																			// is
-																			// the
-																			// name
-																			// of
-																			// the
-																			// method.
+		if (Activator.getDefault().getEditorController().isInMethod()) { // if the text selected is the name of the method.
 			IPreferenceStore preferenceStore = Activator.getDefault()
 					.getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
@@ -71,14 +62,7 @@ public class RefreshHandler extends AbstractHandler {
 						Messages.PREFERENCES_DOT_MSG);
 		} else
 			MessageDialog.openInformation(window.getShell(),
-					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message
-																			// displayed
-																			// when
-																			// the
-																			// graph
-																			// is
-																			// not
-																			// designed.
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 		return null;
 	}
 
@@ -175,8 +159,7 @@ public class RefreshHandler extends AbstractHandler {
 				}
 			else
 				MessageDialog.openInformation(window.getShell(), title, prefix
-						+ msg + sufix); // message displayed when the inserted
-										// test requirement is not valid.
+						+ msg + sufix); // message displayed when the inserted test requirement is not valid.
 		}
 	}
 
@@ -194,38 +177,24 @@ public class RefreshHandler extends AbstractHandler {
 
 	private void keepCommandOptions() {
 		IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getService(IHandlerService.class); // get the
-																	// IHandlerService.
+				.getWorkbench().getService(IHandlerService.class); // get the IHandlerService.
 		ICommandService cmdService = (ICommandService) PlatformUI
-				.getWorkbench().getService(ICommandService.class); // get the
-																	// ICommandService.
+				.getWorkbench().getService(ICommandService.class); // get the ICommandService.
 		State stateLink = cmdService.getCommand(Description.LINK_BUTTON)
-				.getState("org.eclipse.ui.commands.toggleState"); // the current
-																	// state of
-																	// the link
-																	// command.
-		boolean valueLink = (Boolean) stateLink.getValue(); // the value of the
-															// state.
+				.getState("org.eclipse.ui.commands.toggleState"); // the current state of the link command.
+		boolean valueLink = (Boolean) stateLink.getValue(); // the value of the state.
 		State stateLayer = cmdService.getCommand(Description.LAYER_BUTTON)
-				.getState("org.eclipse.ui.commands.radioState"); // the current
-																	// state of
-																	// the layer
-																	// command.
-		String valueLayer = stateLayer.getValue().toString(); // the value of
-																// the layer.
+				.getState("org.eclipse.ui.commands.radioState"); // the current state of the layer command.
+		String valueLayer = stateLayer.getValue().toString(); // the value of the layer.
 		try {
 			if (valueLink) {
 				Activator.getDefault().getCFGController().settLinkState(false);
 				stateLink.setValue(false); // disable selection
-				handlerService.executeCommand(Description.LINK_BUTTON, null); // update
-																				// the
-																				// value.
+				handlerService.executeCommand(Description.LINK_BUTTON, null); // update the value.
 			}
 			if (!valueLayer.equals(Integer.toString(Layer.EMPTY.getLayer()))
 					&& !valueLayer.equals(Description.NONE))
-				handlerService.executeCommand(Description.LAYER_BUTTON, null); // update
-																				// the
-																				// value.
+				handlerService.executeCommand(Description.LAYER_BUTTON, null); // update the value.
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -92,20 +92,12 @@ public class EditorController {
 	}
 
 	public void addVisualCoverage(Object data, List<GraphItem> items) {
-		if (Activator.getDefault().getCFGController().getLinkState()) // if the
-																		// link
-																		// button
-																		// is
-																		// on.
+		if (Activator.getDefault().getCFGController().getLinkState()) // if the link button is on.
 			if (data instanceof TestPathSelectedEvent)
 				visualInfo.addVisualCoverageStatus(Activator.getDefault()
 						.getTestPathController().getCoverageData(), items);
 			else
-				visualInfo.setLayerInformation(Layer.INSTRUCTIONS); // set the
-																	// information
-																	// to the
-																	// instructions
-																	// layer.
+				visualInfo.setLayerInformation(Layer.INSTRUCTIONS); // set the information to the instructions layer.
 	}
 
 	public void removeVisualCoverage() {

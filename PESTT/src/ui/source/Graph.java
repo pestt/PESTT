@@ -74,25 +74,12 @@ public class Graph implements Observer {
 	private void create(adt.graph.Graph<Integer> sourceGraph) {
 		graph.clear();
 		this.sourceGraph = sourceGraph;
-		DotGraphVisitor<Integer> visitor = new DotGraphVisitor<Integer>(); // creates
-																			// the
-																			// visitor
-																			// to
-																			// the
-																			// graph.
+		DotGraphVisitor<Integer> visitor = new DotGraphVisitor<Integer>(); // creates the visitor to the graph.
 		Activator.getDefault().getSourceGraphController().applyVisitor(visitor);
 		String dotGraph = "digraph grafo {\nrankdir=TD\nsize=\"10,10\"\n"
-				+ visitor.getDotString() + "}\n"; // creates the string to be
-													// passed to Graphviz.
-		IDotProcess dotProcess = new DotProcess(); // the object that parse the
-													// information to build the
-													// layoutGraph.
-		Map<String, List<String>> map = dotProcess.dotToPlain(dotGraph); // the
-																			// information
-																			// to
-																			// build
-																			// the
-																			// layoutGraph.
+				+ visitor.getDotString() + "}\n"; // creates the string to be passed to Graphviz.
+		IDotProcess dotProcess = new DotProcess(); // the object that parse the information to build the layoutGraph.
+		Map<String, List<String>> map = dotProcess.dotToPlain(dotGraph); // the information to build the layoutGraph.
 		GraphElements elements = new GraphElements(map);
 		setLayout(elements);
 		setNodes(elements.getNodesInfo());
@@ -118,33 +105,16 @@ public class Graph implements Observer {
 			Node node = entry.getValue(); // get the current node of the list.
 			GraphNode layoutNode = new GraphNode(graph, SWT.NONE,
 					node.getName()); // create the graph node.
-			layoutNode.setBackgroundColor(node.getBackgroundColor()); // sets
-																		// the
-																		// node
-																		// background
-																		// color.
-			layoutNode.setForegroundColor(node.getForegroundColor()); // sets
-																		// the
-																		// node
-																		// text
-																		// color.
-			layoutNode.setBorderColor(Colors.BLACK); // sets the node border
-														// color to black.
-			layoutNode.setHighlightColor(Colors.YELLOW); // sets he highlight
-															// color.
-			layoutNode.setBorderHighlightColor(Colors.BLACK); // sets the node
-																// border
-																// highlight
-																// color to
-																// black.
+			layoutNode.setBackgroundColor(node.getBackgroundColor()); // sets the node background color.
+			layoutNode.setForegroundColor(node.getForegroundColor()); // sets the node text color.
+			layoutNode.setBorderColor(Colors.BLACK); // sets the node border color to black.
+			layoutNode.setHighlightColor(Colors.YELLOW); // sets he highlight color.
+			layoutNode.setBorderHighlightColor(Colors.BLACK); // sets the node border highlight color to black.
 			adt.graph.Node<Integer> sourceNode = sourceGraph.getNode(Integer
-					.parseInt(layoutNode.getText())); // the correspondent
-														// source node.
-			layoutNode.setData(sourceNode); // associate the visualization node
-											// with the source node.
+					.parseInt(layoutNode.getText())); // the correspondent source node.
+			layoutNode.setData(sourceNode); // associate the visualization node with the source node.	
 			new domain.GraphInformation().addInformationToLayer0(sourceGraph,
-					sourceNode, layoutNode); // associate the the nodes of
-												// sourceGraph and layoutGraph.
+					sourceNode, layoutNode); // associate the the nodes of sourceGraph and layoutGraph.
 			graphNodes.add(layoutNode); // add the node to the list.
 		}
 	}
@@ -158,56 +128,32 @@ public class Graph implements Observer {
 		Iterator<Entry<String, Edge>> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Edge> entry = iterator.next();
-			Edge edge = entry.getValue(); // get the current connection of the
-											// list.
+			Edge edge = entry.getValue(); // get the current connection of the list.
 			index = 0; // initialize the index.
 			begin = null; // initialize the begin node of the connection.
 			end = null; // initialize the end node of the connection.
 			while ((begin == null || end == null) && index < graphNodes.size()) {
 				if (edge.getBeginNode().equals(graphNodes.get(index).getText())) {
-					begin = graphNodes.get(index); // assign the graph node to
-													// the start of the
-													// connection..
+					begin = graphNodes.get(index); // assign the graph node to the start of the connection..
 				}
 				if (edge.getEndNode().equals(graphNodes.get(index).getText())) {
-					end = graphNodes.get(index); // assign the the graph node to
-													// the end of the
-													// connection.
+					end = graphNodes.get(index); // assign the the graph node to the end of the connection.
 				}
 				index++;
 			}
 			GraphConnection connection = new GraphConnection(graph,
-					ZestStyles.CONNECTIONS_DIRECTED, begin, end); // create the
-																	// graph
-																	// connection
-																	// between
-																	// the start
-																	// and the
-																	// end
-																	// nodes.
+					ZestStyles.CONNECTIONS_DIRECTED, begin, end); // create the graph connection between the start and the end nodes.
 			connection.setLineColor(edge.getColor()); // sets the edge color.
 			adt.graph.Node<Integer> beginNode = sourceGraph.getNode(Integer
-					.parseInt(begin.getText())); // the correspondent begin
-													// node.
+					.parseInt(begin.getText())); // the correspondent begin node.
 			adt.graph.Node<Integer> endNode = sourceGraph.getNode(Integer
 					.parseInt(end.getText())); // the correspondent final node.
 			// verify which node is the correct.
 			for (adt.graph.Edge<Integer> sourceEdge : sourceGraph
-					.getNodeEdges(beginNode)) { // get all edges of the begin
-												// node.
-				if (sourceEdge.getEndNode().equals(endNode)) { // when the edges
-																// matches.
-					connection.setData(sourceEdge); // associate the
-													// visualization edge with
-													// the source edge.
-					sourceGraph.addMetadata(sourceEdge, connection); // associate
-																		// the
-																		// the
-																		// edge
-																		// of
-																		// sourceGraph
-																		// and
-																		// layoutGraph.
+					.getNodeEdges(beginNode)) { // get all edges of the begin node.
+				if (sourceEdge.getEndNode().equals(endNode)) { // when the edges matches.
+					connection.setData(sourceEdge); // associate the visualization edge with the source edge.
+					sourceGraph.addMetadata(sourceEdge, connection); // associate the the edge of sourceGraph and layoutGraph.
 				}
 			}
 			graphEdges.add(connection); // add the edge to the list.
@@ -282,16 +228,12 @@ public class Graph implements Observer {
 		else if (data instanceof LinkChangeEvent) {
 			if (((LinkChangeEvent) data).state) {
 				Activator.getDefault().getEditorController()
-						.createSelectToEditor(); // create the SelectionListener
-													// to the editor.
-				createSelectionListener(); // create the SelectionAdapter event
-											// to the nodes.
+						.createSelectToEditor(); // create the SelectionListener to the editor.
+				createSelectionListener(); // create the SelectionAdapter event to the nodes.
 			} else {
 				Activator.getDefault().getEditorController()
-						.removeSelectToEditor(); // remove the SelectionListener
-													// to the editor.
-				removeSelectionListener(); // remove the SelectionAdapter event
-											// to the nodes.
+						.removeSelectToEditor(); // remove the SelectionListener to the editor.
+				removeSelectionListener(); // remove the SelectionAdapter event to the nodes.
 			}
 		} else if (data instanceof TestRequirementSelectedEvent) {
 			if (Activator.getDefault().getEditorController()
@@ -345,8 +287,7 @@ public class Graph implements Observer {
 	private void selectTestRequirement(TestRequirementSelectedEvent data) {
 		List<GraphItem> aux = selectInGraph(data.selectedTestRequirement);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length,
-				GraphItem[].class); // convert the aux into an array of
-									// GraphItems.
+				GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
 		Activator.getDefault().getEditorController()
 				.addVisualCoverage(data, aux);
@@ -361,8 +302,7 @@ public class Graph implements Observer {
 	private void selectTestPath(TestPathSelectedEvent data) {
 		List<GraphItem> aux = selectTestPathSet(data.selectedTestPaths);
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length,
-				GraphItem[].class); // convert the aux into an array of
-									// GraphItems.
+				GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
 		Activator.getDefault().getEditorController()
 				.addVisualCoverage(data, aux);
@@ -379,8 +319,7 @@ public class Graph implements Observer {
 			for (Object obj : list)
 				aux.addAll(selectInGraph(obj));
 		GraphItem[] items = Arrays.copyOf(aux.toArray(), aux.toArray().length,
-				GraphItem[].class); // convert the aux into an array of
-									// GraphItems.
+				GraphItem[].class); // convert the aux into an array of GraphItems.
 		setSelected(items); // the list of selected items.
 		Activator.getDefault().getEditorController()
 				.addVisualCoverage(selectedDefUse, aux);
@@ -389,7 +328,7 @@ public class Graph implements Observer {
 	private List<GraphItem> selectInGraph(
 			AbstractPath<Integer> selectedTestRequirement) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
-		// select the nodes in the graph.
+		// select the nodes in the graph.	
 		Iterator<adt.graph.Node<Integer>> it = selectedTestRequirement
 				.iterator();
 		adt.graph.Node<Integer> node = it.next();
@@ -401,14 +340,11 @@ public class Graph implements Observer {
 			for (adt.graph.Edge<Integer> edge : sourceGraph
 					.getNodeEdges((adt.graph.Node<Integer>) node))
 				// through all edges of the node.
-				if (edge.getEndNode() == nextNode) // the end node of the edge
-													// (the next node in the
-													// path).
+				if (edge.getEndNode() == nextNode) // the end node of the edge (the next node in the path).
 					for (GraphConnection gconnection : graphEdges)
 						// through all connections in the graph.
 						if (gconnection.getData().equals(edge)) { // if matches.
-							aux.add(gconnection); // add connection item to the
-													// list.
+							aux.add(gconnection); // add connection item to the list.
 							break;
 						}
 			node = nextNode;
@@ -431,8 +367,7 @@ public class Graph implements Observer {
 					for (GraphConnection gconnection : graphEdges)
 						// through all connections in the graph.
 						if (gconnection.getData().equals(edge)) { // if matches.
-							aux.add(gconnection); // add connection item to the
-													// list.
+							aux.add(gconnection); // add connection item to the list.
 							break;
 						}
 		}
@@ -479,9 +414,7 @@ public class Graph implements Observer {
 						graphNeedToBeUpdate();
 				} else if (e.item == null) {
 					Activator.getDefault().getEditorController()
-							.removeVisualCoverage(); // removes all visual
-														// information in the
-														// editor.
+							.removeVisualCoverage(); // removes all visual information in the editor.
 					Activator.getDefault().getTestPathController()
 							.unSelectTestPaths();
 					Activator.getDefault().getTestRequirementController()
@@ -491,13 +424,11 @@ public class Graph implements Observer {
 				}
 			}
 		};
-		graph.addSelectionListener(event); // add the SelectionAdapter to the
-											// graph.
+		graph.addSelectionListener(event); // add the SelectionAdapter to the graph. 
 	}
 
 	private void removeSelectionListener() {
-		graph.removeSelectionListener(event); // remove the SelectionAdapter
-												// from the graph.
+		graph.removeSelectionListener(event); // remove the SelectionAdapter from the graph.
 	}
 
 	private void automaticEdgeSelectopn() {

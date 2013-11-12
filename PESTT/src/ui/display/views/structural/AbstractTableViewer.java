@@ -39,11 +39,8 @@ public abstract class AbstractTableViewer {
 		table.setToolTipText("");
 		table.setHeaderVisible(true); // show header.
 		table.setLinesVisible(true); // show table lines.
-		viewer.setContentProvider(new ArrayContentProvider()); // set the
-																// content
-																// provider.
-		site.setSelectionProvider(viewer); // Make the selection available to
-											// other views.
+		viewer.setContentProvider(new ArrayContentProvider()); // set the content provider.
+		site.setSelectionProvider(viewer); // Make the selection available to other views.
 		return viewer;
 	}
 

@@ -81,12 +81,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 			if (((TestRequirementChangedEvent) data).hasInfinitePath)
 				MessageDialog.openInformation(parent.getShell(),
 						Messages.TEST_REQUIREMENT_TITLE,
-						Messages.TEST_REQUIREMENT_INFINITE_MSG); // message
-																	// displayed
-																	// when the
-																	// method
-																	// contains
-																	// cycles.
+						Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
 			Set<AbstractPath<Integer>> testRequirements = new TreeSet<AbstractPath<Integer>>();
 			for (AbstractPath<Integer> path : ((TestRequirementChangedEvent) data).testRequirementSet)
 				testRequirements.add(path);
@@ -138,10 +133,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	 */
 	private void createColumnsToTestRequirement() {
 		String[] columnNames = new String[] { TableViewers.INFEASIBLE,
-				TableViewers.STATUS, TableViewers.TEST_REQUIREMENTS }; // the
-																		// names
-																		// of
-																		// columns.
+				TableViewers.STATUS, TableViewers.TEST_REQUIREMENTS }; // the names of columns.
 		int[] columnWidths = new int[] { 80, 55, 200 }; // the width of columns.
 
 		// first column is for the id.
@@ -301,9 +293,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 
 					public void handleEvent(Event event) {
 						cleanPathStatus();
-						if (event.detail == SWT.CHECK) { // when user
-															// enable/disable an
-															// infeasible path.
+						if (event.detail == SWT.CHECK) { // when user enable/disable an infeasible path.
 							Iterator<AbstractPath<Integer>> iterator = Activator
 									.getDefault()
 									.getTestRequirementController()
@@ -324,9 +314,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 									break;
 								}
 							}
-						} else if (event.detail == SWT.NONE) { // when user
-																// selects a
-																// table row.
+						} else if (event.detail == SWT.NONE) { // when user selects a table row.
 							Iterator<AbstractPath<Integer>> iterator = Activator
 									.getDefault()
 									.getTestRequirementController()

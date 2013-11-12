@@ -50,15 +50,6 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 		} else
 			MessageDialog.openInformation(window.getShell(),
 					Messages.TEST_REQUIREMENT_TITLE,
-					Messages.TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG); // message
-																		// displayed
-																		// when
-																		// there
-																		// is no
-																		// test
-																		// requirement
-																		// selected
-																		// to be
-																		// removed.
+					Messages.TEST_REQUIREMENT_SELECT_TO_REMOVE_MSG); // message displayed when there is no test requirement selected to be removed.
 	}
 }

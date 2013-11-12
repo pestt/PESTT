@@ -49,15 +49,8 @@ public class GraphCoverageCriteria implements Observer {
 	private void create() {
 		graph.clear();
 		removeSelectionListener();
-		IDotProcess dotProcess = new DotProcess(); // the object that parse the
-													// information to build the
-													// layoutGraph.
-		Map<String, List<String>> map = dotProcess.dotToPlain(dotString()); // the
-																			// information
-																			// to
-																			// build
-																			// the
-																			// layoutGraph.
+		IDotProcess dotProcess = new DotProcess(); // the object that parse the information to build the layoutGraph.
+		Map<String, List<String>> map = dotProcess.dotToPlain(dotString()); // the information to build the layoutGraph.
 		GraphElements elements = new GraphElements(map);
 		setLayout(elements);
 		setNodes(elements.getNodesInfo());
@@ -271,14 +264,11 @@ public class GraphCoverageCriteria implements Observer {
 	private GraphItem getSelected() {
 		if (graph.getSelection().size() == 0)
 			return null;
-		return (GraphItem) graph.getSelection().get(0); // return the list with
-														// the selected nodes.
+		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 
 	private void setSelected(GraphItem item) {
-		graph.setSelection(item == null ? null : new GraphItem[] { item }); // the
-																			// items
-																			// selected.
+		graph.setSelection(item == null ? null : new GraphItem[] { item }); // the items selected.
 	}
 
 	@Override

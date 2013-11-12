@@ -138,14 +138,10 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		List<Integer> lines = new LinkedList<Integer>();
 		graph = Activator.getDefault().getSourceGraphController()
 				.getSourceGraph();
-		graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the
-																	// layer to
-																	// get the
-																	// information.
+		graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 		for (Node<Integer> node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph
-					.getMetadata(node); // get the information in this layer to
-										// this node.
+					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
@@ -161,8 +157,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		List<Integer> lines = new LinkedList<Integer>();
 		for (Node<Integer> node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph
-					.getMetadata(node); // get the information in this layer to
-										// this node.
+					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();

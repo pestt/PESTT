@@ -56,26 +56,12 @@ public class AddTestPathHandler extends AbstractHandler {
 				else {
 					MessageDialog.openInformation(window.getShell(),
 							Messages.TEST_PATH_TITLE,
-							Messages.TEST_PATH_INVALID_INPUT_MSG); // message
-																	// displayed
-																	// when the
-																	// inserted
-																	// test path
-																	// is not
-																	// valid.
+							Messages.TEST_PATH_INVALID_INPUT_MSG); // message displayed when the inserted test path is not valid.
 					addNewTestPath(window, input);
 				}
 			} else {
 				MessageDialog.openInformation(window.getShell(),
-						Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message
-																					// displayed
-																					// when
-																					// the
-																					// inserted
-																					// test
-																					// path
-																					// is
-																					// empty.
+						Messages.TEST_PATH_TITLE, Messages.TEST_PATH_INPUT_MSG); // message displayed when the inserted test path is empty.
 				addNewTestPath(window, input);
 			}
 	}

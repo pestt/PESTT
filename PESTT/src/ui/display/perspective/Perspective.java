@@ -27,9 +27,8 @@ public class Perspective implements IPerspectiveFactory {
 	}
 
 	private void addViews() {
-		// Creates the overall folder layout.
-		// Note that each new Folder uses a percentage of the remaining
-		// EditorArea.
+		// Creates the overall folder layout. 
+		// Note that each new Folder uses a percentage of the remaining EditorArea.
 
 		String editorarea = IPageLayout.ID_EDITOR_AREA;
 

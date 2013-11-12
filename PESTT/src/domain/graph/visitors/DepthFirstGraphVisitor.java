@@ -20,7 +20,7 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
 	@Override
 	public void visitEdge(Edge<V> edge) {
 		if (visit(edge)) {
-			// visit
+			//visit
 			endVisit(edge);
 		}
 	}

@@ -214,14 +214,11 @@ public class LogicCoverageCriteria implements Observer {
 	private GraphItem getSelected() {
 		if (graph.getSelection().size() == 0)
 			return null;
-		return (GraphItem) graph.getSelection().get(0); // return the list with
-														// the selected nodes.
+		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 
 	private void setSelected(GraphItem item) {
-		graph.setSelection(item == null ? null : new GraphItem[] { item }); // the
-																			// items
-																			// selected.
+		graph.setSelection(item == null ? null : new GraphItem[] { item }); // the items selected.
 	}
 
 	@Override

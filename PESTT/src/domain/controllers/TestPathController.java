@@ -195,17 +195,10 @@ public class TestPathController extends Observable {
 				.getSourceGraphController().getSourceGraph();
 		LinkedHashMap<Integer, String> coverageData = new LinkedHashMap<Integer, String>();
 		List<Integer> lines = new LinkedList<Integer>();
-		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select
-																		// the
-																		// layer
-																		// to
-																		// get
-																		// the
-																		// information.
+		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 		for (Node<Integer> node : sourceGraph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph
-					.getMetadata(node); // get the information in this layer to
-										// this node.
+					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();

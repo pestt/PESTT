@@ -101,8 +101,7 @@ public class TestRequirementSet extends Observable {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for (AbstractPath<Integer> path : testRequirementSet)
 			if (path instanceof Path)
-				if (seletedTestPath.isSubPath(path)) // Infinite paths will
-														// never be subpaths
+				if (seletedTestPath.isSubPath(path)) // Infinite paths will never be subpaths 
 					coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}
@@ -111,8 +110,7 @@ public class TestRequirementSet extends Observable {
 			Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for (AbstractPath<Integer> path : testRequirementSet)
-			if (seletedTestPath.toursWithSideTrip(path)) // Infinite paths will
-															// never be subpaths
+			if (seletedTestPath.toursWithSideTrip(path)) // Infinite paths will never be subpaths
 				coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}
@@ -121,8 +119,7 @@ public class TestRequirementSet extends Observable {
 			Path<Integer> seletedTestPath) {
 		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
 		for (AbstractPath<Integer> path : testRequirementSet)
-			if (seletedTestPath.toursWithDetour(path)) // Infinite paths will
-														// never be subpaths
+			if (seletedTestPath.toursWithDetour(path)) // Infinite paths will never be subpaths
 				coveredPaths.add((Path<Integer>) path);
 		return coveredPaths;
 	}

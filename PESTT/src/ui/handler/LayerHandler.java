@@ -29,17 +29,10 @@ public class LayerHandler extends AbstractHandler {
 					.numberOfNodes() >= 1) {
 				if (Activator.getDefault().getEditorController()
 						.isEverythingMatching()) {
-					option = event.getParameter(RadioState.PARAMETER_ID); // get
-																			// the
-																			// current
-																			// selected
-																			// state.
+					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
 					if (option != null && !option.equals(Description.NONE)) {
 						HandlerUtil
-								.updateRadioState(event.getCommand(), option); // update
-																				// the
-																				// current
-																				// state.
+								.updateRadioState(event.getCommand(), option); // update the current state.
 						old = option;
 					} else if (option == null
 							&& old.equals(Layer.EMPTY.toString()))
@@ -56,14 +49,7 @@ public class LayerHandler extends AbstractHandler {
 			} else {
 				flag = true;
 				MessageDialog.openInformation(window.getShell(),
-						Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message
-																				// displayed
-																				// when
-																				// the
-																				// graph
-																				// is
-																				// not
-																				// designed.
+						Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 			}
 		else
 			flag = false;

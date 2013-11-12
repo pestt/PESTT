@@ -75,12 +75,9 @@ public class ActiveEditor implements Observer {
 		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();
 		editor = (ITextEditor) part; // obtain the text editor.
-		ISelection select = editor.getSelectionProvider().getSelection(); // the
-																			// selected
-																			// text.
+		ISelection select = editor.getSelectionProvider().getSelection(); // the selected text.
 		textSelect = (ITextSelection) select; // get the text selected.
-		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the
-																		// file
+		file = (IFile) part.getEditorInput().getAdapter(IFile.class); // get the file
 		marker = new Markers(file);
 		IProject project = file.getProject();
 		try {
@@ -158,7 +155,7 @@ public class ActiveEditor implements Observer {
 
 	public void removeALLMarkers() {
 		marker.deleteAllMarkers();
-		// Activator.getDefault().getViewController().bringEditorToTop(part);
+		//Activator.getDefault().getViewController().bringEditorToTop(part);
 		part.setFocus();
 	}
 

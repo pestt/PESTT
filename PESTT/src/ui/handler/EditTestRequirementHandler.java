@@ -59,28 +59,13 @@ public class EditTestRequirementHandler extends AbstractHandler {
 					} else {
 						MessageDialog.openInformation(window.getShell(),
 								Messages.TEST_REQUIREMENT_TITLE,
-								Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message
-																				// displayed
-																				// when
-																				// the
-																				// inserted
-																				// test
-																				// requirement
-																				// is
-																				// not
-																				// valid.
+								Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 						editTestRequirement(window, input);
 					}
 				} else {
 					MessageDialog.openInformation(window.getShell(),
 							Messages.TEST_REQUIREMENT_TITLE,
-							Messages.TEST_REQUIREMENT_INPUT_MSG); // message
-																	// displayed
-																	// when the
-																	// inserted
-																	// test
-																	// requirement
-																	// is empty.
+							Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
 					editTestRequirement(window, input);
 				}
 		}

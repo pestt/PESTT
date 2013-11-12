@@ -35,8 +35,7 @@ public class Parser {
 				values.add(tok.nextToken()); // the node x position.
 				values.add(tok.nextToken()); // the node y position.
 				for (int x = 0; x < 6; x++)
-					tok.nextToken(); // discard the remain values until the
-										// fillcolor.
+					tok.nextToken(); // discard the remain values until the fillcolor.   
 				values.add(tok.nextToken()); // the node fillcolor.
 				map.put(Description.NODE + nodeCount++, values);
 			} else if (type.equals(Description.EDGE)) {
@@ -45,8 +44,7 @@ public class Parser {
 				values.add(tok.nextToken()); // the edge head.
 				int coordenates = Integer.parseInt(tok.nextToken()) * 2 + 1;
 				for (int x = 0; x < coordenates; x++)
-					tok.nextToken(); // discard the remain values until the
-										// fillcolor.
+					tok.nextToken(); // discard the remain values until the fillcolor. 
 				values.add(tok.nextToken()); // the edge color.
 				map.put(Description.EDGE + edgeCount++, values);
 			}

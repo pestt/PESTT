@@ -86,8 +86,7 @@ public class CompletePathCoverage<V extends Comparable<V>> implements
 						cycleEnd));
 				AbstractPath<V> innerPath = null;
 				if (innerCycleStart != -1) {
-					innerCycleStart = cycleStart + innerCycleStart + 1; // absolute
-																		// index
+					innerCycleStart = cycleStart + innerCycleStart + 1; // absolute index 
 					int innerCycleEnd = nodes.lastIndexOf(nodes
 							.get(innerCycleStart));
 					InfinitePath<V> innerPathInfinite = new InfinitePath<V>();

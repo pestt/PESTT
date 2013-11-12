@@ -26,8 +26,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends
 		DepthFirstGraphVisitor<Integer> {
 
 	private static final String THIS = "this.";
-	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one
-												// time.
+	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one time.
 	private DefUsesCollector visitor;
 
 	public DefUsesVisitor() {

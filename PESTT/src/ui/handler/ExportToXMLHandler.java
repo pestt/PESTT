@@ -15,7 +15,7 @@ public class ExportToXMLHandler extends AbstractHandler {
 		info.setInformation();
 		Storage storage = new Storage();
 		storage.objectToXML(info);
-		// info.XMLToObject();
+		//info.XMLToObject();
 		return null;
 	}
 

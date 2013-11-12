@@ -124,8 +124,7 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements
 	private void createColumnsToDefUses() {
 		String[] columnNames = new String[] { "", TableViewers.VARIABLES,
 				TableViewers.DEFS, TableViewers.USES }; // the names of columns.
-		int[] columnWidths = new int[] { 50, 405, 405, 400 }; // the width of
-																// columns.
+		int[] columnWidths = new int[] { 50, 405, 405, 400 }; // the width of columns.
 
 		// first column is for id.
 		TableViewerColumn col = createColumnsHeaders(defUsesViewer,

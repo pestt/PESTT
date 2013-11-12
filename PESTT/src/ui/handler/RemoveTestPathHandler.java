@@ -48,11 +48,6 @@ public class RemoveTestPathHandler extends AbstractHandler {
 		} else
 			MessageDialog.openInformation(window.getShell(),
 					Messages.TEST_PATH_TITLE,
-					Messages.TEST_PATH_SELECT_TO_REMOVE_MSG); // message
-																// displayed
-																// when there is
-																// no graph
-																// selected to
-																// be removed.
+					Messages.TEST_PATH_SELECT_TO_REMOVE_MSG); // message displayed when there is no graph selected to be removed.
 	}
 }

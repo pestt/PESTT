@@ -49,8 +49,7 @@ public class InputDialog extends Dialog {
 	}
 
 	public String open() {
-		Shell shell = new Shell(getParent(), getStyle()); // create the dialog
-															// window.
+		Shell shell = new Shell(getParent(), getStyle()); // create the dialog window.
 		shell.setText(getText());
 		createContents(shell);
 		shell.pack();
@@ -108,8 +107,7 @@ public class InputDialog extends Dialog {
 			}
 		});
 
-		// Set the OK button as the default, so user can type input and press
-		// Enter to dismiss
+		// Set the OK button as the default, so user can type input and press Enter to dismiss
 		shell.setDefaultButton(ok);
 	}
 }
