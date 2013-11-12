@@ -52,7 +52,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		statisticsSet.add(getTestRequirementsStatistics());
 		statisticsSet.add(getInfeasiblesStatistics());
 		statisticsSet.add(getCyclomaticComplexity());
-		statisticsSet.add(getMinOfTestRequired());
+		statisticsSet.add(getMinOfTestsRequired());
 		setChanged();
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
@@ -217,7 +217,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		return size;
 	}
 
-	private String getMinOfTestRequired() {
+	private String getMinOfTestsRequired() {
 		String unit = StatisticsElements.TESTREQUIRED;
 		Iterable<AbstractPath<Integer>> automatic = Activator.getDefault()
 				.getTestRequirementController().getTestRequirements();
@@ -243,10 +243,10 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	}
 
 	private String getPercentage(int passed, int total) {
-		DecimalFormat formater = new DecimalFormat("#,##0.0");
+		DecimalFormat formatter = new DecimalFormat("#,##0.0");
 		if (passed == 0 && total == 0)
 			return "0%";
-		return formater.format(((double) passed / (double) total) * 100) + "%";
+		return formatter.format(((double) passed / (double) total) * 100) + "%";
 	}
 
 	private String totalOutput(String unit, int passed, int total,

@@ -208,12 +208,15 @@ public class GraphCoverageCriteria implements Observer {
 				new GraphLayoutAlgorithm(parent, graphElements), true);
 	}
 
+	/*-
+	private void setLayout() {
+		TreeLayoutAlgorithm la = new TreeLayoutAlgorithm(
+				TreeLayoutAlgorithm.TOP_DOWN);
+		la.setResizing(false);
+		graph.setLayoutAlgorithm(la, true);
+	}
+	 */
 	
-	  private void setLayout() { TreeLayoutAlgorithm la = new
-	  TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN); la.setResizing(false);
-	  graph.setLayoutAlgorithm(la, true); }
-	 
-
 	private void addSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 

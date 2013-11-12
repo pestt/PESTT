@@ -27,19 +27,23 @@ public class Tooltips {
 			+ "\nTest requirements contains each prime path in Graph.";
 	public static final String EC_NODE = "     Edge\n Coverage\n";
 	public static final String EC = "Edge Coverage (EC):"
-			+ "\nTest requirements contains each reachable path of length up to 1, inclusive, in Graph.";
+			+ "\nTest requirements contains each reachable path of length up to 1, "
+			+ "inclusive, in Graph.";
 	public static final String ADUPC_NODE = "All-du-Paths\n  Coverage\n ";
 	public static final String ADUPC = "All-du-Paths Coverage (ADUPC):"
-			+ "\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains every path d in S.";
+			+ "\nFor each def-pair set S = du(ni, nj, v),"
+			+ "\nTest requirements contains every path d in S.";
 	public static final String AUC_NODE = "  All-Uses\nCoverage\n";
 	public static final String AUC = "All-Uses Coverage (AUC):"
 			+ "\nFor each def-pair set S = du(ni, nj, v),\nTest requirements contains at least one path d in S.";
 	public static final String CRTC_NODE = "Complete Round\n   Trip Coverage\n";
 	public static final String CRTC = "Complete Round Trip Coverage (CRTC):"
-			+ "\nTest requirements contains all round-trip paths for each reachable node in Graph.";
+			+ "\nTest requirements contains all round-trip paths "
+			+ "for each reachable node in Graph.";
 	public static final String SRTC_NODE = "Simple Round\nTrip Coverage\n";
 	public static final String SRTC = "Simple Round Trip Coverage (SRTC):"
-			+ "\nTest requirements contains at least one round-trip path\n for each reachable node in Graph that begins and ends a round-trip path.";
+			+ "\nTest requirements contains at least one round-trip path\n "
+			+ "for each reachable node in Graph that begins and ends a round-trip path.";
 	public static final String ADC_NODE = "  All-Defs\nCoverage\n";
 	public static final String ADC = "All-Defs Coverage (ADC):"
 			+ "\nFor each def-path set S = du(n, v),\nTest requirements contains at least one path d in S.";
