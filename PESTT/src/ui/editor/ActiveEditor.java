@@ -165,7 +165,6 @@ public class ActiveEditor implements Observer {
 
 	public void everythingMatch() {
 		this.updated = true;
-		;
 	}
 
 	public IJavaProject getJavaProject() {
@@ -214,7 +213,7 @@ public class ActiveEditor implements Observer {
 				for (IMethod method : type.getMethods()) {
 					int cursorPosition = textSelect.getOffset();
 					int methodStart = method.getSourceRange().getOffset();
-					int methodEnd = method.getSourceRange().getOffset()
+					int methodEnd = methodStart
 							+ method.getSourceRange().getLength();
 					if (methodStart <= cursorPosition
 							&& cursorPosition <= methodEnd) {
@@ -237,7 +236,7 @@ public class ActiveEditor implements Observer {
 	}
 
 	public boolean isInMethod() {
-		return getSelectedMethod() != null ? true : false;
+		return getSelectedMethod() != null;
 	}
 
 	public String getClassName() {
@@ -329,16 +328,16 @@ public class ActiveEditor implements Observer {
 	 *            - The tour in use.
 	 * @param infeasibles
 	 *            - The infeasible paths identified.
-	 * @param testRequireents
-	 *            - The Test Requirements manually added to Test Requirement
+	 * @param testRequirements
+	 *            - The Test Requirements manually added to the Test Requirement
 	 *            set.
 	 * @param testPath
-	 *            - The Test Paths manually added to Test Path set.
+	 *            - The Test Paths manually added to the Test Path set.
 	 */
 	private void setJavadocAnnotation(CompilationUnit unit,
 			MethodDeclaration method, String criteria, String tour,
 			Iterable<AbstractPath<Integer>> infeasibles,
-			Iterable<Path<Integer>> testRequireents,
+			Iterable<Path<Integer>> testRequirements,
 			Iterable<Path<Integer>> testPath) {
 		boolean temp = updated;
 		Javadoc javadoc = getJavadoc(method);
@@ -357,7 +356,7 @@ public class ActiveEditor implements Observer {
 					getTextInput(method, input), javadoc);
 			input.clear();
 		}
-		for (Path<Integer> path : testRequireents) {
+		for (Path<Integer> path : testRequirements) {
 			input.add(path.toString());
 			createTag(method,
 					JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH
@@ -371,7 +370,7 @@ public class ActiveEditor implements Observer {
 					getTextInput(method, input), javadoc);
 			input.clear();
 		}
-		applychanges(unit);
+		applyChanges(unit);
 		updated = temp;
 		verifyChanges(method);
 	}
@@ -482,7 +481,7 @@ public class ActiveEditor implements Observer {
 		return tagToKeep;
 	}
 
-	private void applychanges(CompilationUnit unit) {
+	private void applyChanges(CompilationUnit unit) {
 		IDocument document = editor.getDocumentProvider().getDocument(
 				editor.getEditorInput());
 		TextEdit edit = unit.rewrite(document, javaProject.getOptions(true));

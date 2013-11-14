@@ -7,6 +7,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.SWITCH_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.WHILE_STATEMENT;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.Map.Entry;
 
 import main.activator.Activator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -29,7 +31,6 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.ISelectionListener;
@@ -40,11 +41,9 @@ import org.eclipse.ui.PlatformUI;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.MarkersType;
-import ui.constants.Messages;
 import ui.editor.Line;
 import domain.constants.Layer;
 import domain.coverage.data.ICoverageData;
-import domain.exceptions.MethodNotFoundException;
 
 public class VisualInformation {
 
@@ -212,38 +211,52 @@ public class VisualInformation {
 			Activator
 					.getDefault()
 					.getEditorController()
-					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), "if".length()));
+					.createMarker(
+							markerType,
+							start,
+							getLength(start, instruction.getStartPosition(),
+									"if".length()));
 			break;
-		case DO_STATEMENT: //TODO innacurate
+		case DO_STATEMENT:
 			DoStatement d = (DoStatement) instruction;
-			int g = d.getExpression().getStartPosition();
-			//int w = findWhile(d.getRoot(), g);
-			//System.out.println(Activator.getDefault().getEditorController().getEditorPart().getEditorInput().);			
-			Activator.getDefault().getEditorController()
-					.createMarker(markerType, g -  "while (".length(), "while".length());
+			String text = getText();
+			int w = findWhile(text, d.getExpression().getStartPosition());
+			Activator
+					.getDefault()
+					.getEditorController()
+					.createMarker(markerType, w - "whil".length(),
+							"while".length());
 			break;
 		case FOR_STATEMENT:
 		case ENHANCED_FOR_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
-					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), "for".length()));
+					.createMarker(
+							markerType,
+							start,
+							getLength(start, instruction.getStartPosition(),
+									"for".length()));
 			break;
 		case SWITCH_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
-					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), "switch".length()));
+					.createMarker(
+							markerType,
+							start,
+							getLength(start, instruction.getStartPosition(),
+									"switch".length()));
 			break;
 		case WHILE_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
-					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), "while".length()));
+					.createMarker(
+							markerType,
+							start,
+							getLength(start, instruction.getStartPosition(),
+									"while".length()));
 			break;
 		default:
 			for (ASTNode instr : instructions)
@@ -261,26 +274,47 @@ public class VisualInformation {
 	}
 
 	/**
-	 * Finds a 'while' (its 'e') going backwards from its condition, which
-	 * begins at index 'start'.
+	 * Returns the text of the class where the ActiveEditor is.
 	 * 
-	 * @param a
+	 * @return
+	 */
+	private String getText() {
+		IFile file = (IFile) PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().getActiveEditor()
+				.getEditorInput().getAdapter(IFile.class);
+		StringBuilder buf = new StringBuilder();
+		try {
+			InputStreamReader i = new InputStreamReader(file.getContents());
+			int x = 0;
+			while (x != -1) {
+				x = i.read();
+				buf.append((char) x);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return buf.toString();
+	}
+
+	/**
+	 * Finds a 'while' (its 'e') going backwards from its condition, which
+	 * begins at index 'start'. Returns -1 if the while is not found (should not
+	 * happen).
+	 * 
+	 * @param text
 	 *            - the code of the whole class.
 	 * @param start
 	 *            - the index where the condition begins.
 	 * @return
+	 * @requires text.length() > start;
 	 */
-	private int findWhile(ASTNode a, int start) {
-		String s = a.toString();
-		boolean flag = false;
-		int i;
-		for (i = start - 1; i > 0 && !flag; i--) {
-			char x = s.charAt(i);
+	private int findWhile(String text, int start) {
+		for (int i = start - 1; i > 0; i--) {
+			char x = text.charAt(i);
 			if (x == 'e')
-				flag = true;
+				return i;
 		}
-
-		return start - (s.length() - 1 - i);
+		return -1;
 	}
 
 	public int findStartPosition(List<ASTNode> info) {
