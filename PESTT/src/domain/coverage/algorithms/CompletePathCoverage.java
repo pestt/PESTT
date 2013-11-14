@@ -9,12 +9,12 @@ import java.util.TreeSet;
 
 import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Graph;
 import adt.graph.InfinitePath;
 import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SequencePath;
-import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class CompletePathCoverage<V extends Comparable<V>> implements
 		ICoverageAlgorithms<V> {

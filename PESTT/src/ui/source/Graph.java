@@ -34,13 +34,13 @@ import ui.events.LinkChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.constants.Layer;
+import domain.dot.processor.DotGraphVisitor;
 import domain.dot.processor.DotProcess;
 import domain.dot.processor.IDotProcess;
 import domain.events.CFGCreateEvent;
 import domain.events.DefUsesSelectedEvent;
 import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementSelectedEvent;
-import domain.graph.visitors.DotGraphVisitor;
 
 public class Graph implements Observer {
 

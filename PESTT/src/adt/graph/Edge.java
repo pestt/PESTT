@@ -1,6 +1,5 @@
 package adt.graph;
 
-import domain.graph.visitors.IGraphVisitor;
 
 public class Edge<V extends Comparable<V>> {
 

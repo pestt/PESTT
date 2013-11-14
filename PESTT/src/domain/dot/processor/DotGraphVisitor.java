@@ -1,6 +1,7 @@
-package domain.graph.visitors;
+package domain.dot.processor;
 
 import main.activator.Activator;
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;

@@ -43,8 +43,8 @@ import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import domain.GraphInformation;
+import domain.RenumNodesGraphVisitor;
 import domain.constants.Layer;
-import domain.graph.visitors.RenumNodesGraphVisitor;
 
 public class GraphBuilder extends ASTVisitor {
 

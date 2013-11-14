@@ -1,4 +1,4 @@
-package domain.graph.visitors;
+package domain;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.editor.Line;
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Edge;
 import adt.graph.Node;
 import domain.ast.visitors.DefUsesCollector;

@@ -15,12 +15,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
+import adt.graph.IGraphVisitor;
 import adt.graph.Node;
 import domain.ast.visitors.GraphBuilder;
 import domain.constants.Layer;
 import domain.events.CFGCreateEvent;
 import domain.events.CFGUpdateEvent;
-import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraph extends Observable {
 

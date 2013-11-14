@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import domain.graph.visitors.IGraphVisitor;
-
 public class Graph<V extends Comparable<V>> {
 
 	/**

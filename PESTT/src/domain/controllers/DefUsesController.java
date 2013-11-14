@@ -12,9 +12,9 @@ import main.activator.Activator;
 import ui.events.DefUsesChangeViewEvent;
 import adt.graph.AbstractPath;
 import domain.DefUsesSet;
+import domain.DefUsesVisitor;
 import domain.constants.DefUsesView;
 import domain.events.DefUsesSelectedEvent;
-import domain.graph.visitors.DefUsesVisitor;
 
 public class DefUsesController extends Observable {
 

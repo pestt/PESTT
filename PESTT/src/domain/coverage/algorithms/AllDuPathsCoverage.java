@@ -9,11 +9,11 @@ import java.util.TreeSet;
 
 import main.activator.Activator;
 import adt.graph.AbstractPath;
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.graph.visitors.DepthFirstGraphVisitor;
 
 public class AllDuPathsCoverage<V extends Comparable<V>> implements
 		ICoverageAlgorithms<V> {

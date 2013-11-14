@@ -1,11 +1,7 @@
-package domain.graph.visitors;
+package adt.graph;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import adt.graph.Edge;
-import adt.graph.Graph;
-import adt.graph.Node;
 
 public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
 		IGraphVisitor<V> {

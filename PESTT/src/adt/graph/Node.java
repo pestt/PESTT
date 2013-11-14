@@ -1,6 +1,5 @@
 package adt.graph;
 
-import domain.graph.visitors.IGraphVisitor;
 
 public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 

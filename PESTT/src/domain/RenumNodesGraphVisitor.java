@@ -1,8 +1,9 @@
-package domain.graph.visitors;
+package domain;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Node;
 
 public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor<Integer> {

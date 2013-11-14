@@ -1,8 +1,5 @@
-package domain.graph.visitors;
+package adt.graph;
 
-import adt.graph.Edge;
-import adt.graph.Graph;
-import adt.graph.Node;
 
 public interface IGraphVisitor<V extends Comparable<V>> {
 

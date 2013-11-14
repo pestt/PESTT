@@ -12,8 +12,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
+import adt.graph.IGraphVisitor;
 import domain.SourceGraph;
-import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraphController {
 
