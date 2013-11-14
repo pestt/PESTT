@@ -10,11 +10,11 @@ public class ViewStructuralCriteria extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		TableViewerFactory.INSTANCE.createTebleViewer(parent, getSite(),
+		TableViewerFactory.INSTANCE.createTableViewer(parent, getSite(),
 				TableViewers.TEST_REQUIREMENTS_VIEWER_ID);
-		TableViewerFactory.INSTANCE.createTebleViewer(parent, getSite(),
+		TableViewerFactory.INSTANCE.createTableViewer(parent, getSite(),
 				TableViewers.TEST_PATHS_VIEWER_ID);
-		TableViewerFactory.INSTANCE.createTebleViewer(parent, getSite(),
+		TableViewerFactory.INSTANCE.createTableViewer(parent, getSite(),
 				TableViewers.STATISTICS_VIEWER_ID);
 	}
 

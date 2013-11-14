@@ -1,6 +1,5 @@
 /sourcecodeexplorer
-/domain
-/main
 /ui
-/adt
 /exceptions
+/domain
+/adt

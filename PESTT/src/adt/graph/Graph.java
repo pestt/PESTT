@@ -169,7 +169,7 @@ public class Graph<V extends Comparable<V>> {
 			if (node.getValue().equals(value))
 				return node;
 		}
-		return null;
+		return null;//TODO
 	}
 
 	/**

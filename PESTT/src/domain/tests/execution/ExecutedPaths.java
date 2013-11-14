@@ -227,7 +227,7 @@ public class ExecutedPaths {
 				if (edge.getBeginNode().getValue() == begin
 						&& edge.getEndNode().getValue() == end)
 					return edge;
-		return null;
+		return null;//TODO
 	}
 
 	private Edge<Integer> getEdgeForBegin(Node<Integer> begin,
@@ -235,6 +235,6 @@ public class ExecutedPaths {
 		for (Edge<Integer> edge : edges)
 			if (edge.getBeginNode() == begin)
 				return edge;
-		return null;
+		return null;//TODO
 	}
 }

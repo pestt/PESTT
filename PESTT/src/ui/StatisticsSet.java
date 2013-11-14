@@ -145,7 +145,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 			if (map != null)
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
-					if (data.getLineStatus(line).equals(Colors.GRENN_ID))
+					if (data.getLineStatus(line).equals(Colors.GREEN_ID))
 						lines.add(line);
 				}
 		}

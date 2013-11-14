@@ -1,5 +1,12 @@
 package ui.source;
 
+import static org.eclipse.jdt.core.dom.ASTNode.DO_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.ENHANCED_FOR_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.FOR_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.SWITCH_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.WHILE_STATEMENT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +29,7 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.ISelectionListener;
@@ -32,9 +40,11 @@ import org.eclipse.ui.PlatformUI;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.MarkersType;
+import ui.constants.Messages;
 import ui.editor.Line;
 import domain.constants.Layer;
 import domain.coverage.data.ICoverageData;
+import domain.exceptions.MethodNotFoundException;
 
 public class VisualInformation {
 
@@ -129,27 +139,27 @@ public class VisualInformation {
 		List<ASTNode> exps = new ArrayList<ASTNode>();
 		ASTNode instruction = instructions.get(0);
 		switch (instruction.getNodeType()) {
-		case ASTNode.IF_STATEMENT:
+		case IF_STATEMENT:
 			IfStatement ifExp = (IfStatement) instruction;
 			exps.add((ASTNode) ifExp.getExpression());
 			break;
-		case ASTNode.DO_STATEMENT:
+		case DO_STATEMENT:
 			DoStatement doExp = (DoStatement) instruction;
 			exps.add((ASTNode) doExp.getExpression());
 			break;
-		case ASTNode.FOR_STATEMENT:
+		case FOR_STATEMENT:
 			ForStatement forExp = (ForStatement) instruction;
 			exps.add((ASTNode) forExp.getExpression());
 			break;
-		case ASTNode.ENHANCED_FOR_STATEMENT:
+		case ENHANCED_FOR_STATEMENT:
 			EnhancedForStatement forEachExp = (EnhancedForStatement) instruction;
 			exps.add((ASTNode) forEachExp.getExpression());
 			break;
-		case ASTNode.SWITCH_STATEMENT:
+		case SWITCH_STATEMENT:
 			SwitchStatement switchExp = (SwitchStatement) instruction;
 			exps.add((ASTNode) switchExp.getExpression());
 			break;
-		case ASTNode.WHILE_STATEMENT:
+		case WHILE_STATEMENT:
 			WhileStatement whileExp = (WhileStatement) instruction;
 			exps.add((ASTNode) whileExp.getExpression());
 			break;
@@ -198,35 +208,42 @@ public class VisualInformation {
 		int start = findStartPosition(instructions); // get the start position.
 		ASTNode instruction = instructions.get(0); // the first element of the list.
 		switch (instruction.getNodeType()) {
-		case ASTNode.IF_STATEMENT:
-		case ASTNode.DO_STATEMENT:
+		case IF_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
 					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), 2)); // select the if or do words.
+							getLength(start, instruction.getStartPosition(), "if".length()));
 			break;
-		case ASTNode.FOR_STATEMENT:
-		case ASTNode.ENHANCED_FOR_STATEMENT:
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), 3)); // select the for word.
+		case DO_STATEMENT: //TODO innacurate
+			DoStatement d = (DoStatement) instruction;
+			int g = d.getExpression().getStartPosition();
+			//int w = findWhile(d.getRoot(), g);
+			//System.out.println(Activator.getDefault().getEditorController().getEditorPart().getEditorInput().);			
+			Activator.getDefault().getEditorController()
+					.createMarker(markerType, g -  "while (".length(), "while".length());
 			break;
-		case ASTNode.SWITCH_STATEMENT:
+		case FOR_STATEMENT:
+		case ENHANCED_FOR_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
 					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), 6)); // select the switch word.
+							getLength(start, instruction.getStartPosition(), "for".length()));
 			break;
-		case ASTNode.WHILE_STATEMENT:
+		case SWITCH_STATEMENT:
 			Activator
 					.getDefault()
 					.getEditorController()
 					.createMarker(markerType, start,
-							getLength(start, instruction.getStartPosition(), 5)); // select the while word.
+							getLength(start, instruction.getStartPosition(), "switch".length()));
+			break;
+		case WHILE_STATEMENT:
+			Activator
+					.getDefault()
+					.getEditorController()
+					.createMarker(markerType, start,
+							getLength(start, instruction.getStartPosition(), "while".length()));
 			break;
 		default:
 			for (ASTNode instr : instructions)
@@ -241,6 +258,29 @@ public class VisualInformation {
 										instr.getLength()));
 			break;
 		}
+	}
+
+	/**
+	 * Finds a 'while' (its 'e') going backwards from its condition, which
+	 * begins at index 'start'.
+	 * 
+	 * @param a
+	 *            - the code of the whole class.
+	 * @param start
+	 *            - the index where the condition begins.
+	 * @return
+	 */
+	private int findWhile(ASTNode a, int start) {
+		String s = a.toString();
+		boolean flag = false;
+		int i;
+		for (i = start - 1; i > 0 && !flag; i--) {
+			char x = s.charAt(i);
+			if (x == 'e')
+				flag = true;
+		}
+
+		return start - (s.length() - 1 - i);
 	}
 
 	public int findStartPosition(List<ASTNode> info) {
@@ -272,7 +312,7 @@ public class VisualInformation {
 				String colorStatus = data.getLineStatus(entry.getValue()
 						.getStartLine());
 				if (colorStatus != null)
-					if (colorStatus.equals(Colors.GRENN_ID)
+					if (colorStatus.equals(Colors.GREEN_ID)
 							&& isNodeSelected(items, node)) {
 						regionToSelect(instructions,
 								MarkersType.FULL_COVERAGE_MARKER); // select the area in the editor.
@@ -365,7 +405,7 @@ public class VisualInformation {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return null;//TODO
 	}
 
 	@SuppressWarnings("unchecked")
@@ -423,20 +463,19 @@ public class VisualInformation {
 		int endPosition = 0;
 		ASTNode aNode = instructions.get(0); // the first element of the list.
 		switch (aNode.getNodeType()) {
-		case ASTNode.IF_STATEMENT:
-		case ASTNode.DO_STATEMENT:
-			endPosition = aNode.getStartPosition() + 2; // select the if or do words.
+		case IF_STATEMENT:
+		case DO_STATEMENT:
+			endPosition = aNode.getStartPosition() + "if".length();
 			break;
-		case ASTNode.FOR_STATEMENT:
-		case ASTNode.ENHANCED_FOR_STATEMENT:
-			endPosition = aNode.getStartPosition() + 3; // select the for word.
+		case FOR_STATEMENT:
+		case ENHANCED_FOR_STATEMENT:
+			endPosition = aNode.getStartPosition() + "for".length();
 			break;
-		case ASTNode.SWITCH_STATEMENT:
-			endPosition = aNode.getStartPosition() + 6; // select the switch word.
+		case SWITCH_STATEMENT:
+			endPosition = aNode.getStartPosition() + "switch".length();
 			break;
-		case ASTNode.WHILE_STATEMENT:
-			endPosition = aNode.getStartPosition() + 5;
-			; // select the while word.
+		case WHILE_STATEMENT:
+			endPosition = aNode.getStartPosition() + "while".length();
 			break;
 		default:
 			if (aNode.getStartPosition() <= startPosition)
@@ -454,12 +493,12 @@ public class VisualInformation {
 
 	private boolean isProgramStatement(List<ASTNode> ast) {
 		switch (ast.get(0).getNodeType()) {
-		case ASTNode.IF_STATEMENT:
-		case ASTNode.DO_STATEMENT:
-		case ASTNode.FOR_STATEMENT:
-		case ASTNode.ENHANCED_FOR_STATEMENT:
-		case ASTNode.SWITCH_STATEMENT:
-		case ASTNode.WHILE_STATEMENT:
+		case IF_STATEMENT:
+		case DO_STATEMENT:
+		case FOR_STATEMENT:
+		case ENHANCED_FOR_STATEMENT:
+		case SWITCH_STATEMENT:
+		case WHILE_STATEMENT:
 			return true;
 		default:
 			return false;

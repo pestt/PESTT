@@ -119,7 +119,7 @@ public class TestRequirementController extends Observable {
 			}
 		} catch (NumberFormatException ee) {
 		}
-		return null;
+		return null; //TODO
 	}
 
 	private List<String> getInsertedNodes(String input) {
@@ -181,7 +181,7 @@ public class TestRequirementController extends Observable {
 		case DETOUR:
 			return testRequirementSet.getPathsTouredWithDeTour(seletedTestPath);
 		default:
-			return null;
+			return null;//TODO
 		}
 	}
 }

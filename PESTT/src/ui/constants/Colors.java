@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Color;
 public class Colors {
 
 	public static final String RED_ID = "red";
-	public static final String GRENN_ID = "green";
+	public static final String GREEN_ID = "green";
 	public static final String BLUE_ID = "blue";
 	public static final String YELLOW_ID = "yellow";
 	public static final String BLACK_ID = "black";

@@ -193,7 +193,7 @@ public class ActiveEditor implements Observer {
 				.getMethods())
 			if (method.getName().toString().equals(getSelectedMethod()))
 				return method;
-		return null;
+		return null;//TODO
 	}
 
 	public List<String> getMethodNames() {
@@ -233,7 +233,7 @@ public class ActiveEditor implements Observer {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return null;//TODO
 	}
 
 	public boolean isInMethod() {
@@ -525,7 +525,7 @@ public class ActiveEditor implements Observer {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return null;//TODO
 
 	}
 }

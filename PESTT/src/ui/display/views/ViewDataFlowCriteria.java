@@ -10,7 +10,7 @@ public class ViewDataFlowCriteria extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		TableViewerFactory.INSTANCE.createTebleViewer(parent, getSite(),
+		TableViewerFactory.INSTANCE.createTableViewer(parent, getSite(),
 				TableViewers.DEF_USES_VIEWER);
 	}
 

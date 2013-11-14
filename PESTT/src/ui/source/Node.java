@@ -34,7 +34,7 @@ public class Node {
 	}
 
 	private void setBackgroundColor(String color) {
-		if (color.equals(Colors.GRENN_ID)) {
+		if (color.equals(Colors.GREEN_ID)) {
 			bgcolor = Colors.GREEN;
 			setForegroundColor(Colors.WHITE);
 		} else if (color.equals(Colors.RED_ID)) {

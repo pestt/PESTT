@@ -48,7 +48,7 @@ public class CoverageData implements ICoverageData {
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
 					if (executedPath.containsNode(node))
-						lineStatus.put(line, Colors.GRENN_ID);
+						lineStatus.put(line, Colors.GREEN_ID);
 					else if (!lineStatus.containsKey(line))
 						lineStatus.put(line, Colors.RED_ID);
 				}

@@ -11,7 +11,7 @@ public enum TableViewerFactory {
 
 	INSTANCE;
 
-	public TableViewer createTebleViewer(Composite parent,
+	public TableViewer createTableViewer(Composite parent,
 			IWorkbenchPartSite site, String name) {
 		switch (TableViewers.valueOf(name)) {
 		case TESTREQUIREMENTSVIEWER:
@@ -21,9 +21,9 @@ public enum TableViewerFactory {
 		case STATISTICSVIEWER:
 			return new StatisticsViewer(parent, site).create();
 		case DEFUSESVIEWER:
-			return new DefUsesViewerFactory().createTebleViewer(parent, site);
+			return new DefUsesViewerFactory().createTableViewer(parent, site);
 		default:
-			return null;
+			return null;//TODO
 		}
 	}
 }

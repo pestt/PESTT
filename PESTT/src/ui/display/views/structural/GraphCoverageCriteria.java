@@ -244,7 +244,7 @@ public class GraphCoverageCriteria implements Observer {
 
 	private GraphItem getSelected() {
 		if (graph.getSelection().size() == 0)
-			return null;
+			return null;//TODO
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 

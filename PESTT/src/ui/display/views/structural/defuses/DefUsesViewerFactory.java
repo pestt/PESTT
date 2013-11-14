@@ -34,7 +34,7 @@ public class DefUsesViewerFactory implements Observer {
 		view = Activator.getDefault().getDefUsesController().getSelectedView();
 	}
 
-	public TableViewer createTebleViewer(Composite parent,
+	public TableViewer createTableViewer(Composite parent,
 			IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
@@ -48,7 +48,7 @@ public class DefUsesViewerFactory implements Observer {
 			viewer.addObservers();
 			return viewer.create();
 		default:
-			return null;
+			return null;//TODO
 		}
 	}
 
@@ -61,7 +61,7 @@ public class DefUsesViewerFactory implements Observer {
 					viewer.deleteObservers();
 					viewer.dispose();
 				}
-				createTebleViewer(parent, site);
+				createTableViewer(parent, site);
 				parent.layout();
 			}
 	}

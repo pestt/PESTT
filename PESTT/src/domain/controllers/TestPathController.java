@@ -206,7 +206,7 @@ public class TestPathController extends Observable {
 						ICoverageData data = Activator.getDefault()
 								.getCoverageDataController()
 								.getCoverageData(path);
-						if (data.getLineStatus(line).equals(Colors.GRENN_ID))
+						if (data.getLineStatus(line).equals(Colors.GREEN_ID))
 							if (!lines.contains(line))
 								lines.add(line);
 
@@ -218,7 +218,7 @@ public class TestPathController extends Observable {
 
 		for (int line : lines) {
 			coverageData.remove(line);
-			coverageData.put(line, Colors.GRENN_ID);
+			coverageData.put(line, Colors.GREEN_ID);
 		}
 
 		return new CoverageData(coverageData);
@@ -252,14 +252,14 @@ public class TestPathController extends Observable {
 				if (!sourceGraph.isInitialNode(pathNodes.get(0))
 						|| !sourceGraph.isFinalNode(pathNodes.get(pathNodes
 								.size() - 1)))
-					return null;
+					return null;//TODO
 
 				return new Path<Integer>(pathNodes);
 			}
 		} catch (NumberFormatException e) {
 			//ignore
 		}
-		return null;
+		return null;//TODO
 	}
 
 	private List<String> getInsertedNodes(String input) {
