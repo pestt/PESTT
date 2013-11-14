@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import domain.exceptions.NodeNotFoundException;
+
 public class Graph<V extends Comparable<V>> {
 
 	/**
@@ -167,7 +169,8 @@ public class Graph<V extends Comparable<V>> {
 			if (node.getValue().equals(value))
 				return node;
 		}
-		return null;//TODO
+		new NodeNotFoundException().printStackTrace();
+		return null;
 	}
 
 	/**

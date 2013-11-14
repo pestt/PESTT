@@ -17,7 +17,7 @@ public class Tooltips {
 			+ "CPC -> PPC;" + "PPC -> ADUPC;" + "PPC -> EC;" + "PPC -> CRTC;"
 			+ "CRTC -> SRTC;" + "ADUPC -> AUC;" + "AUC -> ADC;" + "AUC -> EC;"
 			+ "EPC -> EC;" + "EC -> NC;" + "}\n";
-	
+
 	// -- GRAPH --
 	public static final String CPC_NODE = "Complete Path\n      Coverage\n";
 	public static final String CPC = "Complete Path Coverage (CPC):"

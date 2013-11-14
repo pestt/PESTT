@@ -32,12 +32,14 @@ import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.layouts.LayoutStyles;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import ui.constants.Colors;
+import ui.constants.Messages;
 import ui.events.RefreshLogicGraphEvent;
 import domain.constants.LogicCoverageCriteriaId;
 
@@ -47,11 +49,13 @@ public class LogicCoverageCriteria implements Observer {
 	private Graph graph;
 	private Map<LogicCoverageCriteriaId, GraphNode> nodes;
 	private SelectionAdapter event;
+	private Composite parent;
 
 	public LogicCoverageCriteria(Composite parent) {
 		graph = new Graph(parent, SWT.NONE);
 		Activator.getDefault().getCFGController().addObserver(this);
 		create();
+		this.parent = parent;
 	}
 
 	private void create() {
@@ -199,7 +203,8 @@ public class LogicCoverageCriteria implements Observer {
 
 	private GraphItem getSelected() {
 		if (graph.getSelection().size() == 0)
-			return null;//TODO
+			MessageDialog.openInformation(parent.getShell(),
+					Messages.GRAPH_ITEM_TITLE, Messages.GRAPH_ITEM_NOT_FOUND);
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 

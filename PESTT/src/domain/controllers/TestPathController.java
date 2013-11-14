@@ -252,14 +252,14 @@ public class TestPathController extends Observable {
 				if (!sourceGraph.isInitialNode(pathNodes.get(0))
 						|| !sourceGraph.isFinalNode(pathNodes.get(pathNodes
 								.size() - 1)))
-					return null;//TODO
+					return null;//!= null check
 
 				return new Path<Integer>(pathNodes);
 			}
 		} catch (NumberFormatException e) {
 			//ignore
 		}
-		return null;//TODO
+		return null;//!= null check
 	}
 
 	private List<String> getInsertedNodes(String input) {

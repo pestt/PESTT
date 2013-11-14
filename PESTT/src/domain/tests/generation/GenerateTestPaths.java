@@ -156,7 +156,7 @@ public class GenerateTestPaths<V extends Comparable<V>> {
 					selectedPathNodes.size());
 			return nodesToAdd;
 		} else
-			return null;//TODO
+			return null; //!= null checks
 	}
 
 	private boolean isCandidate(List<Node<Integer>> nodesSublist,

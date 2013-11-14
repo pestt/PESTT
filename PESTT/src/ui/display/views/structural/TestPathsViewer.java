@@ -178,8 +178,8 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	 * Sets the visual status for the test path according to the selected test
 	 * requirement. The visual status to the test path are:
 	 * <ul>
-	 * <li>Green (Background) if the selected test requirement is covered by
-	 * the test path.</li>
+	 * <li>Green (Background) if the selected test requirement is covered by the
+	 * test path.</li>
 	 * <li>Red (Background) if the selected test requirement is not covered by
 	 * the test path.</li>
 	 * </ul>

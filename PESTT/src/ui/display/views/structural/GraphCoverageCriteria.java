@@ -37,13 +37,14 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import ui.constants.Colors;
+import ui.constants.Messages;
 import ui.events.RefreshStructuralGraphEvent;
 import ui.source.Edge;
 import ui.source.GraphElements;
@@ -216,7 +217,7 @@ public class GraphCoverageCriteria implements Observer {
 		graph.setLayoutAlgorithm(la, true);
 	}
 	 */
-	
+
 	private void addSelectionListener() {
 		event = new SelectionAdapter() { // create a new SelectionAdapter event.
 
@@ -244,7 +245,8 @@ public class GraphCoverageCriteria implements Observer {
 
 	private GraphItem getSelected() {
 		if (graph.getSelection().size() == 0)
-			return null;//TODO
+			MessageDialog.openInformation(parent.getShell(),
+					Messages.GRAPH_ITEM_TITLE, Messages.GRAPH_ITEM_NOT_FOUND);
 		return (GraphItem) graph.getSelection().get(0); // return the list with the selected nodes.
 	}
 

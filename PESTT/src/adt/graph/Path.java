@@ -53,7 +53,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	/**
-	 * TODO
+	 * TODO document
 	 * 
 	 * @param i
 	 * @param path

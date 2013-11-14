@@ -119,7 +119,7 @@ public class DefUsesController extends Observable {
 			return defUsesSet
 					.getTestRequirementsToVariable((String) selectedDefUse);
 		}
-		return null;//TODO
+		return null;
 	}
 
 	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {

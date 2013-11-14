@@ -34,7 +34,10 @@ public class Messages {
 	public static final String TEST_REQUIREMENT_WARNING_EDITED_MSG = "You can only edit one test requirement at a time.";
 	public static final String TEST_REQUIREMENT_NEED_UPDATE_MSG = "You need to update the test requirements.";
 	public static final String TEST_REQUIREMENT_NOT_INFEASIBLE_MSG = " is not infeasible.\nIt will be set as a feasible path and the covered status will be updated..";
-
+	//-- custom --
+	public static final String GRAPH_ITEM_NOT_FOUND = "A graph item has not been found.";
+	public static final String GRAPH_ITEM_TITLE = " PESTT - Graph Items";
+	// --
 	public static final String STATISTICS_TITLE = "PESTT - Statistics";
 	public static final String STATISTICS_MSG = "Impossible to show statistics.";
 	public static final String STATISTICS_REASON_MSG = "Graph contains loop(s) (infinite paths).";

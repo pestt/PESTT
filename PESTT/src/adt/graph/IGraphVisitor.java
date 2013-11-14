@@ -1,6 +1,5 @@
 package adt.graph;
 
-
 public interface IGraphVisitor<V extends Comparable<V>> {
 
 	public void visitEdge(Edge<V> edge);

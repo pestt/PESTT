@@ -23,7 +23,7 @@ public enum TableViewerFactory {
 		case DEFUSESVIEWER:
 			return new DefUsesViewerFactory().createTableViewer(parent, site);
 		default:
-			return null;//TODO
+			return null;//normal
 		}
 	}
 }

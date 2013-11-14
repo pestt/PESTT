@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-//TODO rename
+// TODO rename
 public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 
 	/**

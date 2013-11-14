@@ -48,7 +48,7 @@ public class DefUsesViewerFactory implements Observer {
 			viewer.addObservers();
 			return viewer.create();
 		default:
-			return null;//TODO
+			return null;//normal
 		}
 	}
 

@@ -1,6 +1,5 @@
 package adt.graph;
 
-
 public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 
 	/**

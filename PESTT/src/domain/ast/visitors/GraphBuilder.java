@@ -45,6 +45,7 @@ import adt.graph.Node;
 import domain.GraphInformation;
 import domain.RenumNodesGraphVisitor;
 import domain.constants.Layer;
+import domain.exceptions.HashCreationException;
 
 public class GraphBuilder extends ASTVisitor {
 
@@ -186,7 +187,8 @@ public class GraphBuilder extends ASTVisitor {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		return null;//TODO
+		new HashCreationException().printStackTrace();
+		return null;
 	}
 
 	public List<SingleVariableDeclaration> getMethodParameters() {

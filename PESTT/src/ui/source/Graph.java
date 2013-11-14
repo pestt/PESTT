@@ -260,7 +260,7 @@ public class Graph implements Observer {
 					.isEverythingMatching())
 				if (((DefUsesSelectedEvent) data).selectedDefUse == null)
 					unselectAll();
-			else
+				else
 					selecDefUses();
 			else if (((DefUsesSelectedEvent) data).selectedDefUse != null)
 				graphNeedToBeUpdate();

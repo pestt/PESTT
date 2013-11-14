@@ -439,7 +439,7 @@ public class VisualInformation {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		return null;//TODO
+		return null;//!= null checks
 	}
 
 	@SuppressWarnings("unchecked")
