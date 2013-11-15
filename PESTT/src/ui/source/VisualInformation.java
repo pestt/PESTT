@@ -219,8 +219,7 @@ public class VisualInformation {
 			break;
 		case DO_STATEMENT:
 			DoStatement d = (DoStatement) instruction;
-			int s = d.getExpression().getStartPosition();
-			String text = getText(s);
+			String text = getText(d.getExpression().getStartPosition());
 			int w = findWhile(text);
 			Activator
 					.getDefault()

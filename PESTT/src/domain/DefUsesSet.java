@@ -61,7 +61,7 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	/***
-	 * Insert a new element in the list. Update the variables list.
+	 * Inserts a new element in the list. Updates the variables list.
 	 * 
 	 * @param obj
 	 *            - The Object associated to the def-uses (Node or edge).
@@ -90,7 +90,7 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	/***
-	 * Varify if the set is empty;
+	 * Verifies if the set is empty;
 	 * 
 	 * @return boolean - true if yes. false otherwise.
 	 */
@@ -181,12 +181,12 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	/***
-	 * Get the nodes and edges for a variable.
+	 * Gets the nodes and edges for a variable.
 	 * 
 	 * @param var
 	 *            - The variable to get the nodes and edges.
-	 * @return List<List<Object>> - A List with two list. One to the nodes and
-	 *         edges of variable definitions. Other to the node and edges of
+	 * @return List<List<Object>> - A List with two lists, one to the nodes and
+	 *         edges of variable definitions, the other to the node and edges of
 	 *         variable uses.
 	 */
 	private List<List<Object>> getNodesEdgesDefUses(String var) {
@@ -214,7 +214,7 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	/***
-	 * Add the object to the right place in the list.
+	 * Adds the object to the right place in the list.
 	 * 
 	 * @param list
 	 *            - The list to add the Object.

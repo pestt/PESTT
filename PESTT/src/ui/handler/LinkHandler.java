@@ -22,7 +22,7 @@ public class LinkHandler extends AbstractHandler {
 					.isEverythingMatching()) {
 				boolean state = HandlerUtil.toggleCommandState(event
 						.getCommand());
-				Activator.getDefault().getCFGController().settLinkState(!state);
+				Activator.getDefault().getCFGController().setLinkState(!state);
 			} else
 				MessageDialog.openInformation(window.getShell(),
 						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);

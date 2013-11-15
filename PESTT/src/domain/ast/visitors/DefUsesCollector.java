@@ -149,7 +149,8 @@ public class DefUsesCollector extends ASTVisitor {
 	public void endVisit(PrefixExpression node) {
 		String top = stack.peek();
 		addToUses();
-		defs.add(top);
+		if (!node.getOperator().equals(PrefixExpression.Operator.NOT))
+			defs.add(top);
 	}
 
 	@Override

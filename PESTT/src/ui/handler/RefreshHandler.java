@@ -121,7 +121,7 @@ public class RefreshHandler extends AbstractHandler {
 					Messages.TEST_PATH_TITLE,
 					Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n", "\n"
 							+ Messages.TEST_PATH_REMOVE_MSG);
-			if (isADefUsesCoverageVriteria())
+			if (isADefUsesCoverageCriteria())
 				Activator.getDefault().getDefUsesController().generateDefUses();
 			Activator.getDefault().getTestRequirementController()
 					.generateTestRequirement();
@@ -131,7 +131,8 @@ public class RefreshHandler extends AbstractHandler {
 
 	private void setInformationFromJavadoc(IWorkbenchWindow window,
 			Map<JavadocTagAnnotations, List<String>> javadocAnnotations,
-			JavadocTagAnnotations tag, String title, String prefix, String sufix) {
+			JavadocTagAnnotations tag, String title, String prefix,
+			String suffix) {
 		for (String input : javadocAnnotations.get(tag)) {
 			String msg = input;
 			input = input.substring(1, input.length() - 1);
@@ -159,11 +160,11 @@ public class RefreshHandler extends AbstractHandler {
 				}
 			else
 				MessageDialog.openInformation(window.getShell(), title, prefix
-						+ msg + sufix); // message displayed when the inserted test requirement is not valid.
+						+ msg + suffix); // message displayed when the inserted test requirement is not valid.
 		}
 	}
 
-	private boolean isADefUsesCoverageVriteria() {
+	private boolean isADefUsesCoverageCriteria() {
 		switch (Activator.getDefault().getTestRequirementController()
 				.getSelectedCoverageCriteria()) {
 		case ALL_DU_PATHS:
@@ -188,7 +189,7 @@ public class RefreshHandler extends AbstractHandler {
 		String valueLayer = stateLayer.getValue().toString(); // the value of the layer.
 		try {
 			if (valueLink) {
-				Activator.getDefault().getCFGController().settLinkState(false);
+				Activator.getDefault().getCFGController().setLinkState(false);
 				stateLink.setValue(false); // disable selection
 				handlerService.executeCommand(Description.LINK_BUTTON, null); // update the value.
 			}

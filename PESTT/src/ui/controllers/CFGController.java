@@ -13,7 +13,7 @@ public class CFGController extends Observable {
 	private Layer layer;
 	private boolean state;
 
-	public void settLinkState(boolean state) {
+	public void setLinkState(boolean state) {
 		this.state = state;
 		setChanged();
 		notifyObservers(new LinkChangeEvent(state));
