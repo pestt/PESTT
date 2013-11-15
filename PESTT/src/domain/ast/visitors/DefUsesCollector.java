@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -146,10 +147,16 @@ public class DefUsesCollector extends ASTVisitor {
 	}
 
 	@Override
+	/**
+	 * Note: ++ and -- define the variable.
+	 * ~, !, + and - do not (all of these operators are unary).
+	 */
 	public void endVisit(PrefixExpression node) {
 		String top = stack.peek();
 		addToUses();
-		if (!node.getOperator().equals(PrefixExpression.Operator.NOT))
+		Operator o = node.getOperator();
+		if (o.equals(PrefixExpression.Operator.INCREMENT)
+				|| o.equals(PrefixExpression.Operator.DECREMENT))
 			defs.add(top);
 	}
 
