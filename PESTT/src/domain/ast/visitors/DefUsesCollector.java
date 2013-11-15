@@ -146,11 +146,11 @@ public class DefUsesCollector extends ASTVisitor {
 		defs.add(top);
 	}
 
-	@Override
 	/**
-	 * Note: ++ and -- define the variable.
+	 * Note: ++ and -- define the variable.<br>
 	 * ~, !, + and - do not (all of these operators are unary).
 	 */
+	@Override
 	public void endVisit(PrefixExpression node) {
 		String top = stack.peek();
 		addToUses();

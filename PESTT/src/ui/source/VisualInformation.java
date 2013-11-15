@@ -1,10 +1,12 @@
 package ui.source;
 
+import static org.eclipse.jdt.core.dom.ASTNode.CATCH_CLAUSE;
 import static org.eclipse.jdt.core.dom.ASTNode.DO_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.ENHANCED_FOR_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.FOR_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.SWITCH_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.TRY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.WHILE_STATEMENT;
 
 import java.io.InputStreamReader;
@@ -41,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.MarkersType;
+import ui.controllers.EditorController;
 import ui.editor.Line;
 import domain.constants.Layer;
 import domain.coverage.data.ICoverageData;
@@ -50,7 +53,6 @@ public class VisualInformation {
 	private static final String ALL = "All";
 	private static final String TRUE = "True";
 	private static final String FALSE = "False";
-
 	private adt.graph.Graph<Integer> sourceGraph;
 	private ui.source.Graph layoutGraph;
 	private ISelectionListener listener;
@@ -205,72 +207,55 @@ public class VisualInformation {
 
 	private void regionToSelect(List<ASTNode> instructions, String markerType) {
 		int start = findStartPosition(instructions); // get the start position.
+		int length = 0;
 		ASTNode instruction = instructions.get(0); // the first element of the list.
+		EditorController ec = Activator.getDefault().getEditorController();
+		boolean def = false;
 		switch (instruction.getNodeType()) {
-		case IF_STATEMENT:
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(
-							markerType,
-							start,
-							getLength(start, instruction.getStartPosition(),
-									"if".length()));
-			break;
 		case DO_STATEMENT:
 			DoStatement d = (DoStatement) instruction;
 			String text = getText(d.getExpression().getStartPosition());
 			int w = findWhile(text);
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(markerType, w - ("while".length() - 1),
-							"while".length());
+			start = w - ("while".length() - 1);
+			length = "while".length();
+			break;
+		case IF_STATEMENT:
+			length = getLength(start, instruction.getStartPosition(),
+					"if".length());
 			break;
 		case FOR_STATEMENT:
 		case ENHANCED_FOR_STATEMENT:
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(
-							markerType,
-							start,
-							getLength(start, instruction.getStartPosition(),
-									"for".length()));
+			length = getLength(start, instruction.getStartPosition(),
+					"for".length());
 			break;
 		case SWITCH_STATEMENT:
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(
-							markerType,
-							start,
-							getLength(start, instruction.getStartPosition(),
-									"switch".length()));
+			length = getLength(start, instruction.getStartPosition(),
+					"switch".length());
+			break;
+		case TRY_STATEMENT:
+			length = getLength(start, instruction.getStartPosition(),
+					"try".length());
+			break;
+		case CATCH_CLAUSE:
+			length = getLength(start, instruction.getStartPosition(),
+					"catch".length());
 			break;
 		case WHILE_STATEMENT:
-			Activator
-					.getDefault()
-					.getEditorController()
-					.createMarker(
-							markerType,
-							start,
-							getLength(start, instruction.getStartPosition(),
-									"while".length()));
+			length = getLength(start, instruction.getStartPosition(),
+					"while".length());
 			break;
 		default:
+			def = true;
 			for (ASTNode instr : instructions)
-				Activator
-						.getDefault()
-						.getEditorController()
-						.createMarker(
-								markerType,
-								instr.getStartPosition(),
-								getLength(instr.getStartPosition(),
-										instr.getStartPosition(),
-										instr.getLength()));
+				ec.createMarker(
+						markerType,
+						instr.getStartPosition(),
+						getLength(instr.getStartPosition(),
+								instr.getStartPosition(), instr.getLength()));
 			break;
 		}
+		if (!def)
+			ec.createMarker(markerType, start, length);
 	}
 
 	/**
@@ -305,7 +290,7 @@ public class VisualInformation {
 	 * happen).
 	 * 
 	 * @param text
-	 *            - the code of the whole class.
+	 *            - the code to search.
 	 * @return
 	 */
 	private int findWhile(String text) {
@@ -508,6 +493,12 @@ public class VisualInformation {
 		case SWITCH_STATEMENT:
 			endPosition = aNode.getStartPosition() + "switch".length();
 			break;
+		case TRY_STATEMENT:
+			endPosition = aNode.getStartPosition() + "try".length();
+			break;
+		case CATCH_CLAUSE:
+			endPosition = aNode.getStartPosition() + "catch".length();
+			break;
 		case WHILE_STATEMENT:
 			endPosition = aNode.getStartPosition() + "while".length();
 			break;
@@ -533,6 +524,8 @@ public class VisualInformation {
 		case ENHANCED_FOR_STATEMENT:
 		case SWITCH_STATEMENT:
 		case WHILE_STATEMENT:
+		case TRY_STATEMENT:
+		case CATCH_CLAUSE:
 			return true;
 		default:
 			return false;

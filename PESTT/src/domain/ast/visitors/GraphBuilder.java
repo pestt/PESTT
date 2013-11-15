@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.BreakStatement;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -50,6 +52,7 @@ import domain.exceptions.HashCreationException;
 public class GraphBuilder extends ASTVisitor {
 
 	private static final String NEG = "¬";
+	private static final boolean DEBUG = true;
 	private Graph<Integer> sourceGraph;
 	private String methodName;
 	private int nodeNum;
@@ -73,23 +76,46 @@ public class GraphBuilder extends ASTVisitor {
 		this.unit = unit;
 		nodeNum = 0; // number of the node.
 		sourceGraph = new Graph<Integer>(); // the graph.
-		sourceGraph.addMetadataLayer(); // the layer that associate the sourceGraph elements to the layoutGraph elements.
+		sourceGraph.addMetadataLayer(); // the layer that associates the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
 		attributes = new LinkedList<VariableDeclarationFragment>(); // the class attributes.
 		enumFields = new LinkedList<EnumDeclaration>(); // the enum class attributes.
-		prevNode = new Stack<Node<Integer>>(); // stack that contain the predecessor nodes.
+		prevNode = new Stack<Node<Integer>>(); // stack that contains the predecessor nodes.
 		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
 		javadocAnnotations = new HashMap<JavadocTagAnnotations, List<String>>();
-		controlFlag = false; // flag that control if a continue or a break occur.
-		returnFlag = false; // flag that control if a return occur.
-		caseFlag = false; // flag that control the occurrence of a break in the previous case;  
+		controlFlag = false; // flag that controls if a continue or a break occurs.
+		returnFlag = false; // flag that controls if a return occurs.
+		caseFlag = false; // flag that controls the occurrence of a break in the previous case;  
 		Node<Integer> initial = new Node<Integer>(nodeNum); // the initial node.
-		sourceGraph.addInitialNode(initial); // add first node to the graph.
-		prevNode.push(initial); // add first node to the previous node stack.
+		sourceGraph.addInitialNode(initial); // adds first node to the graph.
+		prevNode.push(initial); // adds first node to the previous node stack.
 		finalnode = initial; // The final node.
 		infos = new GraphInformation(); // the graph informations.
+	}
+
+	/**
+	 * A pretty printer debug method, for inside methods.
+	 */
+	@Override
+	public void preVisit(ASTNode node) {
+		if (DEBUG) {
+			String s = node.getClass().getSimpleName();
+			if (s.equals("CompilationUnit"))
+				System.out.println();
+			ASTNode parent = node;
+			int depth = 1;
+			do {
+				depth++;
+				parent = parent.getParent();
+			} while (parent != null);
+			for (int i = 2; i < depth; i++) {
+				System.out.print(" ");
+			}
+			System.out.println(s);
+			super.preVisit(node);
+		}
 	}
 
 	@Override
@@ -360,6 +386,40 @@ public class GraphBuilder extends ASTVisitor {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean visit(TryStatement node) {
+		if (!prevNode.isEmpty()) {
+			Edge<Integer> edge = createConnection(); // create the edge from the previous node to the try-catch node.
+			infos.addInformationToLayer2(sourceGraph, edge, "try;"); // add information to previous node.
+			Node<Integer> noTry = edge.getEndNode(); // the initial node of the TryStatement.
+			prevNode.push(noTry); // the graph continues from the initial node of the TryStatement.
+			node.getBody().accept(this);
+			edge = createConnection();
+			infos.addInformationToLayer2(sourceGraph, edge, "finally;"); // add information to previous node.
+			Node<Integer> noFinally = edge.getEndNode();
+			prevNode.push(noFinally);
+			node.getFinally().accept(this);
+			//prevNode.push(noTry);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visit(CatchClause node) {
+		if (!prevNode.isEmpty()) {
+			Edge<Integer> edge = createConnection();
+			infos.addInformationToLayer2(sourceGraph, edge, "catch;"); // add information to previous node.
+			sourceGraph.addFinalNode(edge.getEndNode());
+			Node<Integer> body = edge.getEndNode();
+			infos.addInformationToLayer1(sourceGraph, edge.getEndNode(), node,
+					unit);
+			prevNode.push(body);
+			node.getBody().accept(this);
+			finalnode = null;
+		}
+		return true;
 	}
 
 	@Override
