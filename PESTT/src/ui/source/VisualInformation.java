@@ -219,12 +219,13 @@ public class VisualInformation {
 			break;
 		case DO_STATEMENT:
 			DoStatement d = (DoStatement) instruction;
-			String text = getText();
-			int w = findWhile(text, d.getExpression().getStartPosition());
+			int s = d.getExpression().getStartPosition();
+			String text = getText(s);
+			int w = findWhile(text);
 			Activator
 					.getDefault()
 					.getEditorController()
-					.createMarker(markerType, w - "whil".length(),
+					.createMarker(markerType, w - ("while".length() - 1),
 							"while".length());
 			break;
 		case FOR_STATEMENT:
@@ -274,11 +275,14 @@ public class VisualInformation {
 	}
 
 	/**
-	 * Returns the text of the class where the ActiveEditor is.
+	 * Returns the text of the class where the ActiveEditor is, until character
+	 * number 'limit'.
+	 * 
+	 * @param limit
 	 * 
 	 * @return
 	 */
-	private String getText() {
+	private String getText(int limit) {
 		IFile file = (IFile) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getActiveEditor()
 				.getEditorInput().getAdapter(IFile.class);
@@ -286,7 +290,7 @@ public class VisualInformation {
 		try {
 			InputStreamReader i = new InputStreamReader(file.getContents());
 			int x = 0;
-			while (x != -1) {
+			while (x != -1 && buf.length() <= limit) {
 				x = i.read();
 				buf.append((char) x);
 			}
@@ -303,13 +307,10 @@ public class VisualInformation {
 	 * 
 	 * @param text
 	 *            - the code of the whole class.
-	 * @param start
-	 *            - the index where the condition begins.
 	 * @return
-	 * @requires text.length() > start;
 	 */
-	private int findWhile(String text, int start) {
-		for (int i = start - 1; i > 0; i--) {
+	private int findWhile(String text) {
+		for (int i = text.length() - 1; i > 0; i--) {
 			char x = text.charAt(i);
 			if (x == 'e')
 				return i;
