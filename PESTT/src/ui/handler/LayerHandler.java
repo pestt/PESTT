@@ -17,29 +17,39 @@ import domain.constants.Layer;
 public class LayerHandler extends AbstractHandler {
 
 	private String option = Description.EMPTY;
-	private String old = Layer.EMPTY.toString(); 
+	private String old = Layer.EMPTY.toString();
 	private boolean flag = false;
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(!flag)
-			if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1) {
-				if(Activator.getDefault().getEditorController().isEverythingMatching()) {
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (!flag)
+			if (Activator.getDefault().getSourceGraphController()
+					.numberOfNodes() >= 1) {
+				if (Activator.getDefault().getEditorController()
+						.isEverythingMatching()) {
 					option = event.getParameter(RadioState.PARAMETER_ID); // get the current selected state.
-					if(option != null && !option.equals(Description.NONE)) {
-						HandlerUtil.updateRadioState(event.getCommand(), option); // update the current state.
+					if (option != null && !option.equals(Description.NONE)) {
+						HandlerUtil
+								.updateRadioState(event.getCommand(), option); // update the current state.
 						old = option;
-					} else if(option == null && old.equals(Layer.EMPTY.toString()))
-						old = (String) event.getCommand().getState("org.eclipse.ui.commands.radioState").getValue();
+					} else if (option == null
+							&& old.equals(Layer.EMPTY.toString()))
+						old = (String) event.getCommand()
+								.getState("org.eclipse.ui.commands.radioState")
+								.getValue();
 					Activator.getDefault().getCFGController().selectLayer(old);
 				} else {
 					flag = true;
-					MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);				
+					MessageDialog.openInformation(window.getShell(),
+							Messages.DRAW_GRAPH_TITLE,
+							Messages.GRAPH_UPDATE_MSG);
 				}
 			} else {
 				flag = true;
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
 			}
 		else
 			flag = false;

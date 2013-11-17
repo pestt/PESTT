@@ -9,17 +9,17 @@ import adt.graph.Path;
 public class StatisticsController {
 
 	private StatisticsSet statisticsSet;
-	
+
 	public StatisticsController(StatisticsSet statisticsSet) {
 		this.statisticsSet = statisticsSet;
 	}
-	
+
 	public void addObserverStatistics(Observer o) {
 		statisticsSet.addObserver(o);
 	}
-	
+
 	public void getStatistics(Set<Path<Integer>> selectedTestPaths) {
-		statisticsSet.getStatsitics(selectedTestPaths);
+		statisticsSet.getStatistics(selectedTestPaths);
 	}
 
 	public void cleanStatisticsSet() {

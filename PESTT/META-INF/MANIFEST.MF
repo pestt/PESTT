@@ -33,7 +33,6 @@ Export-Package: adt.graph;uses:="domain.graph.visitors",
  domain.coverage.data;uses:="adt.graph",
  domain.dot.processor,
  domain.events;uses:="adt.graph,domain.constants",
- domain.graph.visitors;uses:="adt.graph",
  main.activator;
   uses:="domain.controllers,
    org.eclipse.jface.resource,

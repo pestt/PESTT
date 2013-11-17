@@ -1,7 +1,7 @@
 package ui.constants;
 
 public class Images {
-		
+
 	public static final int PASS = 0;
 	public static final int FAIL = 1;
 	public static final int CHECK = 2;
@@ -10,5 +10,5 @@ public class Images {
 	public static final String FAIL_LOCATION = "icons/fail.gif";
 	public static final String CHECK_LOCATION = "icons/check.gif";
 	public static final String UNCHECK_LOCATION = "icons/uncheck.gif";
-	
+
 }

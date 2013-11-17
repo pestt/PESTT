@@ -1,8 +1,9 @@
-package domain.graph.visitors;
+package domain;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Node;
 
 public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor<Integer> {
@@ -17,7 +18,7 @@ public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor<Integer> {
 
 	@Override
 	public boolean visit(Node<Integer> node) {
-		if(!visitedNodes.contains(node)) {
+		if (!visitedNodes.contains(node)) {
 			visitedNodes.add(node);
 			node.setValue(nodeNum);
 			nodeNum++;

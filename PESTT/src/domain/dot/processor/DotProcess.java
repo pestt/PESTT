@@ -19,7 +19,8 @@ public class DotProcess implements IDotProcess {
 
 	public Map<String, List<String>> dotToPlain(String dotsource) {
 		Map<String, List<String>> elements = null;
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		IPreferenceStore preferenceStore = Activator.getDefault()
+				.getPreferenceStore();
 		String dot = preferenceStore.getString(Preferences.DOT_PATH);
 		String cmd = dot + " -Tplain"; // the Graphviz command.
 		try {

@@ -19,5 +19,4 @@ public class LogicCoverageCriteriaId extends CoverageCriteriaId {
 	
 	protected LogicCoverageCriteriaId () {
 	}
-
 }

@@ -1,24 +1,21 @@
-package domain.graph.visitors;
+package adt.graph;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import adt.graph.Edge;
-import adt.graph.Graph;
-import adt.graph.Node;
-
-public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVisitor<V> {
+public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
+		IGraphVisitor<V> {
 
 	private Set<Node<V>> visitedNodes;
 	protected Graph<V> graph;
-	
+
 	public DepthFirstGraphVisitor() {
 		visitedNodes = new HashSet<Node<V>>();
 	}
-	
+
 	@Override
 	public void visitEdge(Edge<V> edge) {
-		if(visit(edge)) {
+		if (visit(edge)) {
 			//visit
 			endVisit(edge);
 		}
@@ -36,9 +33,9 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVi
 
 	@Override
 	public void visitNode(Node<V> node) {
-		if(visit(node)) { 
+		if (visit(node)) {
 			visitedNodes.add(node);
-			for(Edge<V> edge : graph.getNodeEdges(node)) {
+			for (Edge<V> edge : graph.getNodeEdges(node)) {
 				edge.accept(this);
 				edge.getEndNode().accept(this);
 			}
@@ -59,9 +56,9 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements IGraphVi
 
 	@Override
 	public void visitGraph(Graph<V> graph) {
-		if(visit(graph)) {
+		if (visit(graph)) {
 			this.graph = graph;
-			for(Node<V> node : graph.getInitialNodes())
+			for (Node<V> node : graph.getInitialNodes())
 				node.accept(this);
 			endVisit(graph);
 		}

@@ -22,25 +22,28 @@ import domain.events.TestPathSelectedEvent;
 import domain.events.TestRequirementSelectedEvent;
 
 public class ViewController implements Observer {
-	
+
 	private List<String> views;
 
 	public void addObserverToViews() {
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
-		Activator.getDefault().getSourceGraphController().addObserverSourceGraph(this);
+		Activator.getDefault().getSourceGraphController()
+				.addObserverSourceGraph(this);
 		views = new ArrayList<String>();
 		addAllViews(views);
 	}
-	
+
 	public void deleteObserverToViews() {
-		Activator.getDefault().getTestRequirementController().deleteObserver(this);
+		Activator.getDefault().getTestRequirementController()
+				.deleteObserver(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
 		Activator.getDefault().getDefUsesController().deleteObserver(this);
-		Activator.getDefault().getSourceGraphController().deleteObserverSourceGraph(this);
+		Activator.getDefault().getSourceGraphController()
+				.deleteObserverSourceGraph(this);
 	}
-	
+
 	private void addAllViews(List<String> views) {
 		views.add(Description.VIEW_GRAPH);
 		views.add(Description.VIEW_GRAPH_COVERAGE_CRITERIA);
@@ -48,26 +51,27 @@ public class ViewController implements Observer {
 		views.add(Description.VIEW_STRUCTURAL_COVERAGE);
 		views.add(Description.VIEW_DATA_FLOW_COVERAGE);
 	}
-	
+
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof CFGCreateEvent) 
-			bringViewToTop(Description.VIEW_GRAPH);		
-		else if(data instanceof TestRequirementSelectedEvent) {
+		if (data instanceof CFGCreateEvent)
+			bringViewToTop(Description.VIEW_GRAPH);
+		else if (data instanceof TestRequirementSelectedEvent) {
 			Object selectedTestRequirement = ((TestRequirementSelectedEvent) data).selectedTestRequirement;
-			if(selectedTestRequirement != null) {
+			if (selectedTestRequirement != null) {
 				bringViewToTop(Description.VIEW_GRAPH);
 				bringViewToTop(Description.VIEW_STRUCTURAL_COVERAGE);
 			}
-		} else if(data instanceof TestPathSelectedEvent) {
-			Set<Path<Integer>>  selectedTestPathSelectedEvent = ((TestPathSelectedEvent) data).selectedTestPaths;
-			if(selectedTestPathSelectedEvent != null && !selectedTestPathSelectedEvent.isEmpty()) {
+		} else if (data instanceof TestPathSelectedEvent) {
+			Set<Path<Integer>> selectedTestPathSelectedEvent = ((TestPathSelectedEvent) data).selectedTestPaths;
+			if (selectedTestPathSelectedEvent != null
+					&& !selectedTestPathSelectedEvent.isEmpty()) {
 				bringViewToTop(Description.VIEW_GRAPH);
 				bringViewToTop(Description.VIEW_STRUCTURAL_COVERAGE);
 			}
-		} else if(data instanceof DefUsesSelectedEvent) {
+		} else if (data instanceof DefUsesSelectedEvent) {
 			Object selectedDefUses = ((DefUsesSelectedEvent) data).selectedDefUse;
-			if(selectedDefUses != null) {
+			if (selectedDefUses != null) {
 				bringViewToTop(Description.VIEW_GRAPH);
 				bringViewToTop(Description.VIEW_DATA_FLOW_COVERAGE);
 			}
@@ -80,22 +84,24 @@ public class ViewController implements Observer {
 	public void bringViewToTop(String view) {
 		try {
 			if (view != null)
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(view);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage().showView(view);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void loadNecessaryViews(ExecutionEvent event) {
-		for(String viewId : views) {
-			if(HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().findView(viewId) == null)
-				bringViewToTop(viewId);	
+		for (String viewId : views) {
+			if (HandlerUtil.getActiveWorkbenchWindow(event).getActivePage()
+					.findView(viewId) == null)
+				bringViewToTop(viewId);
 		}
 	}
 
 	public void bringEditorToTop(IEditorPart part) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.bringToTop(part);
 	}
-	
 
 }

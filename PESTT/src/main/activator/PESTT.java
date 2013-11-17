@@ -20,8 +20,7 @@ import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
 
-
-public class PESTT { 
+public class PESTT {
 
 	private SourceGraphController sourceGraphController;
 	private TestRequirementController testRequirementController;
@@ -34,15 +33,17 @@ public class PESTT {
 	private BytemanController bytemanController;
 	private ViewController viewController;
 	private TestSuite testSuite;
-	
+
 	public PESTT() {
 		editorController = new EditorController();
 		SourceGraph sourceGraph = new SourceGraph();
 		sourceGraphController = new SourceGraphController(sourceGraph);
-		testRequirementController = new TestRequirementController(sourceGraph, new TestRequirementSet());
+		testRequirementController = new TestRequirementController(sourceGraph,
+				new TestRequirementSet());
 		testPathController = new TestPathController(new TestPathSet());
 		testPathController.selectTourType(TourType.TOUR.toString());
-		coverageDataController = new CoverageDataController(new CoverageDataSet());
+		coverageDataController = new CoverageDataController(
+				new CoverageDataSet());
 		statisticsController = new StatisticsController(new StatisticsSet());
 		cfgController = new CFGController();
 		cfgController.selectLayer(Layer.EMPTY.toString());
@@ -51,23 +52,23 @@ public class PESTT {
 		viewController = new ViewController();
 		testSuite = new TestSuite("default.xml");
 	}
-	
+
 	public SourceGraphController getSourceGraphController() {
 		return sourceGraphController;
 	}
-	
+
 	public TestRequirementController getTestRequirementController() {
 		return testRequirementController;
 	}
-	
+
 	public TestPathController getTestPathController() {
 		return testPathController;
 	}
-	
+
 	public CoverageDataController getCoverageDataController() {
 		return coverageDataController;
 	}
-	
+
 	public StatisticsController getStatisticsController() {
 		return statisticsController;
 	}

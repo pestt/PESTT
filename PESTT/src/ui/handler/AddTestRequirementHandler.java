@@ -15,36 +15,48 @@ import ui.dialog.InputDialog;
 import adt.graph.Path;
 
 public class AddTestRequirementHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
-			if(Activator.getDefault().getEditorController().isEverythingMatching())
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching())
 				addNewTestReuirementPath(window, "");
-			else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+			else
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+			MessageDialog.openInformation(window.getShell(),
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
 	}
-	
-	private void addNewTestReuirementPath(IWorkbenchWindow window, String input) throws ExecutionException {
+
+	private void addNewTestReuirementPath(IWorkbenchWindow window, String input)
+			throws ExecutionException {
 		String message = "Please enter a test requirement:\n(e.g. 0, ..., 3)";
 		InputDialog dialog = new InputDialog(window.getShell(), message, input);
 		dialog.open();
 		input = dialog.getInput();
-		if(input != null)
-			if(!input.equals(Description.EMPTY)) {
-				Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-				if(newTestRequirement != null) 
-					Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
+		if (input != null)
+			if (!input.equals(Description.EMPTY)) {
+				Path<Integer> newTestRequirement = Activator.getDefault()
+						.getTestRequirementController()
+						.createTestRequirement(input);
+				if (newTestRequirement != null)
+					Activator.getDefault().getTestRequirementController()
+							.addTestRequirement(newTestRequirement);
 				else {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
+					MessageDialog.openInformation(window.getShell(),
+							Messages.TEST_REQUIREMENT_TITLE,
+							Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 					addNewTestReuirementPath(window, input);
 				}
 			} else {
-				MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
+				MessageDialog.openInformation(window.getShell(),
+						Messages.TEST_REQUIREMENT_TITLE,
+						Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
 				addNewTestReuirementPath(window, input);
 			}
 	}

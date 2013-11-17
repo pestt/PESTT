@@ -25,5 +25,4 @@ public class GraphCoverageCriteriaId extends CoverageCriteriaId {
 	public static boolean isADefUsesCoverageCriteria(GraphCoverageCriteriaId criteria) {
 		return criteria == ALL_DU_PATHS || criteria == ALL_USES || criteria == ALL_DEFS;
 	}
-
 }

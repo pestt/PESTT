@@ -21,19 +21,19 @@ import domain.coverage.algorithms.ICoverageAlgorithms;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 import domain.events.TestRequirementSelectedEvent;
 
-
 public class TestRequirementController extends Observable {
 
 	private SourceGraph sourceGraph;
 	private TestRequirementSet testRequirementSet;
 	private AbstractPath<Integer> selectedTestRequirement;
 	private GraphCoverageCriteriaId selectedCoverageAlgorithm;
-	
-	public TestRequirementController(SourceGraph sourceGraph, TestRequirementSet testRequirementSet) {
+
+	public TestRequirementController(SourceGraph sourceGraph,
+			TestRequirementSet testRequirementSet) {
 		this.sourceGraph = sourceGraph;
 		this.testRequirementSet = testRequirementSet;
 	}
-	
+
 	public void addObserverTestRequirement(Observer o) {
 		testRequirementSet.addObserver(o);
 	}
@@ -48,12 +48,12 @@ public class TestRequirementController extends Observable {
 	}
 
 	public void removeSelectedTestRequirement() {
-		if(testRequirementSet.isInfeasible(selectedTestRequirement))
+		if (testRequirementSet.isInfeasible(selectedTestRequirement))
 			testRequirementSet.disableInfeasible(selectedTestRequirement);
 		testRequirementSet.remove(selectedTestRequirement);
 		unSelectTestRequirements();
 	}
-	
+
 	public void cleanTestRequirementSet() {
 		testRequirementSet.clear();
 	}
@@ -61,74 +61,81 @@ public class TestRequirementController extends Observable {
 	public int size() {
 		return testRequirementSet.size();
 	}
-	
+
 	public void enableInfeasible(AbstractPath<Integer> abstractPath) {
 		testRequirementSet.enableInfeasible(abstractPath);
 	}
-	
+
 	public void disableInfeasible(AbstractPath<Integer> abstractPath) {
 		testRequirementSet.disableInfeasible(abstractPath);
 	}
-	
+
 	public int sizeInfeasibles() {
 		return testRequirementSet.sizeInfeasibles();
 	}
-	
-	public boolean isInfeasiblesTestRequirements(AbstractPath<Integer> abstractPath) {
+
+	public boolean isInfeasiblesTestRequirements(
+			AbstractPath<Integer> abstractPath) {
 		return testRequirementSet.isInfeasible(abstractPath);
 	}
-	
+
 	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
 		return testRequirementSet.getInfeasiblesTestRequirements();
 	}
-	
+
 	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
 		return testRequirementSet.getTestRequirementsManuallyAdded();
 	}
-	
+
 	public Iterable<AbstractPath<Integer>> getTestRequirements() {
 		return testRequirementSet.getTestRequirements();
 	}
-	
+
 	public Path<Integer> createTestRequirement(String input) {
 		boolean validPath = true;
 		List<String> insertedNodes = getInsertedNodes(input);
-		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>> ();
+		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>>();
 		try {
 			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>(2);
-			fromToNodes.add(sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(0))));
-			int i = 1; 
-			while(i < insertedNodes.size() && validPath) {
-				fromToNodes.add(sourceGraph.getSourceGraph().getNode(Integer.parseInt(insertedNodes.get(i))));
-				if(fromToNodes.get(0) != null && fromToNodes.get(1) != null && sourceGraph.getSourceGraph().isPath(new Path<Integer>(fromToNodes))) {
+			fromToNodes.add(sourceGraph.getSourceGraph().getNode(
+					Integer.parseInt(insertedNodes.get(0))));
+			int i = 1;
+			while (i < insertedNodes.size() && validPath) {
+				fromToNodes.add(sourceGraph.getSourceGraph().getNode(
+						Integer.parseInt(insertedNodes.get(i))));
+				if (fromToNodes.get(0) != null
+						&& fromToNodes.get(1) != null
+						&& sourceGraph.getSourceGraph().isPath(
+								new Path<Integer>(fromToNodes))) {
 					pathNodes.add(fromToNodes.get(0));
 					fromToNodes.remove(0);
 				} else
 					validPath = false;
 				i++;
 			}
-			if(validPath) {
+			if (validPath) {
 				pathNodes.add(fromToNodes.get(0));
 				return new Path<Integer>(pathNodes);
 			}
-		} catch(NumberFormatException ee) {
+		} catch (NumberFormatException ee) {
+			//ignore
 		}
-		return null;
+		return null;//!= null check
 	}
-	
+
 	private List<String> getInsertedNodes(String input) {
 		List<String> aux = new LinkedList<String>();
 		StringTokenizer strtok = new StringTokenizer(input, ", ");
 		// separate the inserted nodes.
-		while(strtok.hasMoreTokens())
+		while (strtok.hasMoreTokens())
 			aux.add(strtok.nextToken());
 		return aux;
 	}
-	
+
 	public boolean isTestRequirementSelected() {
 		return selectedTestRequirement != null;
 	}
-	
+
 	public AbstractPath<Integer> getSelectedTestRequirement() {
 		return selectedTestRequirement;
 	}
@@ -138,15 +145,15 @@ public class TestRequirementController extends Observable {
 		setChanged();
 		notifyObservers(new TestRequirementSelectedEvent(selected));
 	}
-	
+
 	public void unSelectTestRequirements() {
 		selectTestRequirement(null);
 	}
-	
+
 	public boolean isCoverageCriteriaSelected() {
 		return selectedCoverageAlgorithm != null;
 	}
-	
+
 	public GraphCoverageCriteriaId getSelectedCoverageCriteria() {
 		return selectedCoverageAlgorithm;
 	}
@@ -158,21 +165,24 @@ public class TestRequirementController extends Observable {
 	}
 
 	public void generateTestRequirement() {
-		ICoverageAlgorithms<Integer> algorithm = CoverageAlgorithmsFactory.INSTANCE.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
+		ICoverageAlgorithms<Integer> algorithm = CoverageAlgorithmsFactory.INSTANCE
+				.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
 		testRequirementSet.generateTestRequirements(algorithm);
 	}
 
 	public Set<Path<Integer>> getTestPathCoverage(Path<Integer> seletedTestPath) {
-		TourType selectedTourType = Activator.getDefault().getTestPathController().getSelectedTourType();
-		switch(selectedTourType) {
-			case TOUR:
-				return testRequirementSet.getPathToured(seletedTestPath);
-			case SIDETRIP:
-				return testRequirementSet.getPathsTouredWithSideTrip(seletedTestPath);
-			case DETOUR:
-				return testRequirementSet.getPathsTouredWithDeTour(seletedTestPath);
-			default:
-				return null;	
+		TourType selectedTourType = Activator.getDefault()
+				.getTestPathController().getSelectedTourType();
+		switch (selectedTourType) {
+		case TOUR:
+			return testRequirementSet.getPathToured(seletedTestPath);
+		case SIDETRIP:
+			return testRequirementSet
+					.getPathsTouredWithSideTrip(seletedTestPath);
+		case DETOUR:
+			return testRequirementSet.getPathsTouredWithDeTour(seletedTestPath);
+		default:
+			return null;//normal
 		}
 	}
 }

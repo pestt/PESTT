@@ -20,52 +20,57 @@ public class TestPathSet extends Observable {
 	public void add(Path<Integer> newTestPath) {
 		manuallyTestPathSet.add(newTestPath);
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
-	
+
 	public void addAutomatic(Path<Integer> newTestPath) {
 		testPathSet.add(newTestPath);
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
 
 	public void remove(Set<Path<Integer>> selectedTestPaths) {
-		for(Path<Integer> path : selectedTestPaths) {
+		for (Path<Integer> path : selectedTestPaths) {
 			testPathSet.remove(path);
 			manuallyTestPathSet.remove(path);
 		}
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
-	
+
 	public void clearAutomatic() {
 		testPathSet.clear();
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
-	
+
 	public void clearManually() {
 		manuallyTestPathSet.clear();
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
-	
-	
+
 	public void clearAll() {
 		testPathSet.clear();
 		manuallyTestPathSet.clear();
 		setChanged();
-		notifyObservers(new TestPathChangedEvent(getTestPaths(), getTestPathsManuallyAdded()));
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getTestPathsManuallyAdded()));
 	}
-	
-	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {		
+
+	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {
 		return manuallyTestPathSet;
 	}
-	
+
 	public Iterable<Path<Integer>> getTestPaths() {
 		return testPathSet;
 	}
-	
+
 	public boolean isManuallyAdded(Path<Integer> path) {
 		return manuallyTestPathSet.contains(path);
 	}

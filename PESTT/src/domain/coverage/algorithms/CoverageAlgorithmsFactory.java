@@ -6,8 +6,9 @@ import domain.constants.GraphCoverageCriteriaId;
 public enum CoverageAlgorithmsFactory {
 
 	INSTANCE;
-	
-	public ICoverageAlgorithms<Integer> getCoverageAlgorithm(SourceGraph sourceGraph, GraphCoverageCriteriaId coverageCriteria) {
+
+	public ICoverageAlgorithms<Integer> getCoverageAlgorithm(
+			SourceGraph sourceGraph, GraphCoverageCriteriaId coverageCriteria) {
 		// verify what is the coverage to apply.
 		if (coverageCriteria == GraphCoverageCriteriaId.COMPLETE_PATH)
 				return new CompletePathCoverage<Integer>(sourceGraph.getSourceGraph());

@@ -7,14 +7,15 @@ import ui.constants.TableViewers;
 import ui.display.views.structural.TableViewerFactory;
 
 public class ViewDataFlowCriteria extends ViewPart {
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
-		TableViewerFactory.INSTANCE.createTebleViewer(parent, getSite(), TableViewers.DEF_USES_VIEWER);
+		TableViewerFactory.INSTANCE.createTableViewer(parent, getSite(),
+				TableViewers.DEF_USES_VIEWER);
 	}
 
 	@Override
 	public void setFocus() {
 		// does nothing.
-	}	
+	}
 }

@@ -16,7 +16,7 @@ import ui.StatusImages;
 import ui.constants.Images;
 
 public class RemoveDialog extends Dialog {
-	
+
 	private String message;
 	private String input;
 
@@ -84,9 +84,9 @@ public class RemoveDialog extends Dialog {
 				shell.close();
 			}
 		});
-		
+
 		// Create the YES button and add a handler.
-		Button yes = new Button(shell, SWT.PUSH);	
+		Button yes = new Button(shell, SWT.PUSH);
 		Image okImage = images.getImage().get(Images.PASS);
 		yes.setImage(okImage);
 		yes.setText("Yes");
