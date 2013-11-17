@@ -9,6 +9,10 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 
 	private List<Node<V>> nodes;
 
+	// for serialization purposes
+	protected Path() {
+	}
+	
 	// pre: nodes.size() > 0
 	public Path(Collection<Node<V>> nodes) {
 		this.nodes = new LinkedList<Node<V>>(nodes);

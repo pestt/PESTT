@@ -45,16 +45,9 @@ public class DefUsesSet extends Observable implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object data) {
-		if(data instanceof TestRequirementChangedEvent) 
-			switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
-				case ALL_DU_PATHS:
-				case ALL_DEFS:
-				case ALL_USES:
+		if(data instanceof TestRequirementChangedEvent && 
+				GraphCoverageCriteriaId.isADefUsesCoverageCriteria(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria())) 
 					getTestRequirements(((TestRequirementChangedEvent) data).testRequirementSet);
-					break;
-				default:
-					break;
-			}		
 	}
 
 	/***
@@ -350,11 +343,9 @@ public class DefUsesSet extends Observable implements Observer {
 		Set<AbstractPath<Integer>> result = new LinkedHashSet<AbstractPath<Integer>>();
 		List<Node<Integer>> first = new ArrayList<Node<Integer>>();
 		List<Node<Integer>> last = new ArrayList<Node<Integer>>();
-		switch(criteria) {
-			case ALL_DU_PATHS:
+		if (criteria == GraphCoverageCriteriaId.ALL_DU_PATHS) 
 				result = list;
-				break;
-			case ALL_DEFS:
+		else if (criteria == GraphCoverageCriteriaId.ALL_DEFS) {
 				for(AbstractPath<Integer> path : list) {
 					if(first.isEmpty()) {
 						first.add(path.from());
@@ -366,8 +357,8 @@ public class DefUsesSet extends Observable implements Observer {
 						}
 					}
 				}
-				break;
-			case ALL_USES:
+		     }
+		else if (criteria == GraphCoverageCriteriaId.ALL_USES) {
 				for(AbstractPath<Integer> path : list) {
 					if(first.isEmpty()) {
 						first.add(path.from());
@@ -390,9 +381,6 @@ public class DefUsesSet extends Observable implements Observer {
 						}
 					}
 				}
-				break;
-			default:
-				break;
 		}
 		return result;
 	}

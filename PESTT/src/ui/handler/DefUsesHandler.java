@@ -9,6 +9,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import domain.constants.GraphCoverageCriteriaId;
 import ui.constants.Messages;
 
 public class DefUsesHandler extends AbstractHandler {
@@ -19,7 +20,7 @@ public class DefUsesHandler extends AbstractHandler {
 		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
 			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
 				Activator.getDefault().getEditorController().setListenUpdates(false);
-				if(isADefUsesCoverageVriteria())
+				if(GraphCoverageCriteriaId.isADefUsesCoverageCriteria(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()))
 					Activator.getDefault().getDefUsesController().generateDefUses();
 				else
 					MessageDialog.openInformation(window.getShell(), Messages.DEF_USES_TITLE, Messages.DEF_USES_CRITERIA_SELECT_MSG);
@@ -29,16 +30,5 @@ public class DefUsesHandler extends AbstractHandler {
 		else
 			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
-	}
-	
-	private boolean isADefUsesCoverageVriteria() {
-		switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
-			case ALL_DU_PATHS:
-			case ALL_USES:
-			case ALL_DEFS:
-				return true;
-			default:
-				return false;
-		}
 	}
 }

@@ -76,14 +76,15 @@ public class RefreshHandler extends AbstractHandler {
 		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator.getDefault().getSourceGraphController().getJavadocAnnotations();
 		List<String> criteria = javadocAnnotations.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
 		if(criteria != null && !criteria.isEmpty()) {
-			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
+			//TODO: fmartins: next line is not correct but we will abandon JavaDoc for getting tests infor
+//			Activator.getDefault().getTestRequirementController().selectCoverageCriteria(GraphCoverageCriteriaId.valueOf(criteria.get(0)));
 			List<String> tour = javadocAnnotations.get(JavadocTagAnnotations.TOUR_TYPE);
 			if(!tour.isEmpty())
 				Activator.getDefault().getTestPathController().selectTourType(tour.get(0));
 			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH, Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
 			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.INFEASIBLE_PATH, Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
 			setInformationFromJavadoc(window, javadocAnnotations, JavadocTagAnnotations.ADDITIONAL_TEST_PATH, Messages.TEST_PATH_TITLE, Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n", "\n" + Messages.TEST_PATH_REMOVE_MSG);			
-			if(isADefUsesCoverageVriteria())
+			if(GraphCoverageCriteriaId.isADefUsesCoverageCriteria(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()))
 				Activator.getDefault().getDefUsesController().generateDefUses();
 			Activator.getDefault().getTestRequirementController().generateTestRequirement();
 		}
@@ -113,17 +114,6 @@ public class RefreshHandler extends AbstractHandler {
 				}
 			else
 				MessageDialog.openInformation(window.getShell(), title, prefix + msg + sufix); // message displayed when the inserted test requirement is not valid.
-		}
-	}
-
-	private boolean isADefUsesCoverageVriteria() {
-		switch(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()) {
-			case ALL_DU_PATHS:
-			case ALL_USES:
-			case ALL_DEFS:
-				return true;
-			default:
-				return false;
 		}
 	}
 
