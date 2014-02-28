@@ -1,6 +1,6 @@
 package domain.constants;
 
-public enum LogicCoverageCriteriaId {
+public enum LogicCoverageCriteriaId implements CoverageCriteriaId {
 	
 	COMPLETE_CLAUSE,
 	RESTRICTED_ACTIVE_CLAUSE,

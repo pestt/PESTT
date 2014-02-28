@@ -10,6 +10,7 @@ import domain.DefUsesSet;
 import domain.SourceGraph;
 import domain.TestPathSet;
 import domain.TestRequirementSet;
+import domain.TestSuite;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;
@@ -32,6 +33,7 @@ public class PESTT {
 	private DefUsesController defusesController;
 	private BytemanController bytemanController;
 	private ViewController viewController;
+	private TestSuite testSuite;
 	
 	public PESTT() {
 		editorController = new EditorController();
@@ -47,6 +49,7 @@ public class PESTT {
 		defusesController = new DefUsesController(new DefUsesSet());
 		bytemanController = new BytemanController();
 		viewController = new ViewController();
+		testSuite = new TestSuite("default.xml");
 	}
 	
 	public SourceGraphController getSourceGraphController() {
@@ -87,5 +90,9 @@ public class PESTT {
 
 	public ViewController getViewController() {
 		return viewController;
+	}
+
+	public TestSuite getTestSuite() {
+		return testSuite;
 	}
 }

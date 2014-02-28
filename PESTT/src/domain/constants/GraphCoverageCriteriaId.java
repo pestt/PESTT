@@ -1,15 +1,15 @@
 package domain.constants;
 
-public enum GraphCoverageCriteriaId {
+public class GraphCoverageCriteriaId extends CoverageCriteriaId {
 	
-	COMPLETE_PATH,
-	PRIME_PATH,
-	ALL_DU_PATHS,
-	EDGE_PAIR,
-	COMPLETE_ROUND_TRIP,
-	ALL_USES,
-	EDGE, 
-	SIMPLE_ROUND_TRIP, 
-	ALL_DEFS, 
-	NODE;
+	public static GraphCoverageCriteriaId COMPLETE_PATH = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId PRIME_PATH = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId ALL_DU_PATHS = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId EDGE_PAIR = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId COMPLETE_ROUND_TRIP = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId ALL_USES = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId EDGE = new GraphCoverageCriteriaId();
+	public static GraphCoverageCriteriaId SIMPLE_ROUND_TRIP = new GraphCoverageCriteriaId(); 
+	public static GraphCoverageCriteriaId ALL_DEFS = new GraphCoverageCriteriaId(); 
+	public static GraphCoverageCriteriaId NODE = new GraphCoverageCriteriaId();
 }
