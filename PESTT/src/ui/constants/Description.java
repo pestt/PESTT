@@ -1,7 +1,7 @@
 package ui.constants;
 
 public class Description {
-	
+
 	public static final String VIEW_GRAPH = "PESTT.ViewGraph";
 	public static final String VIEW_STRUCTURAL_COVERAGE = "PESTT.ViewStructuralCoverage";
 	public static final String VIEW_DATA_FLOW_COVERAGE = "PESTT.ViewDataFlowCoverage";
@@ -14,9 +14,9 @@ public class Description {
 	public static final String NONE = "NONE";
 	public static final String EMPTY = "";
 	public static final String NODE = "node";
-	public static final String EDGE = "edge" ;
+	public static final String EDGE = "edge";
 	public static final String GRAPH = "graph";
 	public static final String STOP = "stop";
 	public static final String TOTAL = "Total";
-	
+
 }

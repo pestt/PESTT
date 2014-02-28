@@ -17,7 +17,7 @@ import ui.StatusImages;
 import ui.constants.Images;
 
 public class InputDialog extends Dialog {
-	
+
 	private String message;
 	private String input;
 
@@ -92,20 +92,20 @@ public class InputDialog extends Dialog {
 				shell.close();
 			}
 		});
-		
+
 		// Create the OK button and add a handler.
-				Button ok = new Button(shell, SWT.PUSH);
-				Image okImage = images.getImage().get(Images.PASS);
-				ok.setImage(okImage);
-				ok.setText("OK");
-				data = new GridData(GridData.FILL_HORIZONTAL);
-				ok.setLayoutData(data);
-				ok.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent event) {
-						input = text.getText();
-						shell.close();
-					}
-				});
+		Button ok = new Button(shell, SWT.PUSH);
+		Image okImage = images.getImage().get(Images.PASS);
+		ok.setImage(okImage);
+		ok.setText("OK");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		ok.setLayoutData(data);
+		ok.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				input = text.getText();
+				shell.close();
+			}
+		});
 
 		// Set the OK button as the default, so user can type input and press Enter to dismiss
 		shell.setDefaultButton(ok);

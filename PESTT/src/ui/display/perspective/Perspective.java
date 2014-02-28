@@ -8,10 +8,10 @@ import org.eclipse.ui.console.IConsoleConstants;
 import ui.constants.Description;
 
 /**
- *  This class is meant to serve as an example for how various contributions 
- *  are made to a perspective. Note that some of the extension point id's are
- *  referred to as API constants while others are hardcoded and may be subject 
- *  to change. 
+ * This class is meant to serve as an example for how various contributions are
+ * made to a perspective. Note that some of the extension point id's are
+ * referred to as API constants while others are hardcoded and may be subject to
+ * change.
  */
 public class Perspective implements IPerspectiveFactory {
 
@@ -29,10 +29,11 @@ public class Perspective implements IPerspectiveFactory {
 	private void addViews() {
 		// Creates the overall folder layout. 
 		// Note that each new Folder uses a percentage of the remaining EditorArea.
-	
+
 		String editorarea = IPageLayout.ID_EDITOR_AREA;
-				
-		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorarea);
+
+		IFolderLayout bottom = layout.createFolder("bottom",
+				IPageLayout.BOTTOM, 0.75f, editorarea);
 		bottom.addView(Description.VIEW_STRUCTURAL_COVERAGE);
 		bottom.addView(Description.VIEW_DATA_FLOW_COVERAGE);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
@@ -40,8 +41,9 @@ public class Perspective implements IPerspectiveFactory {
 		bottom.addView("org.eclipse.pde.runtime.LogView");
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView("org.eclipse.jdt.junit.ResultView");
-		
-		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.15f, editorarea);
+
+		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT,
+				0.15f, editorarea);
 		left.addView(IPageLayout.ID_PROJECT_EXPLORER);
 	}
 

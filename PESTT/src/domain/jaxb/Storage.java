@@ -15,7 +15,10 @@ import org.eclipse.core.runtime.IPath;
 
 public class Storage {
 
-	private static final String INFO_XML = Activator.getDefault().getEditorController().getJavaProject().getProject().getRawLocation().toOSString() + IPath.SEPARATOR + "pestt_info.xml";
+	private static final String INFO_XML = Activator.getDefault()
+			.getEditorController().getJavaProject().getProject()
+			.getRawLocation().toOSString()
+			+ IPath.SEPARATOR + "pestt_info.xml";
 	JAXBContext context;
 
 	public Storage() {
@@ -27,7 +30,7 @@ public class Storage {
 	}
 
 	public void objectToXML(InformationDetails info) {
-		try {	     
+		try {
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			Writer writer = new FileWriter(INFO_XML);
@@ -43,21 +46,24 @@ public class Storage {
 	}
 
 	public void XMLToObject() {
-		/*try {
+		/*-
+		try {
 			System.out.println();
 			System.out.println("Output from our XML File: ");
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Bookstore bookstore2 = (Bookstore) unmarshaller.unmarshal(new FileReader(INFO_XML));
+			Bookstore bookstore2 = (Bookstore) unmarshaller
+					.unmarshal(new FileReader(INFO_XML));
 			for (int i = 0; i < bookstore2.getBooksList().toArray().length; i++) {
-			      System.out.println("Book " + (i + 1) + ": "
-			          + bookstore2.getBooksList().get(i).getName() + " from "
-			          + bookstore2.getBooksList().get(i).getAuthor());
-			    }
+				System.out.println("Book " + (i + 1) + ": "
+						+ bookstore2.getBooksList().get(i).getName() + " from "
+						+ bookstore2.getBooksList().get(i).getAuthor());
+			}
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}*/
+		}
+		 */
 	}
 
 }

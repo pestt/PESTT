@@ -16,7 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 import ui.constants.Preferences;
 
-public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class PreferencePage extends FieldEditorPreferencePage implements
+		IWorkbenchPreferencePage {
 
 	public PreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -25,20 +26,21 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	public void createFieldEditors() {
-		addField(new FileFieldEditor(Preferences.DOT_PATH, Preferences.DOT_PATH_LABEL, getFieldEditorParent()));
+		addField(new FileFieldEditor(Preferences.DOT_PATH,
+				Preferences.DOT_PATH_LABEL, getFieldEditorParent()));
 		Link link = new Link(getFieldEditorParent(), SWT.NONE);
 		link.setText(Preferences.SUPPORT_PAGE);
-		link.addSelectionListener(new SelectionAdapter(){
-	        @Override
-	        public void widgetSelected(SelectionEvent e) {
-	        	try {
-	        		PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
-	              } 
-	             catch(Exception ex) {
-	                 ex.printStackTrace();
-	            } 
-	        }
-	    });
+		link.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					PlatformUI.getWorkbench().getBrowserSupport()
+							.getExternalBrowser().openURL(new URL(e.text));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@Override

@@ -8,14 +8,14 @@ import org.eclipse.core.runtime.CoreException;
 import ui.constants.MarkersType;
 
 public class Markers {
-	
+
 	private IFile file;
 	private IMarker marker;
 
 	public Markers(IFile file) {
 		this.file = file;
 	}
-	
+
 	public void createMarks(String markerType, int offset, int length) {
 		try {
 			marker = file.createMarker(markerType);
@@ -25,13 +25,16 @@ public class Markers {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void deleteAllMarkers() {
 		try {
-			file.deleteMarkers(MarkersType.LINK_MARKER, true, IResource.DEPTH_INFINITE);
-			file.deleteMarkers(MarkersType.FULL_COVERAGE_MARKER, true, IResource.DEPTH_INFINITE);
-			file.deleteMarkers(MarkersType.NO_COVERAGE_MARKER, true, IResource.DEPTH_INFINITE);
-	} catch (CoreException e) {
+			file.deleteMarkers(MarkersType.LINK_MARKER, true,
+					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(MarkersType.FULL_COVERAGE_MARKER, true,
+					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(MarkersType.NO_COVERAGE_MARKER, true,
+					IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}

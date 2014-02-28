@@ -4,29 +4,47 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO rename
 public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
-	
+
+	/**
+	 * The subpaths of this path.
+	 */
 	protected List<AbstractPath<V>> subPaths;
-	
+
+	/**
+	 * Creates a new SequencePath.
+	 */
 	public SequencePath() {
 		subPaths = new LinkedList<AbstractPath<V>>();
 	}
-	
+
+	/**
+	 * Adds a subpath.
+	 * 
+	 * @param subPath
+	 */
 	public void addSubPath(AbstractPath<V> subPath) {
 		subPaths.add(subPath);
-	}	
+	}
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder ();
-		s.append("[");		
+		StringBuilder s = new StringBuilder();
+		s.append("[");
 		s.append(subPathToString(this));
 		s.append("]");
 		return s.toString();
 	}
-	
-	public String subPathToString(AbstractPath<V> path) {
-		StringBuilder result = new StringBuilder ();
+
+	/**
+	 * Converts a subpath to String.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private String subPathToString(AbstractPath<V> path) {
+		StringBuilder result = new StringBuilder();
 		if (path instanceof SequencePath) {
 			SequencePath<V> seq = (SequencePath<V>) path;
 			Iterator<AbstractPath<V>> it = seq.subPaths.iterator();

@@ -14,15 +14,18 @@ import domain.constants.TestType;
 import domain.tests.generation.GenerateTestPaths;
 
 public class GenerateTestPathHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Graph<Integer> graph = Activator.getDefault().getSourceGraphController().getSourceGraph();
-		Set<Path<Integer>> paths = new GenerateTestPaths<Integer>(graph).getTestPaths();
-		if(paths != null && !paths.isEmpty()) {
-			for(Path<Integer> newTestPath : paths)
-				Activator.getDefault().getTestPathController().addTestPath(newTestPath, TestType.AUTOMATIC);
+		Graph<Integer> graph = Activator.getDefault()
+				.getSourceGraphController().getSourceGraph();
+		Set<Path<Integer>> paths = new GenerateTestPaths<Integer>(graph)
+				.getTestPaths();
+		if (paths != null && !paths.isEmpty()) {
+			for (Path<Integer> newTestPath : paths)
+				Activator.getDefault().getTestPathController()
+						.addTestPath(newTestPath, TestType.AUTOMATIC);
 		}
 		return null;
-	}	
+	}
 }

@@ -12,8 +12,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
+import adt.graph.IGraphVisitor;
 import domain.SourceGraph;
-import domain.graph.visitors.IGraphVisitor;
 
 public class SourceGraphController {
 
@@ -22,31 +22,31 @@ public class SourceGraphController {
 	public SourceGraphController(SourceGraph sourceGraph) {
 		this.sourceGraph = sourceGraph;
 	}
-	
+
 	public void addObserverSourceGraph(Observer o) {
 		sourceGraph.addObserver(o);
 	}
-	
+
 	public void deleteObserverSourceGraph(Observer o) {
 		sourceGraph.deleteObserver(o);
 	}
-	
+
 	public void create(ICompilationUnit unit, String methodName) {
 		sourceGraph.create(unit, methodName);
 	}
-	
+
 	public void applyVisitor(IGraphVisitor<Integer> visitor) {
 		sourceGraph.applyVisitor(visitor);
 	}
-	
+
 	public List<SingleVariableDeclaration> getMethodParameters() {
 		return sourceGraph.getMethodParameters();
 	}
-	
+
 	public List<VariableDeclarationFragment> getClassAttributes() {
 		return sourceGraph.getClassAttributes();
 	}
-	
+
 	public List<EnumDeclaration> getEnumClassAttributes() {
 		return sourceGraph.getEnumClassAttributes();
 	}
@@ -54,11 +54,11 @@ public class SourceGraphController {
 	public Graph<Integer> getSourceGraph() {
 		return sourceGraph.getSourceGraph();
 	}
-	
+
 	public int numberOfNodes() {
 		return sourceGraph.numberOfNodes();
 	}
-	
+
 	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {
 		return sourceGraph.getCompilationUnit(unit);
 	}
@@ -66,11 +66,11 @@ public class SourceGraphController {
 	public void updateMetadataInformation(Graph<Integer> graph) {
 		sourceGraph.updateMetadataInformation(graph);
 	}
-	
+
 	public Map<JavadocTagAnnotations, List<String>> getJavadocAnnotations() {
 		return sourceGraph.getJavadocAnnotations();
 	}
-	
+
 	public byte[] getMethodHash() {
 		return sourceGraph.getMethodHash();
 	}

@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.Image;
 import ui.constants.Images;
 
 public class StatusImages {
-	
+
 	private List<Image> images; // the list of images.
 	private Image PASS; // the pas image.
 	private Image FAIL; // the fail image
@@ -22,8 +22,8 @@ public class StatusImages {
 		images.add(PASS); // add pass image to the list.
 		images.add(FAIL); // add fail image to the list.
 	}
-	
+
 	public List<Image> getImage() {
 		return images;
-	}	
+	}
 }

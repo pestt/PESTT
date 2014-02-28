@@ -4,7 +4,6 @@ import java.util.Set;
 
 import adt.graph.Path;
 
-
 public class TestPathSelectedEvent {
 
 	public final Set<Path<Integer>> selectedTestPaths;

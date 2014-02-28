@@ -12,18 +12,23 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import ui.constants.Messages;
 
 public class LinkHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
-			if(Activator.getDefault().getEditorController().isEverythingMatching()) {
-		    	boolean state = HandlerUtil.toggleCommandState(event.getCommand());
-		    	Activator.getDefault().getCFGController().settLinkState(!state);
-		    } else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching()) {
+				boolean state = HandlerUtil.toggleCommandState(event
+						.getCommand());
+				Activator.getDefault().getCFGController().setLinkState(!state);
+			} else
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+			MessageDialog.openInformation(window.getShell(),
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
-	}	
+	}
 }

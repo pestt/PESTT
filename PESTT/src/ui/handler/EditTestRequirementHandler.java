@@ -15,41 +15,57 @@ import ui.dialog.InputDialog;
 import adt.graph.Path;
 
 public class EditTestRequirementHandler extends AbstractHandler {
-	
+
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if(Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
-			if(Activator.getDefault().getEditorController().isEverythingMatching())
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		if (Activator.getDefault().getSourceGraphController().numberOfNodes() >= 1)
+			if (Activator.getDefault().getEditorController()
+					.isEverythingMatching())
 				editTestRequirement(window, "");
-			else 
-				MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);	
+			else
+				MessageDialog.openInformation(window.getShell(),
+						Messages.DRAW_GRAPH_TITLE, Messages.GRAPH_UPDATE_MSG);
 		else
-			MessageDialog.openInformation(window.getShell(), Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
+			MessageDialog.openInformation(window.getShell(),
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG);
 		return null;
 	}
-	
-	private void editTestRequirement(IWorkbenchWindow window, String input) throws ExecutionException {
-		if(Activator.getDefault().getTestRequirementController().isTestRequirementSelected())  {
-			if(input.equals(Description.EMPTY)) {
-				input = Activator.getDefault().getTestRequirementController().getSelectedTestRequirement().toString();
+
+	private void editTestRequirement(IWorkbenchWindow window, String input)
+			throws ExecutionException {
+		if (Activator.getDefault().getTestRequirementController()
+				.isTestRequirementSelected()) {
+			if (input.equals(Description.EMPTY)) {
+				input = Activator.getDefault().getTestRequirementController()
+						.getSelectedTestRequirement().toString();
 				input = input.substring(1, input.length() - 1);
 			}
 			String message = Messages.SAVE_CHANGES;
-			InputDialog dialog = new InputDialog(window.getShell(), message, input);
+			InputDialog dialog = new InputDialog(window.getShell(), message,
+					input);
 			dialog.open();
 			input = dialog.getInput();
-			if(input != null)
-				if(!input.equals(Description.EMPTY)) {
-					Path<Integer> newTestRequirement = Activator.getDefault().getTestRequirementController().createTestRequirement(input);
-					if(newTestRequirement != null) {
-						Activator.getDefault().getTestRequirementController().removeSelectedTestRequirement();
-						Activator.getDefault().getTestRequirementController().addTestRequirement(newTestRequirement);
+			if (input != null)
+				if (!input.equals(Description.EMPTY)) {
+					Path<Integer> newTestRequirement = Activator.getDefault()
+							.getTestRequirementController()
+							.createTestRequirement(input);
+					if (newTestRequirement != null) {
+						Activator.getDefault().getTestRequirementController()
+								.removeSelectedTestRequirement();
+						Activator.getDefault().getTestRequirementController()
+								.addTestRequirement(newTestRequirement);
 					} else {
-						MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
+						MessageDialog.openInformation(window.getShell(),
+								Messages.TEST_REQUIREMENT_TITLE,
+								Messages.TEST_REQUIREMENT_INVALID_INPUT_MSG); // message displayed when the inserted test requirement is not valid.
 						editTestRequirement(window, input);
 					}
 				} else {
-					MessageDialog.openInformation(window.getShell(), Messages.TEST_REQUIREMENT_TITLE, Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
+					MessageDialog.openInformation(window.getShell(),
+							Messages.TEST_REQUIREMENT_TITLE,
+							Messages.TEST_REQUIREMENT_INPUT_MSG); // message displayed when the inserted test requirement is empty.
 					editTestRequirement(window, input);
 				}
 		}

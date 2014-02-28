@@ -13,21 +13,27 @@ import ui.constants.TableViewers;
 
 public abstract class AbstractTableViewer {
 
-	protected TableViewer createViewTable(Composite parent, IWorkbenchPartSite site, TableViewers id) {
+	protected TableViewer createViewTable(Composite parent,
+			IWorkbenchPartSite site, TableViewers id) {
 		TableViewer viewer = null;
-		switch(id) {
-			case TESTREQUIREMENTSVIEWER :
-				viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-				break;
-			case TESTPATHSVIEWER:
-				viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-				break;
-			case STATISTICSVIEWER:
-				viewer = new TableViewer(parent, SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-				break;
-			case DEFUSESVIEWER:
-				viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-				break;
+		switch (id) {
+		case TESTREQUIREMENTSVIEWER:
+			viewer = new TableViewer(parent, SWT.CHECK | SWT.SINGLE
+					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
+					| SWT.BORDER);
+			break;
+		case TESTPATHSVIEWER:
+			viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
+					| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+			break;
+		case STATISTICSVIEWER:
+			viewer = new TableViewer(parent, SWT.NONE | SWT.H_SCROLL
+					| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+			break;
+		case DEFUSESVIEWER:
+			viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL
+					| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+			break;
 		}
 		Table table = viewer.getTable(); // create the table.
 		table.setToolTipText("");
@@ -37,9 +43,11 @@ public abstract class AbstractTableViewer {
 		site.setSelectionProvider(viewer); // Make the selection available to other views.
 		return viewer;
 	}
-	
-	protected TableViewerColumn createColumnsHeaders(TableViewer viewer, String columnName, int columnWidth, int colNumber) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE); // the columns style.
+
+	protected TableViewerColumn createColumnsHeaders(TableViewer viewer,
+			String columnName, int columnWidth, int colNumber) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
+				SWT.NONE); // the columns style.
 		final TableColumn column = viewerColumn.getColumn(); // get the column.
 		column.setText(columnName); // set the column title.
 		column.setWidth(columnWidth); // set the column width.
