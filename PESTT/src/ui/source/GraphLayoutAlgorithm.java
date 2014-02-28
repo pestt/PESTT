@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.swt.widgets.Composite;
 
 public class GraphLayoutAlgorithm implements LayoutAlgorithm {
@@ -30,8 +30,8 @@ public class GraphLayoutAlgorithm implements LayoutAlgorithm {
 	@Override
 	public void applyLayout(boolean clean) {
 		EntityLayout[] entries = context.getEntities();
-		layoutHeight = context.getBounds().height;
-		layoutWidth = context.getBounds().width;
+		layoutHeight = context.getBounds().getHeight();
+		layoutWidth = context.getBounds().getWidth();
 		setNodePosition(graphElements, graphElements.getNodesInfo(), entries);
 	}
 

@@ -25,13 +25,12 @@ import java.util.Observer;
 import main.activator.Activator;
 
 import org.eclipse.draw2d.Label;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.LayoutStyles;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,7 +42,6 @@ import ui.constants.Messages;
 import ui.events.RefreshLogicGraphEvent;
 import domain.constants.LogicCoverageCriteriaId;
 
-@SuppressWarnings("deprecation")
 public class LogicCoverageCriteria implements Observer {
 
 	private Graph graph;
@@ -178,7 +176,9 @@ public class LogicCoverageCriteria implements Observer {
 
 	private void setLayout() {
 		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(
-				LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+				TreeLayoutAlgorithm.TOP_DOWN), true);
+//				LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+				
 	}
 
 	private void addSelectionListener() {

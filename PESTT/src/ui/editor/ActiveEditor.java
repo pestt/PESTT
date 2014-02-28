@@ -330,16 +330,6 @@ public class ActiveEditor implements Observer {
 		c1.addMethodTest(new MethodTest("void m2(int x)"));
 		t1.addClassTest(c1);
 		testSuite.addPackageTest(t1);
-	
-	private void updateTestData(String packageName, String className, String methodSignature) {
-		TestSuite testSuite = Activator.getDefault().getTestSuite();
-
-		PackageTest t1 = new PackageTest("domain");
-		ClassTest c1 = new ClassTest ("domain.A");
-		c1.addMethodTest(new MethodTest("int m1 ()"));
-		c1.addMethodTest(new MethodTest("void m2(int x)"));
-		t1.addClassTest(c1);
-		testSuite.addPackageTest(t1);
 		
 		testSuite.update();
 		testSuite.flush();

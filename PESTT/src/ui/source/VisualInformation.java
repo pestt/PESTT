@@ -1,6 +1,5 @@
 package ui.source;
 
-import static org.eclipse.jdt.core.dom.ASTNode.CATCH_CLAUSE;
 import static org.eclipse.jdt.core.dom.ASTNode.DO_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.ENHANCED_FOR_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.FOR_STATEMENT;
@@ -187,10 +186,10 @@ public class VisualInformation {
 										|| info.equals("return;"))
 									gconnection.setText(info);
 								else if (value.equals(TRUE)
-										&& !info.substring(0, 1).equals("¬"))
+										&& !info.substring(0, 1).equals("��"))
 									gconnection.setText(info); // set the information to the edge.
 								else if (value.equals(FALSE)
-										&& info.substring(0, 1).equals("¬"))
+										&& info.substring(0, 1).equals("��"))
 									gconnection.setText(info); // set the information to the edge.
 							} else
 								gconnection.setText(info); // set the information to the edge.
@@ -232,13 +231,13 @@ public class VisualInformation {
 			length = getLength(start, instruction.getStartPosition(),
 					"switch".length());
 			break;
+//		case CATCH_CLAUSE:
+//			length = getLength(start, instruction.getStartPosition(),
+//					"catch".length());
+//			break;
 		case TRY_STATEMENT:
 			length = getLength(start, instruction.getStartPosition(),
 					"try".length());
-			break;
-		case CATCH_CLAUSE:
-			length = getLength(start, instruction.getStartPosition(),
-					"catch".length());
 			break;
 		case WHILE_STATEMENT:
 			length = getLength(start, instruction.getStartPosition(),
@@ -496,9 +495,9 @@ public class VisualInformation {
 		case TRY_STATEMENT:
 			endPosition = aNode.getStartPosition() + "try".length();
 			break;
-		case CATCH_CLAUSE:
-			endPosition = aNode.getStartPosition() + "catch".length();
-			break;
+//		case CATCH_CLAUSE:
+//			endPosition = aNode.getStartPosition() + "catch".length();
+//			break;
 		case WHILE_STATEMENT:
 			endPosition = aNode.getStartPosition() + "while".length();
 			break;
@@ -525,7 +524,7 @@ public class VisualInformation {
 		case SWITCH_STATEMENT:
 		case WHILE_STATEMENT:
 		case TRY_STATEMENT:
-		case CATCH_CLAUSE:
+//		case CATCH_CLAUSE:
 			return true;
 		default:
 			return false;
