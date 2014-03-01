@@ -18,7 +18,7 @@ public class StatisticsController {
 		statisticsSet.addObserver(o);
 	}
 
-	public void getStatistics(Set<Path<Integer>> selectedTestPaths) {
+	public void getStatistics(Set<Path> selectedTestPaths) {
 		statisticsSet.getStatistics(selectedTestPaths);
 	}
 

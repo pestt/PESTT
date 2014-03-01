@@ -6,18 +6,18 @@ import java.util.Set;
 import adt.graph.DepthFirstGraphVisitor;
 import adt.graph.Node;
 
-public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor<Integer> {
+public class RenumNodesGraphVisitor extends DepthFirstGraphVisitor {
 
 	private int nodeNum = 0;
-	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one
+	private Set<Node> visitedNodes; // nodes must be visited just one
 												// time
 
 	public RenumNodesGraphVisitor() {
-		visitedNodes = new HashSet<Node<Integer>>();
+		visitedNodes = new HashSet<Node>();
 	}
 
 	@Override
-	public boolean visit(Node<Integer> node) {
+	public boolean visit(Node node) {
 		if (!visitedNodes.contains(node)) {
 			visitedNodes.add(node);
 			node.setValue(nodeNum);

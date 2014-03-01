@@ -32,7 +32,7 @@ import domain.tests.execution.launch.JUnitTestRunListener;
 
 public class BytemanController implements Observer {
 
-	private Graph<Integer> sourceGraph;
+	private Graph sourceGraph;
 	private FileCreator output;
 	private JUnitTestRunListener listener;
 	private ArrayList<String> tests;
@@ -106,14 +106,14 @@ public class BytemanController implements Observer {
 	private List<EdgeLine> getNodeFirstLineNumber() {
 		List<EdgeLine> lines = new ArrayList<EdgeLine>();
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
-		for (Node<Integer> node : sourceGraph.getNodes()) {
+		for (Node node : sourceGraph.getNodes()) {
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph
 					.getMetadata(node);
 			if (map != null) {
 				int nodeLine = map.values().iterator().next().getStartLine();
-				Set<Edge<Integer>> fromNode = sourceGraph.getNodeEdges(node);
+				Set<Edge> fromNode = sourceGraph.getNodeEdges(node);
 				if (isCondition(node))
-					for (Edge<Integer> edge : fromNode) {
+					for (Edge edge : fromNode) {
 						HashMap<ASTNode, Line> instr = (HashMap<ASTNode, Line>) sourceGraph
 								.getMetadata(edge.getEndNode());
 						if (instr != null) {
@@ -123,7 +123,7 @@ public class BytemanController implements Observer {
 						}
 					}
 				else {
-					for (Edge<Integer> edge : fromNode)
+					for (Edge edge : fromNode)
 						if (isCondition(edge.getEndNode()))
 							addToLines(lines, edge, nodeLine);
 						else {
@@ -141,7 +141,7 @@ public class BytemanController implements Observer {
 		return lines;
 	}
 
-	private void addToLines(List<EdgeLine> lines, Edge<Integer> edge, int line) {
+	private void addToLines(List<EdgeLine> lines, Edge edge, int line) {
 		boolean hasLine = false;
 		for (EdgeLine eg : lines)
 			if (eg.line == line) {
@@ -155,7 +155,7 @@ public class BytemanController implements Observer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean isCondition(Node<Integer> node) {
+	private boolean isCondition(Node node) {
 		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph
 				.getMetadata(node);
 		if (nodeInstructions != null) {
@@ -185,9 +185,9 @@ public class BytemanController implements Observer {
 	}
 
 	private void getExecutedTestPaths() {
-		List<Path<Integer>> paths = getExecutedPaths();
+		List<Path> paths = getExecutedPaths();
 		for (int i = 0; i < paths.size(); i++) {
-			Path<Integer> newTestPath = paths.get(i);
+			Path newTestPath = paths.get(i);
 			String tooltip = tests.get(i);
 			if (newTestPath != null)
 				Activator.getDefault().getTestPathController()
@@ -195,12 +195,12 @@ public class BytemanController implements Observer {
 		}
 	}
 
-	public List<Path<Integer>> getExecutedPaths() {
+	public List<Path> getExecutedPaths() {
 		String mthd = Activator.getDefault().getEditorController()
 				.getSelectedMethod();
 		mthd = mthd.substring(0, mthd.indexOf("("));
 		ExecutedPaths reader = new ExecutedPaths(output.getFile(), mthd);
-		List<Path<Integer>> paths = reader.getExecutedPaths();
+		List<Path> paths = reader.getExecutedPaths();
 		return paths;
 	}
 

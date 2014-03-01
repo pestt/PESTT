@@ -4,9 +4,9 @@ import adt.graph.AbstractPath;
 
 public class TestRequirementSelectedEvent {
 
-	public final AbstractPath<Integer> selectedTestRequirement;
+	public final AbstractPath selectedTestRequirement;
 
-	public TestRequirementSelectedEvent(AbstractPath<Integer> selected) {
+	public TestRequirementSelectedEvent(AbstractPath selected) {
 		this.selectedTestRequirement = selected;
 	}
 

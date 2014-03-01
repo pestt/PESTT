@@ -6,7 +6,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 import ui.constants.TableViewers;
 import ui.display.views.structural.defuses.DefUsesViewerFactory;
-
+ 
 public enum TableViewerFactory {
 
 	INSTANCE;

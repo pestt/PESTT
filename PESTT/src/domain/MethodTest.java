@@ -19,83 +19,84 @@ public class MethodTest {
 	@XmlAttribute private String methodSignature;
 	@XmlElement private CoverageCriteriaId coverageCriteria;
 	@XmlElement private String tourType;
-	@XmlElement private TestRequirements testRequirementSet;
+	@XmlElement private TestRequirements testRequirements;
 	
 	public MethodTest() {
 	}
 
 	public MethodTest(String methodSignature) {
 		this.methodSignature = methodSignature;
+		testRequirements = new TestRequirements();
 	}
 	
 	public String getMethodSignature() {
 		return methodSignature;
 	}
 	
-	public void addManualTestRequirement(Path<Integer> path) {
-		testRequirementSet.addManualTestRequirement(path);
+	public void addManualTestRequirement(Path path) {
+		testRequirements.addManualTestRequirement(path);
 	}
 
-	public void removeManualTestRequirement(AbstractPath<Integer> selectedTestRequirement) {
-		testRequirementSet.remove(selectedTestRequirement);
+	public void removeManualTestRequirement(AbstractPath selectedTestRequirement) {
+		testRequirements.remove(selectedTestRequirement);
 	}
 
 	public void clearTestRequirements() {
-		testRequirementSet.clear();
+		testRequirements.clear();
 	}
 
 	public int size() {
-		return testRequirementSet.size();
+		return testRequirements.size();
 	}
 
 	public boolean hasInfinitePath() {
-		return testRequirementSet.hasInfinitePath();
+		return testRequirements.hasInfinitePath();
 	}
 
-	public boolean isInfeasible(AbstractPath<Integer> requirement) {
-		return testRequirementSet.isInfeasible(requirement);
+	public boolean isInfeasible(AbstractPath requirement) {
+		return testRequirements.isInfeasible(requirement);
 	}
 
-	public void removeTestRequirement(AbstractPath<Integer> requirement) {
-		testRequirementSet.remove(requirement);
+	public void removeTestRequirement(AbstractPath requirement) {
+		testRequirements.remove(requirement);
 	}
 
-	public void setInfeasible(AbstractPath<Integer> infeasible, boolean status) {
-		testRequirementSet.setInfeasible(infeasible, status);
+	public void setInfeasible(AbstractPath infeasible, boolean status) {
+		testRequirements.setInfeasible(infeasible, status);
 	}
 
 	public int infeasiblesSize() {
-		return testRequirementSet.infeasiblesSize();
+		return testRequirements.infeasiblesSize();
 	}
 
-	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {
-		testRequirementSet.generateTestRequirements(algorithm);
+	public void generateTestRequirements(ICoverageAlgorithms algorithm) {
+		testRequirements.generateTestRequirements(algorithm);
 	}
 
-	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
-		return testRequirementSet.getInfeasiblesTestRequirements();
+	public Iterable<AbstractPath> getInfeasiblesTestRequirements() {
+		return testRequirements.getInfeasiblesTestRequirements();
 	}
 
-	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
-		return testRequirementSet.getTestRequirementsManuallyAdded();
+	public Iterable<Path> getTestRequirementsManuallyAdded() {
+		return testRequirements.getTestRequirementsManuallyAdded();
 	}
 
-	public Iterable<AbstractPath<Integer>> getTestRequirements() {
-		return testRequirementSet.getTestRequirements();
+	public Iterable<AbstractPath> getTestRequirements() {
+		return testRequirements.getTestRequirements();
 	}
 
-	public Set<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
-		return testRequirementSet.getPathToured(seletedTestPath);
+	public Set<Path> getPathToured(Path seletedTestPath) {
+		return testRequirements.getPathToured(seletedTestPath);
 	}
 
-	public Set<Path<Integer>> getPathsTouredWithSideTrip(
-			Path<Integer> seletedTestPath) {
-		return testRequirementSet.getPathsTouredWithSideTrip(seletedTestPath);
+	public Set<Path> getPathsTouredWithSideTrip(
+			Path seletedTestPath) {
+		return testRequirements.getPathsTouredWithSideTrip(seletedTestPath);
 	}
 
-	public Set<Path<Integer>> getPathsTouredWithDeTour(
-			Path<Integer> seletedTestPath) {
-		return testRequirementSet.getPathsTouredWithDeTour(seletedTestPath);
+	public Set<Path> getPathsTouredWithDeTour(
+			Path seletedTestPath) {
+		return testRequirements.getPathsTouredWithDeTour(seletedTestPath);
 	}
 
 	

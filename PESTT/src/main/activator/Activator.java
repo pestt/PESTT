@@ -3,7 +3,7 @@ package main.activator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
+ 
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;

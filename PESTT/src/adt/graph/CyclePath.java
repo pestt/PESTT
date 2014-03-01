@@ -2,7 +2,7 @@ package adt.graph;
 
 import java.util.Collection;
 
-public class CyclePath<V extends Comparable<V>> extends Path<V> {
+public class CyclePath extends Path {
 
 	/**
 	 * Create a new CyclePath Object.
@@ -10,7 +10,7 @@ public class CyclePath<V extends Comparable<V>> extends Path<V> {
 	 * @param nodes
 	 *            - The list of nodes.
 	 */
-	public CyclePath(Collection<Node<V>> nodes) {
+	public CyclePath(Collection<Node> nodes) {
 		super(nodes);
 	}
 

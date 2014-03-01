@@ -12,38 +12,37 @@ import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
 
-public class AllDefsCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class AllDefsCoverage implements ICoverageAlgorithms {
 
-	private Graph<V> graph;
-	private Stack<Node<V>> nodes;
+	private Graph graph;
+	private Stack<Node> nodes;
 
-	public AllDefsCoverage(Graph<V> graph) {
+	public AllDefsCoverage(Graph graph) {
 		this.graph = graph;
-		nodes = new Stack<Node<V>>();
+		nodes = new Stack<Node>();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<AbstractPath<V>> getTestRequirements() {
-		Set<AbstractPath<V>> paths = new AllDuPathsCoverage<V>(graph)
+	public Set<AbstractPath> getTestRequirements() {
+		Set<AbstractPath> paths = new AllDuPathsCoverage(graph)
 				.getTestRequirements();
 		Map<String, List<List<Object>>> defusesByVariable = Activator
 				.getDefault().getDefUsesController().getDefUsesByVariable();
-		Set<AbstractPath<V>> result = new TreeSet<AbstractPath<V>>();
+		Set<AbstractPath> result = new TreeSet<AbstractPath>();
 		for (String key : defusesByVariable.keySet()) {
 			nodes.clear();
 			List<List<Object>> variableDefUses = defusesByVariable.get(key);
 			List<Object> defs = variableDefUses.get(0);
 			List<Object> uses = variableDefUses.get(1);
-			for (AbstractPath<V> path : paths)
+			for (AbstractPath path : paths)
 				if (isTestRequirement(defs, uses, path))
 					for (Object obj : defs) {
-						Node<V> node;
-						if (obj instanceof Edge<?>)
-							node = ((Edge<V>) obj).getBeginNode();
+						Node node;
+						if (obj instanceof Edge)
+							node = ((Edge) obj).getBeginNode();
 						else
-							node = ((Node<V>) obj);
+							node = ((Node) obj);
 						if (node == path.from() && !nodes.contains(node)) {
 							nodes.add(node);
 							result.add(path);
@@ -55,20 +54,20 @@ public class AllDefsCoverage<V extends Comparable<V>> implements
 
 	@SuppressWarnings("unchecked")
 	private boolean isTestRequirement(List<Object> defs, List<Object> uses,
-			AbstractPath<V> path) {
+			AbstractPath path) {
 		for (Object def : defs) {
-			Node<V> begin;
-			if (def instanceof Edge<?>)
-				begin = ((Edge<V>) def).getBeginNode();
+			Node begin;
+			if (def instanceof Edge)
+				begin = ((Edge) def).getBeginNode();
 			else
-				begin = ((Node<V>) def);
+				begin = ((Node) def);
 			if (begin == path.from())
 				for (Object use : uses) {
-					Node<V> end;
-					if (use instanceof Edge<?>)
-						end = ((Edge<V>) use).getEndNode();
+					Node end;
+					if (use instanceof Edge)
+						end = ((Edge) use).getEndNode();
 					else
-						end = ((Node<V>) use);
+						end = ((Node) use);
 					if (end == path.to())
 						return true;
 				}

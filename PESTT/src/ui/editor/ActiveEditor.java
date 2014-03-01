@@ -297,13 +297,13 @@ public class ActiveEditor implements Observer {
 					String tour = Activator.getDefault()
 							.getTestPathController().getSelectedTourType()
 							.toString();
-					Iterable<AbstractPath<Integer>> infeasibles = Activator
+					Iterable<AbstractPath> infeasibles = Activator
 							.getDefault().getTestRequirementController()
 							.getInfeasiblesTestRequirements();
-					Iterable<Path<Integer>> testRequirementsManuallyAdded = Activator
+					Iterable<Path> testRequirementsManuallyAdded = Activator
 							.getDefault().getTestRequirementController()
 							.getTestRequirementsManuallyAdded();
-					Iterable<Path<Integer>> testPathManuallyAdded = Activator
+					Iterable<Path> testPathManuallyAdded = Activator
 							.getDefault().getTestPathController()
 							.getTestPathsManuallyAdded();
 					//setJavadocAnnotation(unit, method, criteria, tour,
@@ -349,9 +349,9 @@ public class ActiveEditor implements Observer {
 	 */
 	private void setJavadocAnnotation(CompilationUnit unit,
 			MethodDeclaration method, String criteria, String tour,
-			Iterable<AbstractPath<Integer>> infeasibles,
-			Iterable<Path<Integer>> testRequirements,
-			Iterable<Path<Integer>> testPath) {
+			Iterable<AbstractPath> infeasibles,
+			Iterable<Path> testRequirements,
+			Iterable<Path> testPath) {
 		boolean temp = updated;
 		Javadoc javadoc = getJavadoc(method);
 		List<String> input = new ArrayList<String>();
@@ -363,20 +363,20 @@ public class ActiveEditor implements Observer {
 		createTag(method, JavadocTagAnnotations.TOUR_TYPE.getTag(),
 				getTextInput(method, input), javadoc);
 		input.clear();
-		for (AbstractPath<Integer> path : infeasibles) {
+		for (AbstractPath path : infeasibles) {
 			input.add(path.toString());
 			createTag(method, JavadocTagAnnotations.INFEASIBLE_PATH.getTag(),
 					getTextInput(method, input), javadoc);
 			input.clear();
 		}
-		for (Path<Integer> path : testRequirements) {
+		for (Path path : testRequirements) {
 			input.add(path.toString());
 			createTag(method,
 					JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH
 							.getTag(), getTextInput(method, input), javadoc);
 			input.clear();
 		}
-		for (Path<Integer> path : testPath) {
+		for (Path path : testPath) {
 			input.add(path.toString());
 			createTag(method,
 					JavadocTagAnnotations.ADDITIONAL_TEST_PATH.getTag(),

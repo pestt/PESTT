@@ -34,13 +34,13 @@ import domain.events.TestPathSelectedEvent;
 public class TestPathController extends Observable {
 
 	private TestPathSet testPathSet;
-	private Set<Path<Integer>> selectedTestPaths;
+	private Set<Path> selectedTestPaths;
 	private TourType selectedTourType;
-	private Map<Path<Integer>, String> tooltips;
+	private Map<Path, String> tooltips;
 
 	public TestPathController(TestPathSet testPathSet) {
 		this.testPathSet = testPathSet;
-		tooltips = new HashMap<Path<Integer>, String>();
+		tooltips = new HashMap<Path, String>();
 	}
 
 	public void addObserverTestPath(Observer o) {
@@ -51,7 +51,7 @@ public class TestPathController extends Observable {
 		testPathSet.deleteObserver(o);
 	}
 
-	public void addTestPath(Path<Integer> newTestPath, String tooltip) {
+	public void addTestPath(Path newTestPath, String tooltip) {
 		insertTooltip(newTestPath, tooltip);
 		testPathSet.add(newTestPath);
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
@@ -61,7 +61,7 @@ public class TestPathController extends Observable {
 		unSelectTestPaths();
 	}
 
-	public void addAutomaticTestPath(Path<Integer> newTestPath, String tooltip) {
+	public void addAutomaticTestPath(Path newTestPath, String tooltip) {
 		boolean update = insertTooltip(newTestPath, tooltip);
 		if (!update) {
 			Activator.getDefault().getEditorController()
@@ -77,14 +77,14 @@ public class TestPathController extends Observable {
 		unSelectTestPaths();
 	}
 
-	private boolean insertTooltip(Path<Integer> path, String tooltip) {
+	private boolean insertTooltip(Path path, String tooltip) {
 		boolean update = false;
-		Path<Integer> remove = null;
-		for (Path<Integer> current : tooltips.keySet())
+		Path remove = null;
+		for (Path current : tooltips.keySet())
 			if (current.toString().equals(path.toString())) {
 				if (!tooltip.equals(TestType.MANUALLY))
 					if (testPathSet.isManuallyAdded(current)) {
-						Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
+						Set<Path> set = new TreeSet<Path>();
 						set.add(current);
 						testPathSet.remove(set);
 						remove = current;
@@ -100,12 +100,12 @@ public class TestPathController extends Observable {
 		return update;
 	}
 
-	public String getTooltip(Path<Integer> path) {
+	public String getTooltip(Path path) {
 		return tooltips.get(path);
 	}
 
 	public void removeTestPath() {
-		for (Path<Integer> path : selectedTestPaths) {
+		for (Path path : selectedTestPaths) {
 			Activator.getDefault().getCoverageDataController()
 					.removeSelectedCoverageData(path);
 			tooltips.remove(path);
@@ -115,13 +115,13 @@ public class TestPathController extends Observable {
 	}
 
 	public void clearAutomaticTestPaths() {
-		for (Path<Integer> path : testPathSet.getTestPaths())
+		for (Path path : testPathSet.getTestPaths())
 			tooltips.remove(path);
 		testPathSet.clearAutomatic();
 	}
 
 	public void clearManuallyTestPaths() {
-		for (Path<Integer> path : testPathSet.getTestPathsManuallyAdded())
+		for (Path path : testPathSet.getTestPathsManuallyAdded())
 			tooltips.remove(path);
 		testPathSet.clearManually();
 	}
@@ -135,11 +135,11 @@ public class TestPathController extends Observable {
 		return selectedTestPaths != null;
 	}
 
-	public Set<Path<Integer>> getSelectedTestPaths() {
+	public Set<Path> getSelectedTestPaths() {
 		return selectedTestPaths;
 	}
 
-	public void selectTestPath(Set<Path<Integer>> selectedTestPaths) {
+	public void selectTestPath(Set<Path> selectedTestPaths) {
 		this.selectedTestPaths = selectedTestPaths;
 		setChanged();
 		notifyObservers(new TestPathSelectedEvent(selectedTestPaths));
@@ -164,25 +164,24 @@ public class TestPathController extends Observable {
 		notifyObservers(new TourChangeEvent(selectedTourType));
 	}
 
-	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {
+	public Iterable<Path> getTestPathsManuallyAdded() {
 		return testPathSet.getTestPathsManuallyAdded();
 	}
 
-	public Iterable<Path<Integer>> getTestPaths() {
+	public Iterable<Path> getTestPaths() {
 		return testPathSet.getTestPaths();
 	}
 
 	public void getStatistics() {
-		Activator.getDefault().getStatisticsController()
-				.getStatistics(selectedTestPaths);
+		Activator.getDefault().getStatisticsController().getStatistics(selectedTestPaths);
 	}
 
-	public Set<Path<Integer>> getTestRequirementCoverage() {
-		Set<Path<Integer>> total = new TreeSet<Path<Integer>>();
-		for (Path<Integer> path : selectedTestPaths) {
-			Set<Path<Integer>> coveredPaths = Activator.getDefault()
+	public Set<Path> getTestRequirementCoverage() {
+		Set<Path> total = new TreeSet<Path>();
+		for (Path path : selectedTestPaths) {
+			Set<Path> coveredPaths = Activator.getDefault()
 					.getTestRequirementController().getTestPathCoverage(path);
-			for (Path<Integer> p : coveredPaths)
+			for (Path p : coveredPaths)
 				if (!total.contains(p))
 					total.add(p);
 		}
@@ -191,18 +190,18 @@ public class TestPathController extends Observable {
 
 	@SuppressWarnings("unchecked")
 	public ICoverageData getCoverageData() {
-		Graph<Integer> sourceGraph = Activator.getDefault()
+		Graph sourceGraph = Activator.getDefault()
 				.getSourceGraphController().getSourceGraph();
 		LinkedHashMap<Integer, String> coverageData = new LinkedHashMap<Integer, String>();
 		List<Integer> lines = new LinkedList<Integer>();
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for (Node<Integer> node : sourceGraph.getNodes()) {
+		for (Node node : sourceGraph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph
 					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
 				for (Entry<ASTNode, Line> entry : map.entrySet()) {
 					int line = entry.getValue().getStartLine();
-					for (Path<Integer> path : selectedTestPaths) {
+					for (Path path : selectedTestPaths) {
 						ICoverageData data = Activator.getDefault()
 								.getCoverageDataController()
 								.getCoverageData(path);
@@ -224,14 +223,14 @@ public class TestPathController extends Observable {
 		return new CoverageData(coverageData);
 	}
 
-	public Path<Integer> createTestPath(String input) {
-		Graph<Integer> sourceGraph = Activator.getDefault()
+	public Path createTestPath(String input) {
+		Graph sourceGraph = Activator.getDefault()
 				.getSourceGraphController().getSourceGraph();
 		boolean validPath = true;
 		List<String> insertedNodes = getInsertedNodes(input);
-		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>>();
+		List<Node> pathNodes = new LinkedList<Node>();
 		try {
-			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>();
+			List<Node> fromToNodes = new ArrayList<Node>();
 			fromToNodes.add(sourceGraph.getNode(Integer.parseInt(insertedNodes
 					.get(0))));
 			int i = 1;
@@ -239,7 +238,7 @@ public class TestPathController extends Observable {
 				fromToNodes.add(sourceGraph.getNode(Integer
 						.parseInt(insertedNodes.get(i))));
 				if (fromToNodes.get(0) != null && fromToNodes.get(1) != null
-						&& sourceGraph.isPath(new Path<Integer>(fromToNodes))) {
+						&& sourceGraph.isPath(new Path(fromToNodes))) {
 					pathNodes.add(fromToNodes.get(0));
 					fromToNodes.remove(0);
 				} else
@@ -254,7 +253,7 @@ public class TestPathController extends Observable {
 								.size() - 1)))
 					return null;//!= null check
 
-				return new Path<Integer>(pathNodes);
+				return new Path(pathNodes);
 			}
 		} catch (NumberFormatException e) {
 			//ignore

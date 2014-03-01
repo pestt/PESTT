@@ -8,19 +8,19 @@ public class GraphMetadataLayer {
 	/**
 	 * The Node information associated to the Graph meta-data.
 	 */
-	private Map<Node<?>, Object> nodeMetadata;
+	private Map<Node, Object> nodeMetadata;
 
 	/**
 	 * The Edge information associated to the Graph meta-data.
 	 */
-	private Map<Edge<?>, Object> edgeMetadata;
+	private Map<Edge, Object> edgeMetadata;
 
 	/**
 	 * Creates a new GraphMetadataLayer Object.
 	 */
 	public GraphMetadataLayer() {
-		nodeMetadata = new HashMap<Node<?>, Object>();
-		edgeMetadata = new HashMap<Edge<?>, Object>();
+		nodeMetadata = new HashMap<Node, Object>();
+		edgeMetadata = new HashMap<Edge, Object>();
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class GraphMetadataLayer {
 	 * @param data
 	 *            - The Information to associate to the Node.
 	 */
-	public void addMetadata(Node<?> node, Object data) {
+	public void addMetadata(Node node, Object data) {
 		nodeMetadata.put(node, data);
 	}
 
@@ -43,7 +43,7 @@ public class GraphMetadataLayer {
 	 * @param data
 	 *            - The Information to associate to the Edge.
 	 */
-	public void addEdgeMetadata(Edge<?> edge, Object data) {
+	public void addEdgeMetadata(Edge edge, Object data) {
 		edgeMetadata.put(edge, data);
 	}
 
@@ -54,7 +54,7 @@ public class GraphMetadataLayer {
 	 *            - The Node to get the information from.
 	 * @return Object - The information associated to the given Node.
 	 */
-	public Object getMetadata(Node<?> node) {
+	public Object getMetadata(Node node) {
 		return nodeMetadata.get(node);
 	}
 
@@ -65,7 +65,7 @@ public class GraphMetadataLayer {
 	 *            - The Edge to get the information from.
 	 * @return Object - The information associated to the given Edge.
 	 */
-	public Object getMetadata(Edge<?> edge) {
+	public Object getMetadata(Edge edge) {
 		return edgeMetadata.get(edge);
 	}
 }

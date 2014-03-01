@@ -45,7 +45,7 @@ import domain.events.TestRequirementSelectedEvent;
 public class Graph implements Observer {
 
 	private org.eclipse.gef4.zest.core.widgets.Graph graph;
-	private adt.graph.Graph<Integer> sourceGraph;
+	private adt.graph.Graph sourceGraph;
 	private List<GraphNode> graphNodes;
 	private List<GraphConnection> graphEdges;
 	private SelectionAdapter event;
@@ -71,10 +71,10 @@ public class Graph implements Observer {
 		}
 	}
 
-	private void create(adt.graph.Graph<Integer> sourceGraph) {
+	private void create(adt.graph.Graph sourceGraph) {
 		graph.clear();
 		this.sourceGraph = sourceGraph;
-		DotGraphVisitor<Integer> visitor = new DotGraphVisitor<Integer>(); // creates the visitor to the graph.
+		DotGraphVisitor visitor = new DotGraphVisitor(); // creates the visitor to the graph.
 		Activator.getDefault().getSourceGraphController().applyVisitor(visitor);
 		String dotGraph = "digraph grafo {\nrankdir=TD\nsize=\"10,10\"\n"
 				+ visitor.getDotString() + "}\n"; // creates the string to be passed to Graphviz.
@@ -110,7 +110,7 @@ public class Graph implements Observer {
 			layoutNode.setBorderColor(Colors.BLACK); // sets the node border color to black.
 			layoutNode.setHighlightColor(Colors.YELLOW); // sets he highlight color.
 			layoutNode.setBorderHighlightColor(Colors.BLACK); // sets the node border highlight color to black.
-			adt.graph.Node<Integer> sourceNode = sourceGraph.getNode(Integer
+			adt.graph.Node sourceNode = sourceGraph.getNode(Integer
 					.parseInt(layoutNode.getText())); // the correspondent source node.
 			layoutNode.setData(sourceNode); // associate the visualization node with the source node.	
 			new domain.GraphInformation().addInformationToLayer0(sourceGraph,
@@ -144,12 +144,12 @@ public class Graph implements Observer {
 			GraphConnection connection = new GraphConnection(graph,
 					ZestStyles.CONNECTIONS_DIRECTED, begin, end); // create the graph connection between the start and the end nodes.
 			connection.setLineColor(edge.getColor()); // sets the edge color.
-			adt.graph.Node<Integer> beginNode = sourceGraph.getNode(Integer
+			adt.graph.Node beginNode = sourceGraph.getNode(Integer
 					.parseInt(begin.getText())); // the correspondent begin node.
-			adt.graph.Node<Integer> endNode = sourceGraph.getNode(Integer
+			adt.graph.Node endNode = sourceGraph.getNode(Integer
 					.parseInt(end.getText())); // the correspondent final node.
 			// verify which node is the correct.
-			for (adt.graph.Edge<Integer> sourceEdge : sourceGraph
+			for (adt.graph.Edge sourceEdge : sourceGraph
 					.getNodeEdges(beginNode)) { // get all edges of the begin node.
 				if (sourceEdge.getEndNode().equals(endNode)) { // when the edges matches.
 					connection.setData(sourceEdge); // associate the visualization edge with the source edge.
@@ -326,19 +326,19 @@ public class Graph implements Observer {
 	}
 
 	private List<GraphItem> selectInGraph(
-			AbstractPath<Integer> selectedTestRequirement) {
+			AbstractPath selectedTestRequirement) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		// select the nodes in the graph.	
-		Iterator<adt.graph.Node<Integer>> it = selectedTestRequirement
+		Iterator<adt.graph.Node> it = selectedTestRequirement
 				.iterator();
-		adt.graph.Node<Integer> node = it.next();
+		adt.graph.Node node = it.next();
 		while (it.hasNext()) { // through all node in the path.
-			adt.graph.Node<Integer> nextNode = it.next();
+			adt.graph.Node nextNode = it.next();
 			getGraphNode(aux, node);
 
 			// select the edges in the graph.
-			for (adt.graph.Edge<Integer> edge : sourceGraph
-					.getNodeEdges((adt.graph.Node<Integer>) node))
+			for (adt.graph.Edge edge : sourceGraph
+					.getNodeEdges((adt.graph.Node) node))
 				// through all edges of the node.
 				if (edge.getEndNode() == nextNode) // the end node of the edge (the next node in the path).
 					for (GraphConnection gconnection : graphEdges)
@@ -356,12 +356,12 @@ public class Graph implements Observer {
 	@SuppressWarnings("unchecked")
 	private List<GraphItem> selectInGraph(Object selectedDefUse) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
-		if (selectedDefUse instanceof adt.graph.Node<?>) {
-			adt.graph.Node<Integer> node = (adt.graph.Node<Integer>) selectedDefUse;
+		if (selectedDefUse instanceof adt.graph.Node) {
+			adt.graph.Node node = (adt.graph.Node) selectedDefUse;
 			getGraphNode(aux, node);
-		} else if (selectedDefUse instanceof adt.graph.Edge<?>) {
-			adt.graph.Edge<Integer> edge = (adt.graph.Edge<Integer>) selectedDefUse;
-			for (adt.graph.Edge<Integer> e : sourceGraph.getNodeEdges(edge
+		} else if (selectedDefUse instanceof adt.graph.Edge) {
+			adt.graph.Edge edge = (adt.graph.Edge) selectedDefUse;
+			for (adt.graph.Edge e : sourceGraph.getNodeEdges(edge
 					.getBeginNode()))
 				if (edge == e)
 					for (GraphConnection gconnection : graphEdges)
@@ -374,7 +374,7 @@ public class Graph implements Observer {
 		return aux;
 	}
 
-	private void getGraphNode(List<GraphItem> aux, adt.graph.Node<Integer> node) {
+	private void getGraphNode(List<GraphItem> aux, adt.graph.Node node) {
 		for (GraphNode gnode : graphNodes)
 			// through all nodes in the graph.
 			if (!gnode.isDisposed())
@@ -385,10 +385,10 @@ public class Graph implements Observer {
 	}
 
 	private List<GraphItem> selectTestPathSet(
-			Set<Path<Integer>> selectedTestPaths) {
+			Set<Path> selectedTestPaths) {
 		List<GraphItem> total = new LinkedList<GraphItem>();
 		List<GraphItem> aux = null;
-		for (Path<Integer> path : selectedTestPaths) {
+		for (Path path : selectedTestPaths) {
 			aux = selectInGraph(path);
 			for (GraphItem item : aux)
 				if (!total.contains(item))

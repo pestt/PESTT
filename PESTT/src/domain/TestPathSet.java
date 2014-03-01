@@ -9,30 +9,30 @@ import domain.events.TestPathChangedEvent;
 
 public class TestPathSet extends Observable {
 
-	private Set<Path<Integer>> testPathSet;
-	private Set<Path<Integer>> manuallyTestPathSet;
+	private Set<Path> testPathSet;
+	private Set<Path> manuallyTestPathSet;
 
 	public TestPathSet() {
-		testPathSet = new TreeSet<Path<Integer>>();
-		manuallyTestPathSet = new TreeSet<Path<Integer>>();
+		testPathSet = new TreeSet<Path>();
+		manuallyTestPathSet = new TreeSet<Path>();
 	}
 
-	public void add(Path<Integer> newTestPath) {
+	public void add(Path newTestPath) {
 		manuallyTestPathSet.add(newTestPath);
 		setChanged();
 		notifyObservers(new TestPathChangedEvent(getTestPaths(),
 				getTestPathsManuallyAdded()));
 	}
 
-	public void addAutomatic(Path<Integer> newTestPath) {
+	public void addAutomatic(Path newTestPath) {
 		testPathSet.add(newTestPath);
 		setChanged();
 		notifyObservers(new TestPathChangedEvent(getTestPaths(),
 				getTestPathsManuallyAdded()));
 	}
 
-	public void remove(Set<Path<Integer>> selectedTestPaths) {
-		for (Path<Integer> path : selectedTestPaths) {
+	public void remove(Set<Path> selectedTestPaths) {
+		for (Path path : selectedTestPaths) {
 			testPathSet.remove(path);
 			manuallyTestPathSet.remove(path);
 		}
@@ -63,15 +63,15 @@ public class TestPathSet extends Observable {
 				getTestPathsManuallyAdded()));
 	}
 
-	public Iterable<Path<Integer>> getTestPathsManuallyAdded() {
+	public Iterable<Path> getTestPathsManuallyAdded() {
 		return manuallyTestPathSet;
 	}
 
-	public Iterable<Path<Integer>> getTestPaths() {
+	public Iterable<Path> getTestPaths() {
 		return testPathSet;
 	}
 
-	public boolean isManuallyAdded(Path<Integer> path) {
+	public boolean isManuallyAdded(Path path) {
 		return manuallyTestPathSet.contains(path);
 	}
 }

@@ -24,7 +24,7 @@ import domain.events.CFGUpdateEvent;
 
 public class SourceGraph extends Observable {
 
-	private Graph<Integer> sourceGraph;
+	private Graph sourceGraph;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
 	private List<SingleVariableDeclaration> params;
@@ -32,7 +32,7 @@ public class SourceGraph extends Observable {
 	private List<EnumDeclaration> enumFields;
 
 	public SourceGraph() {
-		sourceGraph = new Graph<Integer>();
+		sourceGraph = new Graph();
 	}
 
 	public void create(ICompilationUnit unit, String methodName) {
@@ -50,7 +50,7 @@ public class SourceGraph extends Observable {
 		notifyObservers(new CFGCreateEvent(sourceGraph));
 	}
 
-	public Graph<Integer> getSourceGraph() {
+	public Graph getSourceGraph() {
 		return sourceGraph;
 	}
 
@@ -82,7 +82,7 @@ public class SourceGraph extends Observable {
 		return hash;
 	}
 
-	public void applyVisitor(IGraphVisitor<Integer> visitor) {
+	public void applyVisitor(IGraphVisitor visitor) {
 		sourceGraph.accept(visitor);
 	}
 
@@ -95,15 +95,15 @@ public class SourceGraph extends Observable {
 		return (CompilationUnit) parser.createAST(null);
 	}
 
-	public void updateMetadataInformation(Graph<Integer> graph) {
+	public void updateMetadataInformation(Graph graph) {
 		graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
-		Iterator<Node<Integer>> sourceGraphIt = sourceGraph.getNodes()
+		Iterator<Node> sourceGraphIt = sourceGraph.getNodes()
 				.iterator();
-		Iterator<Node<Integer>> graphIt = graph.getNodes().iterator();
+		Iterator<Node> graphIt = graph.getNodes().iterator();
 		while (sourceGraphIt.hasNext() && graphIt.hasNext()) {
-			Node<Integer> gNode = graphIt.next();
-			Node<Integer> sgNode = sourceGraphIt.next();
+			Node gNode = graphIt.next();
+			Node sgNode = sourceGraphIt.next();
 			sourceGraph.addMetadata(sgNode, null);
 			sourceGraph.addMetadata(sgNode, graph.getMetadata(gNode));
 		}

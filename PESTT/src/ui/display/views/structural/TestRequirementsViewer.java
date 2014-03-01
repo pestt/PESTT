@@ -80,8 +80,8 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 				MessageDialog.openInformation(parent.getShell(),
 						Messages.TEST_REQUIREMENT_TITLE,
 						Messages.TEST_REQUIREMENT_INFINITE_MSG); // message displayed when the method contains cycles.
-			Set<AbstractPath<Integer>> testRequirements = new TreeSet<AbstractPath<Integer>>();
-			for (AbstractPath<Integer> path : ((TestRequirementChangedEvent) data).testRequirementSet)
+			Set<AbstractPath> testRequirements = new TreeSet<AbstractPath>();
+			for (AbstractPath path : ((TestRequirementChangedEvent) data).testRequirementSet)
 				testRequirements.add(path);
 			testRequirementsViewer.setInput(testRequirements);
 			setInfeasibles(((TestRequirementChangedEvent) data).infeasigles);
@@ -99,7 +99,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 				|| data instanceof TourChangeEvent) {
 			if (Activator.getDefault().getEditorController()
 					.isEverythingMatching()) {
-				Set<Path<Integer>> selectedTestPaths = Activator.getDefault()
+				Set<Path> selectedTestPaths = Activator.getDefault()
 						.getTestPathController().getSelectedTestPaths();
 				if (selectedTestPaths != null && !selectedTestPaths.isEmpty()) {
 					Activator.getDefault().getTestRequirementController()
@@ -161,7 +161,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 
 			@Override
 			public void update(ViewerCell cell) {
-				AbstractPath<?> path = (AbstractPath<?>) cell.getElement();
+				AbstractPath path = (AbstractPath) cell.getElement();
 				cell.setText(path.toString());
 			}
 		});
@@ -200,13 +200,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	private void setPathStatus() {
 		int n = 0;
 		StatusImages images = new StatusImages();
-		Set<Path<Integer>> coveredPaths = Activator.getDefault()
+		Set<Path> coveredPaths = Activator.getDefault()
 				.getTestPathController().getTestRequirementCoverage();
-		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault()
+		Iterator<AbstractPath> iterator = Activator.getDefault()
 				.getTestRequirementController().getTestRequirements()
 				.iterator();
 		for (TableItem item : testRequirementsViewer.getTable().getItems()) {
-			AbstractPath<Integer> path = iterator.next();
+			AbstractPath path = iterator.next();
 			if (coveredPaths.contains(path)) {
 				if (item.getChecked()) {
 					MessageDialog
@@ -245,8 +245,8 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	 * @param infeasibles
 	 *            - The set of infeasible path.
 	 */
-	private void setInfeasibles(Iterable<AbstractPath<Integer>> infeasigles) {
-		for (AbstractPath<Integer> path : infeasigles)
+	private void setInfeasibles(Iterable<AbstractPath> infeasigles) {
+		for (AbstractPath path : infeasigles)
 			for (TableItem item : testRequirementsViewer.getTable().getItems()) {
 				if (item.getText(2).equals(path.toString())
 						&& !item.getChecked()) {
@@ -261,15 +261,15 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	 * or node). The test requirements appear in yellow.
 	 */
 	private void setDefUsesStatus() {
-		Set<AbstractPath<Integer>> testRequirementsOfSelected = Activator
+		Set<AbstractPath> testRequirementsOfSelected = Activator
 				.getDefault().getDefUsesController()
 				.getTestRequirementsOfSelected();
-		Iterator<AbstractPath<Integer>> iterator = Activator.getDefault()
+		Iterator<AbstractPath> iterator = Activator.getDefault()
 				.getTestRequirementController().getTestRequirements()
 				.iterator();
 		if (testRequirementsOfSelected != null) {
 			for (TableItem item : testRequirementsViewer.getTable().getItems()) {
-				AbstractPath<Integer> path = iterator.next();
+				AbstractPath path = iterator.next();
 				if (testRequirementsOfSelected.contains(path))
 					item.setBackground(Colors.YELLOW_COVERAGE);
 			}
@@ -303,13 +303,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 					public void handleEvent(Event event) {
 						cleanPathStatus();
 						if (event.detail == SWT.CHECK) { // when user enable/disable an infeasible path.
-							Iterator<AbstractPath<Integer>> iterator = Activator
+							Iterator<AbstractPath> iterator = Activator
 									.getDefault()
 									.getTestRequirementController()
 									.getTestRequirements().iterator();
 							for (TableItem item : testRequirementsViewer
 									.getTable().getItems()) {
-								AbstractPath<Integer> selected = iterator
+								AbstractPath selected = iterator
 										.next();
 								if (item == event.item) {
 									if (item.getChecked())
@@ -324,13 +324,13 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 								}
 							}
 						} else if (event.detail == SWT.NONE) { // when user selects a table row.
-							Iterator<AbstractPath<Integer>> iterator = Activator
+							Iterator<AbstractPath> iterator = Activator
 									.getDefault()
 									.getTestRequirementController()
 									.getTestRequirements().iterator();
 							for (TableItem item : testRequirementsViewer
 									.getTable().getItems()) {
-								AbstractPath<Integer> selected = iterator
+								AbstractPath selected = iterator
 										.next();
 								if (item == event.item) {
 									Activator.getDefault()

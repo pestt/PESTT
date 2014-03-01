@@ -12,27 +12,27 @@ import java.util.TreeSet;
 
 import domain.exceptions.NodeNotFoundException;
 
-public class Graph<V extends Comparable<V>> {
+public class Graph {
 
 	/**
 	 * The set of nodes in the Graph.
 	 */
-	private Set<Node<V>> nodes;
+	private Set<Node> nodes;
 
 	/**
 	 * A map of node edges in the Graph.
 	 */
-	private Map<Node<V>, Set<Edge<V>>> edges;
+	private Map<Node, Set<Edge>> edges;
 
 	/**
 	 * The initial nodes of the Graph.
 	 */
-	private Set<Node<V>> initialNodes;
+	private Set<Node> initialNodes;
 
 	/**
 	 * The final nodes of the Graph.
 	 */
-	private Set<Node<V>> finalNodes;
+	private Set<Node> finalNodes;
 
 	/**
 	 * The list of Graph meta-data layers.
@@ -48,10 +48,10 @@ public class Graph<V extends Comparable<V>> {
 	 * Creates a new Graph Object.
 	 */
 	public Graph() {
-		nodes = new TreeSet<Node<V>>();
-		edges = new LinkedHashMap<Node<V>, Set<Edge<V>>>();
-		initialNodes = new HashSet<Node<V>>();
-		finalNodes = new HashSet<Node<V>>();
+		nodes = new TreeSet<Node>();
+		edges = new LinkedHashMap<Node, Set<Edge>>();
+		initialNodes = new HashSet<Node>();
+		finalNodes = new HashSet<Node>();
 		metadataLayers = new ArrayList<GraphMetadataLayer>();
 	}
 
@@ -62,8 +62,8 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The value of the Node.
 	 * @return Node&lt;V&gt; - The new Node.
 	 */
-	public Node<V> addNode(V value) {
-		Node<V> node = new Node<V>(value);
+	public Node addNode(int value) {
+		Node node = new Node(value);
 		addNode(node);
 		return node;
 	}
@@ -74,10 +74,10 @@ public class Graph<V extends Comparable<V>> {
 	 * @param Node
 	 *            &lt;V&gt; node - The new Node.
 	 */
-	public void addNode(Node<V> node) {
+	public void addNode(Node node) {
 		if (!containsNode(node)) {
 			nodes.add(node);
-			edges.put(node, new LinkedHashSet<Edge<V>>());
+			edges.put(node, new LinkedHashSet<Edge>());
 		}
 	}
 
@@ -87,7 +87,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param Node
 	 *            &lt;V&gt; - The Node to add to the initial nodes.
 	 */
-	public void addInitialNode(Node<V> node) {
+	public void addInitialNode(Node node) {
 		addNode(node);
 		initialNodes.add(node);
 	}
@@ -100,8 +100,8 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The value of the Node.
 	 * @return Node&lt;V&gt; - The new Node.
 	 */
-	public Node<V> addInitialNode(V value) {
-		Node<V> node = addNode(value);
+	public Node addInitialNode(int value) {
+		Node node = addNode(value);
 		addNode(node);
 		initialNodes.add(node);
 		return node;
@@ -114,7 +114,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to be verified.
 	 * @return boolean - True if it is an initial Graph Node or False if not.
 	 */
-	public boolean isInitialNode(Node<V> node) {
+	public boolean isInitialNode(Node node) {
 		return initialNodes.contains(node);
 	}
 
@@ -124,7 +124,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param Node
 	 *            &lt;V&gt; - The Node to add to the Graph's final nodes.
 	 */
-	public void addFinalNode(Node<V> node) {
+	public void addFinalNode(Node node) {
 		if (!containsNode(node))
 			addNode(node);
 		finalNodes.add(node);
@@ -138,8 +138,8 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The value of the Node.
 	 * @return Node&lt;V&gt; - The new Node.
 	 */
-	public Node<V> addFinalNode(V value) {
-		Node<V> node = getNode(value);
+	public Node addFinalNode(int value) {
+		Node node = getNode(value);
 		if (node == null)
 			addNode(value);
 		finalNodes.add(node);
@@ -153,7 +153,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to be verified.
 	 * @return boolean - True if it is a final Graph Node or False if not.
 	 */
-	public boolean isFinalNode(Node<V> node) {
+	public boolean isFinalNode(Node node) {
 		return finalNodes.contains(node);
 	}
 
@@ -164,9 +164,9 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The value of the Node.
 	 * @return Node&lt;V&gt; - The Node with the given value.
 	 */
-	public Node<V> getNode(V value) {
-		for (Node<V> node : nodes) {
-			if (node.getValue().equals(value))
+	public Node getNode(int value) {
+		for (Node node : nodes) {
+			if (node.getValue() == value)
 				return node;
 		}
 		new NodeNotFoundException().printStackTrace();
@@ -179,7 +179,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param edge
 	 *            - The Edge to add.
 	 */
-	public void addEdge(Edge<V> edge) {
+	public void addEdge(Edge edge) {
 		getNodeEdges(edge.getBeginNode()).add(edge);
 	}
 
@@ -192,8 +192,8 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Edge's end Node.
 	 * @return Edge&lt;V&gt; - The new Edge.
 	 */
-	public Edge<V> addEdge(Node<V> from, Node<V> to) {
-		Edge<V> edge = new Edge<V>(from, to);
+	public Edge addEdge(Node from, Node to) {
+		Edge edge = new Edge(from, to);
 		addEdge(edge);
 		return edge;
 	}
@@ -206,8 +206,8 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to get the edges.
 	 * @return Set&lt;Edge&lt;V&gt;&gt; - The set of edges for the Node.
 	 */
-	public Set<Edge<V>> getNodeEdges(Node<V> node) {
-		Set<Edge<V>> nodeEdges = edges.get(node);
+	public Set<Edge> getNodeEdges(Node node) {
+		Set<Edge> nodeEdges = edges.get(node);
 		if (nodeEdges == null) {
 			addNode(node);
 			nodeEdges = edges.get(node);
@@ -223,10 +223,10 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to get the Edges.
 	 * @return Set&lt;Edge&lt;V&gt;&gt; - The set of Edges for the node.
 	 */
-	public Set<Edge<V>> getNodeEndEdges(Node<V> node) {
-		Set<Edge<V>> nodeEndEdges = new HashSet<Edge<V>>();
-		for (Set<Edge<V>> edgesNode : edges.values())
-			for (Edge<V> edge : edgesNode)
+	public Set<Edge> getNodeEndEdges(Node node) {
+		Set<Edge> nodeEndEdges = new HashSet<Edge>();
+		for (Set<Edge> edgesNode : edges.values())
+			for (Edge edge : edgesNode)
 				if (edge.getEndNode() == node)
 					nodeEndEdges.add(edge);
 
@@ -239,7 +239,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param edge
 	 *            - The Edge to remove.
 	 */
-	public void removeEdge(Edge<V> edge) {
+	public void removeEdge(Edge edge) {
 		getNodeEdges(edge.getBeginNode()).remove(edge);
 	}
 
@@ -249,7 +249,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param node
 	 *            - The Node to remove.
 	 */
-	public void removeNode(Node<V> node) {
+	public void removeNode(Node node) {
 		nodes.remove(node);
 		initialNodes.remove(node);
 		finalNodes.remove(node);
@@ -261,7 +261,7 @@ public class Graph<V extends Comparable<V>> {
 	 * 
 	 * @return Iterable&lt;Node&lt;V&gt&gt; - The Graph initial nodes.
 	 */
-	public Iterable<Node<V>> getInitialNodes() {
+	public Iterable<Node> getInitialNodes() {
 		return initialNodes;
 	}
 
@@ -270,7 +270,7 @@ public class Graph<V extends Comparable<V>> {
 	 * 
 	 * @return Iterable&lt;Node&lt;V&gt;&gt; - The Graph final nodes.
 	 */
-	public Iterable<Node<V>> getFinalNodes() {
+	public Iterable<Node> getFinalNodes() {
 		return finalNodes;
 	}
 
@@ -281,7 +281,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to be verified.
 	 * @return boolean - True if Graph contains the Node and False if not.
 	 */
-	public boolean containsNode(Node<V> node) {
+	public boolean containsNode(Node node) {
 		return nodes.contains(node);
 	}
 
@@ -292,7 +292,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Edge to be verified.
 	 * @return boolean - True if Graph contains the Edge and False if not.
 	 */
-	public boolean containsEdge(Edge<V> edge) {
+	public boolean containsEdge(Edge edge) {
 		return getNodeEdges(edge.getBeginNode()).contains(edge);
 	}
 
@@ -325,7 +325,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param data
 	 *            - The data to be added to the Node.
 	 */
-	public void addMetadata(Node<V> node, Object data) {
+	public void addMetadata(Node node, Object data) {
 		getCurrentLayer().addMetadata(node, data);
 	}
 
@@ -337,7 +337,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param data
 	 *            - The data to be added to the Edge.
 	 */
-	public void addMetadata(Edge<V> edge, Object data) {
+	public void addMetadata(Edge edge, Object data) {
 		getCurrentLayer().addEdgeMetadata(edge, data);
 	}
 
@@ -348,7 +348,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Node to get the data from.
 	 * @return Object - The data associated to the Node.
 	 */
-	public Object getMetadata(Node<?> node) {
+	public Object getMetadata(Node node) {
 		return getCurrentLayer().getMetadata(node);
 	}
 
@@ -359,7 +359,7 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Edge to get the data from.
 	 * @return Object - The data associated to the Edge.
 	 */
-	public Object getMetadata(Edge<?> edge) {
+	public Object getMetadata(Edge edge) {
 		return getCurrentLayer().getMetadata(edge);
 	}
 
@@ -377,7 +377,7 @@ public class Graph<V extends Comparable<V>> {
 	 * 
 	 * @return Iterable&lt;Node&lt;V&gt;&gt; - The Graph nodes.
 	 */
-	public Iterable<Node<V>> getNodes() {
+	public Iterable<Node> getNodes() {
 		return nodes;
 	}
 
@@ -385,8 +385,8 @@ public class Graph<V extends Comparable<V>> {
 	 * Sort the Graph nodes.
 	 */
 	public void sortNodes() {
-		Set<Node<V>> sorted = new TreeSet<Node<V>>();
-		for (Node<V> node : nodes)
+		Set<Node> sorted = new TreeSet<Node>();
+		for (Node node : nodes)
 			sorted.add(node);
 		nodes.clear();
 		nodes = sorted;
@@ -408,16 +408,16 @@ public class Graph<V extends Comparable<V>> {
 	 *            - The Path to be verified.
 	 * @return boolean - True if the Path is a Path of Graph and False if not.
 	 */
-	public boolean isPath(Path<V> path) {
-		Iterator<Node<V>> iterator = path.iterator();
+	public boolean isPath(Path path) {
+		Iterator<Node> iterator = path.iterator();
 		if (!iterator.hasNext())
 			return true;
-		Node<V> previousNode = iterator.next();
+		Node previousNode = iterator.next();
 		if (!containsNode(previousNode))
 			return false;
 		while (iterator.hasNext()) {
-			Node<V> currentNode = iterator.next();
-			Iterator<Edge<V>> edgeIterator = getNodeEdges(previousNode)
+			Node currentNode = iterator.next();
+			Iterator<Edge> edgeIterator = getNodeEdges(previousNode)
 					.iterator();
 			boolean found = false;
 			while (edgeIterator.hasNext() && !found) {
@@ -437,7 +437,7 @@ public class Graph<V extends Comparable<V>> {
 	 * @param visitor
 	 *            - The visitor to apply.
 	 */
-	public void accept(IGraphVisitor<V> visitor) {
+	public void accept(IGraphVisitor visitor) {
 		visitor.visitGraph(this);
 	}
 
@@ -450,7 +450,7 @@ public class Graph<V extends Comparable<V>> {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		s.append("[");
-		Iterator<Node<V>> it = nodes.iterator();
+		Iterator<Node> it = nodes.iterator();
 		if (nodes.size() >= 1) {
 			s.append(it.next()); // a path has always one node, at least!
 			while (it.hasNext())

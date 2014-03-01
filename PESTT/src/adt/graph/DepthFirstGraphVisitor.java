@@ -3,18 +3,17 @@ package adt.graph;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
-		IGraphVisitor<V> {
+public class DepthFirstGraphVisitor implements IGraphVisitor {
 
-	private Set<Node<V>> visitedNodes;
-	protected Graph<V> graph;
+	private Set<Node> visitedNodes;
+	protected Graph graph;
 
 	public DepthFirstGraphVisitor() {
-		visitedNodes = new HashSet<Node<V>>();
+		visitedNodes = new HashSet<Node>();
 	}
 
 	@Override
-	public void visitEdge(Edge<V> edge) {
+	public void visitEdge(Edge edge) {
 		if (visit(edge)) {
 			//visit
 			endVisit(edge);
@@ -22,20 +21,20 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
 	}
 
 	@Override
-	public boolean visit(Edge<V> edge) {
+	public boolean visit(Edge edge) {
 		return true;
 	}
 
 	@Override
-	public void endVisit(Edge<V> edge) {
+	public void endVisit(Edge edge) {
 		// does nothing!
 	}
 
 	@Override
-	public void visitNode(Node<V> node) {
+	public void visitNode(Node node) {
 		if (visit(node)) {
 			visitedNodes.add(node);
-			for (Edge<V> edge : graph.getNodeEdges(node)) {
+			for (Edge edge : graph.getNodeEdges(node)) {
 				edge.accept(this);
 				edge.getEndNode().accept(this);
 			}
@@ -45,37 +44,37 @@ public class DepthFirstGraphVisitor<V extends Comparable<V>> implements
 	}
 
 	@Override
-	public boolean visit(Node<V> node) {
+	public boolean visit(Node node) {
 		return !alreadyVisited(node);
 	}
 
 	@Override
-	public void endVisit(Node<V> node) {
+	public void endVisit(Node node) {
 		// does nothing!
 	}
 
 	@Override
-	public void visitGraph(Graph<V> graph) {
+	public void visitGraph(Graph graph) {
 		if (visit(graph)) {
 			this.graph = graph;
-			for (Node<V> node : graph.getInitialNodes())
+			for (Node node : graph.getInitialNodes())
 				node.accept(this);
 			endVisit(graph);
 		}
 	}
 
 	@Override
-	public boolean visit(Graph<V> graph) {
+	public boolean visit(Graph graph) {
 		return true;
 	}
 
 	@Override
-	public void endVisit(Graph<V> graph) {
+	public void endVisit(Graph graph) {
 		// does nothing!
 	}
 
 	@Override
-	public boolean alreadyVisited(Node<V> node) {
+	public boolean alreadyVisited(Node node) {
 		return visitedNodes.contains(node);
 	}
 }

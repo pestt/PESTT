@@ -25,14 +25,14 @@ public class DefUsesSet extends Observable implements Observer {
 
 	private Map<Object, List<List<String>>> nodeedgeDefUses;
 	private Map<String, List<List<Object>>> variableDefUses;
-	private Map<Object, Set<AbstractPath<Integer>>> nodeedgeTestRequirements;
-	private Map<String, Set<AbstractPath<Integer>>> variableTestRequirements;
+	private Map<Object, Set<AbstractPath>> nodeedgeTestRequirements;
+	private Map<String, Set<AbstractPath>> variableTestRequirements;
 
 	public DefUsesSet() {
 		nodeedgeDefUses = new LinkedHashMap<Object, List<List<String>>>();
 		variableDefUses = new LinkedHashMap<String, List<List<Object>>>();
-		nodeedgeTestRequirements = new LinkedHashMap<Object, Set<AbstractPath<Integer>>>();
-		variableTestRequirements = new LinkedHashMap<String, Set<AbstractPath<Integer>>>();
+		nodeedgeTestRequirements = new LinkedHashMap<Object, Set<AbstractPath>>();
+		variableTestRequirements = new LinkedHashMap<String, Set<AbstractPath>>();
 	}
 
 	public void addObserver() {
@@ -245,25 +245,25 @@ public class DefUsesSet extends Observable implements Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	private int compare(Object inList, Object toAdd) {
-		Node<Integer> nodeInList;
-		Node<Integer> nodeToAdd;
-		Edge<Integer> edgeInList;
-		Edge<Integer> edgeToAdd;
-		if (inList instanceof Node<?>) {
-			nodeInList = (Node<Integer>) inList;
-			if (toAdd instanceof Node<?>)
-				nodeToAdd = (Node<Integer>) toAdd;
+		Node nodeInList;
+		Node nodeToAdd;
+		Edge edgeInList;
+		Edge edgeToAdd;
+		if (inList instanceof Node) {
+			nodeInList = (Node) inList;
+			if (toAdd instanceof Node)
+				nodeToAdd = (Node) toAdd;
 			else
-				nodeToAdd = ((Edge<Integer>) toAdd).getBeginNode();
+				nodeToAdd = ((Edge) toAdd).getBeginNode();
 			return nodeInList.compareTo(nodeToAdd);
 		} else {
-			if (toAdd instanceof Node<?>) {
-				nodeInList = ((Edge<Integer>) inList).getBeginNode();
-				nodeToAdd = (Node<Integer>) toAdd;
+			if (toAdd instanceof Node) {
+				nodeInList = ((Edge) inList).getBeginNode();
+				nodeToAdd = (Node) toAdd;
 				return nodeInList.compareTo(nodeToAdd);
 			} else {
-				edgeInList = (Edge<Integer>) inList;
-				edgeToAdd = (Edge<Integer>) toAdd;
+				edgeInList = (Edge) inList;
+				edgeToAdd = (Edge) toAdd;
 				return edgeInList.compareTo(edgeToAdd);
 			}
 		}
@@ -293,19 +293,19 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	private void getTestRequirements(
-			Iterable<AbstractPath<Integer>> testRequirements) {
+			Iterable<AbstractPath> testRequirements) {
 		nodeedgeTestRequirements.clear();
 		variableTestRequirements.clear();
 		for (Object key : nodeedgeDefUses.keySet()) {
-			Set<AbstractPath<Integer>> pathsForNodeEdge = new LinkedHashSet<AbstractPath<Integer>>();
-			for (AbstractPath<Integer> path : testRequirements)
+			Set<AbstractPath> pathsForNodeEdge = new LinkedHashSet<AbstractPath>();
+			for (AbstractPath path : testRequirements)
 				setDefUsesStatus(pathsForNodeEdge, path, key,
 						DefUsesView.NODE_EDGE);
 			nodeedgeTestRequirements.put(key, pathsForNodeEdge);
 		}
 		for (String key : variableDefUses.keySet()) {
-			Set<AbstractPath<Integer>> pathsForVariables = new LinkedHashSet<AbstractPath<Integer>>();
-			for (AbstractPath<Integer> path : testRequirements)
+			Set<AbstractPath> pathsForVariables = new LinkedHashSet<AbstractPath>();
+			for (AbstractPath path : testRequirements)
 				setDefUsesStatus(pathsForVariables, path, key,
 						DefUsesView.VARIABLE);
 			variableTestRequirements.put(key, pathsForVariables);
@@ -313,15 +313,15 @@ public class DefUsesSet extends Observable implements Observer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setDefUsesStatus(Set<AbstractPath<Integer>> paths,
-			AbstractPath<Integer> path, Object key, DefUsesView view) {
+	private void setDefUsesStatus(Set<AbstractPath> paths,
+			AbstractPath path, Object key, DefUsesView view) {
 		switch (view) {
 		case NODE_EDGE:
-			if (key instanceof Edge<?>
-					&& path.isEdgeOfPath((Edge<Integer>) key))
+			if (key instanceof Edge
+					&& path.isEdgeOfPath((Edge) key))
 				paths.add(path);
-			else if (key instanceof Node<?>
-					&& path.containsNode((Node<Integer>) key))
+			else if (key instanceof Node
+					&& path.containsNode((Node) key))
 				paths.add(path);
 			break;
 		case VARIABLE:
@@ -329,21 +329,21 @@ public class DefUsesSet extends Observable implements Observer {
 			List<Object> defs = values.get(0);
 			List<Object> uses = values.get(1);
 			for (Object def : defs) {
-				Node<Integer> begin = null;
-				if (def instanceof Edge<?>)
-					begin = ((Edge<Integer>) def).getBeginNode();
-				else if (def instanceof Node<?>)
-					begin = ((Node<Integer>) def);
+				Node begin = null;
+				if (def instanceof Edge)
+					begin = ((Edge) def).getBeginNode();
+				else if (def instanceof Node)
+					begin = ((Node) def);
 				if (begin == path.from())
 					for (Object use : uses) {
-						Node<Integer> end = null;
-						if (use instanceof Node<?>) {
-							end = ((Node<Integer>) use);
+						Node end = null;
+						if (use instanceof Node) {
+							end = ((Node) use);
 							if (end == path.to())
 								paths.add(path);
-						} else if (use instanceof Edge<?>) {
-							end = ((Edge<Integer>) use).getEndNode();
-							if (path.isEdgeOfPath((Edge<Integer>) use)
+						} else if (use instanceof Edge) {
+							end = ((Edge) use).getEndNode();
+							if (path.isEdgeOfPath((Edge) use)
 									&& end == path.to())
 								paths.add(path);
 						}
@@ -353,25 +353,25 @@ public class DefUsesSet extends Observable implements Observer {
 		}
 	}
 
-	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {
+	public Set<AbstractPath> getTestRequirementsToNode(Object obj) {
 		return getTestRequirements(nodeedgeTestRequirements.get(obj));
 	}
 
-	public Set<AbstractPath<Integer>> getTestRequirementsToVariable(String str) {
+	public Set<AbstractPath> getTestRequirementsToVariable(String str) {
 		return getTestRequirements(variableTestRequirements.get(str));
 	}
 
-	private Set<AbstractPath<Integer>> getTestRequirements(
-			Set<AbstractPath<Integer>> list) {
+	private Set<AbstractPath> getTestRequirements(
+			Set<AbstractPath> list) {
 		GraphCoverageCriteriaId criteria = Activator.getDefault()
 				.getTestRequirementController().getSelectedCoverageCriteria();
-		Set<AbstractPath<Integer>> result = new LinkedHashSet<AbstractPath<Integer>>();
-		List<Node<Integer>> first = new ArrayList<Node<Integer>>();
-		List<Node<Integer>> last = new ArrayList<Node<Integer>>();
+		Set<AbstractPath> result = new LinkedHashSet<AbstractPath>();
+		List<Node> first = new ArrayList<Node>();
+		List<Node> last = new ArrayList<Node>();
 		if (criteria == GraphCoverageCriteriaId.ALL_DU_PATHS) 
 				result = list;
 		else if (criteria == GraphCoverageCriteriaId.ALL_DEFS) {
-				for(AbstractPath<Integer> path : list) {
+				for(AbstractPath path : list) {
 					if(first.isEmpty()) {
 						first.add(path.from());
 						result.add(path);
@@ -384,16 +384,16 @@ public class DefUsesSet extends Observable implements Observer {
 			}
 		}
 		else if (criteria == GraphCoverageCriteriaId.ALL_USES) {
-				for(AbstractPath<Integer> path : list) {
+				for(AbstractPath path : list) {
 					if(first.isEmpty()) {
 						first.add(path.from());
 						last.add(path.to());
 						result.add(path);
 					} else {
 						boolean contains = false;
-						Iterator<Node<Integer>> iterator = last.iterator();
-						for (Node<Integer> fnode : first) {
-							Node<Integer> lnode = iterator.next();
+						Iterator<Node> iterator = last.iterator();
+						for (Node fnode : first) {
+							Node lnode = iterator.next();
 							if (fnode == path.from() && lnode == path.to()) {
 								contains = true;
 								break;

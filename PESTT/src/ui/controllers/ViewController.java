@@ -63,7 +63,7 @@ public class ViewController implements Observer {
 				bringViewToTop(Description.VIEW_STRUCTURAL_COVERAGE);
 			}
 		} else if (data instanceof TestPathSelectedEvent) {
-			Set<Path<Integer>> selectedTestPathSelectedEvent = ((TestPathSelectedEvent) data).selectedTestPaths;
+			Set<Path> selectedTestPathSelectedEvent = ((TestPathSelectedEvent) data).selectedTestPaths;
 			if (selectedTestPathSelectedEvent != null
 					&& !selectedTestPathSelectedEvent.isEmpty()) {
 				bringViewToTop(Description.VIEW_GRAPH);

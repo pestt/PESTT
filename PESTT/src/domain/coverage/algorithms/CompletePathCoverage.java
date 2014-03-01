@@ -16,43 +16,42 @@ import adt.graph.Node;
 import adt.graph.Path;
 import adt.graph.SequencePath;
 
-public class CompletePathCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class CompletePathCoverage implements ICoverageAlgorithms {
 
-	private Graph<V> graph;
-	private LinkedList<Node<V>> pathNodes;
-	private Set<AbstractPath<V>> completePaths;
+	private Graph graph;
+	private LinkedList<Node> pathNodes;
+	private Set<AbstractPath> completePaths;
 
-	public CompletePathCoverage(Graph<V> graph) {
+	public CompletePathCoverage(Graph graph) {
 		this.graph = graph;
-		completePaths = new TreeSet<AbstractPath<V>>();
-		pathNodes = new LinkedList<Node<V>>();
+		completePaths = new TreeSet<AbstractPath>();
+		pathNodes = new LinkedList<Node>();
 	}
 
-	public Set<AbstractPath<V>> getTestRequirements() {
+	public Set<AbstractPath> getTestRequirements() {
 		CompletePathCoverageVisitor cpcv = new CompletePathCoverageVisitor(
 				graph);
 		graph.accept(cpcv);
 		return completePaths;
 	}
 
-	private class CompletePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
+	private class CompletePathCoverageVisitor extends DepthFirstGraphVisitor {
 
-		private Stack<CyclePath<V>> stack;
+		private Stack<CyclePath> stack;
 
-		public CompletePathCoverageVisitor(Graph<V> graph) {
+		public CompletePathCoverageVisitor(Graph graph) {
 			this.graph = graph;
-			stack = new Stack<CyclePath<V>>();
-			stack.push(new CyclePath<V>(new ArrayList<Node<V>>()));
+			stack = new Stack<CyclePath>();
+			stack.push(new CyclePath(new ArrayList<Node>()));
 		}
 
 		@Override
-		public boolean visit(Node<V> node) {
-			CyclePath<V> currentCycle = stack.peek();
+		public boolean visit(Node node) {
+			CyclePath currentCycle = stack.peek();
 			if (currentCycle.containsNode(node))
 				return false;
 			if (pathNodes.contains(node) && !graph.isInitialNode(node))
-				stack.push(new CyclePath<V>(pathNodes.subList(
+				stack.push(new CyclePath(pathNodes.subList(
 						pathNodes.lastIndexOf(node), pathNodes.size())));
 			pathNodes.addLast(node);
 			if (graph.isFinalNode(node))
@@ -61,9 +60,9 @@ public class CompletePathCoverage<V extends Comparable<V>> implements
 		}
 
 		@Override
-		public void endVisit(Node<V> node) {
+		public void endVisit(Node node) {
 			pathNodes.removeLast();
-			CyclePath<V> topPath = stack.peek();
+			CyclePath topPath = stack.peek();
 			if (topPath.iterator().hasNext() && stack.peek().from() == node) {
 				System.out.println(topPath.toString());
 				System.out.println(topPath.iterator().hasNext());
@@ -71,26 +70,26 @@ public class CompletePathCoverage<V extends Comparable<V>> implements
 			}
 		}
 
-		private AbstractPath<V> parseNodes(List<Node<V>> nodes) {
+		private AbstractPath parseNodes(List<Node> nodes) {
 			int cycleStart = hasCycle(nodes);
 			if (cycleStart == -1)
-				return new Path<V>(nodes);
+				return new Path(nodes);
 			else { // assert nodes.size() > 1
 				int cycleEnd = nodes.lastIndexOf(nodes.get(cycleStart));
 
-				AbstractPath<V> preCycle = null;
+				AbstractPath preCycle = null;
 				if (cycleStart > 0)
-					preCycle = new Path<V>(nodes.subList(0, cycleStart));
+					preCycle = new Path(nodes.subList(0, cycleStart));
 
 				int innerCycleStart = hasCycle(nodes.subList(cycleStart + 1,
 						cycleEnd));
-				AbstractPath<V> innerPath = null;
+				AbstractPath innerPath = null;
 				if (innerCycleStart != -1) {
 					innerCycleStart = cycleStart + innerCycleStart + 1; // absolute index 
 					int innerCycleEnd = nodes.lastIndexOf(nodes
 							.get(innerCycleStart));
-					InfinitePath<V> innerPathInfinite = new InfinitePath<V>();
-					innerPathInfinite.addSubPath(new Path<V>(nodes.subList(
+					InfinitePath innerPathInfinite = new InfinitePath();
+					innerPathInfinite.addSubPath(new Path(nodes.subList(
 							cycleStart, innerCycleStart)));
 					innerPathInfinite.addSubPath(parseNodes(nodes.subList(
 							innerCycleStart, innerCycleEnd + 1)));
@@ -99,16 +98,16 @@ public class CompletePathCoverage<V extends Comparable<V>> implements
 								innerCycleEnd + 1, cycleEnd + 1)));
 					innerPath = innerPathInfinite;
 				} else
-					innerPath = new CyclePath<V>(nodes.subList(cycleStart,
+					innerPath = new CyclePath(nodes.subList(cycleStart,
 							cycleEnd + 1));
 
-				AbstractPath<V> posCycle = null;
+				AbstractPath posCycle = null;
 				if (cycleEnd + 1 < nodes.size())
 					posCycle = parseNodes(nodes.subList(cycleEnd + 1,
 							nodes.size()));
 
 				if (preCycle != null || posCycle != null) {
-					SequencePath<V> result = new SequencePath<V>();
+					SequencePath result = new SequencePath();
 					if (preCycle != null)
 						result.addSubPath(preCycle);
 					result.addSubPath(innerPath);
@@ -120,9 +119,9 @@ public class CompletePathCoverage<V extends Comparable<V>> implements
 			}
 		}
 
-		private int hasCycle(List<Node<V>> nodes) {
+		private int hasCycle(List<Node> nodes) {
 			int i = 0;
-			for (Node<V> node : nodes) {
+			for (Node node : nodes) {
 				if (nodes.indexOf(node) != nodes.lastIndexOf(node))
 					return i;
 				i++;

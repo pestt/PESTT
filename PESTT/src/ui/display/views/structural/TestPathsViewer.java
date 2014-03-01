@@ -101,10 +101,10 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				testPathhsViewer.setSelection(null);
 		} else if (data instanceof TestPathChangedEvent) {
 			List<Object> testPaths = new ArrayList<Object>();
-			Set<Path<Integer>> paths = getPathSet(
+			Set<Path> paths = getPathSet(
 					((TestPathChangedEvent) data).testPathSet,
 					((TestPathChangedEvent) data).manuallyAdded);
-			for (Path<Integer> path : paths)
+			for (Path path : paths)
 				testPaths.add(path);
 			if (testPaths.size() > 1)
 				testPaths.add(Description.TOTAL);
@@ -121,12 +121,12 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		}
 	}
 
-	private Set<Path<Integer>> getPathSet(Iterable<Path<Integer>> automatic,
-			Iterable<Path<Integer>> manually) {
-		Set<Path<Integer>> set = new TreeSet<Path<Integer>>();
-		for (Path<Integer> path : automatic)
+	private Set<Path> getPathSet(Iterable<Path> automatic,
+			Iterable<Path> manually) {
+		Set<Path> set = new TreeSet<Path>();
+		for (Path path : automatic)
 			set.add(path);
-		for (Path<Integer> path : manually)
+		for (Path path : manually)
 			set.add(path);
 		return set;
 	}
@@ -144,11 +144,11 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 
 			@Override
 			public void update(ViewerCell cell) {
-				if (cell.getElement() instanceof Graph<?>) {
-					Graph<?> graph = (Graph<?>) cell.getElement();
+				if (cell.getElement() instanceof Graph) {
+					Graph graph = (Graph) cell.getElement();
 					cell.setText(graph.toString());
-				} else if (cell.getElement() instanceof Path<?>) {
-					Path<?> path = (Path<?>) cell.getElement();
+				} else if (cell.getElement() instanceof Path) {
+					Path path = (Path) cell.getElement();
 					cell.setText(path.toString());
 				} else {
 					String str = (String) cell.getElement();
@@ -182,15 +182,15 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	 * the test path.</li>
 	 * </ul>
 	 */
-	private void setPathStatus(AbstractPath<Integer> testRequirement) {
-		Set<Path<Integer>> paths = getPathSet(Activator.getDefault()
+	private void setPathStatus(AbstractPath testRequirement) {
+		Set<Path> paths = getPathSet(Activator.getDefault()
 				.getTestPathController().getTestPaths(), Activator.getDefault()
 				.getTestPathController().getTestPathsManuallyAdded());
-		Iterator<Path<Integer>> iterator = paths.iterator();
+		Iterator<Path> iterator = paths.iterator();
 		for (TableItem item : testPathhsViewer.getTable().getItems()) {
 			if (iterator.hasNext()) {
-				Path<Integer> path = iterator.next();
-				Set<Path<Integer>> coveredPaths = Activator.getDefault()
+				Path path = iterator.next();
+				Set<Path> coveredPaths = Activator.getDefault()
 						.getTestRequirementController()
 						.getTestPathCoverage(path);
 				if (coveredPaths.contains(testRequirement))
@@ -210,20 +210,20 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 								.getSelection(); // get the selection.
 						if (selection.getFirstElement() != null) {
 							boolean hasTotal = false;
-							Set<Path<Integer>> testPaths = new TreeSet<Path<Integer>>();
+							Set<Path> testPaths = new TreeSet<Path>();
 							for (Object obj : selection.toList())
 								if (obj instanceof String) {
 									hasTotal = true;
 									break;
 								} else
-									testPaths.add((Path<Integer>) obj);
+									testPaths.add((Path) obj);
 							if (hasTotal) {
 								testPaths.clear();
-								for (Path<Integer> path : Activator
+								for (Path path : Activator
 										.getDefault().getTestPathController()
 										.getTestPathsManuallyAdded())
 									testPaths.add(path);
-								for (Path<Integer> path : Activator
+								for (Path path : Activator
 										.getDefault().getTestPathController()
 										.getTestPaths())
 									testPaths.add(path);
@@ -241,12 +241,12 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 			public void handleEvent(Event event) {
 				Point coords = new Point(event.x, event.y);
 				TableItem item = testPathhsViewer.getTable().getItem(coords);
-				Set<Path<Integer>> set = getPathSet(Activator.getDefault()
+				Set<Path> set = getPathSet(Activator.getDefault()
 						.getTestPathController().getTestPaths(), Activator
 						.getDefault().getTestPathController()
 						.getTestPathsManuallyAdded());
-				Iterator<Path<Integer>> iterator = set.iterator();
-				Path<Integer> path = null;
+				Iterator<Path> iterator = set.iterator();
+				Path path = null;
 				for (TableItem i : testPathhsViewer.getTable().getItems()) {
 					path = null;
 					if (iterator.hasNext()) {

@@ -48,7 +48,7 @@ public class EditTestRequirementHandler extends AbstractHandler {
 			input = dialog.getInput();
 			if (input != null)
 				if (!input.equals(Description.EMPTY)) {
-					Path<Integer> newTestRequirement = Activator.getDefault()
+					Path newTestRequirement = Activator.getDefault()
 							.getTestRequirementController()
 							.createTestRequirement(input);
 					if (newTestRequirement != null) {

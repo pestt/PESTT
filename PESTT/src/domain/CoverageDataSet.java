@@ -16,10 +16,10 @@ import domain.events.CFGUpdateEvent;
 
 public class CoverageDataSet implements Observer {
 
-	private Map<Path<Integer>, List<ICoverageData>> coverageDataMap;
+	private Map<Path, List<ICoverageData>> coverageDataMap;
 
 	public CoverageDataSet() {
-		coverageDataMap = new HashMap<Path<Integer>, List<ICoverageData>>();
+		coverageDataMap = new HashMap<Path, List<ICoverageData>>();
 	}
 
 	public void addObserver() {
@@ -32,11 +32,11 @@ public class CoverageDataSet implements Observer {
 				.deleteObserverSourceGraph(this);
 	}
 
-	public void put(Path<Integer> path, List<ICoverageData> data) {
+	public void put(Path path, List<ICoverageData> data) {
 		coverageDataMap.put(path, data);
 	}
 
-	public void remove(Path<Integer> selected) {
+	public void remove(Path selected) {
 		coverageDataMap.remove(selected);
 	}
 
@@ -47,18 +47,18 @@ public class CoverageDataSet implements Observer {
 
 	}
 
-	public ICoverageData getData(Path<Integer> path) {
+	public ICoverageData getData(Path path) {
 		return coverageDataMap.get(path).get(0);
 	}
 
 	@Override
 	public void update(Observable obs, Object data) {
 		if (data instanceof CFGUpdateEvent) {
-			List<Path<Integer>> keys = new ArrayList<Path<Integer>>();
-			for (Path<Integer> path : coverageDataMap.keySet())
+			List<Path> keys = new ArrayList<Path>();
+			for (Path path : coverageDataMap.keySet())
 				keys.add(path);
 			coverageDataMap.clear();
-			for (Path<Integer> path : keys) {
+			for (Path path : keys) {
 				List<ICoverageData> coverageData = new LinkedList<ICoverageData>();
 				coverageData.add(new CoverageData(path));
 				put(path, coverageData);

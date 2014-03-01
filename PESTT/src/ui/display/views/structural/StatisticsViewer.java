@@ -1,5 +1,5 @@
 package ui.display.views.structural;
-
+ 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,7 +71,7 @@ public class StatisticsViewer extends AbstractTableViewer implements Observer {
 				|| data instanceof TourChangeEvent) {
 			if (Activator.getDefault().getEditorController()
 					.isEverythingMatching()) {
-				Set<Path<Integer>> selectedTestPaths = Activator.getDefault()
+				Set<Path> selectedTestPaths = Activator.getDefault()
 						.getTestPathController().getSelectedTestPaths();
 				if (selectedTestPaths != null)
 					if (!selectedTestPaths.isEmpty())
@@ -124,7 +124,7 @@ public class StatisticsViewer extends AbstractTableViewer implements Observer {
 	}
 
 	private boolean containsSequencePaths() {
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		for (AbstractPath path : Activator.getDefault()
 				.getTestRequirementController().getTestRequirements())
 			if (path instanceof SequencePath)
 				return true;

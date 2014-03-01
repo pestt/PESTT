@@ -4,9 +4,9 @@ import adt.graph.Graph;
 
 public class CFGUpdateEvent {
 
-	public Graph<Integer> sourceGraph;
+	public Graph sourceGraph;
 
-	public CFGUpdateEvent(Graph<Integer> sourceGraph) {
+	public CFGUpdateEvent(Graph sourceGraph) {
 		this.sourceGraph = sourceGraph;
 	}
 

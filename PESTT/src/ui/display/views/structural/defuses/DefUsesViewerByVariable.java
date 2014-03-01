@@ -96,7 +96,7 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements
 		} else if (data instanceof TestPathSelectedEvent) {
 			if (Activator.getDefault().getEditorController()
 					.isEverythingMatching()) {
-				Set<Path<Integer>> selectedTestPaths = Activator.getDefault()
+				Set<Path> selectedTestPaths = Activator.getDefault()
 						.getTestPathController().getSelectedTestPaths();
 				if (selectedTestPaths != null && !selectedTestPaths.isEmpty())
 					Activator.getDefault().getDefUsesController()
@@ -197,7 +197,7 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements
 		}
 	}
 
-	private void setDefUsesStatus(AbstractPath<Integer> selectedTestRequirement) {
+	private void setDefUsesStatus(AbstractPath selectedTestRequirement) {
 		Map<String, List<List<Object>>> defuses = Activator.getDefault()
 				.getDefUsesController().getDefUsesByVariable();
 		Iterator<String> iterator = defuses.keySet().iterator();

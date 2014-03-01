@@ -27,29 +27,31 @@ public class TestRequirements {
 	/**
 	 * The set of all tests (automatic plus manually added)
 	 */
-	private Set<AbstractPath<Integer>> testRequirementSet;
+	@XmlElementWrapper(name = "testRequirements")
+	@XmlElement(name = "testRequirement")
+	private Set<AbstractPath> testRequirementSet;
 	
 	/**
 	 * Manually added tests 
 	 */
 	@XmlElementWrapper(name = "manualRequirements")
 	@XmlElement(name = "manualRequirement")
-	private Set<Path<Integer>> manualTestRequirementSet;
+	private Set<Path> manualTestRequirementSet;
 	
 	/**
 	 * Tests marked as infeasible
 	 */
 	@XmlElementWrapper(name = "infeasiblePaths")
 	@XmlElement(name = "infeasiblePath")
-	private Set<AbstractPath<Integer>> infeasibleSet;
+	private Set<AbstractPath> infeasibleSet;
 
 	/**
 	 * Constructs a set of empty requirements
 	 */
 	public TestRequirements() {
-		testRequirementSet = new TreeSet<AbstractPath<Integer>>();
-		manualTestRequirementSet = new TreeSet<Path<Integer>>();
-		infeasibleSet = new TreeSet<AbstractPath<Integer>>();
+		testRequirementSet = new TreeSet<AbstractPath>();
+		manualTestRequirementSet = new TreeSet<Path>();
+		infeasibleSet = new TreeSet<AbstractPath>();
 	}
 
 	/**
@@ -57,7 +59,7 @@ public class TestRequirements {
 	 * 
 	 * @param path The test requirement to be added
 	 */
-	public void addManualTestRequirement(Path<Integer> path) {
+	public void addManualTestRequirement(Path path) {
 		testRequirementSet.add(path);
 		manualTestRequirementSet.add(path);
 	}
@@ -67,7 +69,7 @@ public class TestRequirements {
 	 * 
 	 * @param requirement The test requirement to be removed
 	 */
-	public void remove(AbstractPath<Integer> requirement) {
+	public void remove(AbstractPath requirement) {
 		testRequirementSet.remove(requirement);
 		manualTestRequirementSet.remove(requirement);
 		infeasibleSet.remove(requirement);
@@ -95,7 +97,7 @@ public class TestRequirements {
 	 * @param infeasible The test requirement to be classified
 	 * @param status True to make the test infeasible; false otherwise.
 	 */
-	public void setInfeasible(AbstractPath<Integer> infeasible, boolean status) {
+	public void setInfeasible(AbstractPath infeasible, boolean status) {
 		if (status)
 			infeasibleSet.add(infeasible);
 		else
@@ -106,7 +108,7 @@ public class TestRequirements {
 	 * @param selectedTestRequirement The test requirement to be checked
 	 * @return true is the test is infeasible; false, otherwise
 	 */
-	public boolean isInfeasible(AbstractPath<Integer> selectedTestRequirement) {
+	public boolean isInfeasible(AbstractPath selectedTestRequirement) {
 		return infeasibleSet.contains(selectedTestRequirement);
 	}
 
@@ -117,63 +119,63 @@ public class TestRequirements {
 		return infeasibleSet.size();
 	}
 
-	public void generateTestRequirements(ICoverageAlgorithms<Integer> algorithm) {
+	public void generateTestRequirements(ICoverageAlgorithms algorithm) {
 		testRequirementSet = algorithm.getTestRequirements();
 		testRequirementSet.addAll(manualTestRequirementSet);
 	}
 
 	public boolean hasInfinitePath() {
-		for (AbstractPath<Integer> path : testRequirementSet)
-			if (path instanceof InfinitePath<?>)
+		for (AbstractPath path : testRequirementSet)
+			if (path instanceof InfinitePath)
 				return true;
 		return false;
 	}
 
-	public Set<Path<Integer>> getPathToured(Path<Integer> seletedTestPath) {
-		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for (AbstractPath<Integer> path : testRequirementSet)
+	public Set<Path> getPathToured(Path seletedTestPath) {
+		Set<Path> coveredPaths = new TreeSet<Path>();
+		for (AbstractPath path : testRequirementSet)
 			if (path instanceof Path)
 				if (seletedTestPath.isSubPath(path)) // Infinite paths will never be subpaths 
-					coveredPaths.add((Path<Integer>) path);
+					coveredPaths.add((Path) path);
 		return coveredPaths;
 	}
 
-	public Set<Path<Integer>> getPathsTouredWithSideTrip(
-			Path<Integer> seletedTestPath) {
-		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for (AbstractPath<Integer> path : testRequirementSet)
+	public Set<Path> getPathsTouredWithSideTrip(
+			Path seletedTestPath) {
+		Set<Path> coveredPaths = new TreeSet<Path>();
+		for (AbstractPath path : testRequirementSet)
 			if (seletedTestPath.toursWithSideTrip(path)) // Infinite paths will never be subpaths
-				coveredPaths.add((Path<Integer>) path);
+				coveredPaths.add((Path) path);
 		return coveredPaths;
 	}
 
-	public Set<Path<Integer>> getPathsTouredWithDeTour(
-			Path<Integer> seletedTestPath) {
-		Set<Path<Integer>> coveredPaths = new TreeSet<Path<Integer>>();
-		for (AbstractPath<Integer> path : testRequirementSet)
+	public Set<Path> getPathsTouredWithDeTour(
+			Path seletedTestPath) {
+		Set<Path> coveredPaths = new TreeSet<Path>();
+		for (AbstractPath path : testRequirementSet)
 			if (seletedTestPath.toursWithDetour(path)) // Infinite paths will never be subpaths
-				coveredPaths.add((Path<Integer>) path);
+				coveredPaths.add((Path) path);
 		return coveredPaths;
 	}
 
 	/**
 	 * @return The set of test requirements marked as infeasible
 	 */
-	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
+	public Iterable<AbstractPath> getInfeasiblesTestRequirements() {
 		return infeasibleSet;
 	}
 
 	/**
 	 * @return The set of test requirements added manually
 	 */
-	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
+	public Iterable<Path> getTestRequirementsManuallyAdded() {
 		return manualTestRequirementSet;
 	}
 
 	/**
 	 * @return The set of test requirements
 	 */
-	public Iterable<AbstractPath<Integer>> getTestRequirements() {
+	public Iterable<AbstractPath> getTestRequirements() {
 		return testRequirementSet;
 	}
 }

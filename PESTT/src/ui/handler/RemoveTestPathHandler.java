@@ -35,7 +35,7 @@ public class RemoveTestPathHandler extends AbstractHandler {
 			throws ExecutionException {
 		if (Activator.getDefault().getTestPathController().isTestPathSelected()) {
 			String pathMessage = "";
-			for (Path<Integer> path : Activator.getDefault()
+			for (Path path : Activator.getDefault()
 					.getTestPathController().getSelectedTestPaths())
 				pathMessage += path.toString() + "\n";
 			String message = Messages.TEST_PATH_CONFIRM_REMOVE_MSG

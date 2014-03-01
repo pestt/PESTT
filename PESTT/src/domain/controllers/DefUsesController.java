@@ -51,7 +51,7 @@ public class DefUsesController extends Observable {
 	}
 
 	public void generateDefUses() {
-		DefUsesVisitor<Integer> defusesVisitor = new DefUsesVisitor<Integer>();
+		DefUsesVisitor defusesVisitor = new DefUsesVisitor();
 		Activator.getDefault().getSourceGraphController()
 				.applyVisitor(defusesVisitor);
 	}
@@ -111,7 +111,7 @@ public class DefUsesController extends Observable {
 		return defUsesSet.getDefUsesByVariable();
 	}
 
-	public Set<AbstractPath<Integer>> getTestRequirementsOfSelected() {
+	public Set<AbstractPath> getTestRequirementsOfSelected() {
 		switch (selectedDefUseView) {
 		case NODE_EDGE:
 			return defUsesSet.getTestRequirementsToNode(selectedDefUse);
@@ -122,11 +122,11 @@ public class DefUsesController extends Observable {
 		return null;
 	}
 
-	public Set<AbstractPath<Integer>> getTestRequirementsToNode(Object obj) {
+	public Set<AbstractPath> getTestRequirementsToNode(Object obj) {
 		return defUsesSet.getTestRequirementsToNode(obj);
 	}
 
-	public Set<AbstractPath<Integer>> getTestRequirementsToVariable(String str) {
+	public Set<AbstractPath> getTestRequirementsToVariable(String str) {
 		return defUsesSet.getTestRequirementsToVariable(str);
 	}
 

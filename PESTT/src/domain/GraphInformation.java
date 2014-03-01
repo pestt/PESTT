@@ -29,8 +29,8 @@ public class GraphInformation {
 	 * @param layoutNode
 	 *            - The node representation in the layout graph.
 	 */
-	public void addInformationToLayer0(Graph<Integer> sourceGraph,
-			Node<Integer> sourceNode, GraphNode layoutNode) {
+	public void addInformationToLayer0(Graph sourceGraph,
+			Node sourceNode, GraphNode layoutNode) {
 		sourceGraph.selectMetadataLayer(Layer.EMPTY.getLayer()); // change to node association layer.
 		sourceGraph.addMetadata(sourceNode, layoutNode); // associate the the nodes of sourceGraph and layoutGraph.
 	}
@@ -51,8 +51,8 @@ public class GraphInformation {
 	 *            - The compilation unit.
 	 */
 	@SuppressWarnings("unchecked")
-	public void addInformationToLayer1(Graph<Integer> sourceGraph,
-			Node<Integer> sourceNode, ASTNode instructions, CompilationUnit unit) {
+	public void addInformationToLayer1(Graph sourceGraph,
+			Node sourceNode, ASTNode instructions, CompilationUnit unit) {
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // change to instruction layer.
 		Map<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) sourceGraph
 				.getMetadata(sourceNode); // contains the instructions associated to the node. 
@@ -82,8 +82,8 @@ public class GraphInformation {
 	 * @param info
 	 *            - The guards information.
 	 */
-	public void addInformationToLayer2(Graph<Integer> sourceGraph,
-			Edge<Integer> sourceEdge, String info) {
+	public void addInformationToLayer2(Graph sourceGraph,
+			Edge sourceEdge, String info) {
 		sourceGraph.selectMetadataLayer(Layer.GUARDS.getLayer()); // change to cycle layer.
 		sourceGraph.addMetadata(sourceEdge, info); // add information to edge.
 	}

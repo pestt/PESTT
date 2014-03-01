@@ -42,8 +42,10 @@ public class TestSuite {
 	public MethodTest getMethodTest(String packageName, String className,
 			String methodSignature) {
 		PackageTest pt = packages.get(packageName);
-		if (pt == null)
+		if (pt == null) {
 			pt = new PackageTest(packageName);
+			packages.put(packageName, pt);
+		}
 		return pt.getMethodTest(className, methodSignature);
 	}
 }

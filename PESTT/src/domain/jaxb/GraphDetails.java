@@ -42,7 +42,7 @@ public class GraphDetails {
 	}
 
 	private void setGraphInitialNodes() {
-		for (Node<Integer> node : Activator.getDefault()
+		for (Node node : Activator.getDefault()
 				.getSourceGraphController().getSourceGraph().getInitialNodes())
 			initialNodes.add(node.toString());
 	}
@@ -52,7 +52,7 @@ public class GraphDetails {
 	}
 
 	private void setGraphFinalNodes() {
-		for (Node<Integer> node : Activator.getDefault()
+		for (Node node : Activator.getDefault()
 				.getSourceGraphController().getSourceGraph().getFinalNodes())
 			finalNodes.add(node.toString());
 	}
@@ -62,7 +62,7 @@ public class GraphDetails {
 	}
 
 	private void setGraphNodes() {
-		for (Node<Integer> node : Activator.getDefault()
+		for (Node node : Activator.getDefault()
 				.getSourceGraphController().getSourceGraph().getNodes())
 			nodes.add(node.toString());
 	}
@@ -72,9 +72,9 @@ public class GraphDetails {
 	}
 
 	private void setGraphEdges() {
-		for (Node<Integer> node : Activator.getDefault()
+		for (Node node : Activator.getDefault()
 				.getSourceGraphController().getSourceGraph().getNodes())
-			for (Edge<Integer> edge : Activator.getDefault()
+			for (Edge edge : Activator.getDefault()
 					.getSourceGraphController().getSourceGraph()
 					.getNodeEdges(node))
 				edges.add(edge.toString());

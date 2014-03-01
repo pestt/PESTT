@@ -36,7 +36,7 @@ public class RemoveTestRequirementHandler extends AbstractHandler {
 			throws ExecutionException {
 		if (Activator.getDefault().getTestRequirementController()
 				.isTestRequirementSelected()) {
-			AbstractPath<Integer> selectedPath = Activator.getDefault()
+			AbstractPath selectedPath = Activator.getDefault()
 					.getTestRequirementController()
 					.getSelectedTestRequirement();
 			String message = Messages.TEST_REQUIREMENT_CONFIRM_REMOVE_MSG

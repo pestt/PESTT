@@ -52,7 +52,7 @@ public class VisualInformation {
 	private static final String ALL = "All";
 	private static final String TRUE = "True";
 	private static final String FALSE = "False";
-	private adt.graph.Graph<Integer> sourceGraph;
+	private adt.graph.Graph sourceGraph;
 	private ui.source.Graph layoutGraph;
 	private ISelectionListener listener;
 
@@ -85,9 +85,9 @@ public class VisualInformation {
 	private void clear() {
 		sourceGraph.selectMetadataLayer(Layer.EMPTY.getLayer()); // change to the empty layer.
 		removeVisualCoverage(); // removes the marks in the editor.
-		for (adt.graph.Node<Integer> node : sourceGraph.getNodes())
+		for (adt.graph.Node node : sourceGraph.getNodes())
 			// search in the sourceGraph for all node.
-			for (adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))
+			for (adt.graph.Edge edge : sourceGraph.getNodeEdges(node))
 				// search in the sourceGraph for all edges.
 				for (GraphConnection gconnection : layoutGraph.getGraphEdges())
 					// search in the layoutGraph for all edges.
@@ -104,7 +104,7 @@ public class VisualInformation {
 			for (GraphItem item : layoutGraph.getSelected())
 				// through all graph items.
 				if (item instanceof GraphNode) { // verify if is a GraphNode.
-					adt.graph.Node<Integer> node = sourceGraph.getNode(Integer
+					adt.graph.Node node = sourceGraph.getNode(Integer
 							.parseInt(item.getText())); // get the node.
 					sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS
 							.getLayer()); // select the layer to get the information.
@@ -117,7 +117,7 @@ public class VisualInformation {
 									MarkersType.LINK_MARKER); // select the area in the editor.
 					}
 				} else if (item instanceof GraphConnection) {
-					adt.graph.Node<Integer> node = sourceGraph.getNode(Integer
+					adt.graph.Node node = sourceGraph.getNode(Integer
 							.parseInt(((GraphConnection) item).getSource()
 									.getText()));
 					sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS
@@ -169,9 +169,9 @@ public class VisualInformation {
 
 	private void addInformationToLayers2_3_4(String value) {
 		setLayerInformation(Layer.EMPTY); // clean previous informations.
-		for (adt.graph.Node<Integer> node : sourceGraph.getNodes())
+		for (adt.graph.Node node : sourceGraph.getNodes())
 			// search in the sourceGraph for all node.
-			for (adt.graph.Edge<Integer> edge : sourceGraph.getNodeEdges(node))
+			for (adt.graph.Edge edge : sourceGraph.getNodeEdges(node))
 				// search in the sourceGraph for all edges.
 				for (GraphConnection gconnection : layoutGraph.getGraphEdges())
 					// search in the layoutGraph for all edges.
@@ -320,7 +320,7 @@ public class VisualInformation {
 		sourceGraph = Activator.getDefault().getSourceGraphController()
 				.getSourceGraph(); // set the sourceGraph.
 		removeVisualCoverage(); // removes the marks in the editor.
-		for (adt.graph.Node<Integer> node : sourceGraph.getNodes()) {
+		for (adt.graph.Node node : sourceGraph.getNodes()) {
 			sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph
 					.getMetadata(node); // get the information in this layer to this node.
@@ -359,7 +359,7 @@ public class VisualInformation {
 	}
 
 	private boolean isNodeSelected(List<GraphItem> items,
-			adt.graph.Node<Integer> node) {
+			adt.graph.Node node) {
 		for (GraphNode gnode : layoutGraph.getGraphNodes())
 			// through all nodes in the graph.
 			if (!gnode.isDisposed() && gnode.getData().equals(node)) // if matches.
@@ -432,7 +432,7 @@ public class VisualInformation {
 				.getSourceGraph(); // set the sourceGraph.
 		List<GraphItem> aux = new LinkedList<GraphItem>(); // auxiliary list to store selected items.
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for (adt.graph.Node<Integer> node : sourceGraph.getNodes()) { // through all nodes.
+		for (adt.graph.Node node : sourceGraph.getNodes()) { // through all nodes.
 			HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph
 					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null) {
@@ -445,8 +445,8 @@ public class VisualInformation {
 			}
 		}
 		if (aux.isEmpty()) {
-			for (adt.graph.Node<Integer> node : sourceGraph.getNodes())
-				for (adt.graph.Edge<Integer> edge : sourceGraph
+			for (adt.graph.Node node : sourceGraph.getNodes())
+				for (adt.graph.Edge edge : sourceGraph
 						.getNodeEdges(node)) { // through all nodes.
 					HashMap<ASTNode, Line> map = (HashMap<ASTNode, Line>) sourceGraph
 							.getMetadata(node); // get the information in this layer to this node.

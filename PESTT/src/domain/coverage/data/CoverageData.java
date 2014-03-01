@@ -19,7 +19,7 @@ public class CoverageData implements ICoverageData {
 
 	private HashMap<Integer, String> lineStatus;
 
-	public CoverageData(Path<Integer> executedPath) {
+	public CoverageData(Path executedPath) {
 		lineStatus = new LinkedHashMap<Integer, String>();
 		setLineStatus(executedPath);
 	}
@@ -37,11 +37,11 @@ public class CoverageData implements ICoverageData {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setLineStatus(Path<Integer> executedPath) {
-		Graph<Integer> sourceGraph = Activator.getDefault()
+	private void setLineStatus(Path executedPath) {
+		Graph sourceGraph = Activator.getDefault()
 				.getSourceGraphController().getSourceGraph();
 		sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for (Node<Integer> node : sourceGraph.getNodes()) {
+		for (Node node : sourceGraph.getNodes()) {
 			LinkedHashMap<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) sourceGraph
 					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)

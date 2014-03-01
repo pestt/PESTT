@@ -4,11 +4,11 @@ import adt.graph.Path;
 
 public class TestPathChangedEvent {
 
-	public final Iterable<Path<Integer>> testPathSet;
-	public final Iterable<Path<Integer>> manuallyAdded;
+	public final Iterable<Path> testPathSet;
+	public final Iterable<Path> manuallyAdded;
 
-	public TestPathChangedEvent(Iterable<Path<Integer>> testPathSet,
-			Iterable<Path<Integer>> manuallyAdded) {
+	public TestPathChangedEvent(Iterable<Path> testPathSet,
+			Iterable<Path> manuallyAdded) {
 		this.testPathSet = testPathSet;
 		this.manuallyAdded = manuallyAdded;
 	}

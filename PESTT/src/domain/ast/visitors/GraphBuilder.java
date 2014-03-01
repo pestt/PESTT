@@ -53,16 +53,16 @@ public class GraphBuilder extends ASTVisitor {
 
 	private static final String NEG = "¬";
 	private static final boolean DEBUG = true;
-	private Graph<Integer> sourceGraph;
+	private Graph sourceGraph;
 	private String methodName;
 	private int nodeNum;
-	private Stack<Node<Integer>> prevNode;
-	private Stack<Node<Integer>> continueNode;
-	private Stack<Node<Integer>> breakNode;
+	private Stack<Node> prevNode;
+	private Stack<Node> continueNode;
+	private Stack<Node> breakNode;
 	private boolean controlFlag;
 	private boolean returnFlag;
 	private boolean caseFlag;
-	private Node<Integer> finalnode;
+	private Node finalnode;
 	private GraphInformation infos;
 	private CompilationUnit unit;
 	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
@@ -75,20 +75,20 @@ public class GraphBuilder extends ASTVisitor {
 		this.methodName = methodName; // name of the method to be analyzed.
 		this.unit = unit;
 		nodeNum = 0; // number of the node.
-		sourceGraph = new Graph<Integer>(); // the graph.
+		sourceGraph = new Graph(); // the graph.
 		sourceGraph.addMetadataLayer(); // the layer that associates the sourceGraph elements to the layoutGraph elements.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code cycles.
 		sourceGraph.addMetadataLayer(); // the layer that contains the code instructions.
 		attributes = new LinkedList<VariableDeclarationFragment>(); // the class attributes.
 		enumFields = new LinkedList<EnumDeclaration>(); // the enum class attributes.
-		prevNode = new Stack<Node<Integer>>(); // stack that contains the predecessor nodes.
-		continueNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a continue occurs.
-		breakNode = new Stack<Node<Integer>>(); // stack that contains the node to be linked if a break occurs.
+		prevNode = new Stack<Node>(); // stack that contains the predecessor nodes.
+		continueNode = new Stack<Node>(); // stack that contains the node to be linked if a continue occurs.
+		breakNode = new Stack<Node>(); // stack that contains the node to be linked if a break occurs.
 		javadocAnnotations = new HashMap<JavadocTagAnnotations, List<String>>();
 		controlFlag = false; // flag that controls if a continue or a break occurs.
 		returnFlag = false; // flag that controls if a return occurs.
 		caseFlag = false; // flag that controls the occurrence of a break in the previous case;  
-		Node<Integer> initial = new Node<Integer>(nodeNum); // the initial node.
+		Node initial = new Node(nodeNum); // the initial node.
 		sourceGraph.addInitialNode(initial); // adds first node to the graph.
 		prevNode.push(initial); // adds first node to the previous node stack.
 		finalnode = initial; // The final node.
@@ -234,18 +234,18 @@ public class GraphBuilder extends ASTVisitor {
 	public void endVisit(MethodDeclaration node) {
 		String signature = getMethodSignature(node);
 		if (signature.equals(methodName)) {
-			List<Node<Integer>> nodesToRemove = new LinkedList<Node<Integer>>();
-			List<Edge<Integer>> edgesToRemove = new LinkedList<Edge<Integer>>();
-			for (Node<Integer> graphNode : sourceGraph.getNodes()) {
+			List<Node> nodesToRemove = new LinkedList<Node>();
+			List<Edge> edgesToRemove = new LinkedList<Edge>();
+			for (Node graphNode : sourceGraph.getNodes()) {
 				sourceGraph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.	
 				if (sourceGraph.getMetadata(graphNode) == null
 						&& sourceGraph.getNodeEdges(graphNode).size() == 1) {
-					Set<Edge<Integer>> edgeToRemove = sourceGraph
+					Set<Edge> edgeToRemove = sourceGraph
 							.getNodeEndEdges(graphNode);
-					Edge<Integer> edgeToFinalNode = (Edge<Integer>) sourceGraph
+					Edge edgeToFinalNode = (Edge) sourceGraph
 							.getNodeEdges(graphNode).toArray()[0];
-					for (Edge<Integer> edge : edgeToRemove) {
-						Edge<Integer> newEdge = sourceGraph.addEdge(
+					for (Edge edge : edgeToRemove) {
+						Edge newEdge = sourceGraph.addEdge(
 								edge.getBeginNode(),
 								edgeToFinalNode.getEndNode());
 						sourceGraph
@@ -259,7 +259,7 @@ public class GraphBuilder extends ASTVisitor {
 				}
 			}
 
-			for (Node<Integer> n : sourceGraph.getNodes())
+			for (Node n : sourceGraph.getNodes())
 				if (sourceGraph.getNodeEndEdges(n).size() == 0
 						&& !sourceGraph.isInitialNode(n)
 						&& !nodesToRemove.contains(n)) {
@@ -267,10 +267,10 @@ public class GraphBuilder extends ASTVisitor {
 					nodesToRemove.add(n);
 				}
 
-			for (Edge<Integer> edge : edgesToRemove)
+			for (Edge edge : edgesToRemove)
 				sourceGraph.removeEdge(edge);
 
-			for (Node<Integer> n : nodesToRemove)
+			for (Node n : nodesToRemove)
 				sourceGraph.removeNode(n);
 
 			if (!sourceGraph.getInitialNodes().iterator().hasNext())
@@ -318,7 +318,7 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(ThrowStatement node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = createConnection(); // create the edge from the previous node to the throws node.
+			Edge edge = createConnection(); // create the edge from the previous node to the throws node.
 			infos.addInformationToLayer2(sourceGraph, edge, "throws;"); // add information to previous node - throws.
 			sourceGraph.addFinalNode(edge.getEndNode()); // add the throws node to the final nodes.
 			infos.addInformationToLayer1(sourceGraph, edge.getEndNode(), node,
@@ -337,14 +337,14 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(IfStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noIf = edge.getEndNode(); // the initial node of the IFStatement.
+		Edge edge = createConnection(); // connect the previous node to this node.
+		Node noIf = edge.getEndNode(); // the initial node of the IFStatement.
 		prevNode.push(noIf); // the graph continues from the initial node of the IFStatement.
 		infos.addInformationToLayer1(sourceGraph, noIf, node, unit); // add information to noIF node.
-		Edge<Integer> edgeThen = createConnection(); // visit the Then block.
+		Edge edgeThen = createConnection(); // visit the Then block.
 		infos.addInformationToLayer2(sourceGraph, edgeThen, node
 				.getExpression().toString()); // add information to noIF - noIFThen edge.
-		Node<Integer> noIfThen = edgeThen.getEndNode(); // create the IFThen node.
+		Node noIfThen = edgeThen.getEndNode(); // create the IFThen node.
 		prevNode.push(noIfThen); // the graph continues from the IFThen node.
 		node.getThenStatement().accept(this);
 		boolean breakThenFlag = controlFlag; // verify if a break or a continue occur in the IFThen.
@@ -354,10 +354,10 @@ public class GraphBuilder extends ASTVisitor {
 		prevNode.push(noIf); // the graph continues from the initial node of the IFStatement.
 		Statement elseStatement = node.getElseStatement(); // get the Else block.
 		if (elseStatement != null) { // if exists visit the Else block.
-			Edge<Integer> edgeElse = createConnection();
+			Edge edgeElse = createConnection();
 			infos.addInformationToLayer2(sourceGraph, edgeElse, NEG + "("
 					+ node.getExpression().toString() + ")"); // add information to noIF - noIFElse edge.
-			Node<Integer> noIfElse = edgeElse.getEndNode(); // create the IFElse node. 
+			Node noIfElse = edgeElse.getEndNode(); // create the IFElse node. 
 			prevNode.push(noIfElse); // the graph continues from the IFElse node.
 			elseStatement.accept(this);
 		}
@@ -391,14 +391,14 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(TryStatement node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = createConnection(); // create the edge from the previous node to the try-catch node.
+			Edge edge = createConnection(); // create the edge from the previous node to the try-catch node.
 			infos.addInformationToLayer2(sourceGraph, edge, "try;"); // add information to previous node.
-			Node<Integer> noTry = edge.getEndNode(); // the initial node of the TryStatement.
+			Node noTry = edge.getEndNode(); // the initial node of the TryStatement.
 			prevNode.push(noTry); // the graph continues from the initial node of the TryStatement.
 			node.getBody().accept(this);
 			edge = createConnection();
 			infos.addInformationToLayer2(sourceGraph, edge, "finally;"); // add information to previous node.
-			Node<Integer> noFinally = edge.getEndNode();
+			Node noFinally = edge.getEndNode();
 			prevNode.push(noFinally);
 			node.getFinally().accept(this);
 			//prevNode.push(noTry);
@@ -409,10 +409,10 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(CatchClause node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = createConnection();
+			Edge edge = createConnection();
 			infos.addInformationToLayer2(sourceGraph, edge, "catch;"); // add information to previous node.
 			sourceGraph.addFinalNode(edge.getEndNode());
-			Node<Integer> body = edge.getEndNode();
+			Node body = edge.getEndNode();
 			infos.addInformationToLayer1(sourceGraph, edge.getEndNode(), node,
 					unit);
 			prevNode.push(body);
@@ -424,17 +424,17 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(WhileStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noWhile = edge.getEndNode(); // the initial node of the WhileStatement.
+		Edge edge = createConnection(); // connect the previous node to this node.
+		Node noWhile = edge.getEndNode(); // the initial node of the WhileStatement.
 		prevNode.push(noWhile); // the graph continues from the initial node of the WhileStatement.
 		infos.addInformationToLayer1(sourceGraph, noWhile, node, unit); // add information to noWhile node.
-		Node<Integer> noEndWhile = sourceGraph.addNode(++nodeNum); // the final node of the WhileStatement.
+		Node noEndWhile = sourceGraph.addNode(++nodeNum); // the final node of the WhileStatement.
 		breakNode.push(noEndWhile); // if a break occur goes to the final node of the WhileStatement.
 		continueNode.push(noWhile); // if a continue occur goes to the initial node of the WhileStatement.
-		Edge<Integer> edgeBody = createConnection(); // visit the while body block.
+		Edge edgeBody = createConnection(); // visit the while body block.
 		infos.addInformationToLayer2(sourceGraph, edgeBody, node
 				.getExpression().toString()); // add information to noWhile - noWhileBody edge.
-		Node<Integer> noWhileBody = edgeBody.getEndNode(); // create the WhileBody node. 
+		Node noWhileBody = edgeBody.getEndNode(); // create the WhileBody node. 
 		prevNode.push(noWhileBody); // the graph continues from the WhileBody node.
 		node.getBody().accept(this);
 		continueNode.pop(); // when ends clean the stack.
@@ -456,12 +456,12 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(DoStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noDoWhileBody = edge.getEndNode(); // create the DoWhileBody node. 
+		Edge edge = createConnection(); // connect the previous node to this node.
+		Node noDoWhileBody = edge.getEndNode(); // create the DoWhileBody node. 
 		prevNode.push(noDoWhileBody); // the graph continues from the DoWhileBody node.
-		Node<Integer> noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
+		Node noWhile = sourceGraph.addNode(++nodeNum); // the node of the WhileStatement.
 		infos.addInformationToLayer1(sourceGraph, noWhile, node, unit);
-		Node<Integer> noEndDoWhile = sourceGraph.addNode(++nodeNum); // the final node of the DoStatement.
+		Node noEndDoWhile = sourceGraph.addNode(++nodeNum); // the final node of the DoStatement.
 		breakNode.push(noEndDoWhile); // if a break occur goes to the final node of the DoStatement.
 		continueNode.push(noWhile); // if a continue occur goes to the WhileStatement node.
 		node.getBody().accept(this);
@@ -487,24 +487,24 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(ForStatement node) {
-		Edge<Integer> edge = createConnection(); // initialization of the ForStatement.
+		Edge edge = createConnection(); // initialization of the ForStatement.
 		for (Object initNode : node.initializers())
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(),
 					(ASTNode) initNode, unit); // add information to noInitFor node.
-		Node<Integer> noFor = edge.getEndNode(); // the initial node of the ForStatement.
+		Node noFor = edge.getEndNode(); // the initial node of the ForStatement.
 		infos.addInformationToLayer1(sourceGraph, noFor, node, unit);
-		Node<Integer> incFor = sourceGraph.addNode(++nodeNum); // the node of the incFor.
+		Node incFor = sourceGraph.addNode(++nodeNum); // the node of the incFor.
 		for (Object incNode : node.updaters())
 			infos.addInformationToLayer1(sourceGraph, incFor,
 					(ASTNode) incNode, unit);
-		Node<Integer> noEndFor = sourceGraph.addNode(++nodeNum); // the final node of the ForStatement.
+		Node noEndFor = sourceGraph.addNode(++nodeNum); // the final node of the ForStatement.
 		breakNode.push(noEndFor); // if a break occur goes to the final node of the ForStatement.
 		continueNode.push(incFor); // if a continue occur goes to the incFor node.
 		prevNode.push(noFor); // the graph continues from the initial node of the ForStatement.
-		Edge<Integer> edgeBody = createConnection(); // visit the ForStatement body block.
+		Edge edgeBody = createConnection(); // visit the ForStatement body block.
 		infos.addInformationToLayer2(sourceGraph, edgeBody, node
 				.getExpression().toString()); // add information to noFor - ForBody edge.
-		Node<Integer> noForBody = edgeBody.getEndNode(); // create the ForBody node. 
+		Node noForBody = edgeBody.getEndNode(); // create the ForBody node. 
 		prevNode.push(noForBody); // the graph continues from the ForBody node.
 		node.getBody().accept(this);
 		continueNode.pop(); // when ends clean the stack.
@@ -527,17 +527,17 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(EnhancedForStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noForEach = edge.getEndNode(); // the initial node of the EnhancedForStatement.
+		Edge edge = createConnection(); // connect the previous node to this node.
+		Node noForEach = edge.getEndNode(); // the initial node of the EnhancedForStatement.
 		prevNode.push(noForEach);
 		infos.addInformationToLayer1(sourceGraph, noForEach, node, unit); // add information to noForBody node.
-		Node<Integer> noEndForEach = sourceGraph.addNode(++nodeNum); // the final node of the EnhancedForStatement.
+		Node noEndForEach = sourceGraph.addNode(++nodeNum); // the final node of the EnhancedForStatement.
 		breakNode.push(noEndForEach); // if a break occur goes to the final node of the EnhancedForStatement.
 		continueNode.push(noForEach); // if a break occur goes to the initial node of the EnhancedForStatement.
-		Edge<Integer> edgeBody = createConnection(); // visit the forEach body block.
+		Edge edgeBody = createConnection(); // visit the forEach body block.
 		infos.addInformationToLayer2(sourceGraph, edgeBody, node
 				.getExpression().toString() + ".hasNext()"); // add information to noForEach - noForEachBody edge.
-		Node<Integer> noForEachBody = edgeBody.getEndNode(); // create the ForEachBody node.
+		Node noForEachBody = edgeBody.getEndNode(); // create the ForEachBody node.
 		prevNode.push(noForEachBody); // the graph continues from the ForEachBody node.
 		node.getBody().accept(this);
 		continueNode.pop(); // when ends clean the stack.
@@ -559,10 +559,10 @@ public class GraphBuilder extends ASTVisitor {
 
 	@Override
 	public boolean visit(SwitchStatement node) {
-		Edge<Integer> edge = createConnection(); // connect the previous node to this node.
-		Node<Integer> noSwitch = edge.getEndNode(); // the initial node of the SwitchStatement.
+		Edge edge = createConnection(); // connect the previous node to this node.
+		Node noSwitch = edge.getEndNode(); // the initial node of the SwitchStatement.
 		infos.addInformationToLayer1(sourceGraph, noSwitch, node, unit); // add information to noSwitch node.
-		Node<Integer> noEndSwitch = sourceGraph.addNode(++nodeNum); // the final node of the SwitchStatement.
+		Node noEndSwitch = sourceGraph.addNode(++nodeNum); // the final node of the SwitchStatement.
 		breakNode.push(noEndSwitch); // if a break occur goes to the final node of the ForStatement.
 		continueNode.push(noEndSwitch); // if a continue occur goes to the incFor node.
 		prevNode.push(noEndSwitch);
@@ -602,9 +602,9 @@ public class GraphBuilder extends ASTVisitor {
 		} else
 			returnFlag = false;
 		nodeNum++;
-		Node<Integer> n = sourceGraph.addNode(nodeNum); // create the node of the case.
+		Node n = sourceGraph.addNode(nodeNum); // create the node of the case.
 		infos.addInformationToLayer1(sourceGraph, n, node, unit);
-		Edge<Integer> edge = null;
+		Edge edge = null;
 		if (!caseFlag && prevNode.size() > 2)
 			edge = sourceGraph.addEdge(prevNode.pop(), n); // create a edge from the previous node to this node.
 		edge = sourceGraph.addEdge(prevNode.peek(), n); // create a edge from the begin of switch to this node.
@@ -620,7 +620,7 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(BreakStatement node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = sourceGraph.addEdge(prevNode.pop(),
+			Edge edge = sourceGraph.addEdge(prevNode.pop(),
 					breakNode.peek()); // create the edge from the previous node to the break node.
 			infos.addInformationToLayer2(sourceGraph, edge, "break;"); // add information to previous node - break.
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(),
@@ -633,7 +633,7 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(ContinueStatement node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = sourceGraph.addEdge(prevNode.pop(),
+			Edge edge = sourceGraph.addEdge(prevNode.pop(),
 					continueNode.peek()); // create the edge from the previous node to the continue node.
 			infos.addInformationToLayer2(sourceGraph, edge, "continue;"); // add information to previous node - continue.
 			infos.addInformationToLayer1(sourceGraph, edge.getBeginNode(),
@@ -646,7 +646,7 @@ public class GraphBuilder extends ASTVisitor {
 	@Override
 	public boolean visit(ReturnStatement node) {
 		if (!prevNode.isEmpty()) {
-			Edge<Integer> edge = createConnection(); // create the edge from the previous node to the return node.
+			Edge edge = createConnection(); // create the edge from the previous node to the return node.
 			infos.addInformationToLayer2(sourceGraph, edge, "return;"); // add information to previous node - return.
 			sourceGraph.addFinalNode(edge.getEndNode()); // add the return node to the final nodes.
 			infos.addInformationToLayer1(sourceGraph, edge.getEndNode(), node,
@@ -657,13 +657,13 @@ public class GraphBuilder extends ASTVisitor {
 		return false;
 	}
 
-	private Edge<Integer> createConnection() {
+	private Edge createConnection() {
 		nodeNum++; // increase the node number.
-		Node<Integer> node = sourceGraph.addNode(nodeNum); // create a new node.
+		Node node = sourceGraph.addNode(nodeNum); // create a new node.
 		return sourceGraph.addEdge(prevNode.pop(), node); // create a edge to the previous node to the new one.
 	}
 
-	public Graph<Integer> getGraph() {
+	public Graph getGraph() {
 		if (finalnode != null)
 			sourceGraph.addFinalNode(finalnode); // add final node to the final nodes of the graph.
 		return sourceGraph;

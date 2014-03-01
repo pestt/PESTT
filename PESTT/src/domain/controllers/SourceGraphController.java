@@ -35,7 +35,7 @@ public class SourceGraphController {
 		sourceGraph.create(unit, methodName);
 	}
 
-	public void applyVisitor(IGraphVisitor<Integer> visitor) {
+	public void applyVisitor(IGraphVisitor visitor) {
 		sourceGraph.applyVisitor(visitor);
 	}
 
@@ -51,7 +51,7 @@ public class SourceGraphController {
 		return sourceGraph.getEnumClassAttributes();
 	}
 
-	public Graph<Integer> getSourceGraph() {
+	public Graph getSourceGraph() {
 		return sourceGraph.getSourceGraph();
 	}
 
@@ -63,7 +63,7 @@ public class SourceGraphController {
 		return sourceGraph.getCompilationUnit(unit);
 	}
 
-	public void updateMetadataInformation(Graph<Integer> graph) {
+	public void updateMetadataInformation(Graph graph) {
 		sourceGraph.updateMetadataInformation(graph);
 	}
 

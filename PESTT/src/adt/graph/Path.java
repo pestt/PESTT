@@ -5,12 +5,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Path<V extends Comparable<V>> extends AbstractPath<V> {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Path extends AbstractPath {
 
 	/**
 	 * The nodes of this path.
 	 */
-	private List<Node<V>> nodes;
+	@XmlElementWrapper(name = "nodes")
+	@XmlElement(name = "node")
+	private List<Node> nodes;
 
 	// for serialization purposes
 	protected Path() {
@@ -22,12 +30,12 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	 * @param nodes
 	 * @requires nodes.size() > 0
 	 */
-	public Path(Collection<Node<V>> nodes) {
-		this.nodes = new LinkedList<Node<V>>(nodes);
+	public Path(Collection<Node> nodes) {
+		this.nodes = new LinkedList<Node>(nodes);
 	}
 
 	@Override
-	public Iterator<Node<V>> iterator() {
+	public Iterator<Node> iterator() {
 		return nodes.iterator();
 	}
 
@@ -35,7 +43,7 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		s.append("[");
-		Iterator<Node<V>> it = iterator();
+		Iterator<Node> it = iterator();
 		s.append(it.next()); // a path has always one node, at least!
 		while (it.hasNext())
 			s.append(", " + it.next());
@@ -44,12 +52,12 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	@Override
-	public boolean isSubPath(AbstractPath<V> other) {
+	public boolean isSubPath(AbstractPath other) {
 		if (other instanceof InfinitePath)
 			return false;
-		Path<V> path = (Path<V>) other;
+		Path path = (Path) other;
 		int i = 0;
-		for (Iterator<Node<V>> it = nodes.iterator(); it.hasNext(); i++, it
+		for (Iterator<Node> it = nodes.iterator(); it.hasNext(); i++, it
 				.next())
 			if (isConsecutive(i, path))
 				return true;
@@ -63,8 +71,8 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	 * @param path
 	 * @return True if this path is consecutive.
 	 */
-	private boolean isConsecutive(int i, Path<V> path) {
-		Iterator<Node<V>> it = path.iterator();
+	private boolean isConsecutive(int i, Path path) {
+		Iterator<Node> it = path.iterator();
 		int size = path.nodes.size();
 		if (nodes.size() >= size) {
 			while (i < nodes.size() && it.hasNext()) {
@@ -78,12 +86,12 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	@Override
-	public boolean toursWithSideTrip(AbstractPath<V> other) {
+	public boolean toursWithSideTrip(AbstractPath other) {
 		if (other instanceof InfinitePath)
 			return false;
-		Path<V> path = (Path<V>) other;
+		Path path = (Path) other;
 		int i = 0;
-		for (Iterator<Node<V>> it = nodes.iterator(); it.hasNext(); i++, it
+		for (Iterator<Node> it = nodes.iterator(); it.hasNext(); i++, it
 				.next())
 			if (isConsecutiveSideTrip(i, path))
 				return true;
@@ -98,11 +106,11 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	 * @param path
 	 * @return
 	 */
-	private boolean isConsecutiveSideTrip(int i, Path<V> path) {
-		Iterator<Node<V>> it = path.iterator();
-		Node<V> currentNode = null;
+	private boolean isConsecutiveSideTrip(int i, Path path) {
+		Iterator<Node> it = path.iterator();
+		Node currentNode = null;
 		while (i < nodes.size() && it.hasNext()) {
-			Node<V> node = it.next();
+			Node node = it.next();
 			if (nodes.get(i) != node) {
 				// try advance loop
 
@@ -126,12 +134,12 @@ public class Path<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	@Override
-	public boolean toursWithDetour(AbstractPath<V> other) {
+	public boolean toursWithDetour(AbstractPath other) {
 		if (other instanceof InfinitePath)
 			return false;
-		Path<V> path = (Path<V>) other;
+		Path path = (Path) other;
 		int index = 0;
-		for (Node<V> node : path) {
+		for (Node node : path) {
 			while (index < nodes.size() && nodes.get(index) != node)
 				index++;
 			if (index == nodes.size())

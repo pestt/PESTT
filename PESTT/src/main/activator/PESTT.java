@@ -1,5 +1,5 @@
 package main.activator;
-
+ 
 import ui.StatisticsSet;
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
@@ -9,7 +9,6 @@ import domain.CoverageDataSet;
 import domain.DefUsesSet;
 import domain.SourceGraph;
 import domain.TestPathSet;
-import domain.TestRequirements;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;

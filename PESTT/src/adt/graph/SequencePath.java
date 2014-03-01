@@ -5,18 +5,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 // TODO rename
-public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
+public class SequencePath extends AbstractPath {
 
 	/**
 	 * The subpaths of this path.
 	 */
-	protected List<AbstractPath<V>> subPaths;
+	protected List<AbstractPath> subPaths;
 
 	/**
 	 * Creates a new SequencePath.
 	 */
 	public SequencePath() {
-		subPaths = new LinkedList<AbstractPath<V>>();
+		subPaths = new LinkedList<AbstractPath>();
 	}
 
 	/**
@@ -24,7 +24,7 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 	 * 
 	 * @param subPath
 	 */
-	public void addSubPath(AbstractPath<V> subPath) {
+	public void addSubPath(AbstractPath subPath) {
 		subPaths.add(subPath);
 	}
 
@@ -43,13 +43,13 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 	 * @param path
 	 * @return
 	 */
-	private String subPathToString(AbstractPath<V> path) {
+	private String subPathToString(AbstractPath path) {
 		StringBuilder result = new StringBuilder();
 		if (path instanceof SequencePath) {
-			SequencePath<V> seq = (SequencePath<V>) path;
-			Iterator<AbstractPath<V>> it = seq.subPaths.iterator();
+			SequencePath seq = (SequencePath) path;
+			Iterator<AbstractPath> it = seq.subPaths.iterator();
 			if (it.hasNext()) {
-				AbstractPath<V> subPath = it.next();
+				AbstractPath subPath = it.next();
 				result.append(subPathToString(subPath));
 				while (it.hasNext()) {
 					subPath = it.next();
@@ -57,7 +57,7 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 				}
 			}
 		} else {
-			Iterator<Node<V>> itNodes = path.iterator();
+			Iterator<Node> itNodes = path.iterator();
 			result.append(itNodes.next());
 			while (itNodes.hasNext())
 				result.append(", " + itNodes.next());
@@ -68,26 +68,26 @@ public class SequencePath<V extends Comparable<V>> extends AbstractPath<V> {
 	}
 
 	@Override
-	public boolean toursWithSideTrip(AbstractPath<V> path) {
+	public boolean toursWithSideTrip(AbstractPath path) {
 		return false;
 	}
 
 	@Override
-	public boolean toursWithDetour(AbstractPath<V> path) {
+	public boolean toursWithDetour(AbstractPath path) {
 		return false;
 	}
 
 	@Override
-	public Iterator<Node<V>> iterator() {
-		List<Node<V>> result = new LinkedList<Node<V>>();
-		for (AbstractPath<V> path : subPaths)
-			for (Node<V> node : path)
+	public Iterator<Node> iterator() {
+		List<Node> result = new LinkedList<Node>();
+		for (AbstractPath path : subPaths)
+			for (Node node : path)
 				result.add(node);
 		return result.iterator();
 	}
 
 	@Override
-	public boolean isSubPath(AbstractPath<V> path) {
+	public boolean isSubPath(AbstractPath path) {
 		return false;
 	}
 }

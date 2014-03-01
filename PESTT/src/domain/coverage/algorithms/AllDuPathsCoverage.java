@@ -15,35 +15,34 @@ import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 
-public class AllDuPathsCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class AllDuPathsCoverage implements ICoverageAlgorithms {
 
-	private Graph<V> graph;
-	private Set<AbstractPath<V>> allDuPaths;
-	private Deque<Node<V>> pathNodes;
+	private Graph graph;
+	private Set<AbstractPath> allDuPaths;
+	private Deque<Node> pathNodes;
 	private Map<String, List<List<Object>>> defuses;
 
-	public AllDuPathsCoverage(Graph<V> graph) {
+	public AllDuPathsCoverage(Graph graph) {
 		this.graph = graph;
-		allDuPaths = new TreeSet<AbstractPath<V>>();
-		pathNodes = new LinkedList<Node<V>>();
+		allDuPaths = new TreeSet<AbstractPath>();
+		pathNodes = new LinkedList<Node>();
 		defuses = Activator.getDefault().getDefUsesController()
 				.getDefUsesByVariable();
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<AbstractPath<V>> getTestRequirements() {
+	public Set<AbstractPath> getTestRequirements() {
 		for (String key : defuses.keySet()) {
 			List<List<Object>> variableDefUses = defuses.get(key);
 			List<Object> defs = variableDefUses.get(0);
 			List<Object> uses = variableDefUses.get(1);
 			if (!uses.isEmpty())
 				for (Object obj : defs) {
-					Node<V> node;
-					if (obj instanceof Edge<?>)
-						node = ((Edge<V>) obj).getBeginNode();
+					Node node;
+					if (obj instanceof Edge)
+						node = ((Edge) obj).getBeginNode();
 					else
-						node = ((Node<V>) obj);
+						node = ((Node) obj);
 					SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(
 							graph, defs, uses);
 					node.accept(visitor);
@@ -52,12 +51,12 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 		return allDuPaths;
 	}
 
-	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
+	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor {
 
 		private List<Object> defs;
 		private List<Object> uses;
 
-		public SimplePathCoverageVisitor(Graph<V> graph, List<Object> defs,
+		public SimplePathCoverageVisitor(Graph graph, List<Object> defs,
 				List<Object> uses) {
 			this.graph = graph;
 			this.defs = defs;
@@ -66,7 +65,7 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 		}
 
 		@Override
-		public boolean visit(Node<V> node) {
+		public boolean visit(Node node) {
 			if (!isClearPath(node))
 				return false;
 			if (pathNodes.contains(node)) {
@@ -83,7 +82,7 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 			return true;
 		}
 
-		private boolean isClearPath(Node<V> node) {
+		private boolean isClearPath(Node node) {
 			if (!pathNodes.isEmpty())
 				if (isDefNode(node))
 					if (pathNodes.getFirst() != node) {
@@ -100,13 +99,13 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 		}
 
 		@SuppressWarnings("unchecked")
-		private boolean isDefNode(Node<V> node) {
+		private boolean isDefNode(Node node) {
 			for (Object obj : defs) {
-				Node<V> n;
-				if (obj instanceof Edge<?>)
-					n = ((Edge<V>) obj).getBeginNode();
+				Node n;
+				if (obj instanceof Edge)
+					n = ((Edge) obj).getBeginNode();
 				else
-					n = ((Node<V>) obj);
+					n = ((Node) obj);
 				if (n == node)
 					return true;
 			}
@@ -114,19 +113,19 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 		}
 
 		@SuppressWarnings("unchecked")
-		private boolean isUseNode(Node<V> node) {
+		private boolean isUseNode(Node node) {
 			for (Object obj : uses) {
-				Node<V> n = null;
-				if (obj instanceof Edge<?>) {
+				Node n = null;
+				if (obj instanceof Edge) {
 					if (pathNodes.size() > 1) {
 						pathNodes.removeLast();
-						if (pathNodes.getLast() == ((Edge<V>) obj)
+						if (pathNodes.getLast() == ((Edge) obj)
 								.getBeginNode())
-							n = ((Edge<V>) obj).getEndNode();
+							n = ((Edge) obj).getEndNode();
 						pathNodes.addLast(node);
 					}
 				} else
-					n = ((Node<V>) obj);
+					n = ((Node) obj);
 				if (n != null)
 					if (n == node)
 						return true;
@@ -134,14 +133,14 @@ public class AllDuPathsCoverage<V extends Comparable<V>> implements
 			return false;
 		}
 
-		private void addPath(Deque<Node<V>> nodes) {
-			Path<V> toAdd = new Path<V>(nodes);
+		private void addPath(Deque<Node> nodes) {
+			Path toAdd = new Path(nodes);
 			if (nodes.size() > 1)
 				allDuPaths.add(toAdd);
 		}
 
 		@Override
-		public void endVisit(Node<V> node) {
+		public void endVisit(Node node) {
 			pathNodes.removeLast();
 		}
 	}

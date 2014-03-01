@@ -7,21 +7,20 @@ import adt.graph.AbstractPath;
 import adt.graph.CyclePath;
 import adt.graph.Graph;
 
-public class SimpleRoundTripCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class SimpleRoundTripCoverage implements ICoverageAlgorithms {
 
-	private Graph<V> graph;
+	private Graph graph;
 
-	public SimpleRoundTripCoverage(Graph<V> graph) {
+	public SimpleRoundTripCoverage(Graph graph) {
 		this.graph = graph;
 	}
 
-	public Set<AbstractPath<V>> getTestRequirements() {
-		Set<AbstractPath<V>> paths = new PrimePathCoverage<V>(graph)
+	public Set<AbstractPath> getTestRequirements() {
+		Set<AbstractPath> paths = new PrimePathCoverage(graph)
 				.getTestRequirements();
-		Set<AbstractPath<V>> result = new TreeSet<AbstractPath<V>>();
-		AbstractPath<V> prevPath = null;
-		for (AbstractPath<V> path : paths)
+		Set<AbstractPath> result = new TreeSet<AbstractPath>();
+		AbstractPath prevPath = null;
+		for (AbstractPath path : paths)
 			if (path instanceof CyclePath) {
 				if (prevPath != null && prevPath.from() != path.from())
 					result.add(prevPath);

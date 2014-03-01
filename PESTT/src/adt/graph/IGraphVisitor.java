@@ -1,24 +1,24 @@
 package adt.graph;
 
-public interface IGraphVisitor<V extends Comparable<V>> {
+public interface IGraphVisitor {
 
-	public void visitEdge(Edge<V> edge);
+	public void visitEdge(Edge edge);
 
-	public boolean visit(Edge<V> edge);
+	public boolean visit(Edge edge);
 
-	public void endVisit(Edge<V> edge);
+	public void endVisit(Edge edge);
 
-	public void visitNode(Node<V> node);
+	public void visitNode(Node node);
 
-	public boolean visit(Node<V> node);
+	public boolean visit(Node node);
 
-	public void endVisit(Node<V> node);
+	public void endVisit(Node node);
 
-	public void visitGraph(Graph<V> graph);
+	public void visitGraph(Graph graph);
 
-	public boolean visit(Graph<V> graph);
+	public boolean visit(Graph graph);
 
-	public void endVisit(Graph<V> graph);
+	public void endVisit(Graph graph);
 
-	public boolean alreadyVisited(Node<V> node);
+	public boolean alreadyVisited(Node node);
 }

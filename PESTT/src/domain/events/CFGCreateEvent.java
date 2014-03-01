@@ -4,9 +4,9 @@ import adt.graph.Graph;
 
 public class CFGCreateEvent {
 
-	public final Graph<Integer> sourceGraph;
+	public final Graph sourceGraph;
 
-	public CFGCreateEvent(Graph<Integer> sourceGraph) {
+	public CFGCreateEvent(Graph sourceGraph) {
 		this.sourceGraph = sourceGraph;
 	}
 }

@@ -1,16 +1,16 @@
 package adt.graph;
 
-public class Edge<V extends Comparable<V>> {
+public class Edge {
 
 	/**
 	 * The Edge's begin Node.
 	 */
-	private Node<V> beginNode;
+	private Node beginNode;
 
 	/**
 	 * The Edge's end Node.
 	 */
-	private Node<V> endNode;
+	private Node endNode;
 
 	/**
 	 * Creates a new Edge Object.
@@ -20,7 +20,7 @@ public class Edge<V extends Comparable<V>> {
 	 * @param end
 	 *            - The end Node of the Edge.
 	 */
-	public Edge(Node<V> begin, Node<V> end) {
+	public Edge(Node begin, Node end) {
 		this.beginNode = begin;
 		this.endNode = end;
 	}
@@ -30,7 +30,7 @@ public class Edge<V extends Comparable<V>> {
 	 * 
 	 * @return Node&lt;V&gt; - The begin Node of the Edge.
 	 */
-	public Node<V> getBeginNode() {
+	public Node getBeginNode() {
 		return beginNode;
 	}
 
@@ -39,7 +39,7 @@ public class Edge<V extends Comparable<V>> {
 	 * 
 	 * @return Node&lt;V&gt; - The end Node of the Edge.
 	 */
-	public Node<V> getEndNode() {
+	public Node getEndNode() {
 		return endNode;
 	}
 
@@ -49,7 +49,7 @@ public class Edge<V extends Comparable<V>> {
 	 * @param visitor
 	 *            - The visitor to apply.
 	 */
-	public void accept(IGraphVisitor<V> visitor) {
+	public void accept(IGraphVisitor visitor) {
 		visitor.visitEdge(this);
 	}
 
@@ -64,7 +64,7 @@ public class Edge<V extends Comparable<V>> {
 	 *         the other.</li>
 	 *         </ul>
 	 */
-	public int compareTo(Edge<V> o) {
+	public int compareTo(Edge o) {
 		if (beginNode.compareTo(o.getBeginNode()) == 0)
 			return endNode.compareTo(o.getEndNode());
 		else

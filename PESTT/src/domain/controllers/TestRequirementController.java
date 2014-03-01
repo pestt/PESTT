@@ -11,9 +11,7 @@ import main.activator.Activator;
 import adt.graph.AbstractPath;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.MethodTest;
 import domain.SourceGraph;
-import domain.TestSuite;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 import domain.coverage.algorithms.CoverageAlgorithmsFactory;
@@ -26,7 +24,7 @@ import domain.events.TestRequirementSelectedEvent;
 public class TestRequirementController extends Observable {
 
 	private SourceGraph sourceGraph;
-	private AbstractPath<Integer> selectedTestRequirement;
+	private AbstractPath selectedTestRequirement;
 	private GraphCoverageCriteriaId selectedCoverageAlgorithm;
 	private TestSuiteController testSuiteController;
 
@@ -36,7 +34,7 @@ public class TestRequirementController extends Observable {
 		this.testSuiteController = testSuiteController;
 	}
 	
-	public void addTestRequirement(Path<Integer> newTestRequirement) {
+	public void addTestRequirement(Path newTestRequirement) {
 		testSuiteController.getMethodUnderTest().addManualTestRequirement(newTestRequirement);
 		unSelectTestRequirements();
 		setChanged();
@@ -69,7 +67,7 @@ public class TestRequirementController extends Observable {
 		return testSuiteController.getMethodUnderTest().size();
 	}
 
-	public void setInfeasible(AbstractPath<Integer> abstractPath, boolean status) {
+	public void setInfeasible(AbstractPath abstractPath, boolean status) {
 		testSuiteController.getMethodUnderTest().setInfeasible(abstractPath, status);
 		setChanged();
 		notifyObservers(new InfeasibleChangedEvent(getTestRequirements(),
@@ -83,28 +81,28 @@ public class TestRequirementController extends Observable {
 	}
 
 	public boolean isInfeasiblesTestRequirements(
-			AbstractPath<Integer> abstractPath) {
+			AbstractPath abstractPath) {
 		return testSuiteController.getMethodUnderTest().isInfeasible(abstractPath);
 	}
 
-	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
+	public Iterable<AbstractPath> getInfeasiblesTestRequirements() {
 		return testSuiteController.getMethodUnderTest().getInfeasiblesTestRequirements();
 	}
 
-	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
+	public Iterable<Path> getTestRequirementsManuallyAdded() {
 		return testSuiteController.getMethodUnderTest().getTestRequirementsManuallyAdded();
 	}
 
-	public Iterable<AbstractPath<Integer>> getTestRequirements() {
+	public Iterable<AbstractPath> getTestRequirements() {
 		return testSuiteController.getMethodUnderTest().getTestRequirements();
 	}
 
-	public Path<Integer> createTestRequirement(String input) {
+	public Path createTestRequirement(String input) {
 		boolean validPath = true;
 		List<String> insertedNodes = getInsertedNodes(input);
-		List<Node<Integer>> pathNodes = new LinkedList<Node<Integer>>();
+		List<Node> pathNodes = new LinkedList<Node>();
 		try {
-			List<Node<Integer>> fromToNodes = new ArrayList<Node<Integer>>(2);
+			List<Node> fromToNodes = new ArrayList<Node>(2);
 			fromToNodes.add(sourceGraph.getSourceGraph().getNode(
 					Integer.parseInt(insertedNodes.get(0))));
 			int i = 1;
@@ -114,7 +112,7 @@ public class TestRequirementController extends Observable {
 				if (fromToNodes.get(0) != null
 						&& fromToNodes.get(1) != null
 						&& sourceGraph.getSourceGraph().isPath(
-								new Path<Integer>(fromToNodes))) {
+								new Path(fromToNodes))) {
 					pathNodes.add(fromToNodes.get(0));
 					fromToNodes.remove(0);
 				} else
@@ -123,7 +121,7 @@ public class TestRequirementController extends Observable {
 			}
 			if (validPath) {
 				pathNodes.add(fromToNodes.get(0));
-				return new Path<Integer>(pathNodes);
+				return new Path(pathNodes);
 			}
 		} catch (NumberFormatException ee) {
 			//ignore
@@ -144,11 +142,11 @@ public class TestRequirementController extends Observable {
 		return selectedTestRequirement != null;
 	}
 
-	public AbstractPath<Integer> getSelectedTestRequirement() {
+	public AbstractPath getSelectedTestRequirement() {
 		return selectedTestRequirement;
 	}
 
-	public void selectTestRequirement(AbstractPath<Integer> selected) {
+	public void selectTestRequirement(AbstractPath selected) {
 		this.selectedTestRequirement = selected;
 		setChanged();
 		notifyObservers(new TestRequirementSelectedEvent(selected));
@@ -173,7 +171,7 @@ public class TestRequirementController extends Observable {
 	}
 
 	public void generateTestRequirement() {
-		ICoverageAlgorithms<Integer> algorithm = CoverageAlgorithmsFactory.INSTANCE
+		ICoverageAlgorithms algorithm = CoverageAlgorithmsFactory.INSTANCE
 				.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
 		testSuiteController.getMethodUnderTest().generateTestRequirements(algorithm);
 		setChanged();
@@ -183,7 +181,7 @@ public class TestRequirementController extends Observable {
 				testSuiteController.getMethodUnderTest().hasInfinitePath()));
 	}
 
-	public Set<Path<Integer>> getTestPathCoverage(Path<Integer> seletedTestPath) {
+	public Set<Path> getTestPathCoverage(Path seletedTestPath) {
 		TourType selectedTourType = Activator.getDefault()
 				.getTestPathController().getSelectedTourType();
 		switch (selectedTourType) {

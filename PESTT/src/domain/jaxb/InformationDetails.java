@@ -87,15 +87,15 @@ public class InformationDetails {
 	}
 
 	private void setMethodRequirements() {
-		Set<AbstractPath<Integer>> temp = new TreeSet<AbstractPath<Integer>>();
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		Set<AbstractPath> temp = new TreeSet<AbstractPath>();
+		for (AbstractPath path : Activator.getDefault()
 				.getTestRequirementController().getTestRequirements())
 			temp.add(path);
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		for (AbstractPath path : Activator.getDefault()
 				.getTestRequirementController()
 				.getTestRequirementsManuallyAdded())
 			temp.add(path);
-		for (AbstractPath<Integer> path : temp)
+		for (AbstractPath path : temp)
 			requirements.add(path.toString());
 	}
 
@@ -104,7 +104,7 @@ public class InformationDetails {
 	}
 
 	private void setMethodInfeasibles() {
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		for (AbstractPath path : Activator.getDefault()
 				.getTestRequirementController()
 				.getInfeasiblesTestRequirements())
 			infeasibles.add(path.toString());
@@ -115,14 +115,14 @@ public class InformationDetails {
 	}
 
 	private void setMethodTestPath() {
-		Set<AbstractPath<Integer>> temp = new TreeSet<AbstractPath<Integer>>();
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		Set<AbstractPath> temp = new TreeSet<AbstractPath>();
+		for (AbstractPath path : Activator.getDefault()
 				.getTestPathController().getTestPaths())
 			temp.add(path);
-		for (AbstractPath<Integer> path : Activator.getDefault()
+		for (AbstractPath path : Activator.getDefault()
 				.getTestPathController().getTestPathsManuallyAdded())
 			temp.add(path);
-		for (AbstractPath<Integer> path : temp)
+		for (AbstractPath path : temp)
 			testpaths.add(path.toString());
 	}
 

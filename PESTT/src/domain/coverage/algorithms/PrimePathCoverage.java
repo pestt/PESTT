@@ -12,21 +12,20 @@ import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
 
-public class PrimePathCoverage<V extends Comparable<V>> implements
-		ICoverageAlgorithms<V> {
+public class PrimePathCoverage implements ICoverageAlgorithms {
 
-	private Graph<V> graph;
-	private Set<AbstractPath<V>> primePaths;
-	private Deque<Node<V>> pathNodes;
+	private Graph graph;
+	private Set<AbstractPath> primePaths;
+	private Deque<Node> pathNodes;
 
-	public PrimePathCoverage(Graph<V> graph) {
+	public PrimePathCoverage(Graph graph) {
 		this.graph = graph;
-		primePaths = new TreeSet<AbstractPath<V>>();
-		pathNodes = new LinkedList<Node<V>>();
+		primePaths = new TreeSet<AbstractPath>();
+		pathNodes = new LinkedList<Node>();
 	}
 
-	public Set<AbstractPath<V>> getTestRequirements() {
-		for (Node<V> node : graph.getNodes()) {
+	public Set<AbstractPath> getTestRequirements() {
+		for (Node node : graph.getNodes()) {
 			SimplePathCoverageVisitor visitor = new SimplePathCoverageVisitor(
 					graph);
 			node.accept(visitor);
@@ -34,15 +33,15 @@ public class PrimePathCoverage<V extends Comparable<V>> implements
 		return primePaths;
 	}
 
-	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor<V> {
+	private class SimplePathCoverageVisitor extends DepthFirstGraphVisitor {
 
-		public SimplePathCoverageVisitor(Graph<V> graph) {
+		public SimplePathCoverageVisitor(Graph graph) {
 			this.graph = graph;
 			pathNodes.clear();
 		}
 
 		@Override
-		public boolean visit(Node<V> node) {
+		public boolean visit(Node node) {
 			if (pathNodes.contains(node)) {
 				if (pathNodes.getFirst() == node) {
 					pathNodes.addLast(node);
@@ -58,22 +57,22 @@ public class PrimePathCoverage<V extends Comparable<V>> implements
 			return true;
 		}
 
-		private void addPath(Deque<Node<V>> nodes) {
-			Path<V> toAdd = pathNodes.getFirst() == pathNodes.getLast() ? new CyclePath<V>(
-					nodes) : new Path<V>(nodes);
+		private void addPath(Deque<Node> nodes) {
+			Path toAdd = pathNodes.getFirst() == pathNodes.getLast() ? new CyclePath(
+					nodes) : new Path(nodes);
 			if (!isSubPathInSet(toAdd))
 				primePaths.add(toAdd);
 		}
 
-		private boolean isSubPathInSet(Path<V> path) {
-			for (AbstractPath<V> setPath : primePaths)
+		private boolean isSubPathInSet(Path path) {
+			for (AbstractPath setPath : primePaths)
 				if (setPath.isSubPath(path))
 					return true;
 			return false;
 		}
 
 		@Override
-		public void endVisit(Node<V> node) {
+		public void endVisit(Node node) {
 			pathNodes.removeLast();
 		}
 	}

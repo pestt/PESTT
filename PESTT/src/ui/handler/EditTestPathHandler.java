@@ -39,7 +39,7 @@ public class EditTestPathHandler extends AbstractHandler {
 			throws ExecutionException {
 		if (Activator.getDefault().getTestPathController().isTestPathSelected()) {
 			if (input.equals(Description.EMPTY)) {
-				Set<Path<Integer>> selected = Activator.getDefault()
+				Set<Path> selected = Activator.getDefault()
 						.getTestPathController().getSelectedTestPaths();
 				if (selected.size() != 1) {
 					MessageDialog.openInformation(window.getShell(),
@@ -57,7 +57,7 @@ public class EditTestPathHandler extends AbstractHandler {
 			input = dialog.getInput();
 			if (input != null)
 				if (!input.equals(Description.EMPTY)) {
-					Path<Integer> newTestPath = Activator.getDefault()
+					Path newTestPath = Activator.getDefault()
 							.getTestPathController().createTestPath(input);
 					if (newTestPath != null) {
 						Activator.getDefault().getTestPathController()

@@ -98,7 +98,7 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 		} else if (data instanceof TestPathSelectedEvent) {
 			if (Activator.getDefault().getEditorController()
 					.isEverythingMatching()) {
-				Set<Path<Integer>> selectedTestPaths = Activator.getDefault()
+				Set<Path> selectedTestPaths = Activator.getDefault()
 						.getTestPathController().getSelectedTestPaths();
 				if (selectedTestPaths != null && !selectedTestPaths.isEmpty())
 					Activator.getDefault().getDefUsesController()
@@ -139,15 +139,14 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 				columnWidths[1], 1);
 		col.setLabelProvider(new StyledCellLabelProvider() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void update(ViewerCell cell) {
 				Object obj = cell.getElement();
-				if (obj instanceof Node<?>) {
-					Node<Integer> node = (Node<Integer>) obj;
+				if (obj instanceof Node) {
+					Node node = (Node) obj;
 					cell.setText(node.toString());
-				} else if (obj instanceof Edge<?>) {
-					Edge<Integer> edge = (Edge<Integer>) obj;
+				} else if (obj instanceof Edge) {
+					Edge edge = (Edge) obj;
 					cell.setText(edge.toString());
 				}
 			}
@@ -185,15 +184,14 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setDefUses(Map<Object, List<List<String>>> nodeedgeDefUses) {
 		int n = 0;
 		defUsesViewer.setInput(nodeedgeDefUses.keySet());
 		Iterator<Object> keys = nodeedgeDefUses.keySet().iterator();
 		for (TableItem item : defUsesViewer.getTable().getItems()) {
 			Object key = keys.next();
-			if (key instanceof Node<?>) {
-				Node<Integer> node = (Node<Integer>) key;
+			if (key instanceof Node) {
+				Node node = (Node) key;
 				String defs = "{ "
 						+ getDefUsesRepresentation(nodeedgeDefUses.get(node)
 								.get(0)) + " }";
@@ -204,8 +202,8 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 				item.setText(1, node.toString());
 				item.setText(2, defs);
 				item.setText(3, uses);
-			} else if (key instanceof Edge<?>) {
-				Edge<Integer> edge = (Edge<Integer>) key;
+			} else if (key instanceof Edge) {
+				Edge edge = (Edge) key;
 				String defs = "{ "
 						+ getDefUsesRepresentation(nodeedgeDefUses.get(edge)
 								.get(0)) + " }";
@@ -221,7 +219,7 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 		}
 	}
 
-	private void setDefUsesStatus(AbstractPath<Integer> selectedTestRequirement) {
+	private void setDefUsesStatus(AbstractPath selectedTestRequirement) {
 		Map<Object, List<List<String>>> defuses = Activator.getDefault()
 				.getDefUsesController().getDefUsesByNodeEdge();
 		Iterator<Object> iterator = defuses.keySet().iterator();

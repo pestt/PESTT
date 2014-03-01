@@ -49,8 +49,10 @@ public class ClassTest {
 
 	public MethodTest getMethodTest(String methodSignature) {
 		MethodTest mt = methods.get(methodSignature);
-		if (mt == null)
+		if (mt == null) {
 			mt = new MethodTest(methodSignature);
+			methods.put(methodSignature, mt);
+		}
 		return mt;
 	}
 }

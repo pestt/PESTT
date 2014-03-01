@@ -6,9 +6,9 @@ import adt.graph.Path;
 
 public class TestPathSelectedEvent {
 
-	public final Set<Path<Integer>> selectedTestPaths;
+	public final Set<Path> selectedTestPaths;
 
-	public TestPathSelectedEvent(Set<Path<Integer>> selectedTestPathSet) {
+	public TestPathSelectedEvent(Set<Path> selectedTestPathSet) {
 		this.selectedTestPaths = selectedTestPathSet;
 	}
 }

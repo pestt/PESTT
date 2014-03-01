@@ -23,20 +23,19 @@ import adt.graph.Node;
 import domain.ast.visitors.DefUsesCollector;
 import domain.constants.Layer;
 
-public class DefUsesVisitor<V extends Comparable<V>> extends
-		DepthFirstGraphVisitor<Integer> {
+public class DefUsesVisitor extends DepthFirstGraphVisitor {
 
 	private static final String THIS = "this.";
-	private Set<Node<Integer>> visitedNodes; // nodes must be visited just one time.
+	private Set<Node> visitedNodes; // nodes must be visited just one time.
 	private DefUsesCollector visitor;
 
 	public DefUsesVisitor() {
-		visitedNodes = new HashSet<Node<Integer>>();
+		visitedNodes = new HashSet<Node>();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean visit(Node<Integer> node) {
+	public boolean visit(Node node) {
 		if (!visitedNodes.contains(node)) {
 			graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer());
 			visitedNodes.add(node);
@@ -65,7 +64,7 @@ public class DefUsesVisitor<V extends Comparable<V>> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean visit(Edge<Integer> edge) {
+	public boolean visit(Edge edge) {
 		HashMap<ASTNode, Line> nodeInstructions = (HashMap<ASTNode, Line>) graph
 				.getMetadata(edge.getBeginNode());
 		Set<String> defs = new TreeSet<String>();

@@ -17,12 +17,12 @@ public class GenerateTestPathHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Graph<Integer> graph = Activator.getDefault()
+		Graph graph = Activator.getDefault()
 				.getSourceGraphController().getSourceGraph();
-		Set<Path<Integer>> paths = new GenerateTestPaths<Integer>(graph)
+		Set<Path> paths = new GenerateTestPaths<Integer>(graph)
 				.getTestPaths();
 		if (paths != null && !paths.isEmpty()) {
-			for (Path<Integer> newTestPath : paths)
+			for (Path newTestPath : paths)
 				Activator.getDefault().getTestPathController()
 						.addTestPath(newTestPath, TestType.AUTOMATIC);
 		}

@@ -50,8 +50,10 @@ public class PackageTest {
 
 	public MethodTest getMethodTest(String className, String methodSignature) {
 		ClassTest ct = classes.get(className);
-		if (ct == null)
+		if (ct == null) {
 			ct = new ClassTest(className);
+			classes.put(className, ct);
+		}
 		return ct.getMethodTest(methodSignature);
 	}
 }

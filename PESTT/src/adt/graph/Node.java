@@ -1,11 +1,16 @@
 package adt.graph;
 
-public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Node implements Comparable<Node> {
 
 	/**
 	 * The value of this Node.
 	 */
-	private V value;
+	@XmlElement private int value;
 
 	/**
 	 * Creates a new Node
@@ -13,7 +18,7 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 	 * @param value
 	 *            - the value associated to this Node.
 	 */
-	public Node(V value) {
+	public Node(int value) {
 		this.value = value;
 	}
 
@@ -22,13 +27,13 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 	 * 
 	 * @return this Node's value.
 	 */
-	public V getValue() {
+	public int getValue() {
 		return value;
 	}
 
 	@Override
 	public String toString() {
-		return value.toString();
+		return Integer.toString(value);
 	}
 
 	/**
@@ -36,7 +41,7 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 	 * 
 	 * @param visitor
 	 */
-	public void accept(IGraphVisitor<V> visitor) {
+	public void accept(IGraphVisitor visitor) {
 		visitor.visitNode(this);
 	}
 
@@ -45,12 +50,12 @@ public class Node<V extends Comparable<V>> implements Comparable<Node<V>> {
 	 * 
 	 * @param value
 	 */
-	public void setValue(V value) {
+	public void setValue(int value) {
 		this.value = value;
 	}
 
 	@Override
-	public int compareTo(Node<V> o) {
-		return value.compareTo(o.value);
+	public int compareTo(Node o) {
+		return value - o.value;
 	}
 }

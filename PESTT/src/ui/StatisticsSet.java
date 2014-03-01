@@ -30,7 +30,7 @@ import domain.coverage.data.ICoverageData;
 public class StatisticsSet extends Observable implements Iterable<String> {
 
 	private List<String> statisticsSet;
-	private Graph<Integer> graph;
+	private Graph graph;
 
 	public StatisticsSet() {
 		statisticsSet = new ArrayList<String>();
@@ -42,7 +42,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
 
-	public void getStatistics(Set<Path<Integer>> selectedTestPaths) {
+	public void getStatistics(Set<Path> selectedTestPaths) {
 		graph = Activator.getDefault().getSourceGraphController()
 				.getSourceGraph();
 		statisticsSet.clear();
@@ -57,12 +57,12 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		notifyObservers(new StatisticsChangedEvent(iterator()));
 	}
 
-	private String getNodesStatistics(Set<Path<Integer>> selectedTestPaths) {
+	private String getNodesStatistics(Set<Path> selectedTestPaths) {
 		String unit = StatisticsElements.NODES;
 		;
-		List<Node<Integer>> nodes = new LinkedList<Node<Integer>>();
-		for (Path<Integer> path : selectedTestPaths) {
-			for (Node<Integer> node : path)
+		List<Node> nodes = new LinkedList<Node>();
+		for (Path path : selectedTestPaths) {
+			for (Node node : path)
 				if (!nodes.contains(node))
 					nodes.add(node);
 		}
@@ -76,14 +76,14 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		return graph.size();
 	}
 
-	private String getEdgesStatistics(Set<Path<Integer>> selectedTestPaths) {
+	private String getEdgesStatistics(Set<Path> selectedTestPaths) {
 		String unit = StatisticsElements.EDGES;
 		;
-		List<Edge<Integer>> edges = new LinkedList<Edge<Integer>>();
-		List<Edge<Integer>> aux;
-		for (Path<Integer> path : selectedTestPaths) {
+		List<Edge> edges = new LinkedList<Edge>();
+		List<Edge> aux;
+		for (Path path : selectedTestPaths) {
 			aux = getCoveredEdges(path);
-			for (Edge<Integer> edge : aux)
+			for (Edge edge : aux)
 				if (!edges.contains(edge))
 					edges.add(edge);
 		}
@@ -93,13 +93,13 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 		return totalOutput(unit, passed, total, percentage);
 	}
 
-	private List<Edge<Integer>> getCoveredEdges(Path<Integer> path) {
-		List<Edge<Integer>> edges = new LinkedList<Edge<Integer>>();
-		Iterator<Node<Integer>> it = path.iterator();
-		Node<Integer> nodeFrom = it.next();
+	private List<Edge> getCoveredEdges(Path path) {
+		List<Edge> edges = new LinkedList<Edge>();
+		Iterator<Node> it = path.iterator();
+		Node nodeFrom = it.next();
 		while (it.hasNext()) {
-			Node<Integer> nodeTo = it.next();
-			for (Edge<Integer> edge : graph.getNodeEdges(nodeFrom))
+			Node nodeTo = it.next();
+			for (Edge edge : graph.getNodeEdges(nodeFrom))
 				if (edge.getEndNode() == nodeTo && !edges.contains(edge))
 					edges.add(edge);
 			nodeFrom = nodeTo;
@@ -109,17 +109,17 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 
 	private int getTotalEdges() {
 		int edges = 0;
-		for (Node<Integer> node : graph.getNodes())
+		for (Node node : graph.getNodes())
 			edges += graph.getNodeEdges(node).size();
 		return edges;
 	}
 
-	private String getLinesStatistics(Set<Path<Integer>> selectedTestPaths) {
+	private String getLinesStatistics(Set<Path> selectedTestPaths) {
 		String unit = StatisticsElements.LINES;
 		;
 		List<Integer> lines = new LinkedList<Integer>();
 		List<Integer> aux;
-		for (Path<Integer> path : selectedTestPaths) {
+		for (Path path : selectedTestPaths) {
 			aux = getCoveredLines(path);
 			for (int line : aux)
 				if (!lines.contains(line))
@@ -132,14 +132,14 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Integer> getCoveredLines(Path<Integer> path) {
+	private List<Integer> getCoveredLines(Path path) {
 		ICoverageData data = Activator.getDefault().getCoverageDataController()
 				.getCoverageData(path);
 		List<Integer> lines = new LinkedList<Integer>();
 		graph = Activator.getDefault().getSourceGraphController()
 				.getSourceGraph();
 		graph.selectMetadataLayer(Layer.INSTRUCTIONS.getLayer()); // select the layer to get the information.
-		for (Node<Integer> node : graph.getNodes()) {
+		for (Node node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph
 					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
@@ -155,7 +155,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	@SuppressWarnings("unchecked")
 	private int getTotalLines() {
 		List<Integer> lines = new LinkedList<Integer>();
-		for (Node<Integer> node : graph.getNodes()) {
+		for (Node node : graph.getNodes()) {
 			Map<ASTNode, Line> map = (LinkedHashMap<ASTNode, Line>) graph
 					.getMetadata(node); // get the information in this layer to this node.
 			if (map != null)
@@ -171,14 +171,14 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	private String getTestRequirementsStatistics() {
 		String unit = StatisticsElements.TESTREQUIREMENTS;
 		;
-		Set<Path<Integer>> testRequirements = getTestPathCoverage();
+		Set<Path> testRequirements = getTestPathCoverage();
 		int total = getTotalTestRequirements();
 		int passed = testRequirements.size();
 		String percentage = getPercentage(passed, total);
 		return totalOutput(unit, passed, total, percentage);
 	}
 
-	private Set<Path<Integer>> getTestPathCoverage() {
+	private Set<Path> getTestPathCoverage() {
 		return Activator.getDefault().getTestPathController()
 				.getTestRequirementCoverage();
 	}
@@ -209,7 +209,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 
 	private int getTotalFinalNodes() {
 		int size = 0;
-		Iterator<Node<Integer>> iterator = graph.getFinalNodes().iterator();
+		Iterator<Node> iterator = graph.getFinalNodes().iterator();
 		while (iterator.hasNext()) {
 			size++;
 			iterator.next();
@@ -219,20 +219,20 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 
 	private String getMinOfTestsRequired() {
 		String unit = StatisticsElements.TESTREQUIRED;
-		Iterable<AbstractPath<Integer>> automatic = Activator.getDefault()
+		Iterable<AbstractPath> automatic = Activator.getDefault()
 				.getTestRequirementController().getTestRequirements();
-		Iterable<Path<Integer>> manually = Activator.getDefault()
+		Iterable<Path> manually = Activator.getDefault()
 				.getTestRequirementController()
 				.getTestRequirementsManuallyAdded();
 		int begin = 0;
 		int end = 0;
-		for (AbstractPath<Integer> path : automatic) {
+		for (AbstractPath path : automatic) {
 			if (graph.isInitialNode(path.from()))
 				begin++;
 			if (graph.isFinalNode(path.to()))
 				end++;
 		}
-		for (Path<Integer> path : manually) {
+		for (Path path : manually) {
 			if (graph.isInitialNode(path.from()))
 				begin++;
 			if (graph.isFinalNode(path.to()))
