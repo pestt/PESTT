@@ -50,11 +50,8 @@ import ui.constants.JavadocTagAnnotations;
 import ui.events.TourChangeEvent;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
-import domain.ClassTest;
-import domain.MethodTest;
-import domain.PackageTest;
 import domain.SourceGraph;
-import domain.TestSuite;
+import domain.controllers.TestSuiteController;
 import domain.events.InfeasibleChangedEvent;
 import domain.events.TestPathChangedEvent;
 import domain.events.TestRequirementChangedEvent;
@@ -97,8 +94,6 @@ public class ActiveEditor implements Observer {
 
 	public void addObservers() {
 		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestRequirementController()
-				.addObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController()
 				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
@@ -108,8 +103,6 @@ public class ActiveEditor implements Observer {
 	public void deleteObservers() {
 		Activator.getDefault().getTestRequirementController()
 				.deleteObserver(this);
-		Activator.getDefault().getTestRequirementController()
-				.deleteObserverTestRequirement(this);
 		Activator.getDefault().getTestPathController()
 				.deleteObserverTestPath(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
@@ -322,17 +315,17 @@ public class ActiveEditor implements Observer {
 	}
 
 	private void updateTestData(String packageName, String className, String methodSignature) {
-		TestSuite testSuite = Activator.getDefault().getTestSuite();
+		TestSuiteController testSuiteController = Activator.getDefault().getTestSuiteController();
 
-		PackageTest t1 = new PackageTest("domain");
-		ClassTest c1 = new ClassTest ("domain.A");
-		c1.addMethodTest(new MethodTest("int m1 ()"));
-		c1.addMethodTest(new MethodTest("void m2(int x)"));
-		t1.addClassTest(c1);
-		testSuite.addPackageTest(t1);
+//		PackageTest t1 = new PackageTest("domain");
+//		ClassTest c1 = new ClassTest ("domain.A");
+//		c1.addMethodTest(new MethodTest("int m1 ()"));
+//		c1.addMethodTest(new MethodTest("void m2(int x)"));
+//		t1.addClassTest(c1);
+//		testSuite.addPackageTest(t1);
 		
-		testSuite.update();
-		testSuite.flush();
+//		testSuite.update();
+		testSuiteController.flush();
 	}
 	
 	/***

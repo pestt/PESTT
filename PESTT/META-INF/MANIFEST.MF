@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PESTT
 Bundle-SymbolicName: PESTT;singleton:=true
-Bundle-Version: 0.5.1
+Bundle-Version: 1.0.0
 Bundle-Activator: main.activator.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
- JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ JavaSE-1.6
 Import-Package: org.eclipse.ui.texteditor
 Bundle-ActivationPolicy: lazy
 Export-Package: adt.graph;uses:="domain.graph.visitors",

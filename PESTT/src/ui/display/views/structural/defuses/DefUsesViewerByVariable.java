@@ -50,8 +50,6 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements
 	public void addObservers() {
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
-		Activator.getDefault().getTestRequirementController()
-				.addObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController()
 				.addObserverTestPath(this);
@@ -62,8 +60,6 @@ public class DefUsesViewerByVariable extends AbstractTableViewer implements
 		Activator.getDefault().getDefUsesController()
 				.deleteObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().deleteObserver(this);
-		Activator.getDefault().getTestRequirementController()
-				.deleteObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController()
 				.deleteObserver(this);
 		Activator.getDefault().getTestPathController()

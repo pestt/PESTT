@@ -1,6 +1,5 @@
 package ui.handler;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +23,7 @@ import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
 import ui.constants.Preferences;
 import ui.editor.ActiveEditor;
-import adt.graph.Path;
-import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.Layer;
-import domain.constants.TestType;
-import domain.coverage.data.CoverageData;
-import domain.coverage.data.ICoverageData;
 
 public class RefreshHandler extends AbstractHandler {
 
@@ -67,13 +61,13 @@ public class RefreshHandler extends AbstractHandler {
 	}
 
 	private void resetDataStructures(IWorkbenchWindow window) {
-		Activator.getDefault().getEditorController().setListenUpdates(false);
+//		Activator.getDefault().getEditorController().setListenUpdates(false);
 		Activator.getDefault().getCoverageDataController()
 				.deleteObserverToCoverageData();
 		Activator.getDefault().getDefUsesController().deleteObserverToDefUses();
 		Activator.getDefault().getTestPathController().cleanTestPathSet();
 		Activator.getDefault().getTestRequirementController()
-				.cleanTestRequirementSet();
+				.clearTestRequirementSet();
 		Activator.getDefault().getCoverageDataController()
 				.clearCoverageDataSet();
 		Activator.getDefault().getStatisticsController().cleanStatisticsSet();
@@ -90,82 +84,82 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getCoverageDataController()
 				.addObserverToCoverageData();
 		Activator.getDefault().getDefUsesController().addObserverToDefUses();
-		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator
-				.getDefault().getSourceGraphController()
-				.getJavadocAnnotations();
-		List<String> criteria = javadocAnnotations
-				.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
-		if (criteria != null && !criteria.isEmpty()) {
+//		Map<JavadocTagAnnotations, List<String>> javadocAnnotations = Activator
+//				.getDefault().getSourceGraphController()
+//				.getJavadocAnnotations();
+		//List<String> criteria = javadocAnnotations
+		//		.get(JavadocTagAnnotations.COVERAGE_CRITERIA);
+		//if (criteria != null && !criteria.isEmpty()) {
 			//TODO: fmartins: next line is not correct but we will abandon JavaDoc for getting tests infor
 			//Activator
 			//		.getDefault()
 			//		.getTestRequirementController()
 			//		.selectCoverageCriteria(
 			//				GraphCoverageCriteriaId.valueOf(criteria.get(0)));
-			List<String> tour = javadocAnnotations
-					.get(JavadocTagAnnotations.TOUR_TYPE);
-			if (!tour.isEmpty())
-				Activator.getDefault().getTestPathController()
-						.selectTourType(tour.get(0));
-			setInformationFromJavadoc(window, javadocAnnotations,
-					JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH,
-					Messages.TEST_REQUIREMENT_TITLE,
-					Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n",
-					"\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
-			setInformationFromJavadoc(window, javadocAnnotations,
-					JavadocTagAnnotations.INFEASIBLE_PATH,
-					Messages.TEST_REQUIREMENT_TITLE,
-					Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n",
-					"\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
-			setInformationFromJavadoc(window, javadocAnnotations,
-					JavadocTagAnnotations.ADDITIONAL_TEST_PATH,
-					Messages.TEST_PATH_TITLE,
-					Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n", "\n"
-							+ Messages.TEST_PATH_REMOVE_MSG);
-			if (GraphCoverageCriteriaId.isADefUsesCoverageCriteria(
-					Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria())
-				)
-				Activator.getDefault().getDefUsesController().generateDefUses();
-			Activator.getDefault().getTestRequirementController()
-					.generateTestRequirement();
-		}
-		Activator.getDefault().getEditorController().setListenUpdates(true);
+//			List<String> tour = javadocAnnotations
+//					.get(JavadocTagAnnotations.TOUR_TYPE);
+//			if (!tour.isEmpty())
+//				Activator.getDefault().getTestPathController()
+//						.selectTourType(tour.get(0));
+//			setInformationFromJavadoc(window, javadocAnnotations,
+//					JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH,
+//					Messages.TEST_REQUIREMENT_TITLE,
+//					Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n",
+//					"\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
+//			setInformationFromJavadoc(window, javadocAnnotations,
+//					JavadocTagAnnotations.INFEASIBLE_PATH,
+//					Messages.TEST_REQUIREMENT_TITLE,
+//					Messages.TEST_REQUIREMENT_BECAME_INVALID_INPUT_MSG + "\n",
+//					"\n" + Messages.TEST_REQUIREMENT_REMOVE_MSG);
+//			setInformationFromJavadoc(window, javadocAnnotations,
+//					JavadocTagAnnotations.ADDITIONAL_TEST_PATH,
+//					Messages.TEST_PATH_TITLE,
+//					Messages.TEST_PATH_BECAME_INVALID_INPUT_MSG + "\n", "\n"
+//							+ Messages.TEST_PATH_REMOVE_MSG);
+//			if (GraphCoverageCriteriaId.isADefUsesCoverageCriteria(
+//					Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria())
+//				)
+//				Activator.getDefault().getDefUsesController().generateDefUses();
+//			Activator.getDefault().getTestRequirementController()
+//					.generateTestRequirement();
+//		}
+//		Activator.getDefault().getEditorController().setListenUpdates(true);
 	}
 
-	private void setInformationFromJavadoc(IWorkbenchWindow window,
-			Map<JavadocTagAnnotations, List<String>> javadocAnnotations,
-			JavadocTagAnnotations tag, String title, String prefix,
-			String suffix) {
-		for (String input : javadocAnnotations.get(tag)) {
-			String msg = input;
-			input = input.substring(1, input.length() - 1);
-			Path<Integer> path = Activator.getDefault()
-					.getTestRequirementController()
-					.createTestRequirement(input);
-			if (path != null)
-				switch (tag) {
-				case ADDITIONAL_TEST_REQUIREMENT_PATH:
-					Activator.getDefault().getTestRequirementController()
-							.addTestRequirement(path);
-					break;
-				case INFEASIBLE_PATH:
-					Activator.getDefault().getTestRequirementController()
-							.enableInfeasible(path);
-					break;
-				case ADDITIONAL_TEST_PATH:
-					Activator.getDefault().getTestPathController()
-							.addTestPath(path, TestType.MANUALLY);
-					List<ICoverageData> newData = new LinkedList<ICoverageData>();
-					newData.add(new CoverageData(path));
-					break;
-				default:
-					break;
-				}
-			else
-				MessageDialog.openInformation(window.getShell(), title, prefix
-						+ msg + suffix); // message displayed when the inserted test requirement is not valid.
-		}
-	}
+//	private void setInformationFromJavadoc(IWorkbenchWindow window,
+//			Map<JavadocTagAnnotations, List<String>> javadocAnnotations,
+//			JavadocTagAnnotations tag, String title, String prefix,
+//			String suffix) {
+//		for (String input : javadocAnnotations.get(tag)) {
+//			String msg = input;
+//			input = input.substring(1, input.length() - 1);
+//			Path<Integer> path = Activator.getDefault()
+//					.getTestRequirementController()
+//					.createTestRequirement(input);
+//			if (path != null)
+//				switch (tag) {
+//				case ADDITIONAL_TEST_REQUIREMENT_PATH:
+//					Activator.getDefault().getTestRequirementController()
+//							.addTestRequirement(path);
+//					break;
+//				case INFEASIBLE_PATH:
+//					Activator.getDefault().getTestRequirementController()
+//							.enableInfeasible(path);
+//					break;
+//				case ADDITIONAL_TEST_PATH:
+//					Activator.getDefault().getTestPathController()
+//							.addTestPath(path, TestType.MANUALLY);
+//					List<ICoverageData> newData = new LinkedList<ICoverageData>();
+//					newData.add(new CoverageData(path));
+//					break;
+//				default:
+//					break;
+//				}
+//			else
+//				MessageDialog.openInformation(window.getShell(), title, prefix
+//						+ msg + suffix); // message displayed when the inserted test requirement is not valid.
+//		}
+//	}
 
 
 	private void keepCommandOptions() {

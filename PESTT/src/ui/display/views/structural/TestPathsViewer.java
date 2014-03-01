@@ -55,8 +55,6 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		Activator.getDefault().getTestPathController()
 				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
-		Activator.getDefault().getTestRequirementController()
-				.addObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);

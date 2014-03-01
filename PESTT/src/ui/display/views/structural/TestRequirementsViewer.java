@@ -48,8 +48,6 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	public TestRequirementsViewer(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
-		Activator.getDefault().getTestRequirementController()
-				.addObserverTestRequirement(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController()
 				.addObserverTestPath(this);
@@ -76,7 +74,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 	public void update(Observable obs, Object data) {
 		if (data instanceof TestRequirementSelectedCriteriaEvent)
 			Activator.getDefault().getTestRequirementController()
-					.cleanTestRequirementSet();
+					.clearTestRequirementSet();
 		else if (data instanceof TestRequirementChangedEvent) {
 			if (((TestRequirementChangedEvent) data).hasInfinitePath)
 				MessageDialog.openInformation(parent.getShell(),
@@ -220,7 +218,7 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 											+ Messages.TEST_REQUIREMENT_NOT_INFEASIBLE_MSG);
 					item.setChecked(false);
 					Activator.getDefault().getTestRequirementController()
-							.disableInfeasible(path);
+							.setInfeasible(path, false);
 					Activator.getDefault().getTestPathController()
 							.getStatistics();
 				}
@@ -317,11 +315,11 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 									if (item.getChecked())
 										Activator.getDefault()
 												.getTestRequirementController()
-												.enableInfeasible(selected);
+												.setInfeasible(selected, true);
 									else
 										Activator.getDefault()
 												.getTestRequirementController()
-												.disableInfeasible(selected);
+												.setInfeasible(selected,false);
 									break;
 								}
 							}

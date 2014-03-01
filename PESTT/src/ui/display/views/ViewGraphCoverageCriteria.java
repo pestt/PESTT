@@ -5,6 +5,14 @@ import org.eclipse.ui.part.ViewPart;
 
 import ui.display.views.structural.GraphCoverageCriteria;
 
+/**
+ * The Graph Coverage Criteria View. This file is the extension point from Eclipse.
+ * The actual code for constructing the view is done by 
+ * class ui.display.views.structural.GraphCoverageCriteria.
+ * 
+ * @author Rui Gameiro
+ * @version 1.0 (1/3/2014)
+ */
 public class ViewGraphCoverageCriteria extends ViewPart {
 
 	private GraphCoverageCriteria graph;

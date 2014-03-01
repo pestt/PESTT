@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -12,83 +11,91 @@ import main.activator.Activator;
 import adt.graph.AbstractPath;
 import adt.graph.Node;
 import adt.graph.Path;
+import domain.MethodTest;
 import domain.SourceGraph;
-import domain.TestRequirementSet;
+import domain.TestRequirements;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 import domain.coverage.algorithms.CoverageAlgorithmsFactory;
 import domain.coverage.algorithms.ICoverageAlgorithms;
+import domain.events.InfeasibleChangedEvent;
+import domain.events.TestRequirementChangedEvent;
 import domain.events.TestRequirementSelectedCriteriaEvent;
 import domain.events.TestRequirementSelectedEvent;
 
 public class TestRequirementController extends Observable {
 
 	private SourceGraph sourceGraph;
-	private TestRequirementSet testRequirementSet;
+	private MethodTest methodUnderTest;
 	private AbstractPath<Integer> selectedTestRequirement;
 	private GraphCoverageCriteriaId selectedCoverageAlgorithm;
 
 	public TestRequirementController(SourceGraph sourceGraph,
-			TestRequirementSet testRequirementSet) {
+			TestRequirements testRequirementSet) {
 		this.sourceGraph = sourceGraph;
-		this.testRequirementSet = testRequirementSet;
 	}
 
-	public void addObserverTestRequirement(Observer o) {
-		testRequirementSet.addObserver(o);
+	public void setMethodUnderTest(MethodTest method) {
+		methodUnderTest = method;
 	}
-
-	public void deleteObserverTestRequirement(Observer o) {
-		testRequirementSet.deleteObserver(o);
-	}
-
+	
 	public void addTestRequirement(Path<Integer> newTestRequirement) {
-		testRequirementSet.add(newTestRequirement);
+		methodUnderTest.addManualTestRequirement(newTestRequirement);
 		unSelectTestRequirements();
+		setChanged();
+		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
+				getInfeasiblesTestRequirements(),
+				getTestRequirementsManuallyAdded(), methodUnderTest.hasInfinitePath()));
 	}
 
 	public void removeSelectedTestRequirement() {
-		if (testRequirementSet.isInfeasible(selectedTestRequirement))
-			testRequirementSet.disableInfeasible(selectedTestRequirement);
-		testRequirementSet.remove(selectedTestRequirement);
+		methodUnderTest.removeTestRequirement(selectedTestRequirement);
 		unSelectTestRequirements();
+		setChanged();
+		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
+				getInfeasiblesTestRequirements(),
+				getTestRequirementsManuallyAdded(), methodUnderTest.hasInfinitePath()));
 	}
 
-	public void cleanTestRequirementSet() {
-		testRequirementSet.clear();
+	public void clearTestRequirementSet() {
+		methodUnderTest.clearTestRequirements();
+		setChanged();
+		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
+				getInfeasiblesTestRequirements(),
+				getTestRequirementsManuallyAdded(), methodUnderTest.hasInfinitePath()));
 	}
 
-	public int size() {
-		return testRequirementSet.size();
+	public int testRequirementsSize() {
+		return methodUnderTest.size();
 	}
 
-	public void enableInfeasible(AbstractPath<Integer> abstractPath) {
-		testRequirementSet.enableInfeasible(abstractPath);
+	public void setInfeasible(AbstractPath<Integer> abstractPath, boolean status) {
+		methodUnderTest.setInfeasible(abstractPath, status);
+		setChanged();
+		notifyObservers(new InfeasibleChangedEvent(getTestRequirements(),
+				getInfeasiblesTestRequirements(),
+				getTestRequirementsManuallyAdded(), methodUnderTest.hasInfinitePath()));
 	}
 
-	public void disableInfeasible(AbstractPath<Integer> abstractPath) {
-		testRequirementSet.disableInfeasible(abstractPath);
-	}
-
-	public int sizeInfeasibles() {
-		return testRequirementSet.sizeInfeasibles();
+	public int infeasiblesSize() {
+		return methodUnderTest.infeasiblesSize();
 	}
 
 	public boolean isInfeasiblesTestRequirements(
 			AbstractPath<Integer> abstractPath) {
-		return testRequirementSet.isInfeasible(abstractPath);
+		return methodUnderTest.isInfeasible(abstractPath);
 	}
 
 	public Iterable<AbstractPath<Integer>> getInfeasiblesTestRequirements() {
-		return testRequirementSet.getInfeasiblesTestRequirements();
+		return methodUnderTest.getInfeasiblesTestRequirements();
 	}
 
 	public Iterable<Path<Integer>> getTestRequirementsManuallyAdded() {
-		return testRequirementSet.getTestRequirementsManuallyAdded();
+		return methodUnderTest.getTestRequirementsManuallyAdded();
 	}
 
 	public Iterable<AbstractPath<Integer>> getTestRequirements() {
-		return testRequirementSet.getTestRequirements();
+		return methodUnderTest.getTestRequirements();
 	}
 
 	public Path<Integer> createTestRequirement(String input) {
@@ -167,7 +174,11 @@ public class TestRequirementController extends Observable {
 	public void generateTestRequirement() {
 		ICoverageAlgorithms<Integer> algorithm = CoverageAlgorithmsFactory.INSTANCE
 				.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
-		testRequirementSet.generateTestRequirements(algorithm);
+		methodUnderTest.generateTestRequirements(algorithm);
+		setChanged();
+		notifyObservers(new TestRequirementChangedEvent(
+				getTestRequirements(), getInfeasiblesTestRequirements(),
+				getTestRequirementsManuallyAdded(), methodUnderTest.hasInfinitePath()));
 	}
 
 	public Set<Path<Integer>> getTestPathCoverage(Path<Integer> seletedTestPath) {
@@ -175,12 +186,11 @@ public class TestRequirementController extends Observable {
 				.getTestPathController().getSelectedTourType();
 		switch (selectedTourType) {
 		case TOUR:
-			return testRequirementSet.getPathToured(seletedTestPath);
+			return methodUnderTest.getPathToured(seletedTestPath);
 		case SIDETRIP:
-			return testRequirementSet
-					.getPathsTouredWithSideTrip(seletedTestPath);
+			return methodUnderTest.getPathsTouredWithSideTrip(seletedTestPath);
 		case DETOUR:
-			return testRequirementSet.getPathsTouredWithDeTour(seletedTestPath);
+			return methodUnderTest.getPathsTouredWithDeTour(seletedTestPath);
 		default:
 			return null;//normal
 		}

@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import ui.constants.Colors;
 import ui.constants.Messages;
-import ui.events.RefreshStructuralGraphEvent;
 import ui.source.Edge;
 import ui.source.GraphElements;
 import ui.source.GraphLayoutAlgorithm;
@@ -64,8 +63,8 @@ public class GraphCoverageCriteria implements Observer {
 
 	public GraphCoverageCriteria(Composite parent) {
 		graph = new Graph(parent, SWT.NONE);
-		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getCFGController().addObserver(this);
+		Activator.getDefault().getTestSuiteController().addObserver(this);
+//		Activator.getDefault().getCFGController().addObserver(this);
 		this.parent = parent;
 		create();
 	}
@@ -260,8 +259,8 @@ public class GraphCoverageCriteria implements Observer {
 			setSelected(nodes.get(Activator.getDefault()
 					.getTestRequirementController()
 					.getSelectedCoverageCriteria()));
-		else if (data instanceof RefreshStructuralGraphEvent)
-			create();
+//		else if (data instanceof RefreshStructuralGraphEvent)
+//			create();
 	}
 
 	private String dotString() {

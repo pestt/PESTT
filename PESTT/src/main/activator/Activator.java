@@ -8,13 +8,13 @@ import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
 import ui.controllers.ViewController;
-import domain.TestSuite;
 import domain.controllers.BytemanController;
 import domain.controllers.CoverageDataController;
 import domain.controllers.DefUsesController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
+import domain.controllers.TestSuiteController;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -120,7 +120,7 @@ public class Activator extends AbstractUIPlugin {
 		return pestt.getViewController();
 	}
 	
-	public TestSuite getTestSuite() { 
-		return pestt.getTestSuite();
+	public TestSuiteController getTestSuiteController() { 
+		return pestt.getTestSuiteController();
 	}
 }

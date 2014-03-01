@@ -37,12 +37,12 @@ public class DefUsesSet extends Observable implements Observer {
 
 	public void addObserver() {
 		Activator.getDefault().getTestRequirementController()
-				.addObserverTestRequirement(this);
+				.addObserver(this);
 	}
 
 	public void deleteObserver() {
 		Activator.getDefault().getTestRequirementController()
-				.deleteObserverTestRequirement(this);
+				.deleteObserver(this);
 	}
 
 	@Override

@@ -184,7 +184,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 	}
 
 	private int getTotalTestRequirements() {
-		return Activator.getDefault().getTestRequirementController().size();
+		return Activator.getDefault().getTestRequirementController().testRequirementsSize();
 	}
 
 	private String getInfeasiblesStatistics() {
@@ -195,7 +195,7 @@ public class StatisticsSet extends Observable implements Iterable<String> {
 
 	private int getInfeasible() {
 		return Activator.getDefault().getTestRequirementController()
-				.sizeInfeasibles();
+				.infeasiblesSize();
 	}
 
 	private String getCyclomaticComplexity() {

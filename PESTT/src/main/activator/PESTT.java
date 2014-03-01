@@ -9,8 +9,7 @@ import domain.CoverageDataSet;
 import domain.DefUsesSet;
 import domain.SourceGraph;
 import domain.TestPathSet;
-import domain.TestRequirementSet;
-import domain.TestSuite;
+import domain.TestRequirements;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;
@@ -19,6 +18,7 @@ import domain.controllers.DefUsesController;
 import domain.controllers.SourceGraphController;
 import domain.controllers.TestPathController;
 import domain.controllers.TestRequirementController;
+import domain.controllers.TestSuiteController;
 
 public class PESTT {
 
@@ -32,14 +32,14 @@ public class PESTT {
 	private DefUsesController defusesController;
 	private BytemanController bytemanController;
 	private ViewController viewController;
-	private TestSuite testSuite;
+	private TestSuiteController testSuiteController;
 
 	public PESTT() {
 		editorController = new EditorController();
 		SourceGraph sourceGraph = new SourceGraph();
 		sourceGraphController = new SourceGraphController(sourceGraph);
 		testRequirementController = new TestRequirementController(sourceGraph,
-				new TestRequirementSet());
+				new TestRequirements());
 		testPathController = new TestPathController(new TestPathSet());
 		testPathController.selectTourType(TourType.TOUR.toString());
 		coverageDataController = new CoverageDataController(
@@ -50,7 +50,7 @@ public class PESTT {
 		defusesController = new DefUsesController(new DefUsesSet());
 		bytemanController = new BytemanController();
 		viewController = new ViewController();
-		testSuite = new TestSuite("default.xml");
+		testSuiteController = new TestSuiteController();
 	}
 
 	public SourceGraphController getSourceGraphController() {
@@ -93,7 +93,7 @@ public class PESTT {
 		return viewController;
 	}
 
-	public TestSuite getTestSuite() {
-		return testSuite;
+	public TestSuiteController getTestSuiteController() {
+		return testSuiteController;
 	}
 }
