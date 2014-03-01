@@ -12,17 +12,27 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import domain.MethodTest;
 import domain.TestSuite;
 
 public class TestSuiteController extends Observable {
 
 	private TestSuite testSuite;
 	private String filename;
+	private MethodTest methodUnderTest;
 
 	public TestSuiteController() {
 		//TODO: fmartins: get the right path and filename
 		filename = "/Users/fmartins/Documents/eclipse-workspaces/projects/runtime-EclipseApplication/testePESTT/default.xml";
 		loadTestSuite(filename);
+	}
+	
+	public void setMethodUnderTest(String packageName, String className, String methodSignature) {
+		methodUnderTest = testSuite.getMethodTest(packageName, className, methodSignature);
+	}
+	
+	public MethodTest getMethodUnderTest() {
+		return methodUnderTest;
 	}
 
 	private void loadTestSuite(String filename) {

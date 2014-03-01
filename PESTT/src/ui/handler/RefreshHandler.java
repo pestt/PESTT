@@ -1,8 +1,5 @@
 package ui.handler;
 
-import java.util.List;
-import java.util.Map;
-
 import main.activator.Activator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -19,9 +16,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import ui.constants.Description;
-import ui.constants.JavadocTagAnnotations;
 import ui.constants.Messages;
 import ui.constants.Preferences;
+import ui.controllers.EditorController;
 import ui.editor.ActiveEditor;
 import domain.constants.Layer;
 
@@ -29,19 +26,19 @@ public class RefreshHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (Activator.getDefault().getEditorController().getActiveEditor() != null) {
-			Activator.getDefault().getEditorController().getActiveEditor()
-					.deleteObservers();
+		EditorController ec = Activator.getDefault().getEditorController();
+		if (ec.getActiveEditor() != null) {
+			ec.getActiveEditor().deleteObservers();
 			Activator.getDefault().getViewController().deleteObserverToViews();
 		}
-		Activator.getDefault().getEditorController()
-				.setEditor(new ActiveEditor());
-		Activator.getDefault().getEditorController().getActiveEditor()
-				.addObservers();
+		ec.setEditor(new ActiveEditor());
+		ec.getActiveEditor().addObservers();
 		Activator.getDefault().getViewController().addObserverToViews();
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
-		if (Activator.getDefault().getEditorController().isInMethod()) { // if the text selected is the name of the method.
+		if (ec.isInMethod()) { // if the text selected is the name of the method.
+			Activator.getDefault().getTestSuiteController().setMethodUnderTest(ec.getPackageName(),
+					ec.getClassName(), ec.getSelectedMethod());
 			IPreferenceStore preferenceStore = Activator.getDefault()
 					.getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);

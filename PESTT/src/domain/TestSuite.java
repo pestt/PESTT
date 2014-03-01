@@ -38,4 +38,12 @@ public class TestSuite {
     	for (PackageTest t : pt) 
     		packages.put(t.getQualifiedName(), t);
  	}
+
+	public MethodTest getMethodTest(String packageName, String className,
+			String methodSignature) {
+		PackageTest pt = packages.get(packageName);
+		if (pt == null)
+			pt = new PackageTest(packageName);
+		return pt.getMethodTest(className, methodSignature);
+	}
 }

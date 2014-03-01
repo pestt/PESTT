@@ -46,4 +46,11 @@ public class ClassTest {
     	for (MethodTest m : mt) 
     		methods.put(m.getMethodSignature(), m);
  	}
+
+	public MethodTest getMethodTest(String methodSignature) {
+		MethodTest mt = methods.get(methodSignature);
+		if (mt == null)
+			mt = new MethodTest(methodSignature);
+		return mt;
+	}
 }

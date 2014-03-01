@@ -47,4 +47,11 @@ public class PackageTest {
     	for (ClassTest c : ct) 
     		classes.put(c.getQualifiedName(), c);
  	}
+
+	public MethodTest getMethodTest(String className, String methodSignature) {
+		ClassTest ct = classes.get(className);
+		if (ct == null)
+			ct = new ClassTest(className);
+		return ct.getMethodTest(methodSignature);
+	}
 }

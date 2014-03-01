@@ -38,8 +38,9 @@ public class PESTT {
 		editorController = new EditorController();
 		SourceGraph sourceGraph = new SourceGraph();
 		sourceGraphController = new SourceGraphController(sourceGraph);
+		testSuiteController = new TestSuiteController();
 		testRequirementController = new TestRequirementController(sourceGraph,
-				new TestRequirements());
+				testSuiteController);
 		testPathController = new TestPathController(new TestPathSet());
 		testPathController.selectTourType(TourType.TOUR.toString());
 		coverageDataController = new CoverageDataController(
@@ -50,7 +51,6 @@ public class PESTT {
 		defusesController = new DefUsesController(new DefUsesSet());
 		bytemanController = new BytemanController();
 		viewController = new ViewController();
-		testSuiteController = new TestSuiteController();
 	}
 
 	public SourceGraphController getSourceGraphController() {
