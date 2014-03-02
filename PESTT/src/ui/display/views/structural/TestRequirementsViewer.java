@@ -49,8 +49,6 @@ public class TestRequirementsViewer extends AbstractTableViewer implements
 		this.parent = parent;
 		this.site = site;
 		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestPathController()
-				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);

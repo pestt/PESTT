@@ -24,7 +24,7 @@ public class GenerateTestPathHandler extends AbstractHandler {
 		if (paths != null && !paths.isEmpty()) {
 			for (Path newTestPath : paths)
 				Activator.getDefault().getTestPathController()
-						.addTestPath(newTestPath, TestType.AUTOMATIC);
+						.addManualTestPath(newTestPath, TestType.AUTOMATIC);
 		}
 		return null;
 	}

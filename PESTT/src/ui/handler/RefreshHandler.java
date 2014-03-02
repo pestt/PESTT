@@ -62,9 +62,9 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getCoverageDataController()
 				.deleteObserverToCoverageData();
 		Activator.getDefault().getDefUsesController().deleteObserverToDefUses();
-		Activator.getDefault().getTestPathController().cleanTestPathSet();
-		Activator.getDefault().getTestRequirementController()
-				.clearTestRequirementSet();
+		Activator.getDefault().getTestPathController().clearTestPathSet();
+		//Activator.getDefault().getTestRequirementController()
+		//		.clearTestRequirementSet();
 		Activator.getDefault().getCoverageDataController()
 				.clearCoverageDataSet();
 		Activator.getDefault().getStatisticsController().cleanStatisticsSet();

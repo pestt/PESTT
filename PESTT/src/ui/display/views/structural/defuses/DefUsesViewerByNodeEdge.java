@@ -53,8 +53,6 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestPathController()
-				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 	}
 
@@ -64,8 +62,6 @@ public class DefUsesViewerByNodeEdge extends AbstractTableViewer implements
 		Activator.getDefault().getDefUsesController().deleteObserver(this);
 		Activator.getDefault().getTestRequirementController()
 				.deleteObserver(this);
-		Activator.getDefault().getTestPathController()
-				.deleteObserverTestPath(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
 	}
 

@@ -52,8 +52,6 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	public TestPathsViewer(Composite parent, IWorkbenchPartSite site) {
 		this.parent = parent;
 		this.site = site;
-		Activator.getDefault().getTestPathController()
-				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserverDefUses(this);
@@ -185,7 +183,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 	private void setPathStatus(AbstractPath testRequirement) {
 		Set<Path> paths = getPathSet(Activator.getDefault()
 				.getTestPathController().getTestPaths(), Activator.getDefault()
-				.getTestPathController().getTestPathsManuallyAdded());
+				.getTestPathController().getManuallyAddedTestPaths());
 		Iterator<Path> iterator = paths.iterator();
 		for (TableItem item : testPathhsViewer.getTable().getItems()) {
 			if (iterator.hasNext()) {
@@ -221,7 +219,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 								testPaths.clear();
 								for (Path path : Activator
 										.getDefault().getTestPathController()
-										.getTestPathsManuallyAdded())
+										.getManuallyAddedTestPaths())
 									testPaths.add(path);
 								for (Path path : Activator
 										.getDefault().getTestPathController()
@@ -244,7 +242,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				Set<Path> set = getPathSet(Activator.getDefault()
 						.getTestPathController().getTestPaths(), Activator
 						.getDefault().getTestPathController()
-						.getTestPathsManuallyAdded());
+						.getManuallyAddedTestPaths());
 				Iterator<Path> iterator = set.iterator();
 				Path path = null;
 				for (TableItem i : testPathhsViewer.getTable().getItems()) {
@@ -258,7 +256,7 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 				if (path != null)
 					testPathhsViewer.getTable().setToolTipText(
 							Activator.getDefault().getTestPathController()
-									.getTooltip(path));
+									.getExecutionTip(path));
 				else
 					testPathhsViewer.getTable().setToolTipText("");
 			}

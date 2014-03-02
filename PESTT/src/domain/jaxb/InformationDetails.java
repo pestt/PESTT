@@ -120,7 +120,7 @@ public class InformationDetails {
 				.getTestPathController().getTestPaths())
 			temp.add(path);
 		for (AbstractPath path : Activator.getDefault()
-				.getTestPathController().getTestPathsManuallyAdded())
+				.getTestPathController().getManuallyAddedTestPaths())
 			temp.add(path);
 		for (AbstractPath path : temp)
 			testpaths.add(path.toString());

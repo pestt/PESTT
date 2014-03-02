@@ -27,8 +27,8 @@ public class TestRequirements {
 	/**
 	 * The set of all tests (automatic plus manually added)
 	 */
-	@XmlElementWrapper(name = "testRequirements")
-	@XmlElement(name = "testRequirement")
+	@XmlElementWrapper(name = "requirements")
+	@XmlElement(name = "requirement")
 	private Set<AbstractPath> testRequirementSet;
 	
 	/**

@@ -94,8 +94,6 @@ public class ActiveEditor implements Observer {
 
 	public void addObservers() {
 		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestPathController()
-				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		addChangeListener();
 	}
@@ -103,8 +101,6 @@ public class ActiveEditor implements Observer {
 	public void deleteObservers() {
 		Activator.getDefault().getTestRequirementController()
 				.deleteObserver(this);
-		Activator.getDefault().getTestPathController()
-				.deleteObserverTestPath(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
 		deleteChangeListener();
 	}
@@ -305,7 +301,7 @@ public class ActiveEditor implements Observer {
 							.getTestRequirementsManuallyAdded();
 					Iterable<Path> testPathManuallyAdded = Activator
 							.getDefault().getTestPathController()
-							.getTestPathsManuallyAdded();
+							.getManuallyAddedTestPaths();
 					//setJavadocAnnotation(unit, method, criteria, tour,
 					//		infeasibles, testRequirementsManuallyAdded,
 					//		testPathManuallyAdded);

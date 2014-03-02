@@ -2,7 +2,7 @@ package adt.graph;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Node implements Comparable<Node> {
@@ -10,7 +10,7 @@ public class Node implements Comparable<Node> {
 	/**
 	 * The value of this Node.
 	 */
-	@XmlElement private int value;
+	@XmlAttribute private int value;
 
 	/**
 	 * Creates a new Node

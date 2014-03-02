@@ -90,7 +90,7 @@ public class TestRequirementController extends Observable {
 	}
 
 	public Iterable<Path> getTestRequirementsManuallyAdded() {
-		return testSuiteController.getMethodUnderTest().getTestRequirementsManuallyAdded();
+		return testSuiteController.getMethodUnderTest().getManuallyAddedTestPaths();
 	}
 
 	public Iterable<AbstractPath> getTestRequirements() {

@@ -46,8 +46,6 @@ public class StatisticsViewer extends AbstractTableViewer implements Observer {
 				.addObserverStatistics(this);
 		Activator.getDefault().getTestRequirementController()
 				.addObserver(this);
-		Activator.getDefault().getTestPathController()
-				.addObserverTestPath(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 	}
 

@@ -63,7 +63,7 @@ public class EditTestPathHandler extends AbstractHandler {
 						Activator.getDefault().getTestPathController()
 								.removeTestPath();
 						Activator.getDefault().getTestPathController()
-								.addTestPath(newTestPath, TestType.MANUALLY);
+								.addManualTestPath(newTestPath, TestType.MANUALLY);
 					} else {
 						MessageDialog.openInformation(window.getShell(),
 								Messages.TEST_PATH_TITLE,

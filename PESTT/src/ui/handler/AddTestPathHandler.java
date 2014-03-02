@@ -51,7 +51,7 @@ public class AddTestPathHandler extends AbstractHandler {
 						.getTestPathController().createTestPath(input);
 				if (newTestPath != null)
 					Activator.getDefault().getTestPathController()
-							.addTestPath(newTestPath, TestType.MANUALLY);
+							.addManualTestPath(newTestPath, TestType.MANUALLY);
 				else {
 					MessageDialog.openInformation(window.getShell(),
 							Messages.TEST_PATH_TITLE,

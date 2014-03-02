@@ -1,14 +1,12 @@
 package domain.controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -23,112 +21,77 @@ import ui.events.TourChangeEvent;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
-import domain.TestPathSet;
 import domain.constants.Layer;
-import domain.constants.TestType;
 import domain.constants.TourType;
 import domain.coverage.data.CoverageData;
 import domain.coverage.data.ICoverageData;
+import domain.events.TestPathChangedEvent;
 import domain.events.TestPathSelectedEvent;
 
 public class TestPathController extends Observable {
 
-	private TestPathSet testPathSet;
+	private TestSuiteController testSuiteController;
 	private Set<Path> selectedTestPaths;
 	private TourType selectedTourType;
-	private Map<Path, String> tooltips;
+	private CoverageDataController coverageDataController;
 
-	public TestPathController(TestPathSet testPathSet) {
-		this.testPathSet = testPathSet;
-		tooltips = new HashMap<Path, String>();
+	public TestPathController(TestSuiteController testSuiteController,
+			CoverageDataController coverageDataController) {
+		this.testSuiteController = testSuiteController;
+		this.coverageDataController = coverageDataController;
 	}
 
-	public void addObserverTestPath(Observer o) {
-		testPathSet.addObserver(o);
+	public void addManualTestPath(Path newTestPath, String tooltip) {
+		testSuiteController.getMethodUnderTest().addManualTestPath(newTestPath);
+		computeStatistics(newTestPath);
+		notifyTheObservers();
 	}
 
-	public void deleteObserverTestPath(Observer o) {
-		testPathSet.deleteObserver(o);
+	public void addAutomaticTestPath(Path newTestPath, String executionTip) {
+		testSuiteController.getMethodUnderTest().addAutomaticTestPath(newTestPath, executionTip);
+		computeStatistics(newTestPath);
+		notifyTheObservers();
 	}
 
-	public void addTestPath(Path newTestPath, String tooltip) {
-		insertTooltip(newTestPath, tooltip);
-		testPathSet.add(newTestPath);
+	private void computeStatistics(Path newTestPath) {
 		List<ICoverageData> newData = new LinkedList<ICoverageData>();
 		newData.add(new CoverageData(newTestPath));
-		Activator.getDefault().getCoverageDataController()
-				.addCoverageData(newTestPath, newData);
+		coverageDataController.addCoverageData(newTestPath, newData);
+	}
+
+	private void notifyTheObservers() {
 		unSelectTestPaths();
+		setChanged();
+		notifyObservers(new TestPathChangedEvent(getTestPaths(),
+				getManuallyAddedTestPaths()));
 	}
 
-	public void addAutomaticTestPath(Path newTestPath, String tooltip) {
-		boolean update = insertTooltip(newTestPath, tooltip);
-		if (!update) {
-			Activator.getDefault().getEditorController()
-					.setListenUpdates(false);
-			testPathSet.addAutomatic(newTestPath);
-			Activator.getDefault().getEditorController().setListenUpdates(true);
-		} else
-			testPathSet.addAutomatic(newTestPath);
-		List<ICoverageData> newData = new LinkedList<ICoverageData>();
-		newData.add(new CoverageData(newTestPath));
-		Activator.getDefault().getCoverageDataController()
-				.addCoverageData(newTestPath, newData);
-		unSelectTestPaths();
-	}
-
-	private boolean insertTooltip(Path path, String tooltip) {
-		boolean update = false;
-		Path remove = null;
-		for (Path current : tooltips.keySet())
-			if (current.toString().equals(path.toString())) {
-				if (!tooltip.equals(TestType.MANUALLY))
-					if (testPathSet.isManuallyAdded(current)) {
-						Set<Path> set = new TreeSet<Path>();
-						set.add(current);
-						testPathSet.remove(set);
-						remove = current;
-						update = true;
-						break;
-					}
-				path = current;
-				break;
-			}
-		if (remove != null)
-			tooltips.remove(remove);
-		tooltips.put(path, tooltip);
-		return update;
-	}
-
-	public String getTooltip(Path path) {
-		return tooltips.get(path);
+	
+	public String getExecutionTip(Path path) {
+		return testSuiteController.getMethodUnderTest().getExecutionTip(path);
 	}
 
 	public void removeTestPath() {
-		for (Path path : selectedTestPaths) {
-			Activator.getDefault().getCoverageDataController()
-					.removeSelectedCoverageData(path);
-			tooltips.remove(path);
-		}
-		testPathSet.remove(selectedTestPaths);
-		unSelectTestPaths();
+		for (Path path: selectedTestPaths) 
+			coverageDataController.removeSelectedCoverageData(path);
+		testSuiteController.getMethodUnderTest().removeTestPaths(selectedTestPaths);
+		notifyTheObservers();
 	}
 
 	public void clearAutomaticTestPaths() {
-		for (Path path : testPathSet.getTestPaths())
-			tooltips.remove(path);
-		testPathSet.clearAutomatic();
+		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
+		notifyTheObservers();
 	}
 
 	public void clearManuallyTestPaths() {
-		for (Path path : testPathSet.getTestPathsManuallyAdded())
-			tooltips.remove(path);
-		testPathSet.clearManually();
+		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
+		notifyTheObservers();
 	}
 
-	public void cleanTestPathSet() {
-		testPathSet.clearAll();
-		tooltips.clear();
+	public void clearTestPathSet() {
+		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
+		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
+		notifyTheObservers();
 	}
 
 	public boolean isTestPathSelected() {
@@ -164,12 +127,12 @@ public class TestPathController extends Observable {
 		notifyObservers(new TourChangeEvent(selectedTourType));
 	}
 
-	public Iterable<Path> getTestPathsManuallyAdded() {
-		return testPathSet.getTestPathsManuallyAdded();
+	public Iterable<Path> getManuallyAddedTestPaths() {
+		return testSuiteController.getMethodUnderTest().getManuallyAddedTestPaths();
 	}
 
 	public Iterable<Path> getTestPaths() {
-		return testPathSet.getTestPaths();
+		return testSuiteController.getMethodUnderTest().getTestPaths();
 	}
 
 	public void getStatistics() {

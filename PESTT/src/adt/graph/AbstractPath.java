@@ -2,6 +2,10 @@ package adt.graph;
 
 import java.util.Iterator;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractPath implements
 		Iterable<Node>, Comparable<AbstractPath> {
 

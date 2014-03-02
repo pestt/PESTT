@@ -19,7 +19,12 @@ public class MethodTest {
 	@XmlAttribute private String methodSignature;
 	@XmlElement private CoverageCriteriaId coverageCriteria;
 	@XmlElement private String tourType;
-	@XmlElement private TestRequirements testRequirements;
+	
+	@XmlElement(name = "testRequirements")
+	private TestRequirements testRequirements;
+	
+	@XmlElement(name = "testPaths")
+	private TestPaths testPaths;
 	
 	public MethodTest() {
 	}
@@ -27,6 +32,7 @@ public class MethodTest {
 	public MethodTest(String methodSignature) {
 		this.methodSignature = methodSignature;
 		testRequirements = new TestRequirements();
+		testPaths = new TestPaths();
 	}
 	
 	public String getMethodSignature() {
@@ -77,8 +83,12 @@ public class MethodTest {
 		return testRequirements.getInfeasiblesTestRequirements();
 	}
 
-	public Iterable<Path> getTestRequirementsManuallyAdded() {
+	public Iterable<Path> getManuallyAddedTestPaths() {
 		return testRequirements.getTestRequirementsManuallyAdded();
+	}
+
+	public Iterable<Path> getTestPaths() {
+		return testPaths.getTestPaths();
 	}
 
 	public Iterable<AbstractPath> getTestRequirements() {
@@ -99,5 +109,28 @@ public class MethodTest {
 		return testRequirements.getPathsTouredWithDeTour(seletedTestPath);
 	}
 
+	public void addManualTestPath(Path newTestPath) {
+		testPaths.add(newTestPath);
+	}
+
+	public void addAutomaticTestPath(Path newTestPath, String executionTip) {
+		testPaths.addAutomatic(newTestPath, executionTip);
+	}
+
+	public String getExecutionTip(Path path) {
+		return testPaths.getExecutionTip(path);
+	}
+
+	public void removeTestPaths(Set<Path> selectedTestPaths) {
+		testPaths.remove(selectedTestPaths);
+	}
+
+	public void clearAutomaticTestPaths() {
+		testPaths.clearAutomatic();
+	}
+
+	public void clearManuallyAddedTestPaths() {
+		testPaths.clearManually();
+	}
 	
 }
