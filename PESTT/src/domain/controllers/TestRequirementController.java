@@ -36,6 +36,11 @@ public class TestRequirementController extends Observable {
 	
 	public void addTestRequirement(Path newTestRequirement) {
 		testSuiteController.getMethodUnderTest().addManualTestRequirement(newTestRequirement);
+		notifyObserversTestReqChanged();
+		testSuiteController.flush();
+	}
+
+	private void notifyObserversTestReqChanged() {
 		unSelectTestRequirements();
 		setChanged();
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
@@ -46,25 +51,18 @@ public class TestRequirementController extends Observable {
 
 	public void removeSelectedTestRequirement() {
 		testSuiteController.getMethodUnderTest().removeTestRequirement(selectedTestRequirement);
-		unSelectTestRequirements();
-		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
-				getInfeasiblesTestRequirements(),
-				getTestRequirementsManuallyAdded(), 
-				testSuiteController.getMethodUnderTest().hasInfinitePath()));
+		notifyObserversTestReqChanged();
+		testSuiteController.flush();
 	}
 
 	public void clearTestRequirementSet() {
 		testSuiteController.getMethodUnderTest().clearTestRequirements();
-		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
-				getInfeasiblesTestRequirements(),
-				getTestRequirementsManuallyAdded(), 
-				testSuiteController.getMethodUnderTest().hasInfinitePath()));
+		notifyObserversTestReqChanged();
+		testSuiteController.flush();
 	}
 
 	public int testRequirementsSize() {
-		return testSuiteController.getMethodUnderTest().size();
+		return testSuiteController.getMethodUnderTest().testRequirementsSize();
 	}
 
 	public void setInfeasible(AbstractPath abstractPath, boolean status) {
@@ -74,6 +72,7 @@ public class TestRequirementController extends Observable {
 				getInfeasiblesTestRequirements(),
 				getTestRequirementsManuallyAdded(), 
 				testSuiteController.getMethodUnderTest().hasInfinitePath()));
+		testSuiteController.flush();
 	}
 
 	public int infeasiblesSize() {
@@ -174,11 +173,7 @@ public class TestRequirementController extends Observable {
 		ICoverageAlgorithms algorithm = CoverageAlgorithmsFactory.INSTANCE
 				.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
 		testSuiteController.getMethodUnderTest().generateTestRequirements(algorithm);
-		setChanged();
-		notifyObservers(new TestRequirementChangedEvent(
-				getTestRequirements(), getInfeasiblesTestRequirements(),
-				getTestRequirementsManuallyAdded(), 
-				testSuiteController.getMethodUnderTest().hasInfinitePath()));
+		notifyObserversTestReqChanged();
 	}
 
 	public Set<Path> getTestPathCoverage(Path seletedTestPath) {

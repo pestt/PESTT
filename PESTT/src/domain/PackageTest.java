@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import domain.constants.TourType;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class PackageTest {
 
@@ -50,10 +52,16 @@ public class PackageTest {
 
 	public MethodTest getMethodTest(String className, String methodSignature) {
 		ClassTest ct = classes.get(className);
+		return ct == null ? null : ct.getMethodTest(methodSignature);
+	}
+
+	public MethodTest addMethodTest(String className, String methodSignature, TourType tourType) {
+		ClassTest ct = classes.get(className);
 		if (ct == null) {
 			ct = new ClassTest(className);
 			classes.put(className, ct);
 		}
-		return ct.getMethodTest(methodSignature);
+		return ct.addMethodTest(methodSignature, tourType);
 	}
+
 }

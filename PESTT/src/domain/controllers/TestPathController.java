@@ -38,6 +38,7 @@ public class TestPathController extends Observable {
 	public TestPathController(TestSuiteController testSuiteController,
 			CoverageDataController coverageDataController) {
 		this.testSuiteController = testSuiteController;
+		testSuiteController.setTestPathController(this);
 		this.coverageDataController = coverageDataController;
 	}
 
@@ -45,12 +46,14 @@ public class TestPathController extends Observable {
 		testSuiteController.getMethodUnderTest().addManualTestPath(newTestPath);
 		computeStatistics(newTestPath);
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	public void addAutomaticTestPath(Path newTestPath, String executionTip) {
 		testSuiteController.getMethodUnderTest().addAutomaticTestPath(newTestPath, executionTip);
 		computeStatistics(newTestPath);
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	private void computeStatistics(Path newTestPath) {
@@ -76,22 +79,26 @@ public class TestPathController extends Observable {
 			coverageDataController.removeSelectedCoverageData(path);
 		testSuiteController.getMethodUnderTest().removeTestPaths(selectedTestPaths);
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	public void clearAutomaticTestPaths() {
 		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	public void clearManuallyTestPaths() {
 		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	public void clearTestPathSet() {
 		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
 		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
 		notifyTheObservers();
+		testSuiteController.flush();
 	}
 
 	public boolean isTestPathSelected() {
@@ -123,6 +130,7 @@ public class TestPathController extends Observable {
 			this.selectedTourType = TourType.SIDETRIP;
 		else
 			this.selectedTourType = TourType.TOUR;
+		testSuiteController.setTourType(selectedTourType);
 		setChanged();
 		notifyObservers(new TourChangeEvent(selectedTourType));
 	}

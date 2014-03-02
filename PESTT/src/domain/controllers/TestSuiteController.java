@@ -14,12 +14,14 @@ import javax.xml.bind.Unmarshaller;
 
 import domain.MethodTest;
 import domain.TestSuite;
+import domain.constants.TourType;
 
 public class TestSuiteController extends Observable {
 
 	private TestSuite testSuite;
 	private String filename;
 	private MethodTest methodUnderTest;
+	private TestPathController testPathController;
 
 	public TestSuiteController() {
 		//TODO: fmartins: get the right path and filename
@@ -29,6 +31,15 @@ public class TestSuiteController extends Observable {
 	
 	public void setMethodUnderTest(String packageName, String className, String methodSignature) {
 		methodUnderTest = testSuite.getMethodTest(packageName, className, methodSignature);
+		if (methodUnderTest == null) {
+			methodUnderTest = testSuite.addMethodTest(packageName, className, methodSignature,
+					testPathController.getSelectedTourType());
+			flush();	
+		}
+	}
+	
+	public void setTestPathController (TestPathController testPathController) {
+		this.testPathController = testPathController;
 	}
 	
 	public MethodTest getMethodUnderTest() {
@@ -62,4 +73,18 @@ public class TestSuiteController extends Observable {
 			e.printStackTrace();
 		}		
 	}
+
+	
+	/**
+	 * Sets the tour type for the method under test.
+	 * 
+	 * @param selectedTourType The selected tour type
+	 */
+	public void setTourType(TourType tourType) {
+		if (methodUnderTest != null) {
+			methodUnderTest.setTourType(tourType);
+			flush();
+		}
+	}	
+	
 }

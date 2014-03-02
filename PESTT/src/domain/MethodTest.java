@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.constants.CoverageCriteriaId;
+import domain.constants.TourType;
 import domain.coverage.algorithms.ICoverageAlgorithms;
 
 
@@ -18,7 +19,7 @@ public class MethodTest {
 
 	@XmlAttribute private String methodSignature;
 	@XmlElement private CoverageCriteriaId coverageCriteria;
-	@XmlElement private String tourType;
+	@XmlAttribute private TourType tourType;
 	
 	@XmlElement(name = "testRequirements")
 	private TestRequirements testRequirements;
@@ -29,11 +30,20 @@ public class MethodTest {
 	public MethodTest() {
 	}
 
-	public MethodTest(String methodSignature) {
+	public MethodTest(String methodSignature, TourType tourType) {
 		this.methodSignature = methodSignature;
 		testRequirements = new TestRequirements();
 		testPaths = new TestPaths();
+		this.tourType = tourType;
 	}
+	
+	public TourType getTourType() {
+		return tourType;
+	}
+	
+	public void setTourType(TourType tourType) {
+		this.tourType = tourType;
+	}	
 	
 	public String getMethodSignature() {
 		return methodSignature;
@@ -51,7 +61,7 @@ public class MethodTest {
 		testRequirements.clear();
 	}
 
-	public int size() {
+	public int testRequirementsSize() {
 		return testRequirements.size();
 	}
 
@@ -132,5 +142,5 @@ public class MethodTest {
 	public void clearManuallyAddedTestPaths() {
 		testPaths.clearManually();
 	}
-	
+
 }
