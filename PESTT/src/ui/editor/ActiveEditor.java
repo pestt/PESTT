@@ -1,14 +1,7 @@
 package ui.editor;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import main.activator.Activator;
 
@@ -24,21 +17,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.TagElement;
-import org.eclipse.jdt.core.dom.TextElement;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
@@ -46,19 +28,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ui.constants.Description;
-import ui.constants.JavadocTagAnnotations;
-import ui.events.TourChangeEvent;
-import adt.graph.AbstractPath;
-import adt.graph.Path;
-import domain.SourceGraph;
-import domain.controllers.TestSuiteController;
-import domain.events.InfeasibleChangedEvent;
-import domain.events.TestPathChangedEvent;
-import domain.events.TestRequirementChangedEvent;
-import domain.events.TestRequirementSelectedCriteriaEvent;
-import domain.exceptions.HashCreationException;
 
-public class ActiveEditor implements Observer {
+public class ActiveEditor { //implements Observer {
 
 	private IEditorPart part;
 	private ITextEditor editor;
@@ -67,12 +38,12 @@ public class ActiveEditor implements Observer {
 	private Markers marker; // marker to add.
 	private ICompilationUnit compilationUnit;
 	private IJavaProject javaProject;
-	private boolean listenUpdates;
+//	private boolean listenUpdates;
 	private boolean updated;
 	private IDocumentListener listener;
 
 	public ActiveEditor() {
-		listenUpdates = true;
+//		listenUpdates = true;
 		updated = true;
 		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();
@@ -93,15 +64,15 @@ public class ActiveEditor implements Observer {
 	}
 
 	public void addObservers() {
-		Activator.getDefault().getTestRequirementController().addObserver(this);
-		Activator.getDefault().getTestPathController().addObserver(this);
+//		Activator.getDefault().getTestRequirementController().addObserver(this);
+//		Activator.getDefault().getTestPathController().addObserver(this);
 		addChangeListener();
 	}
 
 	public void deleteObservers() {
-		Activator.getDefault().getTestRequirementController()
-				.deleteObserver(this);
-		Activator.getDefault().getTestPathController().deleteObserver(this);
+//		Activator.getDefault().getTestRequirementController()
+//				.deleteObserver(this);
+//		Activator.getDefault().getTestPathController().deleteObserver(this);
 		deleteChangeListener();
 	}
 
@@ -134,9 +105,9 @@ public class ActiveEditor implements Observer {
 		}
 	}
 
-	public void setListenUpdates(boolean listenUpdates) {
-		this.listenUpdates = listenUpdates;
-	}
+//	public void setListenUpdates(boolean listenUpdates) {
+//		this.listenUpdates = listenUpdates;
+//	}
 
 	public IEditorPart getEditorPart() {
 		return part;
@@ -181,14 +152,14 @@ public class ActiveEditor implements Observer {
 		return "";
 	}
 
-	private MethodDeclaration getMethodDeclaration(CompilationUnit unit) {
+/*	private MethodDeclaration getMethodDeclaration(CompilationUnit unit) {
 		for (MethodDeclaration method : ((TypeDeclaration) unit.types().get(0))
 				.getMethods())
 			if (method.getName().toString().equals(getSelectedMethod()))
 				return method;
 		return null;
 	}
-
+*/
 	public List<String> getMethodNames() {
 		List<String> methodNames = new LinkedList<String>();
 		try {
@@ -271,9 +242,9 @@ public class ActiveEditor implements Observer {
 		return compilationUnit;
 	}
 
-	@Override
-	public void update(Observable obs, Object data) {
-		if (listenUpdates) {
+//	@Override
+//	public void update(Observable obs, Object data) {
+//		if (listenUpdates) {
 			//CompilationUnit unit = Activator.getDefault()
 			//		.getSourceGraphController()
 			//		.getCompilationUnit(compilationUnit);
@@ -282,36 +253,37 @@ public class ActiveEditor implements Observer {
 			//if (method != null
 			//		&& Activator.getDefault().getTestRequirementController()
 			//				.isCoverageCriteriaSelected())
-				if (data instanceof TestRequirementSelectedCriteriaEvent
-						|| data instanceof InfeasibleChangedEvent
-						|| data instanceof TourChangeEvent
-						|| data instanceof TestRequirementChangedEvent
-						|| data instanceof TestPathChangedEvent) {
-					String criteria = Activator.getDefault()
-							.getTestRequirementController()
-							.getSelectedCoverageCriteria().toString();
-					String tour = Activator.getDefault()
-							.getTestPathController().getSelectedTourType()
-							.toString();
-					Iterable<AbstractPath> infeasibles = Activator
-							.getDefault().getTestRequirementController()
-							.getInfeasiblesTestRequirements();
-					Iterable<Path> testRequirementsManuallyAdded = Activator
-							.getDefault().getTestRequirementController()
-							.getTestRequirementsManuallyAdded();
-					Iterable<Path> testPathManuallyAdded = Activator
-							.getDefault().getTestPathController()
-							.getManuallyAddedTestPaths();
+//				if (data instanceof TestRequirementSelectedCriteriaEvent
+//						|| data instanceof InfeasibleChangedEvent
+//						|| data instanceof TourChangeEvent
+//						|| data instanceof TestRequirementChangedEvent
+//						|| data instanceof TestPathChangedEvent) {
+//					String criteria = Activator.getDefault()
+//							.getTestRequirementController()
+//							.getSelectedCoverageCriteria().toString();
+//					String tour = Activator.getDefault()
+//							.getTestPathController().getSelectedTourType()
+//							.toString();
+					//Iterable<AbstractPath> infeasibles = Activator
+					//		.getDefault().getTestRequirementController()
+					//		.getInfeasiblesTestRequirements();
+					//Iterable<Path> testRequirementsManuallyAdded = Activator
+					//		.getDefault().getTestRequirementController()
+					//		.getTestRequirementsManuallyAdded();
+					//Iterable<Path> testPathManuallyAdded = Activator
+					//		.getDefault().getTestPathController()
+					//		.getManuallyAddedTestPaths();
 					//setJavadocAnnotation(unit, method, criteria, tour,
 					//		infeasibles, testRequirementsManuallyAdded,
 					//		testPathManuallyAdded);
-					updateTestData(getPackageName(), getClassName(), getSelectedMethod());
-				}
-		}
-	}
+					//updateTestData(getPackageName(), getClassName(), getSelectedMethod());
+//					Activator.getDefault().getTestSuiteController().flush();
+//				}
+//		}
+//	}
 
-	private void updateTestData(String packageName, String className, String methodSignature) {
-		TestSuiteController testSuiteController = Activator.getDefault().getTestSuiteController();
+//	private void updateTestData(String packageName, String className, String methodSignature) {
+//		TestSuiteController testSuiteController = Activator.getDefault().getTestSuiteController();
 
 //		PackageTest t1 = new PackageTest("domain");
 //		ClassTest c1 = new ClassTest ("domain.A");
@@ -321,8 +293,8 @@ public class ActiveEditor implements Observer {
 //		testSuite.addPackageTest(t1);
 		
 //		testSuite.update();
-		testSuiteController.flush();
-	}
+//		testSuiteController.flush();
+//	}
 	
 	/***
 	 * Updates the method Javadoc annotations.
@@ -343,7 +315,7 @@ public class ActiveEditor implements Observer {
 	 * @param testPath
 	 *            - The Test Paths manually added to the Test Path set.
 	 */
-	private void setJavadocAnnotation(CompilationUnit unit,
+/*	private void setJavadocAnnotation(CompilationUnit unit,
 			MethodDeclaration method, String criteria, String tour,
 			Iterable<AbstractPath> infeasibles,
 			Iterable<Path> testRequirements,
@@ -448,7 +420,7 @@ public class ActiveEditor implements Observer {
 		}
 		return javadoc;
 	}
-
+*/
 	/***
 	 * Views all tags in the method Javadoc. If the tags are external to the
 	 * program they must be kept.
@@ -456,7 +428,7 @@ public class ActiveEditor implements Observer {
 	 * @param method
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	private List<TagElement> keepTags(MethodDeclaration method) {
 		List<TagElement> tagToKeep = new ArrayList<TagElement>();
 		if (method.getJavadoc() != null) {
@@ -536,4 +508,5 @@ public class ActiveEditor implements Observer {
 		new HashCreationException().printStackTrace();
 		return null;
 	}
+*/
 }

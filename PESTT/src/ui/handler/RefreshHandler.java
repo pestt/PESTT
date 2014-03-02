@@ -43,8 +43,7 @@ public class RefreshHandler extends AbstractHandler {
 					.getPreferenceStore();
 			String dot = preferenceStore.getString(Preferences.DOT_PATH);
 			if (dot != null && !dot.equals(Description.EMPTY)) {
-				Activator.getDefault().getViewController()
-						.loadNecessaryViews(event);
+				Activator.getDefault().getViewController().loadNecessaryViews(event);
 				resetDataStructures(window);
 				keepCommandOptions();
 			} else
@@ -53,7 +52,7 @@ public class RefreshHandler extends AbstractHandler {
 						Messages.PREFERENCES_DOT_MSG);
 		} else
 			MessageDialog.openInformation(window.getShell(),
-					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not designed.
+					Messages.DRAW_GRAPH_TITLE, Messages.DRAW_GRAPH_MSG); // message displayed when the graph is not draw.
 		return null;
 	}
 
@@ -62,22 +61,22 @@ public class RefreshHandler extends AbstractHandler {
 		Activator.getDefault().getCoverageDataController()
 				.deleteObserverToCoverageData();
 		Activator.getDefault().getDefUsesController().deleteObserverToDefUses();
-		Activator.getDefault().getTestPathController().clearTestPathSet();
+	//	Activator.getDefault().getTestPathController().clearTestPathSet();
 		//Activator.getDefault().getTestRequirementController()
 		//		.clearTestRequirementSet();
 		Activator.getDefault().getCoverageDataController()
 				.clearCoverageDataSet();
 		Activator.getDefault().getStatisticsController().cleanStatisticsSet();
 		Activator.getDefault().getDefUsesController().clearDefUsesSet();
+
 		String selectedMethod = Activator.getDefault().getEditorController()
 				.getSelectedMethod();
 		ICompilationUnit unit = Activator.getDefault().getEditorController()
 				.getCompilationUnit();
 		Activator.getDefault().getSourceGraphController()
 				.create(unit, selectedMethod);
-		Activator.getDefault().getCFGController()
-				.refreshStructuralCoverageGraph();
-		Activator.getDefault().getCFGController().refreshLogicCoverageGraph();
+		Activator.getDefault().getCFGController().refreshGraph();
+		
 		Activator.getDefault().getCoverageDataController()
 				.addObserverToCoverageData();
 		Activator.getDefault().getDefUsesController().addObserverToDefUses();

@@ -2,10 +2,9 @@ package ui.controllers;
 
 import java.util.Observable;
 
+import ui.events.GraphChangeEvent;
 import ui.events.LayerChangeEvent;
 import ui.events.LinkChangeEvent;
-import ui.events.RefreshLogicGraphEvent;
-import ui.events.RefreshStructuralGraphEvent;
 import domain.constants.Layer;
 
 public class CFGController extends Observable {
@@ -39,7 +38,7 @@ public class CFGController extends Observable {
 			break;
 		default:
 			layer = Layer.EMPTY;
-			;
+			break;
 		}
 		setChanged();
 		notifyObservers(new LayerChangeEvent(layer));
@@ -49,13 +48,8 @@ public class CFGController extends Observable {
 		return layer;
 	}
 
-	public void refreshStructuralCoverageGraph() {
+	public void refreshGraph() {
 		setChanged();
-		notifyObservers(new RefreshStructuralGraphEvent());
-	}
-
-	public void refreshLogicCoverageGraph() {
-		setChanged();
-		notifyObservers(new RefreshLogicGraphEvent());
+		notifyObservers(new GraphChangeEvent());
 	}
 }

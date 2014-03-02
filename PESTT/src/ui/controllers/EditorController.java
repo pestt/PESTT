@@ -59,9 +59,9 @@ public class EditorController {
 		editor.removeALLMarkers();
 	}
 
-	public void setListenUpdates(boolean b) {
-		editor.setListenUpdates(b);
-	}
+//	public void setListenUpdates(boolean b) {
+//		editor.setListenUpdates(b);
+//	}
 
 	public boolean isEverythingMatching() {
 		return editor.isEverythingMatching();

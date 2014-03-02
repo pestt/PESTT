@@ -353,9 +353,9 @@ public class VisualInformation {
 	}
 
 	public void removeVisualCoverage() {
-		Activator.getDefault().getEditorController().setListenUpdates(false);
+//		Activator.getDefault().getEditorController().setListenUpdates(false);
 		Activator.getDefault().getEditorController().removeALLMarkers(); // removes the marks in the editor.
-		Activator.getDefault().getEditorController().setListenUpdates(true);
+//		Activator.getDefault().getEditorController().setListenUpdates(true);
 	}
 
 	private boolean isNodeSelected(List<GraphItem> items,

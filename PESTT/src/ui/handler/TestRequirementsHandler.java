@@ -24,8 +24,8 @@ public class TestRequirementsHandler extends AbstractHandler {
 					.isEverythingMatching())
 				if (Activator.getDefault().getTestRequirementController()
 						.isCoverageCriteriaSelected()) {
-					Activator.getDefault().getEditorController()
-							.setListenUpdates(false);
+//					Activator.getDefault().getEditorController()
+//							.setListenUpdates(false);
 					if (GraphCoverageCriteriaId.isADefUsesCoverageCriteria(Activator.getDefault().getTestRequirementController().getSelectedCoverageCriteria()))
 						if (!Activator.getDefault().getDefUsesController()
 								.isEmpty())
@@ -39,8 +39,8 @@ public class TestRequirementsHandler extends AbstractHandler {
 					else
 						Activator.getDefault().getTestRequirementController()
 								.generateTestRequirement();
-					Activator.getDefault().getEditorController()
-							.setListenUpdates(true);
+//					Activator.getDefault().getEditorController()
+//							.setListenUpdates(true);
 				} else
 					MessageDialog.openInformation(window.getShell(),
 							Messages.COVERAGE_TITLE,

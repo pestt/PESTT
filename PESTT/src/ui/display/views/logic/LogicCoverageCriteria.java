@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import ui.constants.Colors;
 import ui.constants.Messages;
-import ui.events.RefreshLogicGraphEvent;
+import ui.events.GraphChangeEvent;
 import domain.constants.LogicCoverageCriteriaId;
 
 public class LogicCoverageCriteria implements Observer {
@@ -214,7 +214,7 @@ public class LogicCoverageCriteria implements Observer {
 
 	@Override
 	public void update(Observable obs, Object data) {
-		if (data instanceof RefreshLogicGraphEvent)
+		if (data instanceof GraphChangeEvent)
 			create();
 	}
 }

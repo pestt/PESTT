@@ -10,8 +10,7 @@ public class RefreshStructuralCriteriaGraphHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Activator.getDefault().getCFGController()
-				.refreshStructuralCoverageGraph();
+		Activator.getDefault().getCFGController().refreshGraph();
 		return null;
 	}
 

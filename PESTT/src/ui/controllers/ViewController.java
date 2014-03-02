@@ -36,8 +36,7 @@ public class ViewController implements Observer {
 	}
 
 	public void deleteObserverToViews() {
-		Activator.getDefault().getTestRequirementController()
-				.deleteObserver(this);
+		Activator.getDefault().getTestRequirementController().deleteObserver(this);
 		Activator.getDefault().getTestPathController().deleteObserver(this);
 		Activator.getDefault().getDefUsesController().deleteObserver(this);
 		Activator.getDefault().getSourceGraphController()
