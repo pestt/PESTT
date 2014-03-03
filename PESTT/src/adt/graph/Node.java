@@ -12,6 +12,13 @@ public class Node implements Comparable<Node> {
 	 */
 	@XmlAttribute private int value;
 
+	
+	/**
+	 * Constructor used be XML unmarshaller 
+	 */
+	public Node() {
+	}
+	
 	/**
 	 * Creates a new Node
 	 * 

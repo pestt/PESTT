@@ -36,6 +36,7 @@ public class TestSuiteController extends Observable {
 					testPathController.getSelectedTourType());
 			flush();	
 		}
+		
 	}
 	
 	public void setTestPathController (TestPathController testPathController) {
