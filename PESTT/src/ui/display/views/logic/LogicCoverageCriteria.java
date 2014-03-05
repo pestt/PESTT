@@ -26,7 +26,7 @@ import main.activator.Activator;
 
 import org.eclipse.draw2d.Label;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -44,13 +44,13 @@ import domain.constants.LogicCoverageCriteriaId;
 
 public class LogicCoverageCriteria implements Observer {
 
-	private Graph graph;
+	private GraphWidget graph;
 	private Map<LogicCoverageCriteriaId, GraphNode> nodes;
 	private SelectionAdapter event;
 	private Composite parent;
 
 	public LogicCoverageCriteria(Composite parent) {
-		graph = new Graph(parent, SWT.NONE);
+		graph = new GraphWidget(parent, SWT.NONE);
 		Activator.getDefault().getCFGController().addObserver(this);
 		create();
 		this.parent = parent;

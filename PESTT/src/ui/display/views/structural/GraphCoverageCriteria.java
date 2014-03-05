@@ -32,7 +32,7 @@ import java.util.Observer;
 import main.activator.Activator;
 
 import org.eclipse.draw2d.Label;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -56,13 +56,13 @@ import domain.events.TestRequirementSelectedCriteriaEvent;
 
 public class GraphCoverageCriteria implements Observer {
 
-	private Graph graph;
+	private GraphWidget graph;
 	private Map<GraphCoverageCriteriaId, GraphNode> nodes;
 	private SelectionAdapter event;
 	private Composite parent;
 
 	public GraphCoverageCriteria(Composite parent) {
-		graph = new Graph(parent, SWT.NONE);
+		graph = new GraphWidget(parent, SWT.NONE);
 		Activator.getDefault().getTestSuiteController().addObserver(this);
 //		Activator.getDefault().getCFGController().addObserver(this);
 		this.parent = parent;

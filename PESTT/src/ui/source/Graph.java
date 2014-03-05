@@ -44,7 +44,7 @@ import domain.events.TestRequirementSelectedEvent;
 
 public class Graph implements Observer {
 
-	private org.eclipse.gef4.zest.core.widgets.Graph graph;
+	private org.eclipse.gef4.zest.core.widgets.GraphWidget graph;
 	private adt.graph.Graph sourceGraph;
 	private List<GraphNode> graphNodes;
 	private List<GraphConnection> graphEdges;
@@ -53,7 +53,7 @@ public class Graph implements Observer {
 
 	public Graph(Composite parent) {
 		this.parent = parent;
-		graph = new org.eclipse.gef4.zest.core.widgets.Graph(parent, SWT.NONE);
+		graph = new org.eclipse.gef4.zest.core.widgets.GraphWidget(parent, SWT.NONE);
 		Activator.getDefault().getTestRequirementController().addObserver(this);
 		Activator.getDefault().getTestPathController().addObserver(this);
 		Activator.getDefault().getDefUsesController().addObserver(this);
@@ -353,7 +353,6 @@ public class Graph implements Observer {
 		return aux;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<GraphItem> selectInGraph(Object selectedDefUse) {
 		List<GraphItem> aux = new LinkedList<GraphItem>();
 		if (selectedDefUse instanceof adt.graph.Node) {
