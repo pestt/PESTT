@@ -920,6 +920,51 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="PESTT.PackageExplorerClassMenu"
+               label="PESTT">
+            <menu
+                  id="PESTT.ClassTourType"
+                  label="Class tour type">
+               <command
+                     commandId="PESTT.ClassTour"
+                     label="Tour"
+                     style="radio">
+               </command>
+               <command
+                     commandId="PESTT.ClassSidetrip"
+                     label="Sidetrip"
+                     style="radio">
+               </command>
+               <command
+                     commandId="PESTT.ClassDetour"
+                     label="Detour"
+                     style="radio">
+               </command>
+            </menu>
+            <menu
+                  id="PESTT.ClassCoverageCriteria"
+                  label="Class coverage criteria">
+               <menu
+                     id="PESTT.ClassStructuralCoverage"
+                     label="Structural coverage">
+                  <command
+                        commandId="PESTT.ClassNodeCoverage"
+                        label="Node coverage"
+                        style="radio">
+                  </command>
+                  <command
+                        commandId="PESTT.ClassEdgeCoverage"
+                        label="Edge coverage"
+                        style="radio">
+                  </command>
+               </menu>
+            </menu>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">

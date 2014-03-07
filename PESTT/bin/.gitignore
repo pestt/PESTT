@@ -1,6 +1,6 @@
 /sourcecodeexplorer
+/.gitignore
+/adt
 /domain
 /main
-/pestt
 /ui
-/adt
