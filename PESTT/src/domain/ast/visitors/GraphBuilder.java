@@ -3,10 +3,8 @@ package domain.ast.visitors;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -25,14 +23,12 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
-import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
@@ -40,7 +36,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-import ui.constants.JavadocTagAnnotations;
 import adt.graph.Edge;
 import adt.graph.Graph;
 import adt.graph.Node;
@@ -65,7 +60,6 @@ public class GraphBuilder extends ASTVisitor {
 	private Node finalnode;
 	private GraphInformation infos;
 	private CompilationUnit unit;
-	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
 	private List<SingleVariableDeclaration> params;
 	private List<VariableDeclarationFragment> attributes;
@@ -84,7 +78,6 @@ public class GraphBuilder extends ASTVisitor {
 		prevNode = new Stack<Node>(); // stack that contains the predecessor nodes.
 		continueNode = new Stack<Node>(); // stack that contains the node to be linked if a continue occurs.
 		breakNode = new Stack<Node>(); // stack that contains the node to be linked if a break occurs.
-		javadocAnnotations = new HashMap<JavadocTagAnnotations, List<String>>();
 		controlFlag = false; // flag that controls if a continue or a break occurs.
 		returnFlag = false; // flag that controls if a return occurs.
 		caseFlag = false; // flag that controls the occurrence of a break in the previous case;  
@@ -142,33 +135,6 @@ public class GraphBuilder extends ASTVisitor {
 		String signature = getMethodSignature(node);
 		if (signature.equals(methodName)) {
 			hash = getMethodHash(node);
-			if (node.getJavadoc() != null) {
-				javadocAnnotations.put(
-						JavadocTagAnnotations.COVERAGE_CRITERIA,
-						getProperty(node.getJavadoc(),
-								JavadocTagAnnotations.COVERAGE_CRITERIA
-										.getTag()));
-				javadocAnnotations.put(
-						JavadocTagAnnotations.TOUR_TYPE,
-						getProperty(node.getJavadoc(),
-								JavadocTagAnnotations.TOUR_TYPE.getTag()));
-				javadocAnnotations
-						.put(JavadocTagAnnotations.INFEASIBLE_PATH,
-								getProperty(node.getJavadoc(),
-										JavadocTagAnnotations.INFEASIBLE_PATH
-												.getTag()));
-				javadocAnnotations
-						.put(JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH,
-								getProperty(
-										node.getJavadoc(),
-										JavadocTagAnnotations.ADDITIONAL_TEST_REQUIREMENT_PATH
-												.getTag()));
-				javadocAnnotations.put(
-						JavadocTagAnnotations.ADDITIONAL_TEST_PATH,
-						getProperty(node.getJavadoc(),
-								JavadocTagAnnotations.ADDITIONAL_TEST_PATH
-										.getTag()));
-			}
 			params = node.parameters();
 			return true;
 		}
@@ -187,20 +153,6 @@ public class GraphBuilder extends ASTVisitor {
 		return signature;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<String> getProperty(Javadoc javadoc, String propertyName) {
-		List<String> result = new LinkedList<String>();
-		List<TagElement> tags = (List<TagElement>) javadoc.tags();
-		for (TagElement tag : tags)
-			if (tag.getTagName() != null)
-				if (tag.getTagName().equals(propertyName)
-						&& !tag.fragments().isEmpty()) {
-					String str = tag.fragments().get(0).toString();
-					str = str.substring(1, str.length());
-					result.add(str);
-				}
-		return result;
-	}
 
 	private byte[] getMethodHash(MethodDeclaration method) {
 		try {
@@ -229,7 +181,6 @@ public class GraphBuilder extends ASTVisitor {
 		return enumFields;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void endVisit(MethodDeclaration node) {
 		String signature = getMethodSignature(node);
@@ -281,10 +232,6 @@ public class GraphBuilder extends ASTVisitor {
 			sourceGraph.accept(visitor);
 			sourceGraph.sortNodes();
 		}
-	}
-
-	public Map<JavadocTagAnnotations, List<String>> getJavadocAnnotations() {
-		return javadocAnnotations;
 	}
 
 	public byte[] getMethodHash() {

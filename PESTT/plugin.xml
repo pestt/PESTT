@@ -337,6 +337,18 @@
             id="PESTT.ExportToXML"
             name="ExportToXML">
       </command>
+      <command
+            id="PESTT.PopupCommand"
+            name="Popup command">
+         <state
+               id="org.eclipse.ui.commands.radioState">
+         </state>
+         <commandParameter
+               id="org.eclipse.ui.commands.radioStateParameter"
+               name="Selected popup menu option"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -924,42 +936,62 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <menu
-               id="PESTT.PackageExplorerClassMenu"
+               id="PESTT.PackageExplorerPopupMenu"
                label="PESTT">
             <menu
-                  id="PESTT.ClassTourType"
-                  label="Class tour type">
+                  id="PESTT.PopupTourTypeMenu"
+                  label="Set tour type">
                <command
-                     commandId="PESTT.ClassTour"
+                     commandId="PESTT.PopupCommand"
                      label="Tour"
                      style="radio">
+                  <parameter
+                        name="org.eclipse.ui.commands.radioStateParameter"
+                        value="ui.constants.PopupMenuEntries.TOUR">
+                  </parameter>
                </command>
                <command
-                     commandId="PESTT.ClassSidetrip"
+                     commandId="PESTT.PopupCommand"
                      label="Sidetrip"
                      style="radio">
+                  <parameter
+                        name="org.eclipse.ui.commands.radioStateParameter"
+                        value="ui.constants.PopupMenuEntries.SIDETRIP">
+                  </parameter>
                </command>
                <command
-                     commandId="PESTT.ClassDetour"
+                     commandId="PESTT.PopupCommand"
                      label="Detour"
                      style="radio">
+                  <parameter
+                        name="org.eclipse.ui.commands.radioStateParameter"
+                        value="ui.constants.PopupMenuEntries.DETOUR">
+                  </parameter>
                </command>
             </menu>
             <menu
-                  id="PESTT.ClassCoverageCriteria"
-                  label="Class coverage criteria">
+                  id="PESTT.PopupCoverageCriteriaMenu"
+                  label="Set coverage criteria">
                <menu
-                     id="PESTT.ClassStructuralCoverage"
+                     id="PESTT.PopupStructuralCoverageMenu"
                      label="Structural coverage">
                   <command
-                        commandId="PESTT.ClassNodeCoverage"
+                        commandId="PESTT.PopupCommand"
                         label="Node coverage"
                         style="radio">
+                     <parameter
+                           name="org.eclipse.ui.commands.radioStateParameter"
+                           value="ui.constants.PopupMenuEntries.NODE_COVERAGE">
+                     </parameter>
                   </command>
                   <command
-                        commandId="PESTT.ClassEdgeCoverage"
+                        commandId="PESTT.PopupCommand"
                         label="Edge coverage"
                         style="radio">
+                     <parameter
+                           name="org.eclipse.ui.commands.radioStateParameter"
+                           value="ui.constants.PopupMenuEntries.EDGE_COVERAGE">
+                     </parameter>
                   </command>
                </menu>
             </menu>
@@ -1240,6 +1272,10 @@
                </instanceof>
             </with>
          </activeWhen>
+      </handler>
+      <handler
+            class="ui.handler.PopupCommandHandler"
+            commandId="PESTT.PopupCommand">
       </handler>
    </extension>
    <extension id="PESTT.LinkMarker"

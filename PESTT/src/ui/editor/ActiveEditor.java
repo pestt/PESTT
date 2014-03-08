@@ -38,12 +38,10 @@ public class ActiveEditor { //implements Observer {
 	private Markers marker; // marker to add.
 	private ICompilationUnit compilationUnit;
 	private IJavaProject javaProject;
-//	private boolean listenUpdates;
 	private boolean updated;
 	private IDocumentListener listener;
 
 	public ActiveEditor() {
-//		listenUpdates = true;
 		updated = true;
 		part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();
@@ -64,15 +62,10 @@ public class ActiveEditor { //implements Observer {
 	}
 
 	public void addObservers() {
-//		Activator.getDefault().getTestRequirementController().addObserver(this);
-//		Activator.getDefault().getTestPathController().addObserver(this);
 		addChangeListener();
 	}
 
 	public void deleteObservers() {
-//		Activator.getDefault().getTestRequirementController()
-//				.deleteObserver(this);
-//		Activator.getDefault().getTestPathController().deleteObserver(this);
 		deleteChangeListener();
 	}
 
@@ -104,10 +97,6 @@ public class ActiveEditor { //implements Observer {
 						listener);
 		}
 	}
-
-//	public void setListenUpdates(boolean listenUpdates) {
-//		this.listenUpdates = listenUpdates;
-//	}
 
 	public IEditorPart getEditorPart() {
 		return part;

@@ -2,7 +2,6 @@ package domain;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -13,7 +12,6 @@ import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
 import adt.graph.IGraphVisitor;
 import adt.graph.Node;
@@ -25,7 +23,6 @@ import domain.events.CFGUpdateEvent;
 public class SourceGraph extends Observable {
 
 	private Graph sourceGraph;
-	private Map<JavadocTagAnnotations, List<String>> javadocAnnotations;
 	private byte[] hash;
 	private List<SingleVariableDeclaration> params;
 	private List<VariableDeclarationFragment> attributes;
@@ -41,7 +38,6 @@ public class SourceGraph extends Observable {
 		GraphBuilder visitor = new GraphBuilder(methodName, parser);
 		parser.accept(visitor);
 		sourceGraph = visitor.getGraph();
-		javadocAnnotations = visitor.getJavadocAnnotations();
 		hash = visitor.getMethodHash();
 		params = visitor.getMethodParameters();
 		attributes = visitor.getClassAttributes();
@@ -72,10 +68,6 @@ public class SourceGraph extends Observable {
 
 	public CompilationUnit getCompilationUnit(ICompilationUnit unit) {
 		return parse(unit);
-	}
-
-	public Map<JavadocTagAnnotations, List<String>> getJavadocAnnotations() {
-		return javadocAnnotations;
 	}
 
 	public byte[] getMethodHash() {

@@ -1,7 +1,6 @@
 package domain.controllers;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Observer;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -10,7 +9,6 @@ import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import ui.constants.JavadocTagAnnotations;
 import adt.graph.Graph;
 import adt.graph.IGraphVisitor;
 import domain.SourceGraph;
@@ -65,10 +63,6 @@ public class SourceGraphController {
 
 	public void updateMetadataInformation(Graph graph) {
 		sourceGraph.updateMetadataInformation(graph);
-	}
-
-	public Map<JavadocTagAnnotations, List<String>> getJavadocAnnotations() {
-		return sourceGraph.getJavadocAnnotations();
 	}
 
 	public byte[] getMethodHash() {
