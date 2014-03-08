@@ -947,7 +947,7 @@
                      style="radio">
                   <parameter
                         name="org.eclipse.ui.commands.radioStateParameter"
-                        value="ui.constants.PopupMenuEntries.TOUR">
+                        value="TOUR">
                   </parameter>
                </command>
                <command
@@ -956,7 +956,7 @@
                      style="radio">
                   <parameter
                         name="org.eclipse.ui.commands.radioStateParameter"
-                        value="ui.constants.PopupMenuEntries.SIDETRIP">
+                        value="SIDETRIP">
                   </parameter>
                </command>
                <command
@@ -965,7 +965,7 @@
                      style="radio">
                   <parameter
                         name="org.eclipse.ui.commands.radioStateParameter"
-                        value="ui.constants.PopupMenuEntries.DETOUR">
+                        value="DETOUR">
                   </parameter>
                </command>
             </menu>
@@ -981,7 +981,7 @@
                         style="radio">
                      <parameter
                            name="org.eclipse.ui.commands.radioStateParameter"
-                           value="ui.constants.PopupMenuEntries.NODE_COVERAGE">
+                           value="NODE_COVERAGE">
                      </parameter>
                   </command>
                   <command
@@ -990,7 +990,7 @@
                         style="radio">
                      <parameter
                            name="org.eclipse.ui.commands.radioStateParameter"
-                           value="ui.constants.PopupMenuEntries.EDGE_COVERAGE">
+                           value="EDGE_COVERAGE">
                      </parameter>
                   </command>
                </menu>

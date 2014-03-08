@@ -1,6 +1,6 @@
-package ui.constants;
+package ui.preferences;
 
-public class Preferences {
+public class ConstantLabels {
 
 	public static final String DESCRIPTION = "PESTT preferences:\n";
 	public static final String DOT_PATH = "DotPath";

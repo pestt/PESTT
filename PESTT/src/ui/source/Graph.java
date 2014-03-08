@@ -28,9 +28,9 @@ import org.eclipse.ui.PlatformUI;
 import ui.constants.Colors;
 import ui.constants.Description;
 import ui.constants.Messages;
-import ui.constants.Preferences;
 import ui.events.LayerChangeEvent;
 import ui.events.LinkChangeEvent;
+import ui.preferences.ConstantLabels;
 import adt.graph.AbstractPath;
 import adt.graph.Path;
 import domain.constants.Layer;
@@ -64,7 +64,7 @@ public class Graph implements Observer {
 				.setGraphInformation(new VisualInformation(this));
 		IPreferenceStore preferenceStore = Activator.getDefault()
 				.getPreferenceStore();
-		String dot = preferenceStore.getString(Preferences.DOT_PATH);
+		String dot = preferenceStore.getString(ConstantLabels.DOT_PATH);
 		if (dot != null && !dot.equals(Description.EMPTY)) {
 			create(Activator.getDefault().getSourceGraphController()
 					.getSourceGraph());

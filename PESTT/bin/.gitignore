@@ -1,6 +1,3 @@
 /sourcecodeexplorer
-/.gitignore
-/adt
-/domain
-/main
 /ui
+/domain

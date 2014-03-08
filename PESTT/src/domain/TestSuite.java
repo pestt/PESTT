@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,6 +18,15 @@ import domain.constants.TourType;
 public class TestSuite {
 	private Map<String, PackageTest> packages;
 	
+	public TestSuite (String projectName) {
+		this();
+		this.projectName = projectName;
+	}
+	
+	
+	/**
+	 * Constructor for the XML serialization framework 
+	 */
 	public TestSuite () {
 		packages = new HashMap<String, PackageTest>();
 	}
@@ -24,6 +34,8 @@ public class TestSuite {
 	public void addPackageTest(PackageTest pt) {
 		packages.put(pt.getQualifiedName(), pt);
 	}
+
+	@XmlAttribute private String projectName;
 	
 	@XmlElementWrapper(name = "packages")
 	@XmlElement(name = "package") 

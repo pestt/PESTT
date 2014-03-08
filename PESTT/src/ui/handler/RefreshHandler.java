@@ -17,9 +17,9 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import ui.constants.Description;
 import ui.constants.Messages;
-import ui.constants.Preferences;
 import ui.controllers.EditorController;
 import ui.editor.ActiveEditor;
+import ui.preferences.ConstantLabels;
 import domain.constants.Layer;
 
 public class RefreshHandler extends AbstractHandler {
@@ -41,7 +41,7 @@ public class RefreshHandler extends AbstractHandler {
 					ec.getClassName(), ec.getSelectedMethod());
 			IPreferenceStore preferenceStore = Activator.getDefault()
 					.getPreferenceStore();
-			String dot = preferenceStore.getString(Preferences.DOT_PATH);
+			String dot = preferenceStore.getString(ConstantLabels.DOT_PATH);
 			if (dot != null && !dot.equals(Description.EMPTY)) {
 				Activator.getDefault().getViewController().loadNecessaryViews(event);
 				resetDataStructures(window);

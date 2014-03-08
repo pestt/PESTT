@@ -10,7 +10,7 @@ import main.activator.Activator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import ui.constants.Preferences;
+import ui.preferences.ConstantLabels;
 
 public class DotProcess implements IDotProcess {
 
@@ -21,7 +21,7 @@ public class DotProcess implements IDotProcess {
 		Map<String, List<String>> elements = null;
 		IPreferenceStore preferenceStore = Activator.getDefault()
 				.getPreferenceStore();
-		String dot = preferenceStore.getString(Preferences.DOT_PATH);
+		String dot = preferenceStore.getString(ConstantLabels.DOT_PATH);
 		String cmd = dot + " -Tplain"; // the Graphviz command.
 		try {
 			Process p = Runtime.getRuntime().exec(cmd, null, null); // run the Graphviz command.
