@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import domain.constants.CoverageCriteriaId;
 import domain.constants.TourType;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -18,9 +19,10 @@ import domain.constants.TourType;
 public class TestSuite {
 	private Map<String, PackageTest> packages;
 	
-	public TestSuite (String projectName) {
+	public TestSuite (CoverageCriteriaId coverageCriteria, TourType tourType) {
 		this();
-		this.projectName = projectName;
+		this.coverageCriteria = coverageCriteria;
+		this.tourType = tourType;
 	}
 	
 	
@@ -35,7 +37,8 @@ public class TestSuite {
 		packages.put(pt.getQualifiedName(), pt);
 	}
 
-	@XmlAttribute private String projectName;
+	@XmlAttribute private CoverageCriteriaId coverageCriteria;
+	@XmlAttribute private TourType tourType;
 	
 	@XmlElementWrapper(name = "packages")
 	@XmlElement(name = "package") 
