@@ -26,7 +26,7 @@ public class GraphCoverageCriteriaId extends CoverageCriteriaId {
 		return criteria == ALL_DU_PATHS || criteria == ALL_USES || criteria == ALL_DEFS;
 	}
 	
-	public static CoverageCriteriaId valueOf(String s) {
+	public static GraphCoverageCriteriaId valueOf(String s) {
 		if (s.equals("COMPLETE_PATH"))
 			return COMPLETE_PATH;
 		else if (s.equals("PRIME_PATH"))

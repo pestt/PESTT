@@ -19,7 +19,6 @@ public class AllUsesCoverage implements ICoverageAlgorithms {
 		this.graph = graph;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Set<AbstractPath> getTestRequirements() {
 		Set<AbstractPath> paths = new AllDuPathsCoverage(graph)

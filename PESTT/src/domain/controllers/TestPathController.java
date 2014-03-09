@@ -21,6 +21,7 @@ import ui.events.TourChangeEvent;
 import adt.graph.Graph;
 import adt.graph.Node;
 import adt.graph.Path;
+import domain.TestSuiteCatalog;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.coverage.data.CoverageData;
@@ -30,30 +31,29 @@ import domain.events.TestPathSelectedEvent;
 
 public class TestPathController extends Observable {
 
-	private TestSuiteController testSuiteController;
+	private TestSuiteCatalog testSuiteCatalog;
 	private Set<Path> selectedTestPaths;
 	private TourType selectedTourType;
 	private CoverageDataController coverageDataController;
 
-	public TestPathController(TestSuiteController testSuiteController,
+	public TestPathController(TestSuiteCatalog testSuiteCatalog,
 			CoverageDataController coverageDataController) {
-		this.testSuiteController = testSuiteController;
-		testSuiteController.setTestPathController(this);
+		this.testSuiteCatalog = testSuiteCatalog;
 		this.coverageDataController = coverageDataController;
 	}
 
 	public void addManualTestPath(Path newTestPath, String tooltip) {
-		testSuiteController.getMethodUnderTest().addManualTestPath(newTestPath);
+		testSuiteCatalog.getMethodUnderTest().addManualTestPath(newTestPath);
 		computeStatistics(newTestPath);
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public void addAutomaticTestPath(Path newTestPath, String executionTip) {
-		testSuiteController.getMethodUnderTest().addAutomaticTestPath(newTestPath, executionTip);
+		testSuiteCatalog.getMethodUnderTest().addAutomaticTestPath(newTestPath, executionTip);
 		computeStatistics(newTestPath);
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	private void computeStatistics(Path newTestPath) {
@@ -71,34 +71,34 @@ public class TestPathController extends Observable {
 
 	
 	public String getExecutionTip(Path path) {
-		return testSuiteController.getMethodUnderTest().getExecutionTip(path);
+		return testSuiteCatalog.getMethodUnderTest().getExecutionTip(path);
 	}
 
 	public void removeTestPath() {
 		for (Path path: selectedTestPaths) 
 			coverageDataController.removeSelectedCoverageData(path);
-		testSuiteController.getMethodUnderTest().removeTestPaths(selectedTestPaths);
+		testSuiteCatalog.getMethodUnderTest().removeTestPaths(selectedTestPaths);
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public void clearAutomaticTestPaths() {
-		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
+		testSuiteCatalog.getMethodUnderTest().clearAutomaticTestPaths();
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public void clearManuallyTestPaths() {
-		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
+		testSuiteCatalog.getMethodUnderTest().clearManuallyAddedTestPaths();
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public void clearTestPathSet() {
-		testSuiteController.getMethodUnderTest().clearAutomaticTestPaths();
-		testSuiteController.getMethodUnderTest().clearManuallyAddedTestPaths();
+		testSuiteCatalog.getMethodUnderTest().clearAutomaticTestPaths();
+		testSuiteCatalog.getMethodUnderTest().clearManuallyAddedTestPaths();
 		notifyTheObservers();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public boolean isTestPathSelected() {
@@ -124,23 +124,18 @@ public class TestPathController extends Observable {
 	}
 
 	public void selectTourType(String selected) {
-		if (selected.equals(TourType.DETOUR.toString()))
-			this.selectedTourType = TourType.DETOUR;
-		else if (selected.equals(TourType.SIDETRIP.toString()))
-			this.selectedTourType = TourType.SIDETRIP;
-		else
-			this.selectedTourType = TourType.TOUR;
-		testSuiteController.setTourType(selectedTourType);
+		selectedTourType = TourType.valueOf(selected);
+		testSuiteCatalog.setTourType(selectedTourType);
 		setChanged();
 		notifyObservers(new TourChangeEvent(selectedTourType));
 	}
 
 	public Iterable<Path> getManuallyAddedTestPaths() {
-		return testSuiteController.getMethodUnderTest().getManuallyAddedTestPaths();
+		return testSuiteCatalog.getMethodUnderTest().getManuallyAddedTestPaths();
 	}
 
 	public Iterable<Path> getTestPaths() {
-		return testSuiteController.getMethodUnderTest().getTestPaths();
+		return testSuiteCatalog.getMethodUnderTest().getTestPaths();
 	}
 
 	public void getStatistics() {

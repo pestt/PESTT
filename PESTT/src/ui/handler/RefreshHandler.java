@@ -37,8 +37,8 @@ public class RefreshHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
 		if (ec.isInMethod()) { // if the text selected is the name of the method.
-			Activator.getDefault().getTestSuiteController().setMethodUnderTest(ec.getPackageName(),
-					ec.getClassName(), ec.getSelectedMethod());
+			Activator.getDefault().getTestSuiteController().setMethodUnderTest(ec.getProjectName(), 
+					ec.getPackageName(), ec.getClassName(), ec.getSelectedMethod());
 			IPreferenceStore preferenceStore = Activator.getDefault()
 					.getPreferenceStore();
 			String dot = preferenceStore.getString(ConstantLabels.DOT_PATH);

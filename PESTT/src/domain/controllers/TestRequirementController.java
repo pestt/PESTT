@@ -12,6 +12,7 @@ import adt.graph.AbstractPath;
 import adt.graph.Node;
 import adt.graph.Path;
 import domain.SourceGraph;
+import domain.TestSuiteCatalog;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 import domain.coverage.algorithms.CoverageAlgorithmsFactory;
@@ -26,18 +27,18 @@ public class TestRequirementController extends Observable {
 	private SourceGraph sourceGraph;
 	private AbstractPath selectedTestRequirement;
 	private GraphCoverageCriteriaId selectedCoverageAlgorithm;
-	private TestSuiteController testSuiteController;
+	private TestSuiteCatalog testSuiteCatalog;
 
 	public TestRequirementController(SourceGraph sourceGraph,
-			TestSuiteController testSuiteController) {
+			TestSuiteCatalog testSuiteCatalog) {
 		this.sourceGraph = sourceGraph;
-		this.testSuiteController = testSuiteController;
+		this.testSuiteCatalog= testSuiteCatalog;
 	}
 	
 	public void addTestRequirement(Path newTestRequirement) {
-		testSuiteController.getMethodUnderTest().addManualTestRequirement(newTestRequirement);
+		testSuiteCatalog.getMethodUnderTest().addManualTestRequirement(newTestRequirement);
 		notifyObserversTestReqChanged();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	private void notifyObserversTestReqChanged() {
@@ -46,54 +47,54 @@ public class TestRequirementController extends Observable {
 		notifyObservers(new TestRequirementChangedEvent(getTestRequirements(),
 				getInfeasiblesTestRequirements(),
 				getTestRequirementsManuallyAdded(), 
-				testSuiteController.getMethodUnderTest().hasInfinitePath()));
+				testSuiteCatalog.getMethodUnderTest().hasInfinitePath()));
 	}
 
 	public void removeSelectedTestRequirement() {
-		testSuiteController.getMethodUnderTest().removeTestRequirement(selectedTestRequirement);
+		testSuiteCatalog.getMethodUnderTest().removeTestRequirement(selectedTestRequirement);
 		notifyObserversTestReqChanged();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public void clearTestRequirementSet() {
-		testSuiteController.getMethodUnderTest().clearTestRequirements();
+		testSuiteCatalog.getMethodUnderTest().clearTestRequirements();
 		notifyObserversTestReqChanged();
-		testSuiteController.flush();
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public int testRequirementsSize() {
-		return testSuiteController.getMethodUnderTest().testRequirementsSize();
+		return testSuiteCatalog.getMethodUnderTest().testRequirementsSize();
 	}
 
 	public void setInfeasible(AbstractPath abstractPath, boolean status) {
-		testSuiteController.getMethodUnderTest().setInfeasible(abstractPath, status);
+		testSuiteCatalog.getMethodUnderTest().setInfeasible(abstractPath, status);
 		setChanged();
 		notifyObservers(new InfeasibleChangedEvent(getTestRequirements(),
 				getInfeasiblesTestRequirements(),
 				getTestRequirementsManuallyAdded(), 
-				testSuiteController.getMethodUnderTest().hasInfinitePath()));
-		testSuiteController.flush();
+				testSuiteCatalog.getMethodUnderTest().hasInfinitePath()));
+		testSuiteCatalog.flushCurrentProject();
 	}
 
 	public int infeasiblesSize() {
-		return testSuiteController.getMethodUnderTest().infeasiblesSize();
+		return testSuiteCatalog.getMethodUnderTest().infeasiblesSize();
 	}
 
 	public boolean isInfeasiblesTestRequirements(
 			AbstractPath abstractPath) {
-		return testSuiteController.getMethodUnderTest().isInfeasible(abstractPath);
+		return testSuiteCatalog.getMethodUnderTest().isInfeasible(abstractPath);
 	}
 
 	public Iterable<AbstractPath> getInfeasiblesTestRequirements() {
-		return testSuiteController.getMethodUnderTest().getInfeasiblesTestRequirements();
+		return testSuiteCatalog.getMethodUnderTest().getInfeasiblesTestRequirements();
 	}
 
 	public Iterable<Path> getTestRequirementsManuallyAdded() {
-		return testSuiteController.getMethodUnderTest().getManuallyAddedTestPaths();
+		return testSuiteCatalog.getMethodUnderTest().getManuallyAddedTestPaths();
 	}
 
 	public Iterable<AbstractPath> getTestRequirements() {
-		return testSuiteController.getMethodUnderTest().getTestRequirements();
+		return testSuiteCatalog.getMethodUnderTest().getTestRequirements();
 	}
 
 	public Path createTestRequirement(String input) {
@@ -172,7 +173,7 @@ public class TestRequirementController extends Observable {
 	public void generateTestRequirement() {
 		ICoverageAlgorithms algorithm = CoverageAlgorithmsFactory.INSTANCE
 				.getCoverageAlgorithm(sourceGraph, selectedCoverageAlgorithm);
-		testSuiteController.getMethodUnderTest().generateTestRequirements(algorithm);
+		testSuiteCatalog.getMethodUnderTest().generateTestRequirements(algorithm);
 		notifyObserversTestReqChanged();
 	}
 
@@ -181,11 +182,11 @@ public class TestRequirementController extends Observable {
 				.getTestPathController().getSelectedTourType();
 		switch (selectedTourType) {
 		case TOUR:
-			return testSuiteController.getMethodUnderTest().getPathToured(seletedTestPath);
+			return testSuiteCatalog.getMethodUnderTest().getPathToured(seletedTestPath);
 		case SIDETRIP:
-			return testSuiteController.getMethodUnderTest().getPathsTouredWithSideTrip(seletedTestPath);
+			return testSuiteCatalog.getMethodUnderTest().getPathsTouredWithSideTrip(seletedTestPath);
 		case DETOUR:
-			return testSuiteController.getMethodUnderTest().getPathsTouredWithDeTour(seletedTestPath);
+			return testSuiteCatalog.getMethodUnderTest().getPathsTouredWithDeTour(seletedTestPath);
 		default:
 			return null;//normal
 		}

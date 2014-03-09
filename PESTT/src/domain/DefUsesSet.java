@@ -243,7 +243,6 @@ public class DefUsesSet extends Observable implements Observer {
 	 *         then the Object to add. -1 if the Object in the list is lesser
 	 *         than the Object to add.
 	 */
-	@SuppressWarnings("unchecked")
 	private int compare(Object inList, Object toAdd) {
 		Node nodeInList;
 		Node nodeToAdd;
@@ -312,7 +311,6 @@ public class DefUsesSet extends Observable implements Observer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setDefUsesStatus(Set<AbstractPath> paths,
 			AbstractPath path, Object key, DefUsesView view) {
 		switch (view) {

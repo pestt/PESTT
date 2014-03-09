@@ -1,34 +1,21 @@
 package domain.controllers;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import domain.MethodTest;
-import domain.TestSuite;
-import domain.constants.CoverageCriteriaId;
+import domain.TestSuiteCatalog;
 import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 
 public class TestSuiteController extends Observable {
 
-	private Map<String, TestSuite> testSuites;
-	private String filename;
-	private MethodTest methodUnderTest;
-	private TestPathController testPathController;
+	private TestSuiteCatalog testSuiteCatalog;
+	private String projectName;
+	private String packageName;
+	private String className;
+	private String methodSignature;
 
-	public TestSuiteController() {
-		testSuites = new HashMap<String, TestSuite>();
+	public TestSuiteController(TestSuiteCatalog testSuiteCatalog) {
+		this.testSuiteCatalog = testSuiteCatalog;
 	}
 	
 	/**
@@ -38,75 +25,41 @@ public class TestSuiteController extends Observable {
 	 * @param methodSignature
 	 * @requires hasTestSuite(projectName) 
 	 */
-	public void setMethodUnderTest(String projectName, String packageName, String className, String methodSignature) {
-		methodUnderTest = testSuites.get(packageName).getMethodTest(packageName, className, methodSignature);
-		if (methodUnderTest == null) {
-			methodUnderTest = testSuites.get(packageName).addMethodTest(packageName, className, methodSignature,
-					testPathController.getSelectedTourType());
-			flush();	
-		}
+	public void setMethodUnderTest(String projectName, String packageName, 
+			String className, String methodSignature) {
+		this.projectName = projectName;
+		this.packageName = packageName;
+		this.className = className;
+		this.methodSignature = methodSignature;
+		testSuiteCatalog.setMethodUnderTest(projectName, packageName, className, methodSignature);
+	}
 		
-	}
-
 	public boolean hasTestSuite(String projectName) {
-		return testSuites.containsKey(projectName);
+		return testSuiteCatalog.hasTestSuite(projectName);
 	}
 	
-	public void setTestSuite(String projectName, String filename, String coverageCriterium, String tourType) {
-		TestSuite testSuite;
-		try {
-			testSuite = loadTestSuite(filename);
-		} catch (JAXBException|FileNotFoundException e) {
-			// in case it cannot parse the XML file or the file does not exist
-			//TODO: fmartins: adjust to work with LogicCriteria when they appear.
-			testSuite = new TestSuite(GraphCoverageCriteriaId.valueOf(coverageCriterium), TourType.valueOf(tourType));
-		}				
-
-		testSuites.put(filename, loadTestSuite(filename));
-//		filename = "/Users/fmartins/Documents/eclipse-workspaces/projects/runtime-EclipseApplication/testePESTT/default.xml";
+	/**
+	 * Adds a test suite based on structural coverage criteria
+	 * 
+	 * @param projectName The project name
+	 * @param filename The XML filename to serialise test data
+	 * @param coverageCriterium The structural coverage criterium
+	 * @param tourType The tour type
+	 */
+	public void addTestSuite(String projectName, String filename, 
+			String coverageCriterium, String tourType) {
+		testSuiteCatalog.addTestSuite(projectName, filename, 
+				GraphCoverageCriteriaId.valueOf(coverageCriterium), 
+				TourType.valueOf(tourType));
 	}
-
-	
-	public void setTestPathController (TestPathController testPathController) {
-		this.testPathController = testPathController;
-	}
-	
-	public MethodTest getMethodUnderTest() {
-		return methodUnderTest;
-	}
-
-	private TestSuite loadTestSuite(String filename) throws JAXBException, FileNotFoundException {
-		JAXBContext context = JAXBContext.newInstance(TestSuite.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		return (TestSuite) unmarshaller.unmarshal(new FileInputStream(filename));
-	}
-	
-	public void flush () {
-		try {
-			JAXBContext context = JAXBContext.newInstance(TestSuite.class);
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			Writer writer = new FileWriter(filename);
-			marshaller.marshal(testSuite, writer);
-			writer.close();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
-	}
-
 	
 	/**
 	 * Sets the tour type for the method under test.
 	 * 
 	 * @param selectedTourType The selected tour type
+	 * @requires hasTestSuite(projectName)
 	 */
 	public void setTourType(TourType tourType) {
-		if (methodUnderTest != null) {
-			methodUnderTest.setTourType(tourType);
-			flush();
-		}
 	}	
 	
 }

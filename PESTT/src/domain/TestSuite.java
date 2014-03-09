@@ -16,7 +16,7 @@ import domain.constants.TourType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement
-public class TestSuite {
+class TestSuite {
 	private Map<String, PackageTest> packages;
 	
 	public TestSuite (CoverageCriteriaId coverageCriteria, TourType tourType) {

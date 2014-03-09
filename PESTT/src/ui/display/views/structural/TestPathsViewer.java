@@ -201,7 +201,6 @@ public class TestPathsViewer extends AbstractTableViewer implements Observer {
 		testPathhsViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 
-					@SuppressWarnings("unchecked")
 					public void selectionChanged(
 							final SelectionChangedEvent event) {
 						IStructuredSelection selection = (IStructuredSelection) event

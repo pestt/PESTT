@@ -8,6 +8,7 @@ import ui.controllers.ViewController;
 import domain.CoverageDataSet;
 import domain.DefUsesSet;
 import domain.SourceGraph;
+import domain.TestSuiteCatalog;
 import domain.constants.Layer;
 import domain.constants.TourType;
 import domain.controllers.BytemanController;
@@ -36,12 +37,13 @@ public class PESTT {
 		editorController = new EditorController();
 		SourceGraph sourceGraph = new SourceGraph();
 		sourceGraphController = new SourceGraphController(sourceGraph);
-		testSuiteController = new TestSuiteController();
+		TestSuiteCatalog testSuiteCatalog = new TestSuiteCatalog();
+		testSuiteController = new TestSuiteController(testSuiteCatalog);
 		testRequirementController = new TestRequirementController(sourceGraph,
-				testSuiteController);
+				testSuiteCatalog);
 		coverageDataController = new CoverageDataController(
 				new CoverageDataSet());
-		testPathController = new TestPathController(testSuiteController, 
+		testPathController = new TestPathController(testSuiteCatalog, 
 				coverageDataController);
 		testPathController.selectTourType(TourType.TOUR.toString());
 		statisticsController = new StatisticsController(new StatisticsSet());

@@ -22,7 +22,6 @@ public class AllDefsCoverage implements ICoverageAlgorithms {
 		nodes = new Stack<Node>();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Set<AbstractPath> getTestRequirements() {
 		Set<AbstractPath> paths = new AllDuPathsCoverage(graph)
@@ -52,7 +51,6 @@ public class AllDefsCoverage implements ICoverageAlgorithms {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean isTestRequirement(List<Object> defs, List<Object> uses,
 			AbstractPath path) {
 		for (Object def : defs) {

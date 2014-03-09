@@ -30,7 +30,6 @@ public class AllDuPathsCoverage implements ICoverageAlgorithms {
 				.getDefUsesByVariable();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<AbstractPath> getTestRequirements() {
 		for (String key : defuses.keySet()) {
 			List<List<Object>> variableDefUses = defuses.get(key);
@@ -98,7 +97,6 @@ public class AllDuPathsCoverage implements ICoverageAlgorithms {
 			return true;
 		}
 
-		@SuppressWarnings("unchecked")
 		private boolean isDefNode(Node node) {
 			for (Object obj : defs) {
 				Node n;
@@ -112,7 +110,6 @@ public class AllDuPathsCoverage implements ICoverageAlgorithms {
 			return false;
 		}
 
-		@SuppressWarnings("unchecked")
 		private boolean isUseNode(Node node) {
 			for (Object obj : uses) {
 				Node n = null;

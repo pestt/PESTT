@@ -103,4 +103,8 @@ public class EditorController {
 	public void removeVisualCoverage() {
 		visualInfo.removeVisualCoverage();
 	}
+
+	public String getProjectName() {
+		return editor.getProjectName();
+	}
 }
