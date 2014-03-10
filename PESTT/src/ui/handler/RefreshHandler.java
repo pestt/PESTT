@@ -21,6 +21,7 @@ import ui.controllers.EditorController;
 import ui.editor.ActiveEditor;
 import ui.preferences.ConstantLabels;
 import domain.constants.Layer;
+import domain.controllers.TestSuiteController;
 
 public class RefreshHandler extends AbstractHandler {
 
@@ -37,7 +38,14 @@ public class RefreshHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
 		if (ec.isInMethod()) { // if the text selected is the name of the method.
-			Activator.getDefault().getTestSuiteController().setMethodUnderTest(ec.getProjectName(), 
+			TestSuiteController tsc = Activator.getDefault().getTestSuiteController();
+			IPreferenceStore prefs = Activator.getDefault().getPreferenceStore();
+			if (!tsc.hasTestSuite(ec.getProjectName())) 
+				tsc.addTestSuite(ec.getProjectName(), 
+						prefs.getString("defaultFilename"), 
+						prefs.getString("structuralCoverageCriterium"),
+						prefs.getString("tourType"));
+			tsc.setMethodUnderTest(ec.getProjectName(), 
 					ec.getPackageName(), ec.getClassName(), ec.getSelectedMethod());
 			IPreferenceStore preferenceStore = Activator.getDefault()
 					.getPreferenceStore();

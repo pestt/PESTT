@@ -44,8 +44,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		            { "&Complete Path Coverage", "COMPLETE_PAIR_COVERAGE" }, { "All-&Defs Coverage", "ALL_DEFS_COVERAGE" }, 
 		            { "All-&Uses Coverage", "ALL_USES_COVERAGE" }, { "&All-du-Paths Coverage", "ALL_DU_PATHS_COVERAGE" }},
 		            getFieldEditorParent()));
-		addField(new StringFieldEditor("defaultFilename",
-				"Default XML test filename:", getFieldEditorParent()));
+		StringFieldEditor sfe = new StringFieldEditor("defaultFilename",
+				"Default XML test filename:", getFieldEditorParent());
+		sfe.setEmptyStringAllowed(false);
+		addField(sfe);
 		Link link = new Link(getFieldEditorParent(), SWT.NONE);
 		link.setText(ConstantLabels.SUPPORT_PAGE);
 		link.addSelectionListener(new SelectionAdapter() {

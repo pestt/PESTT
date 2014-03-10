@@ -9,10 +9,6 @@ import domain.constants.TourType;
 public class TestSuiteController extends Observable {
 
 	private TestSuiteCatalog testSuiteCatalog;
-	private String projectName;
-	private String packageName;
-	private String className;
-	private String methodSignature;
 
 	public TestSuiteController(TestSuiteCatalog testSuiteCatalog) {
 		this.testSuiteCatalog = testSuiteCatalog;
@@ -27,10 +23,6 @@ public class TestSuiteController extends Observable {
 	 */
 	public void setMethodUnderTest(String projectName, String packageName, 
 			String className, String methodSignature) {
-		this.projectName = projectName;
-		this.packageName = packageName;
-		this.className = className;
-		this.methodSignature = methodSignature;
 		testSuiteCatalog.setMethodUnderTest(projectName, packageName, className, methodSignature);
 	}
 		
@@ -52,14 +44,5 @@ public class TestSuiteController extends Observable {
 				GraphCoverageCriteriaId.valueOf(coverageCriterium), 
 				TourType.valueOf(tourType));
 	}
-	
-	/**
-	 * Sets the tour type for the method under test.
-	 * 
-	 * @param selectedTourType The selected tour type
-	 * @requires hasTestSuite(projectName)
-	 */
-	public void setTourType(TourType tourType) {
-	}	
 	
 }
