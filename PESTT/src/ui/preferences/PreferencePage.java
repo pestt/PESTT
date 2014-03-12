@@ -32,17 +32,17 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 				ConstantLabels.DOT_PATH_LABEL, getFieldEditorParent()));
 		//TODO: fmartins: construct these options from a constants class. One for all UI.
 		addField(new RadioGroupFieldEditor("tourType",
-		        "Default structural tour type:", 3,
+		        "Default graph tour type:", 3,
 		        new String[][] { { "&Tour", "TOUR" },
 		            { "&Sidetrip", "SIDETRIP" }, { "&Detour", "DETOUR" } }, getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor("structuralCoverageCriterium",
-		        "Default structural coverage criterium:", 3,
-		        new String[][] { { "&Node Coverage", "NODE_COVERAGE" },
-		            { "&Edge Coverage", "EDGE_COVERAGE" }, { "E&dge Pair Coverage", "EDGE_PAIR_COVERAGE" },
-		            { "&Prime Path Coverage", "PRIME_PATH_COVERAGE" }, { "&Complete Roundtrip Coverage", "COMPLETE_ROUNDTRIP_COVERAGE" },
-		            { "&Simple Roundtrip Coverage", "SIMPLE_ROUNDTRIP_COVERAGE" },
-		            { "&Complete Path Coverage", "COMPLETE_PAIR_COVERAGE" }, { "All-&Defs Coverage", "ALL_DEFS_COVERAGE" }, 
-		            { "All-&Uses Coverage", "ALL_USES_COVERAGE" }, { "&All-du-Paths Coverage", "ALL_DU_PATHS_COVERAGE" }},
+		        "Default graph coverage criterium:", 3,
+		        new String[][] { { "&Node Coverage", "NODE" },
+		            { "&Edge Coverage", "EDGE" }, { "E&dge Pair Coverage", "EDGE_PAIR" },
+		            { "&Prime Path Coverage", "PRIME_PATH" }, { "&Complete Roundtrip Coverage", "COMPLETE_ROUND_TRIP" },
+		            { "&Simple Roundtrip Coverage", "SIMPLE_ROUND_TRIP" },
+		            { "&Complete Path Coverage", "COMPLETE_PATH" }, { "All-&Defs Coverage", "ALL_DEFS_COVERAGE" }, 
+		            { "All-&Uses Coverage", "ALL_USES" }, { "&All-du-Paths Coverage", "ALL_DU_PATHS" }},
 		            getFieldEditorParent()));
 		StringFieldEditor sfe = new StringFieldEditor("defaultFilename",
 				"Default XML test filename:", getFieldEditorParent());
