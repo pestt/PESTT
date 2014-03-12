@@ -107,4 +107,9 @@ public class EditorController {
 	public String getProjectName() {
 		return editor.getProjectName();
 	}
+	
+	public String getProjectPath() {
+		return editor.getProjectPath().toOSString();
+	}
+
 }

@@ -1,9 +1,10 @@
 package main.activator;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
- 
+
 import ui.controllers.CFGController;
 import ui.controllers.EditorController;
 import ui.controllers.StatisticsController;
@@ -45,6 +46,18 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		// ensures that the preferences have default values
+		setPESTTDefaultPreferences();
+	}
+
+	private void setPESTTDefaultPreferences() {
+		IPreferenceStore prefs = Activator.getDefault().getPreferenceStore();
+		if(prefs.getString("tourType").equals(""))
+			prefs.setValue("tourType", "TOUR");
+		if(prefs.getString("graphCoverageCriterium").equals(""))
+			prefs.setValue("graphCoverageCriterium", "PRIME_PATH");
+		if(prefs.getString("defaultFilename").equals(""))
+			prefs.setValue("defaultFilename", "default.xml");
 	}
 
 	/*

@@ -6,6 +6,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -40,10 +41,10 @@ public class RefreshHandler extends AbstractHandler {
 		if (ec.isInMethod()) { // if the text selected is the name of the method.
 			TestSuiteController tsc = Activator.getDefault().getTestSuiteController();
 			IPreferenceStore prefs = Activator.getDefault().getPreferenceStore();
-			if (!tsc.hasTestSuite(ec.getProjectName())) 
+			if (!tsc.hasTestSuite(ec.getProjectName()))  
 				tsc.addTestSuite(ec.getProjectName(), 
-						prefs.getString("defaultFilename"), 
-						prefs.getString("structuralCoverageCriterium"),
+						ec.getProjectPath()+ IPath.SEPARATOR + prefs.getString("defaultFilename"), 
+						prefs.getString("graphCoverageCriterium"),
 						prefs.getString("tourType"));
 			tsc.setMethodUnderTest(ec.getProjectName(), 
 					ec.getPackageName(), ec.getClassName(), ec.getSelectedMethod());

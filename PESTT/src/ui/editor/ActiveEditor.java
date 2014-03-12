@@ -7,6 +7,7 @@ import main.activator.Activator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -125,6 +126,10 @@ public class ActiveEditor { //implements Observer {
 		return javaProject;
 	}
 
+	public IPath getProjectPath() {
+		return javaProject.getResource().getLocation();
+	}
+	
 	public String getProjectName() {
 		return javaProject.getElementName();
 	}

@@ -22,8 +22,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 	public PreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		if (getPreferenceStore().getString("defaultFilename") == "")
-			getPreferenceStore().setValue("defaultFilename", "default.xml");
 		setDescription(ConstantLabels.DESCRIPTION);
 	}
 
@@ -35,7 +33,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		        "Default graph tour type:", 3,
 		        new String[][] { { "&Tour", "TOUR" },
 		            { "&Sidetrip", "SIDETRIP" }, { "&Detour", "DETOUR" } }, getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("structuralCoverageCriterium",
+		addField(new RadioGroupFieldEditor("graphCoverageCriterium",
 		        "Default graph coverage criterium:", 3,
 		        new String[][] { { "&Node Coverage", "NODE" },
 		            { "&Edge Coverage", "EDGE" }, { "E&dge Pair Coverage", "EDGE_PAIR" },

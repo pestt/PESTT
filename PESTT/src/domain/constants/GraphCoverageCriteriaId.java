@@ -1,22 +1,24 @@
 package domain.constants;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class GraphCoverageCriteriaId extends CoverageCriteriaId {
 	
-	public static final GraphCoverageCriteriaId COMPLETE_PATH = new GraphCoverageCriteriaId(1);
-	public static final GraphCoverageCriteriaId PRIME_PATH = new GraphCoverageCriteriaId(2);
-	public static final GraphCoverageCriteriaId ALL_DU_PATHS = new GraphCoverageCriteriaId(3);
-	public static final GraphCoverageCriteriaId EDGE_PAIR = new GraphCoverageCriteriaId(4);
-	public static final GraphCoverageCriteriaId COMPLETE_ROUND_TRIP = new GraphCoverageCriteriaId(5);
-	public static final GraphCoverageCriteriaId ALL_USES = new GraphCoverageCriteriaId(6);
-	public static final GraphCoverageCriteriaId EDGE = new GraphCoverageCriteriaId(7);
-	public static final GraphCoverageCriteriaId SIMPLE_ROUND_TRIP = new GraphCoverageCriteriaId(8); 
-	public static final GraphCoverageCriteriaId ALL_DEFS = new GraphCoverageCriteriaId(9); 
-	public static final GraphCoverageCriteriaId NODE = new GraphCoverageCriteriaId(10);
+	public static final GraphCoverageCriteriaId COMPLETE_PATH = new GraphCoverageCriteriaId("COMPLETE_PATH");
+	public static final GraphCoverageCriteriaId PRIME_PATH = new GraphCoverageCriteriaId("PRIME_PATH");
+	public static final GraphCoverageCriteriaId ALL_DU_PATHS = new GraphCoverageCriteriaId("ALL_DU_PATHS");
+	public static final GraphCoverageCriteriaId EDGE_PAIR = new GraphCoverageCriteriaId("EDGE_PAIR");
+	public static final GraphCoverageCriteriaId COMPLETE_ROUND_TRIP = new GraphCoverageCriteriaId("COMPLETE_ROUND_TRIP");
+	public static final GraphCoverageCriteriaId ALL_USES = new GraphCoverageCriteriaId("ALL_USES");
+	public static final GraphCoverageCriteriaId EDGE = new GraphCoverageCriteriaId("EDGE");
+	public static final GraphCoverageCriteriaId SIMPLE_ROUND_TRIP = new GraphCoverageCriteriaId("SIMPLE_ROUND_TRIP"); 
+	public static final GraphCoverageCriteriaId ALL_DEFS = new GraphCoverageCriteriaId("ALL_DEFS"); 
+	public static final GraphCoverageCriteriaId NODE = new GraphCoverageCriteriaId("NODE");
 	
-	private int id;
-	
-	private GraphCoverageCriteriaId (int id) {
-		this.id = id;
+	protected GraphCoverageCriteriaId (String name) {
+		super(name);
 	}
 	
 	protected GraphCoverageCriteriaId () {
@@ -49,29 +51,4 @@ public class GraphCoverageCriteriaId extends CoverageCriteriaId {
 			return NODE;
 		throw new IllegalArgumentException("Value " + s + " is not a valid GraphCoverageCriteriaID!");
 	}
-
-	public static CoverageCriteriaId valueOf(int i) {
-		if (i == 1)
-			return COMPLETE_PATH;
-		else if (i == 2)
-			return PRIME_PATH;
-		else if (i == 3)
-			return ALL_DU_PATHS;
-		else if (i == 4)
-			return EDGE_PAIR;
-		else if (i == 5)
-			return COMPLETE_ROUND_TRIP;
-		else if (i == 6)
-			return ALL_USES;
-		else if (i == 7)
-			return EDGE;
-		else if (i == 8)
-			return SIMPLE_ROUND_TRIP;
-		else if (i == 9)
-			return ALL_DEFS;
-		else if (i == 10)
-			return NODE;
-		throw new IllegalArgumentException("Value " + Integer.toString(i) + " is not a valid GraphCoverageCriteriaID!");
-	}
-
 }

@@ -6,12 +6,12 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import domain.constants.CoverageCriteriaId;
+import domain.constants.GraphCoverageCriteriaId;
 import domain.constants.TourType;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -19,7 +19,7 @@ import domain.constants.TourType;
 class TestSuite {
 	private Map<String, PackageTest> packages;
 	
-	public TestSuite (CoverageCriteriaId coverageCriteria, TourType tourType) {
+	public TestSuite (GraphCoverageCriteriaId coverageCriteria, TourType tourType) {
 		this();
 		this.coverageCriteria = coverageCriteria;
 		this.tourType = tourType;
@@ -37,8 +37,8 @@ class TestSuite {
 		packages.put(pt.getQualifiedName(), pt);
 	}
 
-	@XmlAttribute private CoverageCriteriaId coverageCriteria;
-	@XmlAttribute private TourType tourType;
+	@XmlElement private GraphCoverageCriteriaId coverageCriteria;
+	@XmlElement private TourType tourType;
 	
 	@XmlElementWrapper(name = "packages")
 	@XmlElement(name = "package") 
@@ -70,5 +70,21 @@ class TestSuite {
 			packages.put(packageName, pt);
 		}
 		return pt.addMethodTest(className, methodSignature, tourType);
+	}
+
+	public CoverageCriteriaId getCoverageCriteria() {
+		return coverageCriteria;
+	}
+	
+	public void setCoverageCriteria(GraphCoverageCriteriaId coverageCriteria) {
+		this.coverageCriteria = coverageCriteria;
+	}
+	
+	public TourType getTourType() {
+		return tourType;
+	}
+	
+	public void setTourType(TourType tourType) {
+		this.tourType = tourType;
 	}
 }

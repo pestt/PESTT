@@ -57,15 +57,18 @@ public class TestSuiteCatalog {
 			GraphCoverageCriteriaId coverageCriterium, TourType tourType) {
 
 		TestSuite testSuite;
-
+		boolean needsFlush = false;
 		try {
 			testSuite = loadTestSuite(filename);
 		} catch (JAXBException|FileNotFoundException e) {
 			// in case it cannot parse the XML file or the file does not exist
 			testSuite = new TestSuite(coverageCriterium, tourType);
+			needsFlush = true;
 		}				
 
-		testSuites.put(filename, new FileTestSuite(filename, testSuite));
+		testSuites.put(projectName, new FileTestSuite(filename, testSuite));
+		if (needsFlush)
+			flush(projectName);
 	}
 
 	private TestSuite loadTestSuite(String filename) throws JAXBException, FileNotFoundException {
